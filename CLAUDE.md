@@ -12,7 +12,7 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 1. ✅ Always follow the language spec (mixdown/spec/language.md)
 2. ✅ Always ensure the `.gitignore` file is updated to exclude potentially sensitive information
 3. ✅ Unless otherwise directed by the user, always work within the `dev` branch, or a feature branch off of `dev`
-4. ✅ Commit regularly, group commits logically, and use conventional commit messages
+4. ✅ Commit regularly, group commits logically, and use conventional commit messages. When committing, check to see if any files need to be staged.
 5. ✅ When writing code, follow the SOLID principles, DRY principles, KISS principle, and include descriptive inline comments for future developers
 </critical_instructions>
 
