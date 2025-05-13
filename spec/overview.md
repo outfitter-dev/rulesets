@@ -88,13 +88,17 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
     - OpenAI Codex → `./conventions.md`.
 - **Tag**
   - Syntax: `{{...}}`
-  - Used throughout Mixdown to direct the compiler.
+  - Fundamental building block of Mixdown syntax
+  - Used to direct the compiler for various purposes (sections, remixes, insertions)
+  - All Mixdown directives use tag syntax, but serve different functions
   - Similar to `<xml-tags>`, but fully Markdown-previewable.
 - **Section**
-  - Syntax: `{{instructions}}...{{/instructions}}`
-  - Delimited, reusable blocks of content with optional attributes.
-  - 1:1 translations of XML tags, but readable in Markdown previewers
-    - `{{instructions}}` → `<instructions>`
+  - Syntax: `{{section-name}}...{{/section-name}}`
+  - A specific application of tags that creates delimited content blocks
+  - Translates directly to XML tags in output: `<section_name>...</section_name>`
+  - Has opening and closing tags that surround content
+  - Can contain attributes that control rendering behavior
+  - Example: `{{instructions}}This is instruction content{{/instructions}}`
 - **Remix**
   - Syntax: `{{> my-rule }}`
   - Embed content from another mix, section, stem, or template.
