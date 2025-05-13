@@ -1,87 +1,155 @@
 # CLAUDE.md
 
+<file_purpose>
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+</file_purpose>
 
-## Overview
-
+<overview>
 Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a single *mix* file in Markdown and compile it into tool-specific instruction files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI prompts**: write once, target many, keeping agents across different tools on the same page.
+</overview>
 
-## Key Concepts
+<critical_instructions>
+1. ✅ Always follow the language spec (mixdown/spec/language.md)
+2. ✅ Always ensure the `.gitignore` file is updated to exclude potentially sensitive information
+3. ✅ Unless otherwise directed by the user, always work within the `dev` branch, or a feature branch off of `dev`
+4. ✅ Commit regularly, group commits logically, and use conventional commit messages
+5. ✅ When writing code, follow the SOLID principles, DRY principles, KISS principle, and include descriptive inline comments for future developers
+</critical_instructions>
 
+<key_concepts>
 - **Mix**: Source instruction files, written in 100% previewable Markdown
 - **Target**: A supported tool, such as `cursor`, `windsurf`, or `claude-code`
 - **Record**: Target-specific output files, rendered from the source mix
+- **Tag**: Syntax element using `{{...}}` notation, used to direct the compiler
 - **Section**: Delimited blocks of content with optional attributes (`{{instructions}}...{{/instructions}}`)
 - **Remix**: Embed content from another mix, section, stem, or template (`{{> my-rule }}`)
 - **Insertion**: Dynamic values replaced inline at build time (`{{$key}}`)
 - **Stem**: Modular, reusable content components
+</key_concepts>
 
-## Development Commands
-
-```bash
-# Installation
-npm install -g @mixdown/cli        # global CLI
-npm install --save-dev @mixdown    # project-local
-npx @mixdown/cli init              # initialize with CLI
-
-# Core Commands
-mixdown init      # scaffolds .mixdown/ directory structure
-mixdown import    # imports existing rules files into the mixdown format
-mixdown build     # writes records to .mixdown/records/
-```
-
-## Project Structure
-
-```
+<project_structure>
+```text
 project/
 ├── .mixdown/
 │   ├── records/
 │   │   └── builds/         # compiled outputs
 │   ├── instructions/       # Mix files (*.md)
 │   │   └── _stems/         # reusable content modules
-│   └── mixdown.config.json # compiler config
+│   └── mixdown.config.json # Mixdown config file
 ```
+</project_structure>
 
-## Naming Conventions
+<design_goals>
+| Goal | Description |
+|------|-------------|
+| ✨ **Simplicity** | Reduce bespoke format/structure for each tool to just one. |
+| 🧹 **Lintability** | Files must pass standard markdown-lint without hacks. |
+| 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc. |
+| 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new syntax. |
+</design_goals>
 
+<frontmatter_example>
+```yaml
+---
+# .mixdown/instructions/my-rule.md
+mixdown:
+  version: 0.1.0 # version number for the Mixdown format used
+description: "Rules for this project" # useful for tools that use descriptions
+globs: ["**/*.{txt,md,mdc}"] # globs re-written based on target-specific needs
+# Target filter examples:
+target:
+  include: ["cursor", "windsurf"]
+  exclude: ["claude-code"]
+  path: "./custom/output/path"
+# Target-specific frontmatter:
+cursor:
+  alwaysApply: false
+  target:
+    path: "./custom/.cursor/rules"
+# Additional metadata:
+name: my-rule # defaults to filename
+version: 2.0 # version number for this file
+---
+```
+</frontmatter_example>
+
+<naming_conventions>
 - Mix files: `kebab-case.md` (e.g., `coding-standards.md`)
 - Directories: `kebab-case` (e.g., `_samples`)
 - Config files: `kebab-case.config.json` (e.g., `mixdown.config.json`)
 - Section names: `kebab-case` (e.g., `{{user-instructions}}`)
 - XML output tags: `snake_case` (e.g., `<user_instructions>`)
+</naming_conventions>
 
-## Mixdown Syntax Examples
-
-### Sections
+<mixdown_syntax>
+<example>
 ```markdown
 {{instructions +cursor -claude-code}}
 - IMPORTANT: You must follow these coding standards...
 {{/instructions}}
 ```
+</example>
 
-### Remixes
+<remixes>
 ```markdown
 {{> @legal}}  <!-- Embeds `/_stems/legal.md` -->
 {{> conventions#section-name}}  <!-- Embed a specific section -->
+{{> my-rules sections="important-considerations,!less-important-considerations"}}  <!-- Filter sections -->
 ```
+</remixes>
 
-### Insertions
+<insertions>
 ```markdown
-Project: {{$project}}
-Version: {{$.version}}
+Alias: {{$alias}}
+Mix file version: {{$file.version}}
+Current target: {{$target}}
+Target ID: {{$target.id}}
 ```
+</insertions>
 
-### Target-scoped Attributes
+<target_scoped_attributes>
 ```markdown
 {{instructions cursor?name="cursor_instructions"}}
 ...
 {{/instructions}}
 ```
+</target_scoped_attributes>
 
-## Contributing Guidelines
+<rendering_options>
+```markdown
+{{instructions rendered="unwrapped"}}
+Content without surrounding XML tags
+{{/instructions}}
 
+{{> @code-example rendered="code:javascript"}}
+```
+</rendering_options>
+
+<raw_syntax>
+```markdown
+{{{examples}}}  <!-- Triple braces preserve Mixdown syntax -->
+{{example}}
+- Instructions
+- Rules
+{{/example}}
+{{{/examples}}}
+```
+</raw_syntax>
+
+<placeholders>
+```markdown
+[requirements]  <!-- Instruction placeholder for AI to fill -->
+{requirements}  <!-- Alternative placeholder syntax -->
+```
+</placeholders>
+
+</mixdown_syntax>
+
+<contributing_guidelines>
 When contributing to this project:
-1. Follow the naming conventions and terminology outlined in the styleguide
+
+1. Follow the naming conventions and terminology outlined in the language spec
 2. Be consistent with the musical theme alignment in feature naming
 3. Ensure all documentation uses clear, specific terminology over vague descriptions
 4. Write mixes using Markdown ATX-style headers and proper code blocks with language identifiers
+</contributing_guidelines>
