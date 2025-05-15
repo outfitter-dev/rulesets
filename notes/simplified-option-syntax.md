@@ -27,11 +27,12 @@ Content without surrounding XML tags
 ## Core Ideas
 
 1. **Direct Option Usage**: Descriptive options use a simple kebab-case format
-2. **Simple Flags**: Boolean flags are just bare words (like `\name` for preserved options)
+2. **Simple Flags**: Boolean flags are just bare words
 3. **Multi-word Values**: Only use quotes for multi-word values
 4. **Target Filtering**: Include with `+target`, exclude with `!target` (new)
 5. **Scope Delimiter**: Colon (`:`) reserved as scope delimiter (e.g., `cursor:name="value"`)
 6. **Composable**: Multiple options can be combined with spaces
+7. **Custom Options Pass-through**: Unrecognized options automatically included in XML output
 
 ## Option Mapping Examples
 
@@ -57,7 +58,7 @@ Based on the actual options in the Mixdown specification:
 | `output="heading=same"` | `h-same` | Same heading level |
 | `output="heading=replace:first"` | `h-replace` | Replace first heading |
 | `numbering="heading:before"` | `num-head-before` | Numbering before heading |
-| `\name` | `\name` | Preserve option in rendered XML |
+| `my-custom-attr="value"` | `my-custom-attr="value"` | Custom options included in XML output |
 
 ## Multiple Options Example
 
@@ -179,6 +180,30 @@ These are instructions for Cursor with a cursor-specific name
 
 Note: For target exclusion with `!target`, there's generally no need for additional options since the content is being excluded entirely for that target.
 
+### Custom Options Pass-through
+
+Any unrecognized options will be automatically included in XML output when rendered:
+
+```markdown
+{{instructions data-id="123" tag-omit}}
+Content without tags (data-id doesn't appear)
+{{/instructions}}
+
+{{instructions data-id="123" role="example"}}
+Content with tags including the custom options
+{{/instructions}}
+```
+
+The second example would render as:
+
+```xml
+<instructions data-id="123" role="example">
+Content with tags including the custom options
+</instructions>
+```
+
+This eliminates the need for any special escape mechanism for preserving options.
+
 ## Implementation Details
 
 ### Parser Integration
@@ -195,9 +220,9 @@ The parser would need to:
    - Starting with `num-`: Numbering directive
    - Contains `=`: Key-value pair
    - Contains `:`: Scoped option (where text before `:` is the scope)
-   - Starting with `\`: Preserved option
-   - Otherwise: Simple option
+   - Otherwise: Simple option or custom option
 3. Apply them in a deterministic order
+4. Pass through unrecognized options to XML output when appropriate
 
 ## Side-by-Side Comparison with Actual Mixdown Options
 
@@ -209,7 +234,7 @@ The parser would need to:
 | Include for target | `{{track +cursor}}` | `{{track +cursor}}` | 0% (unchanged) |
 | Exclude for target | `{{track -windsurf}}` | `{{track !windsurf}}` | 0% (symbols changed) |
 | Multiple options | `{{track output="code:js" name="example"}}` | `{{track code-js name="example"}}` | 25% (32 → 24 chars) |
-| Preserved option | `{{track \name="core_rules"}}` | `{{track \name="core_rules"}}` | 0% (unchanged) |
+| Custom option | `{{track \name="core_rules"}}` | `{{track name="core_rules"}}` | 6% (27 → 25 chars) |
 | Import tracks filter | `{{> rules tracks="included,!excluded"}}` | `{{> rules tracks="included,!excluded"}}` | 0% (unchanged) |
 | Target-scoped option | `{{track cursor?name="specific"}}` | `{{track cursor:name="specific"}}` | 0% (symbols changed) |
 | Heading level | `{{section output="heading=2"}}` | `{{section h-2}}` | 68% (25 → 8 chars) |
@@ -231,7 +256,7 @@ Testing is required for all new features.
 ### Proposed Syntax
 
 ```markdown
-{{instructions \name="core_rules" +cursor !windsurf}}
+{{instructions name="core_rules" +cursor !windsurf}}
 All code must follow consistent formatting.
 
 Testing is required for all new features.
