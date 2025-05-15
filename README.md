@@ -39,11 +39,11 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 **Output**
 : Target-specific output files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their target tool directories, these are referred to as "tool-ready outputs".
 
-**Section**
+**Track**
 : Delimited, reusable blocks of content using notation like `{{instructions}}...{{/instructions}}` with optional attributes. They are 1:1 translations of XML tags (e.g., `{{instructions}}` → `<instructions>`), but readable in Markdown previewers.
 
 **Import**
-: A reference to another mix file, section, snippet, or template (`{{> my-rule}}`). Embeds content from another source.
+: A reference to another mix file, track, snippet, or template (`{{> my-rule}}`). Embeds content from another source.
 
 **Variable**
 : Dynamic value replaced inline at build time (e.g., `{{$key}}` for aliases, `{{$.frontmatter.key}}` for frontmatter data, `{{$target}}` for the current target name).

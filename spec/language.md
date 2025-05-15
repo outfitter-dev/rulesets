@@ -10,8 +10,8 @@ This document provides terminology guidance for consistent language in Mixdown d
 | **Output** | Target-specific output files generated from mixes | "Compile your mixes into outputs for each tool." |
 | **Target** | A supported tool (e.g., Cursor, Claude Code) | "Each target has specific formatting requirements." |
 | **Notation Marker** | Element using `{{...}}` notation | "Use notation markers to direct the compiler." |
-| **Section** | Delimited blocks marked with `{{section}}...{{/section}}` | "Define a section for agent instructions." |
-| **Import** | A reference to another mix file or section | "Import common guidelines into multiple files." |
+| **Track** | Delimited blocks marked with `{{track}}...{{/track}}` | "Define a track for agent instructions." |
+| **Import** | A reference to another mix file or track | "Import common guidelines into multiple files." |
 | **Variable** | Dynamic values replaced at build time | "Use variables to include dynamic data." |
 | **Snippet** | Modular content component stored in `/_snippets` | "Import commonly used content as snippets." |
 
@@ -60,8 +60,8 @@ This document provides terminology guidance for consistent language in Mixdown d
 | Mix files | `kebab-case.md` | `coding-standards.md` |
 | Directory | `kebab-case` | `_samples` |
 | Config files | `kebab-case.config.json` | `mixdown.config.json` |
-| Section tags | `kebab-case` | `{{user-instructions}}` |
-| Section tags in outputs | `snake_case` | `<user_instructions>` |
+| Track tags | `kebab-case` | `{{user-instructions}}` |
+| Track tags in outputs | `snake_case` | `<user_instructions>` |
 
 ## Musical Theme Alignment
 
@@ -72,7 +72,7 @@ Mixdown uses audio production terminology to reinforce its brand identity:
 | **Mix** | Source audio tracks | Source instruction file |
 | **Mixdown** | Process of combining audio | Process of compiling instructions |
 | **Output** | Final audio product | Final compiled output |
-| **Track** | Individual audio component | Individual section in a mix |
+| **Track** | Individual audio component | Individual content block in a mix |
 | **Snippet** | Reusable code fragment | Modular, reusable content component |
 
 ## Markdown Formatting

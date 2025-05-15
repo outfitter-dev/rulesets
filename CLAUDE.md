@@ -21,8 +21,8 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 - **Target**: A supported tool, such as `cursor`, `windsurf`, or `claude-code`
 - **Output**: Target-specific output files, rendered from the source mix
 - **Notation Marker**: Element using `{{...}}` notation, used to direct the compiler
-- **Section**: Delimited blocks of content with optional attributes (`{{instructions}}...{{/instructions}}`)
-- **Import**: Embed content from another mix, section, snippet, or template (`{{> my-rule }}`)
+- **Track**: Delimited blocks of content with optional attributes (`{{instructions}}...{{/instructions}}`)
+- **Import**: Embed content from another mix, track, snippet, or template (`{{> my-rule }}`)
 - **Variable**: Dynamic values replaced inline at build time (`{{$key}}`)
 - **Snippet**: Modular, reusable content components
 </key_concepts>
@@ -93,8 +93,8 @@ version: 2.0 # version number for this file
 <imports>
 ```markdown
 {{> @legal}}  <!-- Embeds `/_snippets/legal.md` -->
-{{> conventions#section-name}}  <!-- Embed a specific section -->
-{{> my-rules sections="important-considerations,!less-important-considerations"}}  <!-- Filter sections -->
+{{> conventions#track-name}}  <!-- Embed a specific track -->
+{{> my-rules tracks="important-considerations,!less-important-considerations"}}  <!-- Filter tracks -->
 ```
 </imports>
 

@@ -19,13 +19,13 @@
   - [Quick Start](#quick-start)
 - [Notation Reference](#notation-reference)
   - [Design Goals](#design-goals)
-  - [Sections](#sections)
-    - [Section Tags Notation](#section-tags-notation)
-    - [Section Tag Names](#section-tag-names)
-    - [Section Tag Parsing](#section-tag-parsing)
+  - [Tracks](#tracks)
+    - [Track Tags Notation](#track-tags-notation)
+    - [Track Tag Names](#track-tag-names)
+    - [Track Tag Parsing](#track-tag-parsing)
     - [Target-scoped attribute overrides](#target-scoped-attribute-overrides)
     - [Multi-line Tags for Readability](#multi-line-tags-for-readability)
-    - [Section Attributes](#section-attributes)
+    - [Track Attributes](#track-attributes)
     - [Rendered Content](#rendered-content)
     - [Using bare XML tags](#using-bare-xml-tags)
   - [Mixdown Frontmatter](#mixdown-frontmatter)
@@ -90,19 +90,19 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
 - **Tag**
   - Syntax: `{{...}}`
   - Fundamental building block of Mixdown Notation
-  - Used to direct the compiler for various purposes (sections, imports, variables)
+  - Used to direct the compiler for various purposes (tracks, imports, variables)
   - All Mixdown directives use tag notation, but serve different functions
   - Similar to `<xml-tags>`, but fully Markdown-previewable.
-- **Section**
-  - Syntax: `{{section-name}}...{{/section-name}}`
-  - A specific application of tags that creates delimited content blocks
-  - Translates directly to XML tags in output: `<section_name>...</section_name>`
+- **Track**
+  - Syntax: `{{track-name}}...{{/track-name}}`
+  - A specific application of notation markers that creates delimited content blocks
+  - Translates directly to XML tags in output: `<track_name>...</track_name>`
   - Has opening and closing tags that surround content
   - Can contain attributes that control rendering behavior
   - Example: `{{instructions}}This is instruction content{{/instructions}}`
 - **Import**
   - Syntax: `{{> my-rule }}`
-  - Embed content from another mix, section, snippet, or template.
+  - Embed content from another mix, track, snippet, or template.
 - **Variable**
   - Syntax: `{{$key}}` or `$key` if used within a `{{...}}` tag.
   - Dynamic values replaced inline at build time.
@@ -113,7 +113,7 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
 ### Mixdown Notation
 
 - **100% Preview-able Markdown:** Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
-- **Granular Sections:** Filter sections within a single mix for per-target inclusion/exclusion.
+- **Granular Tracks:** Filter tracks within a single mix for per-target inclusion/exclusion.
 - **Build-time Variables:** Aliases and frontmatter data injection.
 
 ### Compiler & Integration
@@ -165,9 +165,9 @@ mixdown build     # writes outputs to .mixdown/outputs/
 | 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc. |
 | 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new notation. |
 
-### Sections
+### Tracks
 
-Sections are the core building block of Mixdown and are a direct stand in for XML `<section>` tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other sections or mixes.
+Tracks are the core building block of Mixdown and are a direct stand in for XML tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other tracks or mixes.
 
 ```markdown
 {{instructions +cursor -claude-code}}
@@ -175,46 +175,46 @@ Sections are the core building block of Mixdown and are a direct stand in for XM
 {{/instructions}}
 ```
 
-#### Section Tags Notation
+#### Track Tags Notation
 
-- **1:1 Markdown-to-XML Translation**: Write sections as `{{section-name}}` and they will be converted to `<section_name>` in the output.
-- **Open/Close** `{{section-name ... }}` [ section content ] `{{/section-name}}`
+- **1:1 Markdown-to-XML Translation**: Write tracks as `{{track-name}}` and they will be converted to `<track_name>` in the output.
+- **Open/Close** `{{track-name ... }}` [ track content ] `{{/track-name}}`
 
-#### Section Tag Names
+#### Track Tag Names
 
-- `kebab-case` is recommended for section names (to avoid accidental Markdown emphasis rendering)
+- `kebab-case` is recommended for track names (to avoid accidental Markdown emphasis rendering)
 - Regardless of the naming convention, XML tag names in outputs will be formatted as `<snake_case>` (which is configurable)
 
-#### Section Tag Parsing
+#### Track Tag Parsing
 
 ```markdown
 <!-- Mixdown input -->
-{{section-one}}
+{{track-one}}
 Content A
-{{/section-one}}
+{{/track-one}}
 
-{{section-two +* -claude-code}}
+{{track-two +* -claude-code}}
 Content B
-{{/section-two}}
+{{/track-two}}
 
 ---
 
 Output for all configured tools (except `claude-code` in this example):
 <!-- XML output -->
-<section-one>
+<track-one>
 Content A
-</section-one>
-<section-two>
+</track-one>
+<track-two>
 Content B
-</section-two>
+</track-two>
 ```
 
 While Claude Code output will be:
 
 ```markdown
-<section-one>
+<track-one>
 Content A
-</section-one>
+</track-one>
 ```
 
 #### Target-scoped attribute overrides
@@ -227,9 +227,9 @@ Any string attribute can be given a per-target override by suffixing the target 
 {{/instructions}}
 ```
 
-In this example the section will use the name "cursor_instructions" when compiled for the *cursor* target. The same pattern works with groups once they arrive (e.g. `ide?name="ide_instructions"`).
+In this example the track will use the name "cursor_instructions" when compiled for the *cursor* target. The same pattern works with groups once they arrive (e.g. `ide?name="ide_instructions"`).
 
-Note: You can also use the `+target` notation to both include the section for specific targets *and* apply target-specific overrides.
+Note: You can also use the `+target` notation to both include the track for specific targets *and* apply target-specific overrides.
 
 #### Multi-line Tags for Readability
 
@@ -256,7 +256,7 @@ Output:
 </instructions>
 ```
 
-#### Section Attributes
+#### Track Attributes
 
 | Attribute | Type | Purpose |
 |-----------|------|---------|
@@ -267,7 +267,7 @@ Output:
 
 #### Rendered Content
 
-The `rendered` attribute provides flexible control over how content is formatted in the final output. This attribute is available for sections, imports, and inclusions.
+The `rendered` attribute provides flexible control over how content is formatted in the final output. This attribute is available for tracks, imports, and inclusions.
 
 ```markdown
 {{instructions rendered="unwrapped"}}
@@ -333,19 +333,19 @@ If the file extension is not recognized (and isn't a `.md` file), it will defaul
 > [!WARNING]
 > Bare XML tags are not valid Markdown, so Markdown previewers may be likely to render them differently or not at all.
 
-When `allow-bare-xml-tags` is set to `true` in frontmatter or `.mixdown.config.json`, you can use bare XML tags for section names. The outputs will be rendered verbatim, but note:
+When `allow-bare-xml-tags` is set to `true` in frontmatter or `.mixdown.config.json`, you can use bare XML tags for track names. The outputs will be rendered verbatim, but note:
 
 ```markdown
 <!-- XML tags with `allow-bare-xml-tags` set to `true` -->
-<section_name>
+<track_name>
   ...
-</section_name>
+</track_name>
 
 Renders as:
 
-<section_name>
+<track_name>
   ...
-</section_name>
+</track_name>
 ```
 
 ### Mixdown Frontmatter
@@ -441,25 +441,25 @@ Variables are dynamic values using the `{{$...}}` notation. They are replaced in
 
 ### Imports
 
-Imports allow you to reuse content across multiple mixes by embedding mixes, sections within a mix, or snippets into rendered outputs. They are denoted by the `{{> ...}}` notation.
+Imports allow you to reuse content across multiple mixes by embedding mixes, tracks within a mix, or snippets into rendered outputs. They are denoted by the `{{> ...}}` notation.
 
 ```markdown
 <!-- Embeds `/_snippets/legal.md` -->
 {{> @legal}}
 
-<!-- Embed a specific section from the `conventions.md` mix file -->
-{{> conventions#section-name}}
+<!-- Embed a specific track from the `conventions.md` mix file -->
+{{> conventions#track-name}}
 
-<!-- Embed a section from within the existing file -->
-{{> #section-name}}
+<!-- Embed a track from within the existing file -->
+{{> #track-name}}
 
-<!-- Import a mix with multiple specific sections -->
-{{> my-rules sections="section-name,!section-name-to-exclude"}}
+<!-- Import a mix with multiple specific tracks -->
+{{> my-rules tracks="track-name,!track-name-to-exclude"}}
 ```
 
 Example:
 
-Let's say that we have a mix file called `conventions.md` that contains a section called `style-guide`. We can import it into another mix file called `my-rules.md` and include only the `style-guide` section:
+Let's say that we have a mix file called `conventions.md` that contains a track called `style-guide`. We can import it into another mix file called `my-rules.md` and include only the `style-guide` track:
 
 ```markdown
 <!-- my-rules.md -->
@@ -480,9 +480,9 @@ Important: Be sure to follow the style guide:
 
 #### Import Attributes
 
-All [section attributes](#section-attributes) can be applied to imports. Imports also support the following additional attributes:
+All [track attributes](#track-attributes) can be applied to imports. Imports also support the following additional attributes:
 
-- `sections="included,!excluded"` allows you to filter which sections from the mix are included/excluded on render.
+- `tracks="included,!excluded"` allows you to filter which tracks from the mix are included/excluded on render.
 - `rendered` can provide some flexibility for how imports will be rendered
   - `rendered="unwrapped"` will remove the surrounding tag from the output.
   - `rendered="inline"` will attempt to render the content inline.
@@ -491,15 +491,15 @@ All [section attributes](#section-attributes) can be applied to imports. Imports
 Examples:
 
 ```markdown
-{{> my-rules sections="!less-important-considerations"}}
+{{> my-rules tracks="!less-important-considerations"}}
 
-<!-- 👆 This would include all sections from `my-rules.md`
+<!-- 👆 This would include all tracks from `my-rules.md`
      except for `less-important-considerations`. -->
 
-{{> my-rules sections="important-considerations"}}
+{{> my-rules tracks="important-considerations"}}
 
 <!-- 👆 This would include only the `important-considerations`
-     section from `my-rules.md`. -->
+     track from `my-rules.md`. -->
 ```
 
 ### Imports vs. Inclusions
@@ -693,14 +693,14 @@ Features planned for v0.x releases:
 
 The following table provides a complete list of all supported attributes in Mixdown v0:
 
-| Attribute            | Type    | Default    | Section | Import | Frontmatter | Description |
+| Attribute            | Type    | Default    | Track | Import | Frontmatter | Description |
 |----------------------|---------|------------|---------|-------|--------------|-------------|
 | `name`               | string  | none       | ✅      | ✅    | ✅           | Name or identifier (frontmatter: mix identifier, required) |
 | `description`        | string  | none       | ❌      | ❌    | ✅           | Short description of content (frontmatter only) |
 | `+/-target`          | flag    | none       | ✅      | ✅    | ❌           | Include/exclude for specific targets |
 | `rendered`           | string  | "default"  | ✅      | ✅    | ❌           | Controls how content is processed and displayed |
 | `allow-bare-xml-tags`| boolean | false      | ❌      | ❌    | ✅           | Allow using bare XML tags |
-| `sections`           | list    | none       | ❌      | ✅    | ❌           | Filter specific sections in imports |
+| `tracks`           | list    | none       | ❌      | ✅    | ❌           | Filter specific tracks in imports |
 | `version`            | string  | none       | ❌      | ❌    | ✅           | Mix version |
 | `labels`             | array   | `[]`       | ❌      | ❌    | ✅           | Categorization tags |
 | `target.include`     | array   | `[]`       | ❌      | ❌    | ✅           | Target inclusion list |
