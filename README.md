@@ -34,13 +34,13 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 ## Core Concepts
 
 **Mix**
-: Source instruction files, written in 100% previewable Markdown. Written in Mixdown Syntax and use `{{...}}` tags to direct the compiler.
+: Source instruction files, written in 100% previewable Markdown. Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
 
 **Output**
 : Target-specific output files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their target tool directories, these are referred to as "tool-ready outputs".
 
 **Section**
-: Delimited, reusable blocks of content using syntax like `{{instructions}}...{{/instructions}}` with optional attributes. They are 1:1 translations of XML tags (e.g., `{{instructions}}` → `<instructions>`), but readable in Markdown previewers.
+: Delimited, reusable blocks of content using notation like `{{instructions}}...{{/instructions}}` with optional attributes. They are 1:1 translations of XML tags (e.g., `{{instructions}}` → `<instructions>`), but readable in Markdown previewers.
 
 **Import**
 : A reference to another mix file, section, stem, or template (`{{> my-rule}}`). Embeds content from another source.
@@ -49,7 +49,7 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 : Dynamic value replaced inline at build time (e.g., `{{$key}}` for aliases, `{{$.frontmatter.key}}` for frontmatter data, `{{$target}}` for the current target name).
 
 **Tag**
-: Syntax element using `{{...}}` notation, used throughout Mixdown to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
+: Notation marker using `{{...}}` format, used throughout Mixdown to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
 
 **Stem**
 : Modular, reusable content component stored in `/_stems`.
@@ -76,7 +76,7 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 
 ## Key Features
 
-### Mixdown Syntax
+### Mixdown Notation
 
 - **100% Preview-able Markdown** – Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
 - **Granular Sections** – Filter sections within a single mix for per-target inclusion/exclusion.
@@ -119,7 +119,7 @@ project/
 │   └── mixdown.config.json # compiler config
 ```
 
-## Syntax Cheatsheet
+## Notation Cheatsheet
 
 | Token / Feature | Example | Notes |
 |-----------------|---------|-------|
@@ -134,7 +134,7 @@ project/
 | **Target Variable** | `{{$target}}` / `{{$target.id}}` | Injects current target name/ID. |
 | **Instruction Placeholder** | `[fill this in]` | Marker for LLM to complete. |
 
-Full spec lives in `docs/spec/mixdown-syntax.md`.
+Full spec lives in `docs/spec/mixdown-notation.md`.
 
 ## Versioning and Changelog
 
@@ -168,6 +168,6 @@ See [`docs/contributing/DEVELOPMENT.md`](docs/contributing/DEVELOPMENT.md) for f
 
 ## References
 
-- `docs/spec/mixdown-syntax.md` – Full syntax specification.
+- `docs/spec/mixdown-notation.md` – Full notation specification.
 - `docs/developer/plugin-development.md` – Build a new plugin provider.
 - `docs/architecture/design-decisions.md` – Design rationale & deep-dive.

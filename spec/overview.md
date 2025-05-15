@@ -11,16 +11,16 @@
   - [Our Solution](#our-solution)
 - [Core Concepts](#core-concepts)
 - [Key Features](#key-features)
-  - [Mixdown Syntax](#mixdown-syntax)
+  - [Mixdown Notation](#mixdown-notation)
   - [Compiler \& Integration](#compiler--integration)
 - [Target Providers](#target-providers)
 - [Getting Started](#getting-started)
   - [Installation](#installation)
   - [Quick Start](#quick-start)
-- [Syntax Reference](#syntax-reference)
+- [Notation Reference](#notation-reference)
   - [Design Goals](#design-goals)
   - [Sections](#sections)
-    - [Section Tags Syntax](#section-tags-syntax)
+    - [Section Tags Notation](#section-tags-notation)
     - [Section Tag Names](#section-tag-names)
     - [Section Tag Parsing](#section-tag-parsing)
     - [Target-scoped attribute overrides](#target-scoped-attribute-overrides)
@@ -61,7 +61,7 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 
 ### Our Solution
 
-Mixdown introduces a single source-of-truth rules syntax written in pure Markdown (with a dash of specialized syntax), which is processed into tool-specific files by a compiler that:
+Mixdown introduces a single source-of-truth rules notation written in pure Markdown (with a dash of specialized notation), which is processed into tool-specific files by a compiler that:
 
 1. Parses the mix into an AST (abstract syntax tree) to ensure a consistent format.
 2. Uses **tool-specific compilers** (as plugins) to transform the AST into per-tool rules files (outputs).
@@ -73,7 +73,7 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
 
 - **Mix**
   - Source instruction files, written in 100% previewable Markdown.
-  - Written in Mixdown Syntax and use `{{...}}` tags to direct the compiler.
+  - Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
   - Compiled into tool-specific rules files:
     - `./mixdown/instructions/my-rule.md` → `.cursor/rules/my-rule.mdc`
 - **Target**
@@ -89,9 +89,9 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
   - When placed in tool directories, referred to as "tool-ready outputs".
 - **Tag**
   - Syntax: `{{...}}`
-  - Fundamental building block of Mixdown syntax
+  - Fundamental building block of Mixdown Notation
   - Used to direct the compiler for various purposes (sections, imports, variables)
-  - All Mixdown directives use tag syntax, but serve different functions
+  - All Mixdown directives use tag notation, but serve different functions
   - Similar to `<xml-tags>`, but fully Markdown-previewable.
 - **Section**
   - Syntax: `{{section-name}}...{{/section-name}}`
@@ -110,7 +110,7 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
 
 ## Key Features
 
-### Mixdown Syntax
+### Mixdown Notation
 
 - **100% Preview-able Markdown:** Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
 - **Granular Sections:** Filter sections within a single mix for per-target inclusion/exclusion.
@@ -154,7 +154,7 @@ mixdown import    # imports existing rules files into the mixdown format
 mixdown build     # writes outputs to .mixdown/outputs/
 ```
 
-## Syntax Reference
+## Notation Reference
 
 ### Design Goals
 
@@ -163,7 +163,7 @@ mixdown build     # writes outputs to .mixdown/outputs/
 | ✨ **Simplicity** | Reduce bespoke format/structure for each tool to just one. |
 | 🧹 **Lintability** | Files must pass standard markdown-lint without hacks. |
 | 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc. |
-| 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new syntax. |
+| 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new notation. |
 
 ### Sections
 
@@ -175,7 +175,7 @@ Sections are the core building block of Mixdown and are a direct stand in for XM
 {{/instructions}}
 ```
 
-#### Section Tags Syntax
+#### Section Tags Notation
 
 - **1:1 Markdown-to-XML Translation**: Write sections as `{{section-name}}` and they will be converted to `<section_name>` in the output.
 - **Open/Close** `{{section-name ... }}` [ section content ] `{{/section-name}}`
@@ -229,7 +229,7 @@ Any string attribute can be given a per-target override by suffixing the target 
 
 In this example the section will use the name "cursor_instructions" when compiled for the *cursor* target. The same pattern works with groups once they arrive (e.g. `ide?name="ide_instructions"`).
 
-Note: You can also use the `+target` syntax to both include the section for specific targets *and* apply target-specific overrides.
+Note: You can also use the `+target` notation to both include the section for specific targets *and* apply target-specific overrides.
 
 #### Multi-line Tags for Readability
 
@@ -286,7 +286,7 @@ Content without surrounding XML tags
 | `default` | Normal rendering with XML tags (default behavior) |
 | `unwrapped` | No XML tags (equivalent to former `no-tag=true`) |
 | `inline` | Content rendered inline (preserves formatting otherwise) useful with [stems](#stems) |
-| `raw` | Render everything as raw Mixdown syntax |
+| `raw` | Render everything as raw Mixdown Notation |
 | `raw:content` | Only render content as raw, process tags normally |
 | `raw:tags` | Only render tags as raw, process content normally |
 | `code[:language]` | Render content as a code block in the specified language |
@@ -402,7 +402,7 @@ Standard Markdown links work as expected external links, and links to other mix 
 - Regular links: `[Text](url)`
 - Links to other mix files: `[Text](other-mix.md)`
 
-Mixdown also provides a `{{link}}` tag to allow for more expressive link syntax.
+Mixdown also provides a `{{link}}` notation marker to allow for more expressive link notation.
 
 ```markdown
 {{link mix-name}}
@@ -426,9 +426,9 @@ The above will render as a link relative to the compiled output's directory. For
 
 ### Variables
 
-Variables are dynamic values using the `{{$...}}` syntax. They are replaced inline at build time.
+Variables are dynamic values using the `{{$...}}` notation. They are replaced inline at build time.
 
-| Type | Syntax | Notes |
+| Type | Notation | Notes |
 |------|--------|-------|
 | **Alias** | `{{$key}}` | Alias lookup in `.mixdown.config.json` under `aliases` key. |
 | **Frontmatter value** | `{{$.key}}` | Access values from thecurrent file's frontmatter. |
@@ -441,7 +441,7 @@ Variables are dynamic values using the `{{$...}}` syntax. They are replaced inli
 
 ### Imports
 
-Imports allow you to reuse content across multiple mixes by embedding mixes, sections within a mix, or stems into rendered outputs. They are denoted by the `{{> ...}}` syntax.
+Imports allow you to reuse content across multiple mixes by embedding mixes, sections within a mix, or stems into rendered outputs. They are denoted by the `{{> ...}}` notation.
 
 ```markdown
 <!-- Embeds `/_stems/legal.md` -->
@@ -547,16 +547,16 @@ Example:
 </remember>
 ```
 
-### Rendering Raw Mixdown Syntax
+### Rendering Raw Mixdown Notation
 
-Triple-brace `{{{...}}}` to skip processing of the content and render it in the raw Mixdown syntax.
+Triple-brace `{{{...}}}` to skip processing of the content and render it in the raw Mixdown Notation.
 
 - This is useful for writing documentation or rules that need to show Mixdown-flavored Markdown (mix.md) literally
-- Wrapping a section in triple curly braces preserves all Mixdown syntax and content exactly as written
+- Wrapping a section in triple curly braces preserves all Mixdown Notation and content exactly as written
 - Example:
 
 ```markdown
-> Triple braces will preserve the Mixdown syntax on render.
+> Triple braces will preserve the Mixdown Notation on render.
 > Adding `rendered="unwrapped"` will remove those section tags from the output.
 > Adding `+cursor` will only include the section for the `cursor` target.
 
@@ -586,7 +586,7 @@ Without the `rendered="unwrapped"` attribute, it would render as:
 
 ### Instruction Placeholders
 
-When writing prompts or instructions, you can use placeholders as self-contained prompts to direct an AI to fill in. Mixdown recommends using single-bracket `[placeholder text]`, but single-brace `{placeholder text}` syntax is supported. Just be careful, as one extra brace will cause the compiler to treat it as a Mixdown tag.
+When writing prompts or instructions, you can use placeholders as self-contained prompts to direct an AI to fill in. Mixdown recommends using single-bracket `[placeholder text]`, but single-brace `{placeholder text}` notation is supported. Just be careful, as one extra brace will cause the compiler to treat it as a Mixdown notation marker.
 
 - ✅ Do this:
   - `[requirements]` / `[ requirements ]`
@@ -712,7 +712,7 @@ The following table provides a complete list of all supported attributes in Mixd
 
 **Notes:**
 
-- All string attributes can be target-scoped with `+target?key="value"` syntax
+- All string attributes can be target-scoped with `+target?key="value"` notation
 - Frontmatter target blocks override global values (e.g., `cursor: { description: "..." }`)
 - Target-specific paths can be set with `cursor: { target: { path: "./custom/path" } }`
 - The `\key` flag specifically indicates that the attribute should be included in the XML output

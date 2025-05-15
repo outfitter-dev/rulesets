@@ -6,11 +6,11 @@ This document provides terminology guidance for consistent language in Mixdown d
 
 | Term | Definition | Usage Examples |
 |------|------------|----------------|
-| **Mix** | Source instruction files, written in Mixdown Syntax | "Write your code standards in a mix file." |
+| **Mix** | Source instruction files, written in Mixdown Notation | "Write your code standards in a mix file." |
 | **Output** | Target-specific output files generated from mixes | "Compile your mixes into outputs for each tool." |
 | **Target** | A supported tool (e.g., Cursor, Claude Code) | "Each target has specific formatting requirements." |
-| **Tag** | Syntax element using `{{...}}` notation | "Use tags to direct the compiler." |
-| **Section** | Delimited blocks marked with `{{tag}}...{{/tag}}` | "Define a section for agent instructions." |
+| **Notation Marker** | Element using `{{...}}` notation | "Use notation markers to direct the compiler." |
+| **Section** | Delimited blocks marked with `{{section}}...{{/section}}` | "Define a section for agent instructions." |
 | **Import** | A reference to another mix file or section | "Import common guidelines into multiple files." |
 | **Variable** | Dynamic values replaced at build time | "Use variables to include dynamic data." |
 | **Stem** | Modular content component stored in `/_stems` | "Import commonly used content as stems." |
@@ -77,7 +77,7 @@ Mixdown uses audio production terminology to reinforce its brand identity:
 
 ## Markdown Formatting
 
-- Headers (`#` syntax)
+- Headers (`#` notation)
   - Must be preceded and followed by blank lines
   - Must not end with `:`
 - Code blocks

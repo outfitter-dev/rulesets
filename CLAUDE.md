@@ -20,7 +20,7 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 - **Mix**: Source instruction files, written in 100% previewable Markdown
 - **Target**: A supported tool, such as `cursor`, `windsurf`, or `claude-code`
 - **Output**: Target-specific output files, rendered from the source mix
-- **Tag**: Syntax element using `{{...}}` notation, used to direct the compiler
+- **Notation Marker**: Element using `{{...}}` notation, used to direct the compiler
 - **Section**: Delimited blocks of content with optional attributes (`{{instructions}}...{{/instructions}}`)
 - **Import**: Embed content from another mix, section, stem, or template (`{{> my-rule }}`)
 - **Variable**: Dynamic values replaced inline at build time (`{{$key}}`)
@@ -45,7 +45,7 @@ project/
 | ✨ **Simplicity** | Reduce bespoke format/structure for each tool to just one. |
 | 🧹 **Lintability** | Files must pass standard markdown-lint without hacks. |
 | 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc. |
-| 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new syntax. |
+| 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new notation. |
 </design_goals>
 
 <frontmatter_example>
@@ -81,7 +81,7 @@ version: 2.0 # version number for this file
 - XML output tags: `snake_case` (e.g., `<user_instructions>`)
 </naming_conventions>
 
-<mixdown_syntax>
+<mixdown_notation>
 <example>
 ```markdown
 {{instructions +cursor -claude-code}}
@@ -125,25 +125,25 @@ Content without surrounding XML tags
 ```
 </rendering_options>
 
-<raw_syntax>
+<raw_notation>
 ```markdown
-{{{examples}}}  <!-- Triple braces preserve Mixdown syntax -->
+{{{examples}}}  <!-- Triple braces preserve Mixdown notation -->
 {{example}}
 - Instructions
 - Rules
 {{/example}}
 {{{/examples}}}
 ```
-</raw_syntax>
+</raw_notation>
 
 <placeholders>
 ```markdown
 [requirements]  <!-- Instruction placeholder for AI to fill -->
-{requirements}  <!-- Alternative placeholder syntax -->
+{requirements}  <!-- Alternative placeholder notation -->
 ```
 </placeholders>
 
-</mixdown_syntax>
+</mixdown_notation>
 
 <contributing_guidelines>
 When contributing to this project:
