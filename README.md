@@ -18,12 +18,12 @@ The problem is, they all have different formats, behavior, and capabilities, whi
 
 Mixdown is "Terraform for AI prompts": declare your ideal prompt rules once, target dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative instructions—no copy‑paste, no drift, just high‑quality, version-controlled context.
 
-With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single "mix" file (`.md`). This mix is the "gold master" for your instructions, from which individual target-specific records are created in their respective format and sent to the right places.
+With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single "mix" file (`.md`). This mix is the "gold master" for your instructions, from which individual target-specific outputs are created in their respective format and sent to the right places.
 
 The app consists of:
 
 1. A Node.js app with a compiler (featuring a plugin architecture for different tools), an API, CLI, and Model Context Protocol implementation for managing prompts and instructions.
-2. A CommonMark-compliant markup specification for creating effective and reusable prompts, processed by the compiler to generate tool-specific records.
+2. A CommonMark-compliant markup specification for creating effective and reusable prompts, processed by the compiler to generate tool-specific outputs.
 
 Result: *author once, distribute everywhere, zero drift.*
 
@@ -36,8 +36,8 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 **Mix**
 : Source instruction files, written in 100% previewable Markdown. Written in Mixdown Syntax and use `{{...}}` tags to direct the compiler.
 
-**Record**
-: Target-specific output files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`).
+**Output**
+: Target-specific output files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their target tool directories, these are referred to as "tool-ready outputs".
 
 **Section**
 : Delimited, reusable blocks of content using syntax like `{{instructions}}...{{/instructions}}` with optional attributes. They are 1:1 translations of XML tags (e.g., `{{instructions}}` → `<instructions>`), but readable in Markdown previewers.
@@ -104,7 +104,7 @@ mixdown init      # scaffolds .mixdown/ directory structure
 
 mixdown import    # imports existing rules files into the mixdown format
 
-mixdown build     # writes records to .mixdown/records/
+mixdown build     # writes outputs to .mixdown/outputs/
 ```
 
 ## Directory Structure
@@ -112,7 +112,7 @@ mixdown build     # writes records to .mixdown/records/
 ```
 project/
 ├── .mixdown/
-│   ├── records/
+│   ├── outputs/
 │   │   └── builds/         # compiled outputs
 │   ├── instructions/       # Mix files (*.md)
 │   │   └── _stems/         # reusable content modules

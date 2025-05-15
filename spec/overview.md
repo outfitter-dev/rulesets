@@ -64,8 +64,8 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 Mixdown introduces a single source-of-truth rules syntax written in pure Markdown (with a dash of specialized syntax), which is processed into tool-specific files by a compiler that:
 
 1. Parses the mix into an AST (abstract syntax tree) to ensure a consistent format.
-2. Uses **tool-specific compilers** (as plugins) to transform the AST into per-tool rules files (records).
-3. Writes per-tool **records** to their respective locations, with the necessary filenames, formats, etc. all accounted for.
+2. Uses **tool-specific compilers** (as plugins) to transform the AST into per-tool rules files (outputs).
+3. Writes per-tool **outputs** to their respective locations, with the necessary filenames, formats, etc. all accounted for.
 
 Result: *Write prompts once, render tool-specific rules, zero drift.*
 
@@ -80,12 +80,13 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
   - A supported tool, such as `cursor`, `windsurf`, or `claude-code`.
   - Defines tool-specific criteria for compiling mixes to rules files.
   - Provided through plugins.
-- **Record**
+- **Output**
   - Target-specific (tool) output files, rendered from the source mix.
   - Examples for a mix called `project-conventions.md`:
     - Cursor → `.cursor/rules/project-conventions.mdc`
     - Claude Code → `./CLAUDE.md#project-conventions`
     - OpenAI Codex → `./conventions.md`.
+  - When placed in tool directories, referred to as "tool-ready outputs".
 - **Tag**
   - Syntax: `{{...}}`
   - Fundamental building block of Mixdown syntax
@@ -150,7 +151,7 @@ mixdown init      # scaffolds .mixdown/ directory structure
 
 mixdown import    # imports existing rules files into the mixdown format
 
-mixdown build     # writes records to .mixdown/records/
+mixdown build     # writes outputs to .mixdown/outputs/
 ```
 
 ## Syntax Reference
@@ -182,7 +183,7 @@ Sections are the core building block of Mixdown and are a direct stand in for XM
 #### Section Tag Names
 
 - `kebab-case` is recommended for section names (to avoid accidental Markdown emphasis rendering)
-- Regardless of the naming convention, XML tag names in records will be formatted as `<snake_case>` (which is configurable)
+- Regardless of the naming convention, XML tag names in outputs will be formatted as `<snake_case>` (which is configurable)
 
 #### Section Tag Parsing
 
@@ -332,7 +333,7 @@ If the file extension is not recognized (and isn't a `.md` file), it will defaul
 > [!WARNING]
 > Bare XML tags are not valid Markdown, so Markdown previewers may be likely to render them differently or not at all.
 
-When `allow-bare-xml-tags` is set to `true` in frontmatter or `.mixdown.config.json`, you can use bare XML tags for section names. The records will be rendered verbatim, but note:
+When `allow-bare-xml-tags` is set to `true` in frontmatter or `.mixdown.config.json`, you can use bare XML tags for section names. The outputs will be rendered verbatim, but note:
 
 ```markdown
 <!-- XML tags with `allow-bare-xml-tags` set to `true` -->
@@ -361,7 +362,7 @@ target:
   include: ["cursor", "windsurf"]
   exclude: ["claude-code"]
   path: "./custom/output/path"
-# Provide target-specific frontmatter which is included in their respective records:
+# Provide target-specific frontmatter which is included in their respective outputs:
 cursor:
   alwaysApply: false
   target:
@@ -385,7 +386,7 @@ Frontmatter is used to provide metadata about the mix file and control how it's 
 - `globs`: Optional globs to be rewritten based on target-specific needs
 - `target`: Control how this mix is processed for targets
   - `include`/`exclude`: Control which targets receive this mix
-  - `path`: Specify a custom output path for records
+  - `path`: Specify a custom output path for outputs
   - Options include any target providers registered in `.mixdown.config.json`
 - `version`: Version information
 - `labels`: Categorization tags
@@ -418,7 +419,7 @@ Linking to project files is done with with the link tag and a relative path to t
 ```markdown
 {{link ["Link Title"] /path/to/file.ts}}
 
-The above will render as a link relative to the compiled record's directory. For example, if the compiled record is written to `.cursor/rules/project-conventions.mdc`, the link will be rendered as:
+The above will render as a link relative to the compiled output's directory. For example, if the compiled output is written to `.cursor/rules/project-conventions.mdc`, the link will be rendered as:
 
 [Link Title](../../path/to/file/.ts)
 ```
@@ -440,7 +441,7 @@ Variables are dynamic values using the `{{$...}}` syntax. They are replaced inli
 
 ### Imports
 
-Imports allow you to reuse content across multiple mixes by embedding mixes, sections within a mix, or stems into rendered records. They are denoted by the `{{> ...}}` syntax.
+Imports allow you to reuse content across multiple mixes by embedding mixes, sections within a mix, or stems into rendered outputs. They are denoted by the `{{> ...}}` syntax.
 
 ```markdown
 <!-- Embeds `/_stems/legal.md` -->
@@ -668,7 +669,7 @@ To include a section in Mixdown use: {{section-name}}
 ```text
 project/
 ├── .mixdown/
-│   ├── records/
+│   ├── outputs/
 │   │   └── builds/         # compiled outputs
 │   ├── instructions/       # Mix files (*.md)
 │   │   └── _stems/         # reusable content modules
@@ -704,7 +705,7 @@ The following table provides a complete list of all supported attributes in Mixd
 | `labels`             | array   | `[]`       | ❌      | ❌    | ✅           | Categorization tags |
 | `target.include`     | array   | `[]`       | ❌      | ❌    | ✅           | Target inclusion list |
 | `target.exclude`     | array   | `[]`       | ❌      | ❌    | ✅           | Target exclusion list |
-| `target.path`        | string  | none       | ❌      | ❌    | ✅           | Custom output path for records |
+| `target.path`        | string  | none       | ❌      | ❌    | ✅           | Custom output path for outputs |
 | `globs`              | array   | `[]`       | ❌      | ❌    | ✅           | File patterns for tool-specific support (frontmatter only) |
 | `alwaysApply`        | boolean | false      | ❌      | ❌    | ✅           | Whether rule should always be applied (frontmatter only) |
 | `\key`               | flag    | none       | ✅      | ✅    | ❌           | Include attribute in rendered XML |

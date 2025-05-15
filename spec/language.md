@@ -7,7 +7,7 @@ This document provides terminology guidance for consistent language in Mixdown d
 | Term | Definition | Usage Examples |
 |------|------------|----------------|
 | **Mix** | Source instruction files, written in Mixdown Syntax | "Write your code standards in a mix file." |
-| **Record** | Target-specific output files generated from mixes | "Compile your mixes into records for each tool." |
+| **Output** | Target-specific output files generated from mixes | "Compile your mixes into outputs for each tool." |
 | **Target** | A supported tool (e.g., Cursor, Claude Code) | "Each target has specific formatting requirements." |
 | **Tag** | Syntax element using `{{...}}` notation | "Use tags to direct the compiler." |
 | **Section** | Delimited blocks marked with `{{tag}}...{{/tag}}` | "Define a section for agent instructions." |
@@ -27,16 +27,16 @@ This document provides terminology guidance for consistent language in Mixdown d
 
 #### Compilation Process
 
-- ✅ "Compile mixes into records"
+- ✅ "Compile mixes into outputs"
 - ✅ "Generate tool-specific outputs"
-- ✅ "Transform mix into target-specific records"
+- ✅ "Transform mix into target-specific outputs"
 - ❌ "Render artifacts" (outdated)
 
-#### Record Generation
+#### Output Generation
 
 - ✅ "Output" (as a noun for the compilation result)
-- ✅ "Records are written to their respective locations"
-- ✅ "The mix file is transformed into records"
+- ✅ "Outputs are written to their respective locations"
+- ✅ "The mix file is transformed into outputs"
 - ❌ "The rendered artifact" (outdated)
 
 #### Content Display
@@ -61,7 +61,7 @@ This document provides terminology guidance for consistent language in Mixdown d
 | Directory | `kebab-case` | `_samples` |
 | Config files | `kebab-case.config.json` | `mixdown.config.json` |
 | Section tags | `kebab-case` | `{{user-instructions}}` |
-| Section tags in output records | `snake_case` | `<user_instructions>` |
+| Section tags in outputs | `snake_case` | `<user_instructions>` |
 
 ## Musical Theme Alignment
 
@@ -71,7 +71,7 @@ Mixdown uses audio production terminology to reinforce its brand identity:
 |------|--------------|-----------------|
 | **Mix** | Source audio tracks | Source instruction file |
 | **Mixdown** | Process of combining audio | Process of compiling instructions |
-| **Record** | Final audio product | Final compiled output |
+| **Output** | Final audio product | Final compiled output |
 | **Track** | Individual audio component | Individual section in a mix |
 | **Stem** | Isolated, reusable track | Modular, reusable content component |
 

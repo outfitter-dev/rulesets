@@ -19,7 +19,7 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 <key_concepts>
 - **Mix**: Source instruction files, written in 100% previewable Markdown
 - **Target**: A supported tool, such as `cursor`, `windsurf`, or `claude-code`
-- **Record**: Target-specific output files, rendered from the source mix
+- **Output**: Target-specific output files, rendered from the source mix
 - **Tag**: Syntax element using `{{...}}` notation, used to direct the compiler
 - **Section**: Delimited blocks of content with optional attributes (`{{instructions}}...{{/instructions}}`)
 - **Import**: Embed content from another mix, section, stem, or template (`{{> my-rule }}`)
@@ -31,7 +31,7 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 ```text
 project/
 ├── .mixdown/
-│   ├── records/
+│   ├── outputs/
 │   │   └── builds/         # compiled outputs
 │   ├── instructions/       # Mix files (*.md)
 │   │   └── _stems/         # reusable content modules
