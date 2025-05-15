@@ -114,7 +114,7 @@ project/
 ├── .mixdown/
 │   ├── outputs/
 │   │   └── builds/         # compiled outputs
-│   ├── instructions/       # Mix files (*.md)
+│   ├── mixes/       # Mix files (*.md)
 │   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json # compiler config
 ```

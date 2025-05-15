@@ -75,7 +75,7 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
   - Source instruction files, written in 100% previewable Markdown.
   - Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
   - Compiled into tool-specific rules files:
-    - `./mixdown/instructions/my-rule.md` → `.cursor/rules/my-rule.mdc`
+    - `./mixdown/mixes/my-rule.md` → `.cursor/rules/my-rule.mdc`
 - **Target**
   - A supported tool, such as `cursor`, `windsurf`, or `claude-code`.
   - Defines tool-specific criteria for compiling mixes to rules files.
@@ -352,7 +352,7 @@ Renders as:
 
 ```yaml
 ---
-# .mixdown/instructions/my-rule.md
+# .mixdown/mixes/my-rule.md
 mixdown:
   version: 0.1.0 # optional, version number for the Mixdown format used
 description: "Rules for this project" # optional, may be useful for tools that use descriptions, such as Cursor, Windsurf, etc.
@@ -410,7 +410,7 @@ Mixdown also provides a `{{link}}` notation marker to allow for more expressive 
 ```
 
 > [!NOTE]
-> Standard Markdown links will work in previews as expected within the `.mixdown/instructions` directory, but `{{link ...}}` will not.
+> Standard Markdown links will work in previews as expected within the `.mixdown/mixes` directory, but `{{link ...}}` will not.
 
 #### Linking to Project Files
 
@@ -671,7 +671,7 @@ project/
 ├── .mixdown/
 │   ├── outputs/
 │   │   └── builds/         # compiled outputs
-│   ├── instructions/       # Mix files (*.md)
+│   ├── mixes/       # Mix files (*.md)
 │   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json # compiler config
 ```

@@ -33,7 +33,7 @@ project/
 ├── .mixdown/
 │   ├── outputs/
 │   │   └── builds/         # compiled outputs
-│   ├── instructions/       # Mix files (*.md)
+│   ├── mixes/       # Mix files (*.md)
 │   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json # Mixdown config file
 ```
@@ -51,7 +51,7 @@ project/
 <frontmatter_example>
 ```yaml
 ---
-# .mixdown/instructions/my-rule.md
+# .mixdown/mixes/my-rule.md
 mixdown:
   version: 0.1.0 # version number for the Mixdown format used
 description: "Rules for this project" # useful for tools that use descriptions
