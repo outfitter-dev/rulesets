@@ -98,7 +98,7 @@ Nesting more content
 {{/outer-track}}
 ```
 
-With the `heading` attribute applied to all tracks, this would output:
+With the `heading` option applied to all tracks, this would output:
 
 ```markdown
 ## Outer Track
@@ -266,7 +266,7 @@ mixdown:
    - Heading levels respect `level.min` (default: 2) and `level.max` (default: 5).
    - If nesting would exceed `level.max`, the level is capped.
    - If nesting would exceed h6 (the maximum Markdown heading level), it's capped at h6.
-2. **Heading Content**: If a track has a `name` attribute, that would be used for the heading text instead of the track name.
+2. **Heading Content**: If a track has a `name` option, that would be used for the heading text instead of the track name.
 3. **Empty Tracks**: If a track has no content, it would still generate a heading, but implementations might choose to handle this differently.
 4. **Content With Existing Headings**: When using `heading="replace"`, special handling is needed:
 
@@ -317,7 +317,7 @@ Sequential numbering allows tracks to be automatically numbered based on their p
 
 ### 1. Basic Numbering
 
-To enable numbering on a track, use the `numbering` attribute:
+To enable numbering on a track, use the `numbering` option:
 
 ```markdown
 {{chapter numbering}}
@@ -432,7 +432,7 @@ mixdown:
 4. Line break handling should respect both configuration and markdown linting standards:
    - By default, follow markdownlint rule MD022 (blanks-around-headings)
    - Allow overriding through `line_breaks` settings
-   - Provide inline control with track attributes: `heading line_breaks.after=false`
+   - Provide inline control with track options: `heading line_breaks.after=false`
 5. Quoted string heading syntax should:
    - Create a derived track name (e.g., `{{"Getting Started"}}` → `getting-started`)
    - Automatically apply heading formatting without XML tags

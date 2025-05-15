@@ -110,9 +110,9 @@ Mixdown provides a simplified interface to common markdown style concerns, while
 
 ### Precedence Rules
 
-1. **Track-level settings**: Options specified directly in track notation
-2. **Mix-level settings**: Frontmatter settings for the specific mix file
-3. **Global settings**: Project-wide settings in mixdown.config.json
+1. **Track-level options**: Options specified directly in track notation
+2. **Mix-level options**: Frontmatter settings for the specific mix file
+3. **Global options**: Project-wide settings in mixdown.config.json
 4. **Defaults**: Built-in defaults designed to follow common markdown conventions
 
 ## Implementation Considerations

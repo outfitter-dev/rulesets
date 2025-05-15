@@ -228,12 +228,12 @@ It's important to distinguish between:
 - **Self-closing tags**: `{{track-name/}}` (a single tag with no content)
 - **Auto-closing tracks**: `{{track-1}}...{{track-2}}...` (tracks closed by inference)
 
-### 4. Attribute Inheritance
+### 4. Option Inheritance
 
-Consider whether attributes should be inherited between adjacent auto-closed tracks:
+Consider whether options should be inherited between adjacent auto-closed tracks:
 
 ```markdown
-{{track-1 attr="value"}}
+{{track-1 option="value"}}
 Content 1
 
 {{track-2}}
@@ -241,11 +241,11 @@ Content 2
 ```
 
 Options:
-- No inheritance (each track has its own attributes)
-- Inherit non-conflicting attributes from parent
-- Inherit specifically marked attributes
+- No inheritance (each track has its own options)
+- Inherit non-conflicting options from parent
+- Inherit specifically marked options
 
-Recommendation: No inheritance by default, with an opt-in inheritance attribute.
+Recommendation: No inheritance by default, with an opt-in inheritance option.
 
 ### 5. Target Filtering Implications
 

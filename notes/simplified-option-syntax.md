@@ -1,8 +1,8 @@
-# Simplified Syntax for Mixdown Attributes
+# Simplified Syntax for Mixdown Options
 
 ## Current Approach
 
-The current approach for track attributes uses a verbose `key="value"` syntax:
+The current approach for track options uses a verbose `key="value"` syntax:
 
 ```markdown
 {{instructions output="tag:omit"}}
@@ -14,7 +14,7 @@ Content without surrounding XML tags
 
 ## Proposed Tailwind-inspired Approach
 
-We can adopt a more concise, Tailwind-like approach for attributes:
+We can adopt a more concise, Tailwind-like approach for marker options:
 
 ```markdown
 {{instructions tag-omit}}
@@ -26,16 +26,16 @@ Content without surrounding XML tags
 
 ## Core Ideas
 
-1. **Direct Attribute Usage**: Descriptive attributes use a simple kebab-case format
-2. **Simple Flags**: Boolean flags are just bare words (like `\name` for preserved attributes)
+1. **Direct Option Usage**: Descriptive options use a simple kebab-case format
+2. **Simple Flags**: Boolean flags are just bare words (like `\name` for preserved options)
 3. **Multi-word Values**: Only use quotes for multi-word values
 4. **Target Filtering**: Include with `+target`, exclude with `!target` (new)
 5. **Scope Delimiter**: Colon (`:`) reserved as scope delimiter (e.g., `cursor:name="value"`)
-6. **Composable**: Multiple attributes can be combined with spaces
+6. **Composable**: Multiple options can be combined with spaces
 
-## Attribute Mapping Examples
+## Option Mapping Examples
 
-Based on the actual attributes in the Mixdown specification:
+Based on the actual options in the Mixdown specification:
 
 | Current Syntax | Proposed Syntax | Description |
 |---------------|-----------------|-------------|
@@ -45,7 +45,7 @@ Based on the actual attributes in the Mixdown specification:
 | `output="code:javascript"` | `code-js` | JavaScript code block |
 | `output="code:python"` | `code-py` | Python code block |
 | `output="raw:all"` | `raw-all` | Raw Mixdown notation |
-| `output="raw:content"` | `raw-content` | Process tags, keep content raw |
+| `output="raw:content"` | `raw-content` | Process markers, keep content raw |
 | `name="important_rules"` | `name="important_rules"` | Named track (quotes needed) |
 | `tracks="included,!excluded"` | `tracks="included,!excluded"` | Filter tracks in imports |
 | `-windsurf` | `!windsurf` | Exclude target |
@@ -57,9 +57,9 @@ Based on the actual attributes in the Mixdown specification:
 | `output="heading=same"` | `h-same` | Same heading level |
 | `output="heading=replace:first"` | `h-replace` | Replace first heading |
 | `numbering="heading:before"` | `num-head-before` | Numbering before heading |
-| `\name` | `\name` | Preserve attribute in rendered XML |
+| `\name` | `\name` | Preserve option in rendered XML |
 
-## Multiple Attributes Example
+## Multiple Options Example
 
 ```markdown
 {{instructions tag-omit name="Important Rules"}}
@@ -67,7 +67,7 @@ This content will appear without tags and have a custom name
 {{/instructions}}
 ```
 
-## Format-Specific Attributes
+## Format-Specific Options
 
 ### Heading Format
 
@@ -136,9 +136,9 @@ Instead of:
 {{section output="heading=3" numbering="tag:after"}}
 ```
 
-### Scoped Attributes
+### Scoped Options
 
-For scoped attributes, use a simple colon syntax where the scope comes first:
+For scoped options, use a simple colon syntax where the scope comes first:
 
 ```markdown
 {{instructions cursor:name="cursor_instructions"}}
@@ -161,7 +161,7 @@ The colon pattern is reserved for scope delimiting, making it:
 
 ### Target Filtering and Scope Combinations
 
-Target inclusion can also be combined with scoped attributes compactly:
+Target inclusion can also be combined with scoped options compactly:
 
 ```markdown
 {{instructions +cursor:name="cursor_instructions"}}
@@ -177,7 +177,7 @@ These are instructions for Cursor with a cursor-specific name
 {{/instructions}}
 ```
 
-Note: For target exclusion with `!target`, there's generally no need for additional attributes since the content is being excluded entirely for that target.
+Note: For target exclusion with `!target`, there's generally no need for additional options since the content is being excluded entirely for that target.
 
 ## Implementation Details
 
@@ -185,21 +185,21 @@ Note: For target exclusion with `!target`, there's generally no need for additio
 
 The parser would need to:
 
-1. Identify attributes as any token after the track name
+1. Identify options as any token after the track name
 2. Categorize them based on pattern recognition:
    - Starting with `+` (but no `:`): Target inclusion
-   - Starting with `+` and containing `:`: Scoped attribute for included target
+   - Starting with `+` and containing `:`: Scoped option for included target
    - Starting with `!`: Target exclusion 
    - Starting with `h-` followed by a number (1-6): Heading level
    - Starting with `h-`: Heading modifier
    - Starting with `num-`: Numbering directive
    - Contains `=`: Key-value pair
-   - Contains `:`: Scoped attribute (where text before `:` is the scope)
-   - Starting with `\`: Preserved attribute
-   - Otherwise: Simple attribute
+   - Contains `:`: Scoped option (where text before `:` is the scope)
+   - Starting with `\`: Preserved option
+   - Otherwise: Simple option
 3. Apply them in a deterministic order
 
-## Side-by-Side Comparison with Actual Mixdown Attributes
+## Side-by-Side Comparison with Actual Mixdown Options
 
 | Use Case | Current Syntax | Proposed Syntax | Character Reduction |
 |----------|---------------|-----------------|---------------------|
@@ -208,10 +208,10 @@ The parser would need to:
 | Named track | `{{track name="custom_name"}}` | `{{track name="custom_name"}}` | 0% (unchanged) |
 | Include for target | `{{track +cursor}}` | `{{track +cursor}}` | 0% (unchanged) |
 | Exclude for target | `{{track -windsurf}}` | `{{track !windsurf}}` | 0% (symbols changed) |
-| Multiple attributes | `{{track output="code:js" name="example"}}` | `{{track code-js name="example"}}` | 25% (32 → 24 chars) |
-| Preserved attribute | `{{track \name="core_rules"}}` | `{{track \name="core_rules"}}` | 0% (unchanged) |
+| Multiple options | `{{track output="code:js" name="example"}}` | `{{track code-js name="example"}}` | 25% (32 → 24 chars) |
+| Preserved option | `{{track \name="core_rules"}}` | `{{track \name="core_rules"}}` | 0% (unchanged) |
 | Import tracks filter | `{{> rules tracks="included,!excluded"}}` | `{{> rules tracks="included,!excluded"}}` | 0% (unchanged) |
-| Target-scoped attribute | `{{track cursor?name="specific"}}` | `{{track cursor:name="specific"}}` | 0% (symbols changed) |
+| Target-scoped option | `{{track cursor?name="specific"}}` | `{{track cursor:name="specific"}}` | 0% (symbols changed) |
 | Heading level | `{{section output="heading=2"}}` | `{{section h-2}}` | 68% (25 → 8 chars) |
 | Combined target inclusion with scope | `{{track +cursor cursor?name="value"}}` | `{{track +cursor:name="value"}}` | 29% (35 → 25 chars) |
 | Heading with numbering | `{{section output="heading=3" numbering="heading:before"}}` | `{{section h-3 numbering}}` | 63% (47 → 17 chars) |
@@ -238,7 +238,7 @@ Testing is required for all new features.
 {{/instructions}}
 ```
 
-### Real-world Example with Multiple Attributes
+### Real-world Example with Multiple Options
 
 **Current syntax:**
 
@@ -280,7 +280,7 @@ Content
 
 ### Quoted String Syntax for Headings
 
-The simplified quoted string syntax with proposed attribute mapping:
+The simplified quoted string syntax with proposed option mapping:
 
 ```markdown
 {{"Getting Started" h-2}}
@@ -314,9 +314,9 @@ Content
 {{/instructions}}
 ```
 
-## Comprehensive Format Attribute Table
+## Comprehensive Format Option Table
 
-| Current Format Attribute | Proposed Attribute | Description |
+| Current Format Option | Proposed Option | Description |
 |--------------------------|-------------------|-------------|
 | `output="tag:omit"` | `tag-omit` | Remove XML tags |
 | `output="inline"` | `inline` | Render content inline |
@@ -327,8 +327,8 @@ Content
 | `output="code:html"` | `code-html` | HTML code block |
 | `output="code:css"` | `code-css` | CSS code block |
 | `output="raw:all"` | `raw-all` | Raw Mixdown notation |
-| `output="raw:content"` | `raw-content` | Process tags, keep content raw |
-| `output="raw:tags"` | `raw-tags` | Process content, keep tags raw |
+| `output="raw:content"` | `raw-content` | Process markers, keep content raw |
+| `output="raw:tags"` | `raw-tags` | Process content, keep markers raw |
 | `output="heading"` | `heading` | Render as heading |
 | `output="heading=1"` | `h-1` | Heading level 1 |
 | `output="heading=2"` | `h-2` | Heading level 2 |
@@ -346,10 +346,20 @@ Content
 | `numbering="tag:after"` | `num-tag-after` | Numbering after tag |
 | `numbering` | `numbering` | Enable numbering with defaults |
 
+## Terminology Clarification
+
+In Mixdown, we use these specific terms:
+
+- **Marker options**: The general term for all configurable options that can be applied to markers
+- **Track options**: Options specific to content tracks like `{{instructions}}` or `{{code}}`
+- **Import options**: Options specific to imports like `{{> snippet}}`
+
+This terminology better reflects how these settings function as customization choices rather than passive properties.
+
 ## Conclusion
 
-This simplified Tailwind-inspired syntax offers a more concise approach to managing Mixdown attributes. By adopting kebab-case for descriptive attributes, reserving the colon for scopes, and changing target exclusion to use `!` instead of `-`, we create a more intuitive and extensible syntax.
+This simplified Tailwind-inspired syntax offers a more concise approach to managing Mixdown options. By adopting kebab-case for descriptive options, reserving the colon for scopes, and changing target exclusion to use `!` instead of `-`, we create a more intuitive and extensible syntax.
 
 The approach maintains compatibility with existing features while reducing the amount of typing required. For most common use cases, the character count reduction is significant, and the syntax becomes more visually intuitive.
 
-The parser can reliably distinguish between different attribute types based on their format, making this approach both simple and unambiguous.
+The parser can reliably distinguish between different option types based on their format, making this approach both simple and unambiguous.
