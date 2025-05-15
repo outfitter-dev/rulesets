@@ -13,7 +13,7 @@ This document provides terminology guidance for consistent language in Mixdown d
 | **Section** | Delimited blocks marked with `{{section}}...{{/section}}` | "Define a section for agent instructions." |
 | **Import** | A reference to another mix file or section | "Import common guidelines into multiple files." |
 | **Variable** | Dynamic values replaced at build time | "Use variables to include dynamic data." |
-| **Stem** | Modular content component stored in `/_stems` | "Import commonly used content as stems." |
+| **Snippet** | Modular content component stored in `/_snippets` | "Import commonly used content as snippets." |
 
 ## Linguistic Conventions
 
@@ -73,7 +73,7 @@ Mixdown uses audio production terminology to reinforce its brand identity:
 | **Mixdown** | Process of combining audio | Process of compiling instructions |
 | **Output** | Final audio product | Final compiled output |
 | **Track** | Individual audio component | Individual section in a mix |
-| **Stem** | Isolated, reusable track | Modular, reusable content component |
+| **Snippet** | Reusable code fragment | Modular, reusable content component |
 
 ## Markdown Formatting
 

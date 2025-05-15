@@ -43,7 +43,7 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 : Delimited, reusable blocks of content using notation like `{{instructions}}...{{/instructions}}` with optional attributes. They are 1:1 translations of XML tags (e.g., `{{instructions}}` → `<instructions>`), but readable in Markdown previewers.
 
 **Import**
-: A reference to another mix file, section, stem, or template (`{{> my-rule}}`). Embeds content from another source.
+: A reference to another mix file, section, snippet, or template (`{{> my-rule}}`). Embeds content from another source.
 
 **Variable**
 : Dynamic value replaced inline at build time (e.g., `{{$key}}` for aliases, `{{$.frontmatter.key}}` for frontmatter data, `{{$target}}` for the current target name).
@@ -51,8 +51,8 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 **Tag**
 : Notation marker using `{{...}}` format, used throughout Mixdown to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
 
-**Stem**
-: Modular, reusable content component stored in `/_stems`.
+**Snippet**
+: Modular, reusable content component stored in `/_snippets`.
 
 **Target**
 : A supported tool (Cursor, Roo Code, etc.) identified by a `kebab-case` ID (e.g., `cursor`, `roo-code`). Defines tool-specific criteria for compiling mixes to rules files and is provided through plugins.
@@ -115,7 +115,7 @@ project/
 │   ├── outputs/
 │   │   └── builds/         # compiled outputs
 │   ├── instructions/       # Mix files (*.md)
-│   │   └── _stems/         # reusable content modules
+│   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json # compiler config
 ```
 

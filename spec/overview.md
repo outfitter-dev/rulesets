@@ -36,7 +36,7 @@
   - [Imports](#imports)
     - [Import Attributes](#import-attributes)
   - [Imports vs. Inclusions](#imports-vs-inclusions)
-  - [Stems](#stems)
+  - [Snippets](#snippets)
   - [Rendering Raw Mixdown Syntax](#rendering-raw-mixdown-syntax)
   - [Instruction Placeholders](#instruction-placeholders)
     - [Placeholder Formatting](#placeholder-formatting)
@@ -102,7 +102,7 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
   - Example: `{{instructions}}This is instruction content{{/instructions}}`
 - **Import**
   - Syntax: `{{> my-rule }}`
-  - Embed content from another mix, section, stem, or template.
+  - Embed content from another mix, section, snippet, or template.
 - **Variable**
   - Syntax: `{{$key}}` or `$key` if used within a `{{...}}` tag.
   - Dynamic values replaced inline at build time.
@@ -285,7 +285,7 @@ Content without surrounding XML tags
 |-------|-------------|
 | `default` | Normal rendering with XML tags (default behavior) |
 | `unwrapped` | No XML tags (equivalent to former `no-tag=true`) |
-| `inline` | Content rendered inline (preserves formatting otherwise) useful with [stems](#stems) |
+| `inline` | Content rendered inline (preserves formatting otherwise) useful with [snippets](#snippets) |
 | `raw` | Render everything as raw Mixdown Notation |
 | `raw:content` | Only render content as raw, process tags normally |
 | `raw:tags` | Only render tags as raw, process content normally |
@@ -311,7 +311,7 @@ function hello() {
 {{/section}}
 ```
 
-When used with stems, if the language is omitted (`rendered="code"`), the system will automatically determine the language based on the stem file's extension:
+When used with snippets, if the language is omitted (`rendered="code"`), the system will automatically determine the language based on the snippet file's extension:
 
 ```markdown
 {{> @my-script.js rendered="code"}}
@@ -441,10 +441,10 @@ Variables are dynamic values using the `{{$...}}` notation. They are replaced in
 
 ### Imports
 
-Imports allow you to reuse content across multiple mixes by embedding mixes, sections within a mix, or stems into rendered outputs. They are denoted by the `{{> ...}}` notation.
+Imports allow you to reuse content across multiple mixes by embedding mixes, sections within a mix, or snippets into rendered outputs. They are denoted by the `{{> ...}}` notation.
 
 ```markdown
-<!-- Embeds `/_stems/legal.md` -->
+<!-- Embeds `/_snippets/legal.md` -->
 {{> @legal}}
 
 <!-- Embed a specific section from the `conventions.md` mix file -->
@@ -486,7 +486,7 @@ All [section attributes](#section-attributes) can be applied to imports. Imports
 - `rendered` can provide some flexibility for how imports will be rendered
   - `rendered="unwrapped"` will remove the surrounding tag from the output.
   - `rendered="inline"` will attempt to render the content inline.
-  - `rendered="code"` will format the content as a code block. When used with stems, the language will be derived from the stem file's extension.
+  - `rendered="code"` will format the content as a code block. When used with snippets, the language will be derived from the snippet file's extension.
 
 Examples:
 
@@ -509,16 +509,16 @@ While they may seem similar, imports and inclusions have different use cases and
 - **Imports** `{{> ...}}` **will** render the surrounding tag in the final output.
 - **Inclusions** `{{$...}}` are replaced outright and **will not** render the surrounding tag in the final output.
 
-### Stems
+### Snippets
 
-Stems are modular, reusable content components, stored in the `/_stems` directory. Like audio production stems that provide isolated tracks, Mixdown stems provide isolated content blocks that can be mixed into multiple instruction files.
+Snippets are modular, reusable content components, stored in the `/_snippets` directory. Like pieces of code that provide specific functionality, Mixdown snippets provide isolated content blocks that can be imported into multiple instruction files.
 
-- Stems are converted to `<stem_name>` tags in the final output. This can be disabled using the `rendered="unwrapped"` attribute.
+- Snippets are converted to `<snippet_name>` tags in the final output. This can be disabled using the `rendered="content-only"` attribute.
 
 Example:
 
 ```markdown
-<!-- Stem: `/_stems/remember.md` -->
+<!-- Snippet: `/_snippets/remember.md` -->
 1. Always follow the code conventions.
 2. Never commit directly to `main`
 3. Use conventional commit messages.
@@ -672,7 +672,7 @@ project/
 │   ├── outputs/
 │   │   └── builds/         # compiled outputs
 │   ├── instructions/       # Mix files (*.md)
-│   │   └── _stems/         # reusable content modules
+│   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json # compiler config
 ```
 
