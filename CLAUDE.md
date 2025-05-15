@@ -117,7 +117,7 @@ Target ID: {{$target.id}}
 
 <rendering_options>
 ```markdown
-{{instructions rendered="unwrapped"}}
+{{instructions rendered="content-only"}}
 Content without surrounding XML tags
 {{/instructions}}
 

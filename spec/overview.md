@@ -270,7 +270,7 @@ Output:
 The `rendered` attribute provides flexible control over how content is formatted in the final output. This attribute is available for tracks, imports, and inclusions.
 
 ```markdown
-{{instructions rendered="unwrapped"}}
+{{instructions rendered="content-only"}}
 Content without surrounding XML tags
 {{/instructions}}
 
@@ -284,7 +284,7 @@ Content without surrounding XML tags
 | Value | Description |
 |-------|-------------|
 | `default` | Normal rendering with XML tags (default behavior) |
-| `unwrapped` | No XML tags (equivalent to former `no-tag=true`) |
+| `content-only` | No XML tags (equivalent to former `no-tag=true`) |
 | `inline` | Content rendered inline (preserves formatting otherwise) useful with [snippets](#snippets) |
 | `raw` | Render everything as raw Mixdown Notation |
 | `raw:content` | Only render content as raw, process tags normally |
@@ -294,7 +294,7 @@ Content without surrounding XML tags
 Multiple values can be combined with commas where compatible:
 
 ```markdown
-{{instructions rendered="unwrapped,inline"}}
+{{instructions rendered="content-only,inline"}}
 This content will appear without tags and inline
 {{/instructions}}
 ```
@@ -484,7 +484,7 @@ All [track attributes](#track-attributes) can be applied to imports. Imports als
 
 - `tracks="included,!excluded"` allows you to filter which tracks from the mix are included/excluded on render.
 - `rendered` can provide some flexibility for how imports will be rendered
-  - `rendered="unwrapped"` will remove the surrounding tag from the output.
+  - `rendered="content-only"` will remove the surrounding tag from the output.
   - `rendered="inline"` will attempt to render the content inline.
   - `rendered="code"` will format the content as a code block. When used with snippets, the language will be derived from the snippet file's extension.
 
@@ -557,10 +557,10 @@ Triple-brace `{{{...}}}` to skip processing of the content and render it in the 
 
 ```markdown
 > Triple braces will preserve the Mixdown Notation on render.
-> Adding `rendered="unwrapped"` will remove those section tags from the output.
+> Adding `rendered="content-only"` will remove those track tags from the output.
 > Adding `+cursor` will only include the section for the `cursor` target.
 
-{{{examples rendered="unwrapped" +cursor}}}
+{{{examples rendered="content-only" +cursor}}}
   {{example}}
   - Instructions
   - Rules
@@ -574,7 +574,7 @@ The above will render (in Cursor only) as:
 - Rules
 {{/example}}
 
-Without the `rendered="unwrapped"` attribute, it would render as:
+Without the `rendered="content-only"` attribute, it would render as:
 
 <examples>
   <example>
@@ -659,7 +659,7 @@ Version: {{ $.version }}
 **Using raw output:**
 
 ```markdown
-{{{example rendered="unwrapped"}}}
+{{{example rendered="content-only"}}}
 To include a section in Mixdown use: {{section-name}}
 {{{/example}}}
 ```
