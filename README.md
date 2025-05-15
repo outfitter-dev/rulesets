@@ -42,10 +42,10 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 **Section**
 : Delimited, reusable blocks of content using syntax like `{{instructions}}...{{/instructions}}` with optional attributes. They are 1:1 translations of XML tags (e.g., `{{instructions}}` → `<instructions>`), but readable in Markdown previewers.
 
-**Remix**
+**Import**
 : A reference to another mix file, section, stem, or template (`{{> my-rule}}`). Embeds content from another source.
 
-**Insertion**
+**Variable**
 : Dynamic value replaced inline at build time (e.g., `{{$key}}` for aliases, `{{$.frontmatter.key}}` for frontmatter data, `{{$target}}` for the current target name).
 
 **Tag**
@@ -80,7 +80,7 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 
 - **100% Preview-able Markdown** – Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
 - **Granular Sections** – Filter sections within a single mix for per-target inclusion/exclusion.
-- **Build-time Insertions** – Aliases and frontmatter data injection.
+- **Build-time Variables** – Aliases and frontmatter data injection.
 
 ### Compiler & Integration
 
@@ -125,13 +125,13 @@ project/
 |-----------------|---------|-------|
 | **Section** | `{{instructions name="Rules" +cli}}...{{/instructions}}` | Attributes control name & export. |
 | **Front-matter** | `---\nname: foo\n---` | YAML at file top. |
-| **Remix** | `{{> legal}}` | Embed content from another mix. |
-| **Remix Section** | `{{> conventions#section-name}}` | Embed a specific section. |
+| **Import** | `{{> legal}}` | Embed content from another mix. |
+| **Import Section** | `{{> conventions#section-name}}` | Embed a specific section. |
 | **Internal Link** | `[Read more](rules.md)` | Standard Markdown links. |
 | **Absolute Link** | `{{link [\"Link Title\"] /path/to/file.ts}}` | Links to project files. |
-| **Alias Insertion** | `{{$project}}` | Resolved via `aliases` in config. |
-| **Data Insertion** | `{{$.frontmatter.key}}` | Injects YAML frontmatter data. |
-| **Target Insertion** | `{{$target}}` / `{{$target.id}}` | Injects current target name/ID. |
+| **Alias Variable** | `{{$project}}` | Resolved via `aliases` in config. |
+| **Data Variable** | `{{$.frontmatter.key}}` | Injects YAML frontmatter data. |
+| **Target Variable** | `{{$target}}` / `{{$target.id}}` | Injects current target name/ID. |
 | **Instruction Placeholder** | `[fill this in]` | Marker for LLM to complete. |
 
 Full spec lives in `docs/spec/mixdown-syntax.md`.

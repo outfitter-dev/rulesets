@@ -11,9 +11,9 @@ This document provides terminology guidance for consistent language in Mixdown d
 | **Target** | A supported tool (e.g., Cursor, Claude Code) | "Each target has specific formatting requirements." |
 | **Tag** | Syntax element using `{{...}}` notation | "Use tags to direct the compiler." |
 | **Section** | Delimited blocks marked with `{{tag}}...{{/tag}}` | "Define a section for agent instructions." |
-| **Remix** | A reference to another mix file or section | "Remix common guidelines into multiple files." |
-| **Insertion** | Dynamic values replaced at build time | "Use insertions to include variable data." |
-| **Stem** | Modular content component stored in `/_stems` | "Mix in commonly used content as stems." |
+| **Import** | A reference to another mix file or section | "Import common guidelines into multiple files." |
+| **Variable** | Dynamic values replaced at build time | "Use variables to include dynamic data." |
+| **Stem** | Modular content component stored in `/_stems` | "Import commonly used content as stems." |
 
 ## Linguistic Conventions
 

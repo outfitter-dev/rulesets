@@ -32,10 +32,10 @@
   - [Links](#links)
     - [External \& Mixdown File Internal Links](#external--mixdown-file-internal-links)
     - [Linking to Project Files](#linking-to-project-files)
-  - [Insertions](#insertions)
-  - [Remixes](#remixes)
-    - [Remix Attributes](#remix-attributes)
-  - [Remixes vs. Inclusions](#remixes-vs-inclusions)
+  - [Variables](#variables)
+  - [Imports](#imports)
+    - [Import Attributes](#import-attributes)
+  - [Imports vs. Inclusions](#imports-vs-inclusions)
   - [Stems](#stems)
   - [Rendering Raw Mixdown Syntax](#rendering-raw-mixdown-syntax)
   - [Instruction Placeholders](#instruction-placeholders)
@@ -89,7 +89,7 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
 - **Tag**
   - Syntax: `{{...}}`
   - Fundamental building block of Mixdown syntax
-  - Used to direct the compiler for various purposes (sections, remixes, insertions)
+  - Used to direct the compiler for various purposes (sections, imports, variables)
   - All Mixdown directives use tag syntax, but serve different functions
   - Similar to `<xml-tags>`, but fully Markdown-previewable.
 - **Section**
@@ -99,10 +99,10 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
   - Has opening and closing tags that surround content
   - Can contain attributes that control rendering behavior
   - Example: `{{instructions}}This is instruction content{{/instructions}}`
-- **Remix**
+- **Import**
   - Syntax: `{{> my-rule }}`
   - Embed content from another mix, section, stem, or template.
-- **Insertion**
+- **Variable**
   - Syntax: `{{$key}}` or `$key` if used within a `{{...}}` tag.
   - Dynamic values replaced inline at build time.
   - Examples: `{{$target}}`, `{{$.frontmatter.key}}`, `{{$alias}}`
@@ -113,7 +113,7 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
 
 - **100% Preview-able Markdown:** Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
 - **Granular Sections:** Filter sections within a single mix for per-target inclusion/exclusion.
-- **Build-time Insertions:** Aliases and frontmatter data injection.
+- **Build-time Variables:** Aliases and frontmatter data injection.
 
 ### Compiler & Integration
 
@@ -266,7 +266,7 @@ Output:
 
 #### Rendered Content
 
-The `rendered` attribute provides flexible control over how content is formatted in the final output. This attribute is available for sections, remixes, and inclusions.
+The `rendered` attribute provides flexible control over how content is formatted in the final output. This attribute is available for sections, imports, and inclusions.
 
 ```markdown
 {{instructions rendered="unwrapped"}}
@@ -423,9 +423,9 @@ The above will render as a link relative to the compiled record's directory. For
 [Link Title](../../path/to/file/.ts)
 ```
 
-### Insertions
+### Variables
 
-Insertions are dynamic values using the `{{$...}}` syntax. They are replaced inline at build time.
+Variables are dynamic values using the `{{$...}}` syntax. They are replaced inline at build time.
 
 | Type | Syntax | Notes |
 |------|--------|-------|
@@ -433,14 +433,14 @@ Insertions are dynamic values using the `{{$...}}` syntax. They are replaced inl
 | **Frontmatter value** | `{{$.key}}` | Access values from thecurrent file's frontmatter. |
 | **Target** | `{{$target}}` or `{{$target.id}}` | Display name from the provider manifest (e.g. `Cursor`, `Claude Code`). The current target ID in kebab-case can be accessed by adding `.id` to the end (`cursor`, `claude-code`, etc.) |
 
-**Built-in System Insertions**:
+**Built-in System Variables**:
 
 - `{{$target}}` → display name from the provider manifest (e.g. `Cursor`, `Claude Code`, etc.)
 - `{{$target.id}}` → current target ID in kebab-case (`cursor`, `claude-code`, etc.)
 
-### Remixes
+### Imports
 
-Remixes allow you to reuse content across multiple mixes by embedding mixes, sections within a mix, or stems into rendered records. They are denoted by the `{{> ...}}` syntax.
+Imports allow you to reuse content across multiple mixes by embedding mixes, sections within a mix, or stems into rendered records. They are denoted by the `{{> ...}}` syntax.
 
 ```markdown
 <!-- Embeds `/_stems/legal.md` -->
@@ -452,13 +452,13 @@ Remixes allow you to reuse content across multiple mixes by embedding mixes, sec
 <!-- Embed a section from within the existing file -->
 {{> #section-name}}
 
-<!-- Remix a mix with multiple specific sections -->
+<!-- Import a mix with multiple specific sections -->
 {{> my-rules sections="section-name,!section-name-to-exclude"}}
 ```
 
 Example:
 
-Let's say that we have a mix file called `conventions.md` that contains a section called `style-guide`. We can remix it into another mix file called `my-rules.md` and include only the `style-guide` section:
+Let's say that we have a mix file called `conventions.md` that contains a section called `style-guide`. We can import it into another mix file called `my-rules.md` and include only the `style-guide` section:
 
 ```markdown
 <!-- my-rules.md -->
@@ -477,12 +477,12 @@ Important: Be sure to follow the style guide:
 </style_guide>
 ```
 
-#### Remix Attributes
+#### Import Attributes
 
-All [section attributes](#section-attributes) can be applied to remixes. Remixes also support the following additional attributes:
+All [section attributes](#section-attributes) can be applied to imports. Imports also support the following additional attributes:
 
 - `sections="included,!excluded"` allows you to filter which sections from the mix are included/excluded on render.
-- `rendered` can provide some flexibility for how remixes will be rendered
+- `rendered` can provide some flexibility for how imports will be rendered
   - `rendered="unwrapped"` will remove the surrounding tag from the output.
   - `rendered="inline"` will attempt to render the content inline.
   - `rendered="code"` will format the content as a code block. When used with stems, the language will be derived from the stem file's extension.
@@ -501,11 +501,11 @@ Examples:
      section from `my-rules.md`. -->
 ```
 
-### Remixes vs. Inclusions
+### Imports vs. Inclusions
 
-While they may seem similar, remixes and inclusions have different use cases and will be interpreted differently by the compiler:
+While they may seem similar, imports and inclusions have different use cases and will be interpreted differently by the compiler:
 
-- **Remixes** `{{> ...}}` **will** render the surrounding tag in the final output.
+- **Imports** `{{> ...}}` **will** render the surrounding tag in the final output.
 - **Inclusions** `{{$...}}` are replaced outright and **will not** render the surrounding tag in the final output.
 
 ### Stems
@@ -640,7 +640,7 @@ Testing is required for all new features.
 </instructions>
 ```
 
-**Remixing content:**
+**Importing content:**
 
 ```markdown
 {{> @coding-standards}}
@@ -648,7 +648,7 @@ Testing is required for all new features.
 {{> my-mix#specific-section}}
 ```
 
-**Using insertions:**
+**Using variables:**
 
 ```markdown
 Project: {{ $project }}
@@ -692,14 +692,14 @@ Features planned for v0.x releases:
 
 The following table provides a complete list of all supported attributes in Mixdown v0:
 
-| Attribute            | Type    | Default    | Section | Remix | Frontmatter | Description |
+| Attribute            | Type    | Default    | Section | Import | Frontmatter | Description |
 |----------------------|---------|------------|---------|-------|--------------|-------------|
 | `name`               | string  | none       | ✅      | ✅    | ✅           | Name or identifier (frontmatter: mix identifier, required) |
 | `description`        | string  | none       | ❌      | ❌    | ✅           | Short description of content (frontmatter only) |
 | `+/-target`          | flag    | none       | ✅      | ✅    | ❌           | Include/exclude for specific targets |
 | `rendered`           | string  | "default"  | ✅      | ✅    | ❌           | Controls how content is processed and displayed |
 | `allow-bare-xml-tags`| boolean | false      | ❌      | ❌    | ✅           | Allow using bare XML tags |
-| `sections`           | list    | none       | ❌      | ✅    | ❌           | Filter specific sections in remixes |
+| `sections`           | list    | none       | ❌      | ✅    | ❌           | Filter specific sections in imports |
 | `version`            | string  | none       | ❌      | ❌    | ✅           | Mix version |
 | `labels`             | array   | `[]`       | ❌      | ❌    | ✅           | Categorization tags |
 | `target.include`     | array   | `[]`       | ❌      | ❌    | ✅           | Target inclusion list |

@@ -22,8 +22,8 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 - **Record**: Target-specific output files, rendered from the source mix
 - **Tag**: Syntax element using `{{...}}` notation, used to direct the compiler
 - **Section**: Delimited blocks of content with optional attributes (`{{instructions}}...{{/instructions}}`)
-- **Remix**: Embed content from another mix, section, stem, or template (`{{> my-rule }}`)
-- **Insertion**: Dynamic values replaced inline at build time (`{{$key}}`)
+- **Import**: Embed content from another mix, section, stem, or template (`{{> my-rule }}`)
+- **Variable**: Dynamic values replaced inline at build time (`{{$key}}`)
 - **Stem**: Modular, reusable content components
 </key_concepts>
 
@@ -90,22 +90,22 @@ version: 2.0 # version number for this file
 ```
 </example>
 
-<remixes>
+<imports>
 ```markdown
 {{> @legal}}  <!-- Embeds `/_stems/legal.md` -->
 {{> conventions#section-name}}  <!-- Embed a specific section -->
 {{> my-rules sections="important-considerations,!less-important-considerations"}}  <!-- Filter sections -->
 ```
-</remixes>
+</imports>
 
-<insertions>
+<variables>
 ```markdown
 Alias: {{$alias}}
 Mix file version: {{$file.version}}
 Current target: {{$target}}
 Target ID: {{$target.id}}
 ```
-</insertions>
+</variables>
 
 <target_scoped_attributes>
 ```markdown
