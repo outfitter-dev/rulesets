@@ -115,15 +115,15 @@ Target ID: {{$target.id}}
 ```
 </target_scoped_attributes>
 
-<rendering_options>
+<output_options>
 ```markdown
-{{instructions rendered="content-only"}}
+{{instructions output="content-only"}}
 Content without surrounding XML tags
 {{/instructions}}
 
-{{> @code-example rendered="code:javascript"}}
+{{> @code-example output="code:javascript"}}
 ```
-</rendering_options>
+</output_options>
 
 <raw_notation>
 ```markdown

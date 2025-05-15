@@ -26,7 +26,7 @@
     - [Target-scoped attribute overrides](#target-scoped-attribute-overrides)
     - [Multi-line Tags for Readability](#multi-line-tags-for-readability)
     - [Track Attributes](#track-attributes)
-    - [Rendered Content](#rendered-content)
+    - [Output Format](#output-format)
     - [Using bare XML tags](#using-bare-xml-tags)
   - [Mixdown Frontmatter](#mixdown-frontmatter)
   - [Links](#links)
@@ -262,24 +262,24 @@ Output:
 |-----------|------|---------|
 | `+/-target` | flag | Include/exclude for specific targets (e.g., `+cursor -windsurf`). |
 | `\key` | flag | Include the attribute in rendered XML. |
-| `rendered` | string | Controls how content is processed and displayed (see [Rendered Content](#rendered-content) below). |
+| `output` | string | Controls how content is processed and displayed (see [Output Format](#output-format) below). |
 | *Custom* | any | Passed through untouched. |
 
-#### Rendered Content
+#### Output Format
 
-The `rendered` attribute provides flexible control over how content is formatted in the final output. This attribute is available for tracks, imports, and inclusions.
+The `output` attribute provides flexible control over how content is formatted in the final output. This attribute is available for tracks, imports, and inclusions.
 
 ```markdown
-{{instructions rendered="content-only"}}
+{{instructions output="content-only"}}
 Content without surrounding XML tags
 {{/instructions}}
 
-{{> conventions#style-guide rendered="inline"}}
+{{> conventions#style-guide output="inline"}}
 
-{{> @code-example rendered="code:javascript"}}
+{{> @code-example output="code:javascript"}}
 ```
 
-**Rendered Attribute Values:**
+**Output Attribute Values:**
 
 | Value | Description |
 |-------|-------------|
@@ -294,7 +294,7 @@ Content without surrounding XML tags
 Multiple values can be combined with commas where compatible:
 
 ```markdown
-{{instructions rendered="content-only,inline"}}
+{{instructions output="content-only,inline"}}
 This content will appear without tags and inline
 {{/instructions}}
 ```
@@ -304,27 +304,27 @@ This content will appear without tags and inline
 The `code[:language]` value renders content as a code block in the specified language. For example:
 
 ```markdown
-{{section rendered="code:javascript"}}
+{{section output="code:javascript"}}
 function hello() {
   console.log("Hello, world!");
 }
 {{/section}}
 ```
 
-When used with snippets, if the language is omitted (`rendered="code"`), the system will automatically determine the language based on the snippet file's extension:
+When used with snippets, if the language is omitted (`output="code"`), the system will automatically determine the language based on the snippet file's extension:
 
 ```markdown
-{{> @my-script.js rendered="code"}}
+{{> @my-script.js output="code"}}
 <!-- Will output as JavaScript code block -->
 
-{{> @styles.css rendered="code"}}
+{{> @styles.css output="code"}}
 <!-- Will output as CSS code block -->
 ```
 
 If the file extension is not recognized (and isn't a `.md` file), it will default to `txt`. Explicitly specifying a language will always override the automatic detection:
 
 ```markdown
-{{> @config.json rendered="code:yaml"}}
+{{> @config.json output="code:yaml"}}
 <!-- Will output as YAML code block despite being a JSON file -->
 ```
 
@@ -483,10 +483,10 @@ Important: Be sure to follow the style guide:
 All [track attributes](#track-attributes) can be applied to imports. Imports also support the following additional attributes:
 
 - `tracks="included,!excluded"` allows you to filter which tracks from the mix are included/excluded on render.
-- `rendered` can provide some flexibility for how imports will be rendered
-  - `rendered="content-only"` will remove the surrounding tag from the output.
-  - `rendered="inline"` will attempt to render the content inline.
-  - `rendered="code"` will format the content as a code block. When used with snippets, the language will be derived from the snippet file's extension.
+- `output` can provide some flexibility for how imports will be rendered
+  - `output="content-only"` will remove the surrounding tag from the output.
+  - `output="inline"` will attempt to render the content inline.
+  - `output="code"` will format the content as a code block. When used with snippets, the language will be derived from the snippet file's extension.
 
 Examples:
 
@@ -513,7 +513,7 @@ While they may seem similar, imports and inclusions have different use cases and
 
 Snippets are modular, reusable content components, stored in the `/_snippets` directory. Like pieces of code that provide specific functionality, Mixdown snippets provide isolated content blocks that can be imported into multiple instruction files.
 
-- Snippets are converted to `<snippet_name>` tags in the final output. This can be disabled using the `rendered="content-only"` attribute.
+- Snippets are converted to `<snippet_name>` tags in the final output. This can be disabled using the `output="content-only"` attribute.
 
 Example:
 
@@ -557,10 +557,10 @@ Triple-brace `{{{...}}}` to skip processing of the content and render it in the 
 
 ```markdown
 > Triple braces will preserve the Mixdown Notation on render.
-> Adding `rendered="content-only"` will remove those track tags from the output.
+> Adding `output="content-only"` will remove those track tags from the output.
 > Adding `+cursor` will only include the section for the `cursor` target.
 
-{{{examples rendered="content-only" +cursor}}}
+{{{examples output="content-only" +cursor}}}
   {{example}}
   - Instructions
   - Rules
@@ -574,7 +574,7 @@ The above will render (in Cursor only) as:
 - Rules
 {{/example}}
 
-Without the `rendered="content-only"` attribute, it would render as:
+Without the `output="content-only"` attribute, it would render as:
 
 <examples>
   <example>
@@ -659,7 +659,7 @@ Version: {{ $.version }}
 **Using raw output:**
 
 ```markdown
-{{{example rendered="content-only"}}}
+{{{example output="content-only"}}}
 To include a section in Mixdown use: {{section-name}}
 {{{/example}}}
 ```
@@ -698,7 +698,7 @@ The following table provides a complete list of all supported attributes in Mixd
 | `name`               | string  | none       | ✅      | ✅    | ✅           | Name or identifier (frontmatter: mix identifier, required) |
 | `description`        | string  | none       | ❌      | ❌    | ✅           | Short description of content (frontmatter only) |
 | `+/-target`          | flag    | none       | ✅      | ✅    | ❌           | Include/exclude for specific targets |
-| `rendered`           | string  | "default"  | ✅      | ✅    | ❌           | Controls how content is processed and displayed |
+| `output`           | string  | "default"  | ✅      | ✅    | ❌           | Controls how content is processed and displayed |
 | `allow-bare-xml-tags`| boolean | false      | ❌      | ❌    | ✅           | Allow using bare XML tags |
 | `tracks`           | list    | none       | ❌      | ✅    | ❌           | Filter specific tracks in imports |
 | `version`            | string  | none       | ❌      | ❌    | ✅           | Mix version |
