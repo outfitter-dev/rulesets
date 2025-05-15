@@ -20,11 +20,11 @@
 - [Notation Reference](#notation-reference)
   - [Design Goals](#design-goals)
   - [Tracks](#tracks)
-    - [Track Tags Notation](#track-tags-notation)
-    - [Track Tag Names](#track-tag-names)
-    - [Track Tag Parsing](#track-tag-parsing)
+    - [Track Notation Markers](#track-notation-markers)
+    - [Track Marker Names](#track-marker-names)
+    - [Track Marker Parsing](#track-marker-parsing)
     - [Target-scoped attribute overrides](#target-scoped-attribute-overrides)
-    - [Multi-line Tags for Readability](#multi-line-tags-for-readability)
+    - [Multi-line Markers for Readability](#multi-line-markers-for-readability)
     - [Track Attributes](#track-attributes)
     - [Output Format](#output-format)
     - [Using bare XML tags](#using-bare-xml-tags)
@@ -37,7 +37,7 @@
     - [Import Attributes](#import-attributes)
   - [Imports vs. Inclusions](#imports-vs-inclusions)
   - [Snippets](#snippets)
-  - [Rendering Raw Mixdown Syntax](#rendering-raw-mixdown-syntax)
+  - [Rendering Raw Mixdown Notation](#rendering-raw-mixdown-notation)
   - [Instruction Placeholders](#instruction-placeholders)
     - [Placeholder Formatting](#placeholder-formatting)
   - [Whitespace Handling](#whitespace-handling)
@@ -87,24 +87,24 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
     - Claude Code → `./CLAUDE.md#project-conventions`
     - OpenAI Codex → `./conventions.md`.
   - When placed in tool directories, referred to as "tool-ready outputs".
-- **Tag**
+- **Notation Marker**
   - Syntax: `{{...}}`
   - Fundamental building block of Mixdown Notation
   - Used to direct the compiler for various purposes (tracks, imports, variables)
-  - All Mixdown directives use tag notation, but serve different functions
+  - All Mixdown directives use marker notation, but serve different functions
   - Similar to `<xml-tags>`, but fully Markdown-previewable.
 - **Track**
   - Syntax: `{{track-name}}...{{/track-name}}`
   - A specific application of notation markers that creates delimited content blocks
   - Translates directly to XML tags in output: `<track_name>...</track_name>`
-  - Has opening and closing tags that surround content
+  - Has opening and closing notation markers that surround content
   - Can contain attributes that control rendering behavior
   - Example: `{{instructions}}This is instruction content{{/instructions}}`
 - **Import**
   - Syntax: `{{> my-rule }}`
   - Embed content from another mix, track, snippet, or template.
 - **Variable**
-  - Syntax: `{{$key}}` or `$key` if used within a `{{...}}` tag.
+  - Syntax: `{{$key}}` or `$key` if used within a `{{...}}` marker.
   - Dynamic values replaced inline at build time.
   - Examples: `{{$target}}`, `{{$.frontmatter.key}}`, `{{$alias}}`
 
@@ -175,17 +175,17 @@ Tracks are the core building block of Mixdown and are a direct stand in for XML 
 {{/instructions}}
 ```
 
-#### Track Tags Notation
+#### Track Notation Markers
 
 - **1:1 Markdown-to-XML Translation**: Write tracks as `{{track-name}}` and they will be converted to `<track_name>` in the output.
 - **Open/Close** `{{track-name ... }}` [ track content ] `{{/track-name}}`
 
-#### Track Tag Names
+#### Track Marker Names
 
 - `kebab-case` is recommended for track names (to avoid accidental Markdown emphasis rendering)
-- Regardless of the naming convention, XML tag names in outputs will be formatted as `<snake_case>` (which is configurable)
+- Regardless of the naming convention, XML tags in outputs will be formatted as `<snake_case>` (which is configurable)
 
-#### Track Tag Parsing
+#### Track Marker Parsing
 
 ```markdown
 <!-- Mixdown input -->
@@ -231,12 +231,12 @@ In this example the track will use the name "cursor_instructions" when compiled 
 
 Note: You can also use the `+target` notation to both include the track for specific targets *and* apply target-specific overrides.
 
-#### Multi-line Tags for Readability
+#### Multi-line Markers for Readability
 
 Attributes can be split across lines for readability. The parser preserves this formatting when writing XML tags:
 
 ```markdown
-<!-- Multi-line section tag in Mixdown format -->
+<!-- Multi-line section marker in Mixdown format -->
 
 {{instructions
   \name="important_rules"
@@ -270,7 +270,7 @@ Output:
 The `output` attribute provides flexible control over how content is formatted in the final output. This attribute is available for tracks, imports, and inclusions.
 
 ```markdown
-{{instructions output="content-only"}}
+{{instructions output="tag:omit"}}
 Content without surrounding XML tags
 {{/instructions}}
 
@@ -283,18 +283,19 @@ Content without surrounding XML tags
 
 | Value | Description |
 |-------|-------------|
-| `default` | Normal rendering with XML tags (default behavior) |
-| `content-only` | No XML tags (equivalent to former `no-tag=true`) |
-| `inline` | Content rendered inline (preserves formatting otherwise) useful with [snippets](#snippets) |
-| `raw` | Render everything as raw Mixdown Notation |
-| `raw:content` | Only render content as raw, process tags normally |
-| `raw:tags` | Only render tags as raw, process content normally |
-| `code[:language]` | Render content as a code block in the specified language |
+| `default` | Normal rendering with XML tags in standard format (default behavior) |
+| `inline` | Content rendered inline without XML tags (simple, concise format) |
+| `inline:tags` | Content rendered inline with XML tags preserved (all on a single line) |
+| `tag:omit` | Remove XML tags from output but maintain block formatting |
+| `code[:language]` | Render content as a code block in specified language |
+| `raw:all` | Render everything as raw Mixdown Notation |
+| `raw:content` | Process tags normally, keep content as raw notation |
+| `raw:tags` | Process content normally, keep tags as raw notation |
 
 Multiple values can be combined with commas where compatible:
 
 ```markdown
-{{instructions output="content-only,inline"}}
+{{instructions output="inline"}}
 This content will appear without tags and inline
 {{/instructions}}
 ```
@@ -484,8 +485,9 @@ All [track attributes](#track-attributes) can be applied to imports. Imports als
 
 - `tracks="included,!excluded"` allows you to filter which tracks from the mix are included/excluded on render.
 - `output` can provide some flexibility for how imports will be rendered
-  - `output="content-only"` will remove the surrounding tag from the output.
-  - `output="inline"` will attempt to render the content inline.
+  - `output="tag:omit"` will remove the surrounding XML tags from the output.
+  - `output="inline"` will render the content inline without XML tags.
+  - `output="inline:tags"` will render the content inline with XML tags (all on a single line).
   - `output="code"` will format the content as a code block. When used with snippets, the language will be derived from the snippet file's extension.
 
 Examples:
@@ -513,7 +515,7 @@ While they may seem similar, imports and inclusions have different use cases and
 
 Snippets are modular, reusable content components, stored in the `/_snippets` directory. Like pieces of code that provide specific functionality, Mixdown snippets provide isolated content blocks that can be imported into multiple instruction files.
 
-- Snippets are converted to `<snippet_name>` tags in the final output. This can be disabled using the `output="content-only"` attribute.
+- Snippets are converted to `<snippet_name>` tags in the final output. This can be disabled using the `output="tag:omit"` or `output="inline"` attribute.
 
 Example:
 
@@ -557,10 +559,10 @@ Triple-brace `{{{...}}}` to skip processing of the content and render it in the 
 
 ```markdown
 > Triple braces will preserve the Mixdown Notation on render.
-> Adding `output="content-only"` will remove those track tags from the output.
+> Adding `output="tag:omit"` will remove those track tags from the output.
 > Adding `+cursor` will only include the section for the `cursor` target.
 
-{{{examples output="content-only" +cursor}}}
+{{{examples output="tag:omit" +cursor}}}
   {{example}}
   - Instructions
   - Rules
@@ -574,7 +576,7 @@ The above will render (in Cursor only) as:
 - Rules
 {{/example}}
 
-Without the `output="content-only"` attribute, it would render as:
+Without the `output="tag:omit"` attribute, it would render as:
 
 <examples>
   <example>
@@ -659,7 +661,7 @@ Version: {{ $.version }}
 **Using raw output:**
 
 ```markdown
-{{{example output="content-only"}}}
+{{{example output="tag:omit"}}}
 To include a section in Mixdown use: {{section-name}}
 {{{/example}}}
 ```
@@ -670,10 +672,10 @@ To include a section in Mixdown use: {{section-name}}
 project/
 ├── .mixdown/
 │   ├── outputs/
-│   │   └── builds/         # compiled outputs
-│   ├── mixes/       # Mix files (*.md)
+│   │   └── builds/            # compiled outputs
+│   ├── mixes/                 # Mix files (*.md)
 │   │   └── _snippets/         # reusable content modules
-│   └── mixdown.config.json # compiler config
+│   └── mixdown.config.json    # compiler config
 ```
 
 ## Future Releases

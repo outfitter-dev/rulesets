@@ -77,7 +77,7 @@ version: 2.0 # version number for this file
 - Mix files: `kebab-case.md` (e.g., `coding-standards.md`)
 - Directories: `kebab-case` (e.g., `_samples`)
 - Config files: `kebab-case.config.json` (e.g., `mixdown.config.json`)
-- Section names: `kebab-case` (e.g., `{{user-instructions}}`)
+- Track names: `kebab-case` (e.g., `{{user-instructions}}`)
 - XML output tags: `snake_case` (e.g., `<user_instructions>`)
 </naming_conventions>
 
@@ -117,7 +117,7 @@ Target ID: {{$target.id}}
 
 <output_options>
 ```markdown
-{{instructions output="content-only"}}
+{{instructions output="tag:omit"}}
 Content without surrounding XML tags
 {{/instructions}}
 
