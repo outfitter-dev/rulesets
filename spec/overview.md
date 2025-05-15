@@ -231,6 +231,23 @@ In this example the track will use the name "cursor_instructions" when compiled 
 
 Note: You can also use the `+target` notation to both include the track for specific targets *and* apply target-specific overrides.
 
+#### Self-Closing Tags
+
+For tracks with no content, you can use a self-closing tag format:
+
+```markdown
+{{empty-track/}}
+
+<!-- Which is equivalent to: -->
+{{empty-track}}{{/empty-track}}
+```
+
+Self-closing tags render as empty XML tags in the output:
+
+```xml
+<empty_track />
+```
+
 #### Multi-line Markers for Readability
 
 Attributes can be split across lines for readability. The parser preserves this formatting when writing XML tags:

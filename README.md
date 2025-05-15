@@ -48,8 +48,8 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 **Variable**
 : Dynamic value replaced inline at build time (e.g., `{{$key}}` for aliases, `{{$.frontmatter.key}}` for frontmatter data, `{{$target}}` for the current target name).
 
-**Tag**
-: Notation marker using `{{...}}` format, used throughout Mixdown to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
+**Notation Marker**
+: Element using `{{...}}` notation, used throughout Mixdown to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
 
 **Snippet**
 : Modular, reusable content component stored in `/_snippets`.
@@ -123,10 +123,10 @@ project/
 
 | Token / Feature | Example | Notes |
 |-----------------|---------|-------|
-| **Section** | `{{instructions name="Rules" +cli}}...{{/instructions}}` | Attributes control name & export. |
+| **Track** | `{{instructions name="Rules" +cli}}...{{/instructions}}` | Attributes control name & export. |
 | **Front-matter** | `---\nname: foo\n---` | YAML at file top. |
 | **Import** | `{{> legal}}` | Embed content from another mix. |
-| **Import Section** | `{{> conventions#section-name}}` | Embed a specific section. |
+| **Import Track** | `{{> conventions#track-name}}` | Embed a specific track. |
 | **Internal Link** | `[Read more](rules.md)` | Standard Markdown links. |
 | **Absolute Link** | `{{link [\"Link Title\"] /path/to/file.ts}}` | Links to project files. |
 | **Alias Variable** | `{{$project}}` | Resolved via `aliases` in config. |

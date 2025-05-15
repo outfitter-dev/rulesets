@@ -60,8 +60,8 @@ This document provides terminology guidance for consistent language in Mixdown d
 | Mix files | `kebab-case.md` | `coding-standards.md` |
 | Directory | `kebab-case` | `_samples` |
 | Config files | `kebab-case.config.json` | `mixdown.config.json` |
-| Track tags | `kebab-case` | `{{user-instructions}}` |
-| Track tags in outputs | `snake_case` | `<user_instructions>` |
+| Track markers | `kebab-case` | `{{user-instructions}}` |
+| Track markers in outputs | `snake_case` | `<user_instructions>` |
 
 ## Musical Theme Alignment
 
