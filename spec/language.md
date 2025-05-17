@@ -77,7 +77,7 @@ Mixdown uses audio production terminology to reinforce its brand identity:
 
 ## Markdown Formatting
 
-- Headers (`#` notation)
+- Heads (`#` notation)
   - Must be preceded and followed by blank lines
   - Must not end with `:`
 - Code blocks
