@@ -19,6 +19,7 @@ This guide explains how AI coding assistants use persistent instruction files (o
     - [Windsurf Rules System](#windsurf-rules-system)
     - [Roo Code Rules System](#roo-code-rules-system)
     - [OpenAI Codex AGENTS System](#openai-codex-agents-system)
+    - [OpenAI Codex CLI System](#openai-codex-cli-system)
     - [Simpler Implementations](#simpler-implementations)
 - [Managing Rules Across Tools](#managing-rules-across-tools)
 - [Tool Comparison](#tool-comparison)
@@ -479,15 +480,74 @@ flowchart TD
 - Avoid duplicating code-style rules that can be better handled by linters
 - Can disable loading with `codex --no-project-doc` or `CODEX_DISABLE_PROJECT_DOC=1`
 
+### OpenAI Codex CLI System
+
+OpenAI Codex CLI uses a layered instructions approach with Markdown files to guide the AI agent's behavior in the terminal.
+
+**Key Features:**
+
+- **Layered Instructions:** Combines global user preferences with project-specific guidelines
+- **Command Policy Control:** Guides what commands the agent can and should run
+- **Project Context:** Provides information about repository structure and standards
+- **Terminal Integration:** Designed for developers who work primarily in the terminal
+- **Version Control Awareness:** Works seamlessly with Git repositories
+
+**Canonical Locations & Precedence (highest → lowest):**
+
+```text
+~/.codex/instructions.md         # Personal, applies to every repo
+<repo-root>/codex.md             # Project-wide defaults
+```
+
+**File Structure Example:**
+
+```markdown
+# Coding Standards
+- Always use TypeScript for new JavaScript files
+- Follow AirBnB style guide for linting
+- Maximum line length is 100 characters
+- All exports should be typed
+
+# Testing Requirements
+- Write unit tests for all new functionality
+- Use Jest for testing framework
+- Maintain at least 80% code coverage
+
+# Command Policy
+- Never use git force push unless explicitly requested
+- Always run linting before committing code
+- Use npm for package management
+```
+
+**Loading Behavior:**
+
+```mermaid
+flowchart TD
+    A[Start Codex CLI in project] --> B[Load ~/.codex/instructions.md]
+    B --> C{codex.md in project root?}
+    C -->|Yes| D[Load project codex.md]
+    C -->|No| E[Skip project file]
+    D --> F[Merge instructions]
+    E --> F
+    F --> G[Apply to agent session]
+    H["--no-project-doc flag"] -.-> |Disables| C
+```
+
+**Best Practices for Codex Instructions:**
+
+- Keep instructions clear, concise, and specific
+- Organize by topic with descriptive headings
+- Include project-specific architectural details
+- Define command policies to prevent unwanted actions
+- Create a consistent workflow pattern with clear steps
+- Use the .codex/ directory for shared agent workspace
+- Can disable loading with `codex --no-project-doc` or `CODEX_DISABLE_PROJECT_DOC=1`
+
 ### Simpler Implementations
 
 **Cline:** Uses a single `.clinerules` file in the project root.
 
 **Aider:** Commonly uses `.aider.memory.md` which must be manually included at startup.
-
-**OpenAI Codex CLI:** Uses a layered system with global `~/.codex/instructions.md` and project-level `codex.md`.
-
-**OpenAI Codex AGENTS:** Uses a hierarchical system with heading-based section merging across multiple AGENTS.md files.
 
 ## Managing Rules Across Tools
 
@@ -501,6 +561,7 @@ flowchart LR
     B --> E[.windsurf/rules/]
     B --> F[.roo/rules/*.md]
     B --> G[AGENTS.md]
+    B --> H[codex.md]
     
     style A fill:#bbf,stroke:#333
     style B fill:#f9f,stroke:#333
@@ -518,7 +579,7 @@ graph TB
     
     subgraph "CLI Tools"
         D[Claude Code] --- D1[Hierarchical with imports]
-        E[OpenAI CLI] --- E1[Layered files]
+        E[OpenAI Codex CLI] --- E1[Layered instructions]
         H[OpenAI Codex AGENTS] --- H1[Section-based merging]
     end
     

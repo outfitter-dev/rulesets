@@ -25,6 +25,7 @@
     - [Track Marker Parsing](#track-marker-parsing)
     - [Target-scoped Option Overrides](#target-scoped-option-overrides)
     - [Target-scoped Multiple Options](#target-scoped-multiple-options)
+    - [Option Processing Order](#option-processing-order)
     - [Self-Closing Tags](#self-closing-tags)
     - [Multi-line Markers for Readability](#multi-line-markers-for-readability)
     - [Track Options](#track-options)
@@ -32,6 +33,7 @@
     - [Option Grouping](#option-grouping)
       - [Multi-line Option Grouping](#multi-line-option-grouping)
       - [Option Bracketing Rules](#option-bracketing-rules)
+    - [Option Grouping \& Scoping: Common Patterns](#option-grouping--scoping-common-patterns)
     - [Using bare XML tags](#using-bare-xml-tags)
   - [Mixdown Frontmatter](#mixdown-frontmatter)
   - [Links](#links)
@@ -51,7 +53,11 @@
 - [Directory Structure](#directory-structure)
 - [Future Releases](#future-releases)
 - [Appendix](#appendix)
-  - [Comprehensive Option Reference Table](#comprehensive-option-reference-table)
+  - [Comprehensive Option Reference](#comprehensive-option-reference)
+    - [Option Naming Conventions](#option-naming-conventions)
+    - [Option Categories and Usage](#option-categories-and-usage)
+    - [Common Option Patterns and Languages](#common-option-patterns-and-languages)
+    - [Option Extension Rules](#option-extension-rules)
 
 ## Purpose & Vision
 
