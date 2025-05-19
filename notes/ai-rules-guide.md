@@ -48,7 +48,7 @@ Different AI tools use different file locations and naming conventions:
 | Tool | Project Rules | Global/User Rules | Format |
 |------|--------------|-------------------|--------|
 | **Claude Code** | `CLAUDE.md` in root and/or subdirs | `~/.claude/CLAUDE.md` | Markdown with `@file` imports |
-| **Cursor** | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.48+) | User settings (UI-based) | Markdown with YAML front-matter |
+| **Cursor** | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based) | Markdown with YAML front-matter |
 | **Windsurf** | `.windsurf/rules/*.md` files (v1.8.2+) | `~/.codeium/windsurf/memories/global_rules.md` | Markdown with activation modes (Always On, Manual, Model Decision, Glob) |
 | **Roo Code** | `.roo/rules/` and `.roo/rules-{mode}/` folders | No built-in global file | Markdown files in folders |
 | **OpenAI Codex CLI** | `codex.md` in root | `~/.codex/instructions.md` | Markdown text |
@@ -252,7 +252,7 @@ Cursor uses Markdown files with YAML front-matter (`.mdc` extension) organized i
 **Key Features:**
 
 - **Rule Types:** Always Apply, Auto-Attached (via globs), Agent-Requested, Manual
-- **Nested Rules:** Supports `.cursor/rules/` directories in subdirectories (v0.48+)
+- **Nested Rules:** Supports `.cursor/rules/` directories in subdirectories (v0.50+)
 - **Prompt Integration:** Shows which rules are active in the context panel
 
 **Directory Structure:**
@@ -283,7 +283,7 @@ alwaysApply: false
 - Follow naming pattern: ComponentName.tsx
 ```
 
-#### Nested Rules Feature (v0.48+, Mar 2025)
+#### Nested Rules Feature (v0.50+, May 2025)
 
 Cursor supports nested rule directories with automatic scoping:
 

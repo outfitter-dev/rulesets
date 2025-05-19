@@ -22,7 +22,7 @@ $HOME/.claude/CLAUDE.md                   # Global user preferences
 
 Claude Code's unique `@file` syntax resolves paths relative to the current file location and processes imports recursively.
 
-Cursor (v0.48+) supports nested rule directories with automatic scoping:
+Cursor (v0.50+) supports nested rule directories with automatic scoping:
 ```text
 project/
 ├── .cursor/                       # Project root rules
