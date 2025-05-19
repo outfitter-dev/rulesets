@@ -1,5 +1,109 @@
 # Comprehensive Options Proposal for Mixdown
 
+## Implementation Plan
+
+- **Goal:** Update the spec/overview.md document with the new options syntax below
+
+### Implementation Checklist
+
+To update the spec/overview.md document with the new options syntax, the following changes are needed:
+
+1. **Update Track Marker Syntax** (Lines ~170-176, ~196-202)
+   - [x] Replace `-target` with `!target` for exclusion throughout the document
+     - [x] Change line 173: `{{instructions +cursor -claude-code}}` to `{{instructions +cursor !claude-code}}`
+     - [x] Change line 196: `{{track-two +* -claude-code}}` to `{{track-two +* !claude-code}}`
+     - [x] Update any other instances of `-target` in examples
+   - [x] Update example explaining inclusion/exclusion patterns (line ~196-210)
+   - [x] Add explanation of option ordering for inclusion/exclusion (based on new section in this proposal)
+
+2. **Update Track Attribute Syntax** (Lines ~256-274, ~277-283)
+   - [x] Replace `attribute="value"` syntax with new kebab-case option patterns
+     - [x] Update lines ~256-266 to remove backslash `\` escape mechanism
+     - [x] Change `\name="important_rules"` to `name(important-rules)` in examples
+     - [x] Replace attribute declaration examples with new syntax
+   - [x] Update Track Attributes table (lines ~277-283) 
+     - [x] Remove the `\key` flag row or replace with explanation of direct XML attributes
+     - [x] Add rows for structured prefixes (h-*, num-*, etc.)
+     - [x] Change the `+/-target` to `+/!target` in the table
+
+3. **Update Target-scoped Attributes** (Lines ~220-233)
+   - [x] Replace `cursor?name="value"` with `cursor:name(value)` syntax 
+     - [x] Update section at line ~220-233 to use colon instead of question mark
+     - [x] Change `cursor?name="cursor_instructions"` to `cursor:name(cursor-instructions)`
+   - [x] Add comprehensive examples for all scoping patterns:
+     - [x] Single option scope: `target:option`
+     - [x] Multiple option scope: `target:[option1 option2]`
+     - [x] Inclusion with scope: `+target:option`
+     - [x] Exclusion with scope: `!target:option`
+     - [x] Group scoping: `+group:[options] !member`
+   - [x] Document scope delimiter role (:) and its consistent usage
+   - [x] Add explanation of target-scoped brackets for multiple options
+
+4. **Update Output Format** (Lines ~286-347)
+   - [x] Replace `output="tag:omit"` with direct `tag-omit` syntax
+     - [x] Update all examples to use kebab-case options
+     - [x] Line ~290: `{{instructions output="tag:omit"}}` → `{{instructions tag-omit}}`
+     - [x] Line ~294: `{{> conventions#style-guide output="inline"}}` → `{{> conventions#style-guide inline}}`
+     - [x] Line ~296: `{{> @code-example output="code:javascript"}}` → `{{> @code-example code-js}}`
+   - [x] Update Output Attribute Values table (lines ~300-310)
+     - [x] Replace `output="default"` with default behavior explanation
+     - [x] Replace `output="inline"` with `inline`
+     - [x] Replace `output="inline:tags"` with `inline-with-tags`
+     - [x] Replace `output="tag:omit"` with `tag-omit`
+     - [x] Replace `output="code[:language]"` with `code-*` family
+     - [x] Replace `output="raw:all"` with `raw-all`
+     - [x] Replace `output="raw:content"` with `raw-content`
+     - [x] Replace `output="raw:tags"` with `raw-tags`
+   - [x] Add detailed sections for option families:
+     - [x] `code-*` family (with comprehensive list of language shortcuts)
+     - [x] `h-*` family (with examples for all heading level options)
+     - [x] `num-*` family (with examples for numbering options)
+   - [x] Update line ~324-347 with new code block examples using `code-js`, etc.
+
+5. **Add New Option Grouping Section** (after Output Format section)
+   - [x] Create new section documenting square bracket syntax for option grouping
+     - [x] Explain basic grouping: `{{rules [ option1 option2 option3 ]}}`
+     - [x] Explain how grouped options behave the same as space-delimited options
+     - [x] Document visual benefits of grouping complex combinations
+   - [x] Add multi-line option examples
+     - [x] Show how to format multi-line options for readability
+     - [x] Explain whitespace handling within option groups
+   - [x] Document option bracketing rules
+     - [x] Explain that brackets cannot be nested
+     - [x] Provide examples of valid vs. invalid bracketing
+     - [x] Document target-scoped option brackets: `target:[option1 option2]`
+   - [x] Add example patterns section with comprehensive examples of different option grouping patterns
+
+6. **Update Import Filtering Syntax** (Lines ~498-507)
+   - [x] Replace `tracks="included,!excluded"` with parentheses syntax
+     - [x] Line ~501: `{{> my-rules tracks="track-name,!track-name-to-exclude"}}` → `{{> my-rules(+track-name !track-name-to-exclude)}}`
+     - [x] Update lines ~513-521 examples with new parentheses syntax
+   - [x] Add section on target-specific track filtering for imports
+     - [x] Add examples of target-specific inclusion: `cursor:+track-name`
+     - [x] Add examples of target-specific exclusion: `windsurf:!track-name`
+     - [x] Document how multiple target filters can be combined
+   - [x] Update Import Attributes section (line ~499-507) to reflect new syntax
+
+7. **Update Comprehensive Attribute Reference Table** (Lines ~712-737)
+   - [x] Update the entire table with new syntax
+     - [x] Replace all `output="value"` entries with kebab-case options
+     - [x] Remove backslash escape mechanism entries
+     - [x] Add prefix family options (h-*, num-*, etc.)
+     - [x] Change target filter notation from `+/-target` to `+/!target`
+     - [x] Update examples to use new syntax patterns
+   - [x] Add new rows for option grouping syntax
+   - [x] Update the "Notes" section below the table
+     - [x] Change target-scoped attribute explanation from `?` to `:`
+     - [x] Update explanation of custom XML attribute preservation
+
+8. **Global Changes and Consistency Check**
+   - [x] Search for all instances of `-target` and replace with `!target`
+   - [x] Search for all instances of `output="..."` and replace with kebab-case equivalents
+   - [x] Search for all instances of `cursor?...` or any target-scoped attributes and update to use colon
+   - [x] Verify all code examples consistently use the new syntax
+   - [x] Update "Notation Reference" section (line ~157) if necessary to reflect new syntax
+   - [x] Check TOC and ensure all new sections are properly reflected
+
 ## Overview
 
 This document proposes a comprehensive approach to Mixdown options, designed to solve the most common usability issues faced when creating rule files. Building on the kebab-case notation introduced in the simplified-option-syntax proposal, this approach focuses on intuitive option discovery, consistent naming patterns, and ergonomic composability.
@@ -20,7 +124,7 @@ This proposal builds upon and replaces the simplified approach outlined in the s
 The Mixdown options syntax follows strict delimiter rules to maintain consistency and clarity:
 
 | Delimiter | Role | Example | Purpose |
-|-----------|------|---------|---------|
+|-----------|------|---------|---------| 
 | `:` | Scope indicator | `target:code-js` | Indicates that options are scoped to a specific target |
 | `()` | Value container | `name(value)` | Contains values for a specific option |
 | `[]` | Option grouping | `target:[option-1 option-2]` | Groups multiple options within a scope |
@@ -67,7 +171,7 @@ All options follow a consistent prefix pattern for categorization:
 ### 2. Value Specification Patterns
 
 | Pattern          | Format                 | Example                              | Use Case                                                   |
-|------------------|------------------------|--------------------------------------|------------------------------------------------------------|
+|------------------|------------------------|--------------------------------------|----------------------------------------------------------|
 | Simple Flag      | `option-name`          | `tag-omit`                           | Boolean operations                                         |
 | Enumerated Value | `option-value`         | `h-2`, `code-js`                     | Fixed value choices                                        |
 | Named Value      | `option(value)`        | `name(rules)`, `name(Custom Title)`  | String values with special chars/spaces                    |
@@ -131,7 +235,7 @@ This is equivalent to specifying the heading within the content but provides a m
 #### Target Management
 
 | Option      | Description                                              | Example                  |
-|-------------|----------------------------------------------------------|--------------------------|
+|-------------|----------------------------------------------------------|--------------------------| 
 | `+target`   | Include only for target                                  | `{{rules +target}}`      |
 | `!target`   | Exclude only for target                                  | `{{rules !target}}`      |
 | `+all`      | Include for all targets                                  | `{{rules +all}}`         |

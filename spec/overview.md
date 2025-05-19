@@ -23,10 +23,15 @@
     - [Track Notation Markers](#track-notation-markers)
     - [Track Marker Names](#track-marker-names)
     - [Track Marker Parsing](#track-marker-parsing)
-    - [Target-scoped attribute overrides](#target-scoped-attribute-overrides)
+    - [Target-scoped Option Overrides](#target-scoped-option-overrides)
+    - [Target-scoped Multiple Options](#target-scoped-multiple-options)
+    - [Self-Closing Tags](#self-closing-tags)
     - [Multi-line Markers for Readability](#multi-line-markers-for-readability)
-    - [Track Attributes](#track-attributes)
+    - [Track Options](#track-options)
     - [Output Format](#output-format)
+    - [Option Grouping](#option-grouping)
+      - [Multi-line Option Grouping](#multi-line-option-grouping)
+      - [Option Bracketing Rules](#option-bracketing-rules)
     - [Using bare XML tags](#using-bare-xml-tags)
   - [Mixdown Frontmatter](#mixdown-frontmatter)
   - [Links](#links)
@@ -35,6 +40,7 @@
   - [Variables](#variables)
   - [Imports](#imports)
     - [Import Attributes](#import-attributes)
+    - [Target-Specific Track Filtering](#target-specific-track-filtering)
   - [Imports vs. Inclusions](#imports-vs-inclusions)
   - [Snippets](#snippets)
   - [Rendering Raw Mixdown Notation](#rendering-raw-mixdown-notation)
@@ -45,7 +51,7 @@
 - [Directory Structure](#directory-structure)
 - [Future Releases](#future-releases)
 - [Appendix](#appendix)
-  - [Comprehensive Attribute Reference Table](#comprehensive-attribute-reference-table)
+  - [Comprehensive Option Reference Table](#comprehensive-option-reference-table)
 
 ## Purpose & Vision
 
@@ -130,7 +136,8 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
 | `claude-code` | Claude Code | CLI |
 | `roo-code` | Roo Code | VS Code Extension |
 | `cline` | Cline | VS Code Extension |
-| `openai-codex` | OpenAI Codex | CLI |
+| `codex-cli` | OpenAI Codex CLI | CLI |
+| `codex-agent` | OpenAI Codex Agent | Web agent |
 
 ## Getting Started
 
@@ -170,7 +177,7 @@ mixdown build     # writes outputs to .mixdown/outputs/
 Tracks are the core building block of Mixdown and are a direct stand in for XML tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other tracks or mixes.
 
 ```markdown
-{{instructions +cursor -claude-code}}
+{{instructions +cursor !claude-code}}
 - IMPORTANT: You must follow these coding standards...
 {{/instructions}}
 ```
@@ -193,7 +200,7 @@ Tracks are the core building block of Mixdown and are a direct stand in for XML 
 Content A
 {{/track-one}}
 
-{{track-two +* -claude-code}}
+{{track-two +* !claude-code}}
 Content B
 {{/track-two}}
 
@@ -217,19 +224,66 @@ Content A
 </track-one>
 ```
 
-#### Target-scoped attribute overrides
+#### Target-scoped Option Overrides
 
-Any string attribute can be given a per-target override by suffixing the target ID with a **`?`** delimiter:
+Any option can be given a per-target override by suffixing the target ID with a **`:`** delimiter (colon):
 
 ```markdown
-{{instructions cursor?name="cursor_instructions"}}
+{{instructions cursor:name(cursor-instructions)}}
 ...
 {{/instructions}}
 ```
 
-In this example the track will use the name "cursor_instructions" when compiled for the *cursor* target. The same pattern works with groups once they arrive (e.g. `ide?name="ide_instructions"`).
+In this example the track will use the name "cursor-instructions" when compiled for the *cursor* target. The same pattern works with groups once they arrive (e.g. `ide:name(ide-instructions)`).
 
 Note: You can also use the `+target` notation to both include the track for specific targets *and* apply target-specific overrides.
+
+#### Target-scoped Multiple Options
+
+For multiple target-specific options, you can use square brackets after the colon:
+
+```markdown
+{{instructions cursor:[name(cursor-rules) code-js]}}
+```
+
+This applies both `name(cursor-rules)` and `code-js` options only when building for the cursor target, without affecting other targets. The square brackets group the options that are scoped to that specific target.
+
+#### Option Processing Order
+
+Options within a track marker are processed sequentially from left to right. This processing order affects three main categories of options:
+
+1. **Basic Options**: Simple formatting options like `tag-omit` or `code-js`
+2. **Target Inclusion/Exclusion**: Modifiers like `+target` and `!target`
+3. **Target-Scoped Options**: Special formatting for specific targets using `target:[options]`
+
+The evaluation follows this simple rule:
+
+- Options are applied **in the exact order they appear** (left to right)
+- When conflict occurs, **the last directive wins**
+
+**Simple Example:**
+```markdown
+{{track code-js tag-omit}}
+```
+First applies `code-js` (JavaScript code block formatting), then applies `tag-omit` (removes surrounding XML tags).
+
+**Practical Target Example:**
+```markdown
+{{track +ide !windsurf cursor:[tag-omit]}}
+```
+This would:
+1. Include the track for all IDE targets (`+ide`)
+2. Exclude it specifically for Windsurf (`!windsurf`), even though Windsurf might be in the IDE group
+3. Apply the `tag-omit` option, but only when building for Cursor
+
+**Conflict Resolution Example:**
+```markdown
+{{track h-2 h-3}}
+```
+The track would use heading level 3 because `h-3` appears last and overrides `h-2`.
+
+> [!NOTE]
+> While options are processed left-to-right, certain option types like `name()` might have special handling if specified multiple times. When in doubt about complex combinations, the last specified option for a particular feature usually takes precedence.
 
 #### Self-Closing Tags
 
@@ -248,101 +302,247 @@ Self-closing tags render as empty XML tags in the output:
 <empty_track />
 ```
 
+**Further Target Scoping Examples:**
+
+- **Target-specific option (block included for all targets unless otherwise specified):**
+  `{{instructions cursor:name(cursor-specific-rules)}}`
+  *(Applies `name(cursor-specific-rules)` only for the `cursor` target. The block itself is included for all targets by default.)*
+
+- **Inclusion for a target with a specific option:**
+  `{{instructions +cursor:name(only-for-cursor)}}`
+  *(Includes this track *only* for the `cursor` target, and for `cursor`, it uses `name(only-for-cursor)`.)*
+
+- **Inclusion for a target with multiple specific options:**
+  `{{instructions +cursor:[name(cursor-rules) code-js]}}`
+  *(Includes this track *only* for the `cursor` target, applying both `name(cursor-rules)` and `code-js` for `cursor`.)*
+
+- **Exclusion for a target, even if a scoped option is present:**
+  `{{instructions !cursor:name(ignored-for-cursor)}}`
+  *(Excludes this track for the `cursor` target. The `name(ignored-for-cursor)` option would not apply as the track is excluded for `cursor`.)*
+
+- **Group inclusion with member exclusion and scoped options for the group:**
+  `{{instructions +ide:[code-block] !cursor}}`
+  *(Includes this track for all targets in the `ide` group, applying the `code-block` option, but explicitly excludes it for the `cursor` target, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `mixdown.config.json`.)*
+
+> [!IMPORTANT]
+> Differentiating Scoped Options from Scoped Inclusion:
+> - `target:[my-option]` means "If this track is rendered for `target`, apply `my-option`." The track's general inclusion is determined elsewhere (e.g. by default, or by a `+target` on its own).
+> - `+target:[my-option]` means "Render this track *only* for `target`, and when doing so, apply `my-option`." This controls both inclusion and target-specific options simultaneously.
+
 #### Multi-line Markers for Readability
 
-Attributes can be split across lines for readability. The parser preserves this formatting when writing XML tags:
+Options can be split across lines for readability. The parser preserves this formatting when writing XML tags:
 
 ```markdown
 <!-- Multi-line section marker in Mixdown format -->
 
 {{instructions
-  \name="important_rules"
+  name(important-rules)
 }}
 This is the content of the instructions section.
 {{/instructions}}
 
-<!-- Note: Including the `\` backslash prefix tells
-  Mixdown to preserve the attribute on render -->
+<!-- Note: Using the name(value) syntax specifically sets the 'name' attribute 
+  (e.g., name="important-rules") in the rendered XML output. -->
 
 ---
 
 Output:
 <instructions
-  name="important_rules">
+  name="important-rules">
   This is the content of the instructions section.
 </instructions>
 ```
 
-#### Track Attributes
+#### Track Options
 
-| Attribute | Type | Purpose |
-|-----------|------|---------|
-| `+/-target` | flag | Include/exclude for specific targets (e.g., `+cursor -windsurf`). |
-| `\key` | flag | Include the attribute in rendered XML. |
-| `output` | string | Controls how content is processed and displayed (see [Output Format](#output-format) below). |
-| *Custom* | any | Passed through untouched. |
+| Option | Type | Purpose |
+|--------|------|---------|
+| `+/!target` | flag | Include/exclude for specific targets (e.g., `+cursor !windsurf`). |
+| `name(value)` | value | Sets a name with a specified value for the track. |
+| `tag-omit`, `inline`, etc. | flag | Controls how content is processed (see [Output Format](#output-format) below). |
+| `code-*`, `h-*`, `num-*` | flag | Family-specific options for code blocks, headings, and numbering. |
+| `[option1 option2]` | group | Groups multiple options together for readability. |
+| `target:[options]` | scoped | Target-specific option group. |
+| *Custom* `key="value"` | attribute | Any key-value pair is passed through to XML output. |
 
 #### Output Format
 
-The `output` attribute provides flexible control over how content is formatted in the final output. This attribute is available for tracks, imports, and inclusions.
+Output options provide flexible control over how content is formatted in the final output. These options are available for tracks, imports, and inclusions.
 
 ```markdown
-{{instructions output="tag:omit"}}
+{{instructions tag-omit}}
 Content without surrounding XML tags
 {{/instructions}}
 
-{{> conventions#style-guide output="inline"}}
+{{> conventions#style-guide inline}}
 
-{{> @code-example output="code:javascript"}}
+{{> @code-example code-js}}
 ```
 
-**Output Attribute Values:**
+**Output Option Values:**
 
 | Value | Description |
 |-------|-------------|
-| `default` | Normal rendering with XML tags in standard format (default behavior) |
+| (default) | Normal rendering with XML tags in standard format (default behavior) |
 | `inline` | Content rendered inline without XML tags (simple, concise format) |
-| `inline:tags` | Content rendered inline with XML tags preserved (all on a single line) |
-| `tag:omit` | Remove XML tags from output but maintain block formatting |
-| `code[:language]` | Render content as a code block in specified language |
-| `raw:all` | Render everything as raw Mixdown Notation |
-| `raw:content` | Process tags normally, keep content as raw notation |
-| `raw:tags` | Process content normally, keep tags as raw notation |
+| `inline-with-tags` | Content rendered inline with XML tags preserved (all on a single line) |
+| `tag-omit` | Remove XML tags from output but maintain block formatting |
+| `code-*` | Render content as a code block in specified language (see Code Block Options below) |
+| `raw-all` | Render everything as raw Mixdown Notation |
+| `raw-content` | Process tags normally, keep content as raw notation |
+| `raw-tags` | Process content normally, keep tags as raw notation |
 
-Multiple values can be combined with commas where compatible:
+Multiple options can be applied together (space-separated):
 
 ```markdown
-{{instructions output="inline"}}
+{{instructions inline tag-omit}}
 This content will appear without tags and inline
 {{/instructions}}
 ```
 
-**Rendering as Code Blocks:**
+**Code Block Options (code-* family):**
 
-The `code[:language]` value renders content as a code block in the specified language. For example:
+The `code-*` option family renders content as a code block in the specified language. For example:
 
 ```markdown
-{{section output="code:javascript"}}
+{{section code-js}}
 function hello() {
   console.log("Hello, world!");
 }
 {{/section}}
 ```
 
-When used with snippets, if the language is omitted (`output="code"`), the system will automatically determine the language based on the snippet file's extension:
+Common language shortcuts include:
+
+| Option | Language |
+|--------|----------|
+| `code-js` | JavaScript |
+| `code-ts` | TypeScript |
+| `code-py` | Python |
+| `code-rb` | Ruby |
+| `code-java` | Java |
+| `code-go` | Go |
+| `code-rust` | Rust |
+| `code-html` | HTML |
+| `code-css` | CSS |
+| `code-sql` | SQL |
+| `code-sh` | Shell/Bash |
+| `code-yaml` | YAML |
+| `code-json` | JSON |
+
+**Heading Options (h-* family):**
+
+Heading options control how headings are processed:
+
+| Option | Description | Example |
+|--------|-------------|--------|
+| `h-1` to `h-6` | Set specific heading level | `{{section h-2}}` |
+| `h-inc` | Increment heading level | `{{section h-inc}}` |
+| `h-dec` | Decrement heading level | `{{section h-dec}}` |
+| `h-same` | Keep same heading level | `{{section h-same}}` |
+| `h-initial` | Replace first heading | `{{section h-initial}}` |
+
+You can also use a string as the first item to create a heading:
 
 ```markdown
-{{> @my-script.js output="code"}}
+{{section "Section Name" h-3}}
+Section content goes here.
+{{/section}}
+```
+
+**Numbering Options (num-* family):**
+
+Numbering options control how content is numbered:
+
+| Option | Description | Example |
+|--------|-------------|--------|
+| `num` | Enable default numbering | `{{chapter num}}` |
+| `num-heading-first` | Number first heading | `{{chapter num-heading-first}}` |
+| `num-heading-last` | Number last heading | `{{chapter num-heading-last}}` |
+| `num-tag-first` | Number first tag | `{{chapter num-tag-first}}` |
+| `num-tag-last` | Number last tag | `{{chapter num-tag-last}}` |
+
+#### Option Grouping
+
+> [!NOTE]
+> This section has been added to document the new option grouping syntax.
+
+By default, options are space-delimited. You can optionally wrap a list of options in square brackets for visual grouping and better readability:
+
+```markdown
+{{rules [ tag-omit code-js +cursor name(important-rules) ]}}
+...
+{{/rules}}
+```
+
+All options inside `[...]` behave exactly the same as if they were space-delimited. This is particularly useful for complex option combinations.
+
+##### Multi-line Option Grouping
+
+Option grouping allows for improved readability with multi-line options:
+
+```markdown
+{{rules [
+  tag-omit
+  code-js
+  name(important-rules)
+  +cursor
+  ]}}
+...
+{{/rules}}
+```
+
+##### Option Bracketing Rules
+
+Option groups (brackets) cannot be nested. All options within a group must be space-delimited and cannot themselves contain another options group.
+
+For target-scoped options with multiple options, use square brackets after the colon:
+
+```markdown
+{{rules target:[code-js name(target-rules)]}}
+```
+
+Important: You cannot nest option groups within other option groups:
+
+```markdown
+{{rules [code-js tag-omit target:[option-a option-b]]}}  # ❌ Invalid, nested options groups
+{{rules [code-js tag-omit] target:[option-a option-b]}}  # ✅ Valid, separate option groups
+```
+
+Leading and trailing whitespace within the option group brackets `[]` is optional and will be ignored by the parser. Spaces between options within the brackets are necessary delimiters. For example, `[ option1  option2 ]` is equivalent to `[option1 option2]`.
+
+#### Option Grouping & Scoping: Common Patterns
+
+The following table provides a quick reference to common invocation patterns for option grouping and target scoping:
+
+| Pattern                                     | Example                                         | Description                                                                 |
+|---------------------------------------------|-------------------------------------------------|-----------------------------------------------------------------------------|
+| Basic Grouping                              | `{{track [opt1 opt2 opt3]}}`                    | Visually groups space-delimited options.                                    |
+| Multi-line Grouping                         | `{{track [opt1
+  opt2
+]}}`                     | Improves readability for many options.                                      |
+| Target-Scoped Single Option (no group)      | `{{track target:opt1}}`                         | Applies `opt1` only for `target`. Block included for all valid targets.     |
+| Target-Scoped Multiple Options (via group)  | `{{track target:[opt1 opt2]}}`                  | Applies `opt1` and `opt2` only for `target`. Block included for all.        |
+| Inclusion for Target + Scoped Single Opt  | `{{track +target:opt1}}`                        | Includes block only for `target`, applying `opt1`.                          |
+| Inclusion for Target + Scoped Multi Opts  | `{{track +target:[opt1 opt2]}}`                 | Includes block only for `target`, applying `opt1` and `opt2`.               |
+| Exclusion for Target (scoped opts moot)     | `{{track !target:opt1}}` or `!target:[opt1]`  | Excludes block for `target`.                                                |
+| Group Inclusion + Member Exclusion          | `{{track +group:[opt1] !member}}`               | Includes for `group` with `opt1`, but excludes for `member`.                |
+
+When used with snippets, if the language is omitted (`code`), the system will automatically determine the language based on the snippet file's extension:
+
+```markdown
+{{> @my-script.js code}}
 <!-- Will output as JavaScript code block -->
 
-{{> @styles.css output="code"}}
+{{> @styles.css code}}
 <!-- Will output as CSS code block -->
 ```
 
 If the file extension is not recognized (and isn't a `.md` file), it will default to `txt`. Explicitly specifying a language will always override the automatic detection:
 
 ```markdown
-{{> @config.json output="code:yaml"}}
+{{> @config.json code-yaml}}
 <!-- Will output as YAML code block despite being a JSON file -->
 ```
 
@@ -428,7 +628,7 @@ Mixdown also provides a `{{link}}` notation marker to allow for more expressive 
 ```
 
 > [!NOTE]
-> Standard Markdown links will work in previews as expected within the `.mixdown/mixes` directory, but `{{link ...}}` will not.
+> Standard Markdown links will work in previews as expected within the `.mixdown/mixes` directory, but `{{link ...}}` will not, as it requires compilation by Mixdown to resolve paths relative to the final output directory and apply any target-specific link transformations.
 
 #### Linking to Project Files
 
@@ -472,7 +672,7 @@ Imports allow you to reuse content across multiple mixes by embedding mixes, tra
 {{> #track-name}}
 
 <!-- Import a mix with multiple specific tracks -->
-{{> my-rules tracks="track-name,!track-name-to-exclude"}}
+{{> my-rules(+track-name !track-name-to-exclude)}}
 ```
 
 Example:
@@ -498,28 +698,48 @@ Important: Be sure to follow the style guide:
 
 #### Import Attributes
 
-All [track attributes](#track-attributes) can be applied to imports. Imports also support the following additional attributes:
+All [track options](#track-attributes) can be applied to imports. Additionally, imports support filtering of tracks using parentheses syntax:
 
-- `tracks="included,!excluded"` allows you to filter which tracks from the mix are included/excluded on render.
-- `output` can provide some flexibility for how imports will be rendered
-  - `output="tag:omit"` will remove the surrounding XML tags from the output.
-  - `output="inline"` will render the content inline without XML tags.
-  - `output="inline:tags"` will render the content inline with XML tags (all on a single line).
-  - `output="code"` will format the content as a code block. When used with snippets, the language will be derived from the snippet file's extension.
+```markdown
+{{> my-rules(+track-one !track-two)}}
+```
+
+This allows you to filter which tracks from the mix are included/excluded on render:
+- Prefix included tracks with `+` (consistent with target inclusion)
+- Prefix excluded tracks with `!` (consistent with target exclusion)
+
+For formatting options:
+- `tag-omit` will remove the surrounding XML tags from the output
+- `inline` will render the content inline without XML tags
+- `inline-with-tags` will render the content inline with XML tags (all on a single line)
+- `code` or `code-*` will format the content as a code block
 
 Examples:
 
 ```markdown
-{{> my-rules tracks="!less-important-considerations"}}
+{{> my-rules(!less-important-considerations)}}
 
 <!-- 👆 This would include all tracks from `my-rules.md`
      except for `less-important-considerations`. -->
 
-{{> my-rules tracks="important-considerations"}}
+{{> my-rules(+important-considerations)}}
 
 <!-- 👆 This would include only the `important-considerations`
      track from `my-rules.md`. -->
 ```
+
+#### Target-Specific Track Filtering
+
+You can also apply target-specific track filtering for imports:
+
+```markdown
+{{> my-rules(+common-track cursor:+cursor-specific !legacy-track)}}
+```
+
+This would:
+- Include "common-track" for all targets
+- Additionally include "cursor-specific" only when building for the cursor target
+- Exclude "legacy-track" for all targets
 
 ### Imports vs. Inclusions
 
@@ -532,7 +752,7 @@ While they may seem similar, imports and inclusions have different use cases and
 
 Snippets are modular, reusable content components, stored in the `/_snippets` directory. Like pieces of code that provide specific functionality, Mixdown snippets provide isolated content blocks that can be imported into multiple instruction files.
 
-- Snippets are converted to `<snippet_name>` tags in the final output. This can be disabled using the `output="tag:omit"` or `output="inline"` attribute.
+- Snippets are converted to `<snippet_name>` tags in the final output. This can be disabled using the `tag-omit` or `inline` options.
 
 Example:
 
@@ -576,10 +796,10 @@ Triple-brace `{{{...}}}` to skip processing of the content and render it in the 
 
 ```markdown
 > Triple braces will preserve the Mixdown Notation on render.
-> Adding `output="tag:omit"` will remove those track tags from the output.
+> Adding `tag-omit` will remove those track tags from the output.
 > Adding `+cursor` will only include the section for the `cursor` target.
 
-{{{examples output="tag:omit" +cursor}}}
+{{{examples tag-omit +cursor}}}
   {{example}}
   - Instructions
   - Rules
@@ -593,7 +813,7 @@ The above will render (in Cursor only) as:
 - Rules
 {{/example}}
 
-Without the `output="tag:omit"` attribute, it would render as:
+Without the `tag-omit` option, it would render as:
 
 <examples>
   <example>
@@ -645,7 +865,7 @@ Mixdown has specific rules for whitespace to ensure consistent parsing and outpu
 **Section with attributes:**
 
 ```markdown
-{{instructions \name="core_rules" +cursor -windsurf}}
+{{instructions name(core-rules) +cursor !windsurf}}
 All code must follow consistent formatting.
 
 Testing is required for all new features.
@@ -678,7 +898,7 @@ Version: {{ $.version }}
 **Using raw output:**
 
 ```markdown
-{{{example output="tag:omit"}}}
+{{{example tag-omit}}}
 To include a section in Mixdown use: {{section-name}}
 {{{/example}}}
 ```
@@ -708,32 +928,50 @@ Features planned for v0.x releases:
 
 ## Appendix
 
-### Comprehensive Attribute Reference Table
+### Comprehensive Option Reference Table
 
-The following table provides a complete list of all supported attributes in Mixdown v0:
+The following table provides a complete list of all supported options in Mixdown v0:
 
-| Attribute            | Type    | Default    | Track | Import | Frontmatter | Description |
-|----------------------|---------|------------|---------|-------|--------------|-------------|
-| `name`               | string  | none       | ✅      | ✅    | ✅           | Name or identifier (frontmatter: mix identifier, required) |
-| `description`        | string  | none       | ❌      | ❌    | ✅           | Short description of content (frontmatter only) |
-| `+/-target`          | flag    | none       | ✅      | ✅    | ❌           | Include/exclude for specific targets |
-| `output`           | string  | "default"  | ✅      | ✅    | ❌           | Controls how content is processed and displayed |
-| `allow-bare-xml-tags`| boolean | false      | ❌      | ❌    | ✅           | Allow using bare XML tags |
-| `tracks`           | list    | none       | ❌      | ✅    | ❌           | Filter specific tracks in imports |
-| `version`            | string  | none       | ❌      | ❌    | ✅           | Mix version |
-| `labels`             | array   | `[]`       | ❌      | ❌    | ✅           | Categorization tags |
-| `target.include`     | array   | `[]`       | ❌      | ❌    | ✅           | Target inclusion list |
-| `target.exclude`     | array   | `[]`       | ❌      | ❌    | ✅           | Target exclusion list |
-| `target.path`        | string  | none       | ❌      | ❌    | ✅           | Custom output path for outputs |
-| `globs`              | array   | `[]`       | ❌      | ❌    | ✅           | File patterns for tool-specific support (frontmatter only) |
-| `alwaysApply`        | boolean | false      | ❌      | ❌    | ✅           | Whether rule should always be applied (frontmatter only) |
-| `\key`               | flag    | none       | ✅      | ✅    | ❌           | Include attribute in rendered XML |
+| Option Category      | Examples                         | Track | Import | Frontmatter | Description |
+|----------------------|----------------------------------|---------|-------|--------------|-------------|
+| **Core Options** | | | | | |
+| `name(value)`        | `name(important-rules)`          | ✅      | ✅    | ✅           | Name or identifier (frontmatter: mix identifier, required) |
+| `+/!target`          | `+cursor`, `!windsurf`           | ✅      | ✅    | ❌           | Include/exclude for specific targets |
+| `target:[options]`   | `cursor:[code-js tag-omit]`      | ✅      | ✅    | ❌           | Target-scoped multiple options |
+| **Display Options** | | | | | |
+| `tag-omit`           | `tag-omit`                       | ✅      | ✅    | ❌           | Remove XML tags from output |
+| `inline`             | `inline`                         | ✅      | ✅    | ❌           | Render content inline without tags |
+| `inline-with-tags`   | `inline-with-tags`               | ✅      | ✅    | ❌           | Render content inline with tags |
+| **Raw Options** | | | | | |
+| `raw-all`            | `raw-all`                        | ✅      | ✅    | ❌           | Render as raw Mixdown notation |
+| `raw-content`        | `raw-content`                     | ✅      | ✅    | ❌           | Process tags, keep content as raw |
+| `raw-tags`           | `raw-tags`                       | ✅      | ✅    | ❌           | Process content, keep tags as raw |
+| **Code Options** | | | | | |
+| `code`               | `code`                           | ✅      | ✅    | ❌           | Auto-detect code language |
+| `code-*`             | `code-js`, `code-py`             | ✅      | ✅    | ❌           | Render as code block in language |
+| **Heading Options** | | | | | |
+| `h-1` to `h-6`       | `h-2`                            | ✅      | ✅    | ❌           | Set heading level |
+| `h-inc`/`h-dec`      | `h-inc`                          | ✅      | ✅    | ❌           | Increment/decrement heading level |
+| **Numbering Options** | | | | | |
+| `num-*`              | `num`, `num-heading-first`       | ✅      | ✅    | ❌           | Control content numbering |
+| **Import Filtering** | | | | | |
+| `(+/-tracks)`        | `(+track-one !track-two)`        | ❌      | ✅    | ❌           | Filter specific tracks in imports |
+| **Frontmatter**     | | | | | |
+| `description`        | (In YAML frontmatter)            | ❌      | ❌    | ✅           | Short description of content |
+| `allow-bare-xml-tags`| (In YAML frontmatter)            | ❌      | ❌    | ✅           | Allow using bare XML tags |
+| `version`            | (In YAML frontmatter)            | ❌      | ❌    | ✅           | Mix version |
+| `labels`             | (In YAML frontmatter)            | ❌      | ❌    | ✅           | Categorization tags |
+| `target.include/exclude` | (In YAML frontmatter)         | ❌      | ❌    | ✅           | Target inclusion/exclusion lists |
+| `target.path`        | (In YAML frontmatter)            | ❌      | ❌    | ✅           | Custom output path for outputs |
+| `globs`              | (In YAML frontmatter)            | ❌      | ❌    | ✅           | File patterns for tool-specific support |
+| `alwaysApply`        | (In YAML frontmatter)            | ❌      | ❌    | ✅           | Whether rule should always be applied |
 
 **Notes:**
 
-- All string attributes can be target-scoped with `+target?key="value"` notation
+- Options are space-delimited (`{{track tag-omit code-js}}`) or can be grouped with brackets (`{{track [tag-omit code-js]}}`) 
+- Target-scoped options use the colon syntax: `target:option` or `target:[option1 option2]`
 - Frontmatter target blocks override global values (e.g., `cursor: { description: "..." }`)
 - Target-specific paths can be set with `cursor: { target: { path: "./custom/path" } }`
-- The `\key` flag specifically indicates that the attribute should be included in the XML output
+- Custom XML attributes use the format `attribute="value"` and are passed through to the output XML
 
 *© 2025 Mixdown contributors – MIT License.*
