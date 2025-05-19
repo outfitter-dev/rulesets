@@ -18,12 +18,12 @@ The problem is, they all have different formats, behavior, and capabilities, whi
 
 Mixdown is "Terraform for AI prompts": declare your ideal prompt rules once, target dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative instructions—no copy‑paste, no drift, just high‑quality, version-controlled context.
 
-With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single "mix" file (`.md`). This mix is the "gold master" for your instructions, from which individual target-specific records are created in their respective format and sent to the right places.
+With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single "mix" file (`.md`). This mix is the "gold master" for your instructions, from which individual target-specific outputs are created in their respective format and sent to the right places.
 
 The app consists of:
 
 1. A Node.js app with a compiler (featuring a plugin architecture for different tools), an API, CLI, and Model Context Protocol implementation for managing prompts and instructions.
-2. A CommonMark-compliant markup specification for creating effective and reusable prompts, processed by the compiler to generate tool-specific records.
+2. A CommonMark-compliant markup specification for creating effective and reusable prompts, processed by the compiler to generate tool-specific outputs.
 
 Result: *author once, distribute everywhere, zero drift.*
 
@@ -34,25 +34,25 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 ## Core Concepts
 
 **Mix**
-: Source instruction files, written in 100% previewable Markdown. Written in Mixdown Syntax and use `{{...}}` tags to direct the compiler.
+: Source instruction files, written in 100% previewable Markdown. Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
 
-**Record**
-: Target-specific output files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`).
+**Output**
+: Target-specific output files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their target tool directories, these are referred to as "tool-ready outputs".
 
-**Section**
-: Delimited, reusable blocks of content using syntax like `{{instructions}}...{{/instructions}}` with optional attributes. They are 1:1 translations of XML tags (e.g., `{{instructions}}` → `<instructions>`), but readable in Markdown previewers.
+**Track**
+: Delimited, reusable blocks of content using notation like `{{instructions}}...{{/instructions}}` with optional attributes. They are 1:1 translations of XML tags (e.g., `{{instructions}}` → `<instructions>`), but readable in Markdown previewers.
 
-**Remix**
-: A reference to another mix file, section, stem, or template (`{{> my-rule}}`). Embeds content from another source.
+**Import**
+: A reference to another mix file, track, snippet, or template (`{{> my-rule}}`). Embeds content from another source.
 
-**Insertion**
+**Variable**
 : Dynamic value replaced inline at build time (e.g., `{{$key}}` for aliases, `{{$.frontmatter.key}}` for frontmatter data, `{{$target}}` for the current target name).
 
-**Tag**
-: Syntax element using `{{...}}` notation, used throughout Mixdown to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
+**Notation Marker**
+: Element using `{{...}}` notation, used throughout Mixdown to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
 
-**Stem**
-: Modular, reusable content component stored in `/_stems`.
+**Snippet**
+: Modular, reusable content component stored in `/_snippets`.
 
 **Target**
 : A supported tool (Cursor, Roo Code, etc.) identified by a `kebab-case` ID (e.g., `cursor`, `roo-code`). Defines tool-specific criteria for compiling mixes to rules files and is provided through plugins.
@@ -76,11 +76,11 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 
 ## Key Features
 
-### Mixdown Syntax
+### Mixdown Notation
 
 - **100% Preview-able Markdown** – Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
 - **Granular Sections** – Filter sections within a single mix for per-target inclusion/exclusion.
-- **Build-time Insertions** – Aliases and frontmatter data injection.
+- **Build-time Variables** – Aliases and frontmatter data injection.
 
 ### Compiler & Integration
 
@@ -104,7 +104,7 @@ mixdown init      # scaffolds .mixdown/ directory structure
 
 mixdown import    # imports existing rules files into the mixdown format
 
-mixdown build     # writes records to .mixdown/records/
+mixdown build     # writes outputs to .mixdown/outputs/
 ```
 
 ## Directory Structure
@@ -112,29 +112,29 @@ mixdown build     # writes records to .mixdown/records/
 ```
 project/
 ├── .mixdown/
-│   ├── records/
+│   ├── outputs/
 │   │   └── builds/         # compiled outputs
-│   ├── instructions/       # Mix files (*.md)
-│   │   └── _stems/         # reusable content modules
+│   ├── mixes/       # Mix files (*.md)
+│   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json # compiler config
 ```
 
-## Syntax Cheatsheet
+## Notation Cheatsheet
 
 | Token / Feature | Example | Notes |
 |-----------------|---------|-------|
-| **Section** | `{{instructions name="Rules" +cli}}...{{/instructions}}` | Attributes control name & export. |
+| **Track** | `{{instructions name="Rules" +cli}}...{{/instructions}}` | Attributes control name & export. |
 | **Front-matter** | `---\nname: foo\n---` | YAML at file top. |
-| **Remix** | `{{> legal}}` | Embed content from another mix. |
-| **Remix Section** | `{{> conventions#section-name}}` | Embed a specific section. |
+| **Import** | `{{> legal}}` | Embed content from another mix. |
+| **Import Track** | `{{> conventions#track-name}}` | Embed a specific track. |
 | **Internal Link** | `[Read more](rules.md)` | Standard Markdown links. |
 | **Absolute Link** | `{{link [\"Link Title\"] /path/to/file.ts}}` | Links to project files. |
-| **Alias Insertion** | `{{$project}}` | Resolved via `aliases` in config. |
-| **Data Insertion** | `{{$.frontmatter.key}}` | Injects YAML frontmatter data. |
-| **Target Insertion** | `{{$target}}` / `{{$target.id}}` | Injects current target name/ID. |
+| **Alias Variable** | `{{$project}}` | Resolved via `aliases` in config. |
+| **Data Variable** | `{{$.frontmatter.key}}` | Injects YAML frontmatter data. |
+| **Target Variable** | `{{$target}}` / `{{$target.id}}` | Injects current target name/ID. |
 | **Instruction Placeholder** | `[fill this in]` | Marker for LLM to complete. |
 
-Full spec lives in `docs/spec/mixdown-syntax.md`.
+Full spec lives in `docs/spec/mixdown-notation.md`.
 
 ## Versioning and Changelog
 
@@ -168,6 +168,6 @@ See [`docs/contributing/DEVELOPMENT.md`](docs/contributing/DEVELOPMENT.md) for f
 
 ## References
 
-- `docs/spec/mixdown-syntax.md` – Full syntax specification.
+- `docs/spec/mixdown-notation.md` – Full notation specification.
 - `docs/developer/plugin-development.md` – Build a new plugin provider.
 - `docs/architecture/design-decisions.md` – Design rationale & deep-dive.

@@ -19,22 +19,22 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 <key_concepts>
 - **Mix**: Source instruction files, written in 100% previewable Markdown
 - **Target**: A supported tool, such as `cursor`, `windsurf`, or `claude-code`
-- **Record**: Target-specific output files, rendered from the source mix
-- **Tag**: Syntax element using `{{...}}` notation, used to direct the compiler
-- **Section**: Delimited blocks of content with optional attributes (`{{instructions}}...{{/instructions}}`)
-- **Remix**: Embed content from another mix, section, stem, or template (`{{> my-rule }}`)
-- **Insertion**: Dynamic values replaced inline at build time (`{{$key}}`)
-- **Stem**: Modular, reusable content components
+- **Output**: Target-specific output files, rendered from the source mix
+- **Notation Marker**: Element using `{{...}}` notation, used to direct the compiler
+- **Track**: Delimited blocks of content with optional attributes (`{{instructions}}...{{/instructions}}`)
+- **Import**: Embed content from another mix, track, snippet, or template (`{{> my-rule }}`)
+- **Variable**: Dynamic values replaced inline at build time (`{{$key}}`)
+- **Snippet**: Modular, reusable content components
 </key_concepts>
 
 <project_structure>
 ```text
 project/
 ├── .mixdown/
-│   ├── records/
+│   ├── outputs/
 │   │   └── builds/         # compiled outputs
-│   ├── instructions/       # Mix files (*.md)
-│   │   └── _stems/         # reusable content modules
+│   ├── mixes/       # Mix files (*.md)
+│   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json # Mixdown config file
 ```
 </project_structure>
@@ -45,13 +45,13 @@ project/
 | ✨ **Simplicity** | Reduce bespoke format/structure for each tool to just one. |
 | 🧹 **Lintability** | Files must pass standard markdown-lint without hacks. |
 | 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc. |
-| 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new syntax. |
+| 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new notation. |
 </design_goals>
 
 <frontmatter_example>
 ```yaml
 ---
-# .mixdown/instructions/my-rule.md
+# .mixdown/mixes/my-rule.md
 mixdown:
   version: 0.1.0 # version number for the Mixdown format used
 description: "Rules for this project" # useful for tools that use descriptions
@@ -77,11 +77,11 @@ version: 2.0 # version number for this file
 - Mix files: `kebab-case.md` (e.g., `coding-standards.md`)
 - Directories: `kebab-case` (e.g., `_samples`)
 - Config files: `kebab-case.config.json` (e.g., `mixdown.config.json`)
-- Section names: `kebab-case` (e.g., `{{user-instructions}}`)
+- Track names: `kebab-case` (e.g., `{{user-instructions}}`)
 - XML output tags: `snake_case` (e.g., `<user_instructions>`)
 </naming_conventions>
 
-<mixdown_syntax>
+<mixdown_notation>
 <example>
 ```markdown
 {{instructions +cursor -claude-code}}
@@ -90,22 +90,22 @@ version: 2.0 # version number for this file
 ```
 </example>
 
-<remixes>
+<imports>
 ```markdown
-{{> @legal}}  <!-- Embeds `/_stems/legal.md` -->
-{{> conventions#section-name}}  <!-- Embed a specific section -->
-{{> my-rules sections="important-considerations,!less-important-considerations"}}  <!-- Filter sections -->
+{{> @legal}}  <!-- Embeds `/_snippets/legal.md` -->
+{{> conventions#track-name}}  <!-- Embed a specific track -->
+{{> my-rules tracks="important-considerations,!less-important-considerations"}}  <!-- Filter tracks -->
 ```
-</remixes>
+</imports>
 
-<insertions>
+<variables>
 ```markdown
 Alias: {{$alias}}
 Mix file version: {{$file.version}}
 Current target: {{$target}}
 Target ID: {{$target.id}}
 ```
-</insertions>
+</variables>
 
 <target_scoped_attributes>
 ```markdown
@@ -115,35 +115,35 @@ Target ID: {{$target.id}}
 ```
 </target_scoped_attributes>
 
-<rendering_options>
+<output_options>
 ```markdown
-{{instructions rendered="unwrapped"}}
+{{instructions output="tag:omit"}}
 Content without surrounding XML tags
 {{/instructions}}
 
-{{> @code-example rendered="code:javascript"}}
+{{> @code-example output="code:javascript"}}
 ```
-</rendering_options>
+</output_options>
 
-<raw_syntax>
+<raw_notation>
 ```markdown
-{{{examples}}}  <!-- Triple braces preserve Mixdown syntax -->
+{{{examples}}}  <!-- Triple braces preserve Mixdown notation -->
 {{example}}
 - Instructions
 - Rules
 {{/example}}
 {{{/examples}}}
 ```
-</raw_syntax>
+</raw_notation>
 
 <placeholders>
 ```markdown
 [requirements]  <!-- Instruction placeholder for AI to fill -->
-{requirements}  <!-- Alternative placeholder syntax -->
+{requirements}  <!-- Alternative placeholder notation -->
 ```
 </placeholders>
 
-</mixdown_syntax>
+</mixdown_notation>
 
 <contributing_guidelines>
 When contributing to this project:
