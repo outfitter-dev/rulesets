@@ -16,6 +16,9 @@ This document provides terminology guidance for consistent language in Mixdown d
 | **Snippet** | Modular content component stored in `/_snippets` | "Import commonly used content as snippets." |
 | **Option** | A configuration applied to tracks or imports | "Apply the tag-omit option to remove XML tags in output." |
 | **Scope** | A target-specific context for options | "Use target:option to apply options in a specific scope." |
+| **Option Family** | Group of related options sharing a prefix | "The code-* family includes language-specific formatting." |
+| **Option Parameter** | Value enclosed in parentheses after an option | "The name(value) parameter sets the XML name attribute." |
+| **Modifier** | Special option that changes inclusion/exclusion | "Use the + modifier to include content for a target." |
 
 ## Linguistic Conventions
 
@@ -54,8 +57,13 @@ This document provides terminology guidance for consistent language in Mixdown d
 - ✅ "Scope options to" (when targeting options to specific tools)
 - ✅ "Include with `+`" (when referring to inclusion)
 - ✅ "Exclude with `!`" (when referring to exclusion)
-- ❌ "Option settings" (use "option values" instead)
-- ❌ "Target-specific options" (use "scoped options" instead)
+- ✅ "Option family" (for groups of related options like `code-*` or `h-*`)
+- ✅ "Option pattern" (for consistent naming conventions like `prefix-*`)
+- ✅ "Target-scoped options" (for options applied to specific targets)
+- ✅ "Option parameter" (for values in parentheses like `name(value)`)
+- ❌ "Option settings" (use "option values" or "option parameters" instead)
+- ❌ "Target-specific options" (use "target-scoped options" instead)
+- ❌ "Attribute" (use "option" for Mixdown directives, "XML attribute" for output)
 
 #### XML Generation
 
@@ -93,10 +101,11 @@ Mixdown uses specific delimiters consistently throughout the syntax:
 | Delimiter | Role | Example | Purpose |
 |-----------|------|---------|---------|
 | `:` | Scope indicator | `target:code-js` | Indicates that options are scoped to a specific target |
-| `()` | Value container | `name(value)` | Contains values for a specific option |
-| `[]` | Option grouping | `target:[option-1 option-2]` | Groups multiple options within a scope |
-| `+` | Inclusion | `+target`, `+track-one` | Indicates inclusion of a target or track |
-| `!` | Exclusion | `!target`, `!track-two` | Indicates exclusion of a target or track |
+| `()` | Parameter container | `name(value)` | Contains parameter values for options |
+| `[]` | Option grouping | `target:[option-1 option-2]` | Groups multiple options for readability |
+| `+` | Inclusion modifier | `+target`, `+track-one` | Indicates inclusion of a target or track |
+| `!` | Exclusion modifier | `!target`, `!track-two` | Indicates exclusion of a target or track |
+| `""` | Attribute value | `priority="high"` | Contains custom XML attribute values |
 
 ## Markdown Formatting
 

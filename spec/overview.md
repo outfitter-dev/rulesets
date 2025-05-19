@@ -928,50 +928,122 @@ Features planned for v0.x releases:
 
 ## Appendix
 
-### Comprehensive Option Reference Table
+### Comprehensive Option Reference
 
-The following table provides a complete list of all supported options in Mixdown v0:
+This section provides a complete reference for all options supported in Mixdown v0.x, organized by their purpose and usage patterns.
 
-| Option Category      | Examples                         | Track | Import | Frontmatter | Description |
-|----------------------|----------------------------------|---------|-------|--------------|-------------|
-| **Core Options** | | | | | |
-| `name(value)`        | `name(important-rules)`          | ✅      | ✅    | ✅           | Name or identifier (frontmatter: mix identifier, required) |
-| `+/!target`          | `+cursor`, `!windsurf`           | ✅      | ✅    | ❌           | Include/exclude for specific targets |
-| `target:[options]`   | `cursor:[code-js tag-omit]`      | ✅      | ✅    | ❌           | Target-scoped multiple options |
-| **Display Options** | | | | | |
-| `tag-omit`           | `tag-omit`                       | ✅      | ✅    | ❌           | Remove XML tags from output |
-| `inline`             | `inline`                         | ✅      | ✅    | ❌           | Render content inline without tags |
-| `inline-with-tags`   | `inline-with-tags`               | ✅      | ✅    | ❌           | Render content inline with tags |
-| **Raw Options** | | | | | |
-| `raw-all`            | `raw-all`                        | ✅      | ✅    | ❌           | Render as raw Mixdown notation |
-| `raw-content`        | `raw-content`                     | ✅      | ✅    | ❌           | Process tags, keep content as raw |
-| `raw-tags`           | `raw-tags`                       | ✅      | ✅    | ❌           | Process content, keep tags as raw |
-| **Code Options** | | | | | |
-| `code`               | `code`                           | ✅      | ✅    | ❌           | Auto-detect code language |
-| `code-*`             | `code-js`, `code-py`             | ✅      | ✅    | ❌           | Render as code block in language |
-| **Heading Options** | | | | | |
-| `h-1` to `h-6`       | `h-2`                            | ✅      | ✅    | ❌           | Set heading level |
-| `h-inc`/`h-dec`      | `h-inc`                          | ✅      | ✅    | ❌           | Increment/decrement heading level |
-| **Numbering Options** | | | | | |
-| `num-*`              | `num`, `num-heading-first`       | ✅      | ✅    | ❌           | Control content numbering |
-| **Import Filtering** | | | | | |
-| `(+/-tracks)`        | `(+track-one !track-two)`        | ❌      | ✅    | ❌           | Filter specific tracks in imports |
-| **Frontmatter**     | | | | | |
-| `description`        | (In YAML frontmatter)            | ❌      | ❌    | ✅           | Short description of content |
-| `allow-bare-xml-tags`| (In YAML frontmatter)            | ❌      | ❌    | ✅           | Allow using bare XML tags |
-| `version`            | (In YAML frontmatter)            | ❌      | ❌    | ✅           | Mix version |
-| `labels`             | (In YAML frontmatter)            | ❌      | ❌    | ✅           | Categorization tags |
-| `target.include/exclude` | (In YAML frontmatter)         | ❌      | ❌    | ✅           | Target inclusion/exclusion lists |
-| `target.path`        | (In YAML frontmatter)            | ❌      | ❌    | ✅           | Custom output path for outputs |
-| `globs`              | (In YAML frontmatter)            | ❌      | ❌    | ✅           | File patterns for tool-specific support |
-| `alwaysApply`        | (In YAML frontmatter)            | ❌      | ❌    | ✅           | Whether rule should always be applied |
+#### Option Naming Conventions
 
-**Notes:**
+Mixdown uses consistent naming patterns to make options discoverable and intuitive:
 
-- Options are space-delimited (`{{track tag-omit code-js}}`) or can be grouped with brackets (`{{track [tag-omit code-js]}}`) 
-- Target-scoped options use the colon syntax: `target:option` or `target:[option1 option2]`
-- Frontmatter target blocks override global values (e.g., `cursor: { description: "..." }`)
-- Target-specific paths can be set with `cursor: { target: { path: "./custom/path" } }`
-- Custom XML attributes use the format `attribute="value"` and are passed through to the output XML
+| Pattern | Description | Examples |
+|---------|-------------|----------|
+| `prefix-*` | Family of related options | `code-js`, `h-2` |
+| `name(value)` | Option with parameter value | `name(important-rules)` |
+| `+/-prefix` | Inclusion/exclusion modifiers | `+cursor`, `!windsurf` |
+| `target:option` | Target-scoped single option | `cursor:tag-omit` |
+| `target:[opts]` | Target-scoped option group | `cursor:[tag-omit code-js]` |
+| `custom="value"` | Custom XML attribute | `priority="high"` |
+
+#### Option Categories and Usage
+
+The table below organizes options by their categories with comprehensive information about where they can be used.
+
+| Option | Format | Example | Track | Import | Frontmatter | Description |
+|--------|--------|---------|-------|--------|-------------|-------------|
+| **Target Selection Options** ||||||||
+| `+target` | Flag | `+cursor` | ✅ | ✅ | ❌ | Include content for specific target |
+| `!target` | Flag | `!windsurf` | ✅ | ✅ | ❌ | Exclude content for specific target |
+| `+group` | Flag | `+ide` | ✅ | ✅ | ❌ | Include for all targets in a group |
+| `!group` | Flag | `!cli` | ✅ | ✅ | ❌ | Exclude for all targets in a group |
+| **Target-Scoped Options** ||||||||
+| `target:option` | Scoped | `cursor:tag-omit` | ✅ | ✅ | ❌ | Apply option only for specified target |
+| `target:[options]` | Scoped group | `cursor:[code-js name(rules)]` | ✅ | ✅ | ❌ | Apply multiple options only for specified target |
+| `+target:option` | Combined | `+cursor:tag-omit` | ✅ | ✅ | ❌ | Include for target and apply option to that target |
+| `!target:option` | Combined | `!windsurf:code-js` | ✅ | ✅ | ❌ | Exclude for target (option has no effect) |
+| **Metadata Options** ||||||||
+| `name(value)` | Parameter | `name(important-rules)` | ✅ | ✅ | ✅ | Set XML name attribute; identifier in frontmatter |
+| `id(value)` | Parameter | `id(section-1)` | ✅ | ✅ | ❌ | Set id attribute for linking and references |
+| `custom="value"` | XML attribute | `priority="high"` | ✅ | ✅ | ❌ | Set custom XML attributes passed to output |
+| **Display Options** ||||||||
+| `tag-omit` | Flag | `tag-omit` | ✅ | ✅ | ❌ | Remove XML tags from output, preserve formatting |
+| `inline` | Flag | `inline` | ✅ | ✅ | ❌ | Remove XML tags and render content inline |
+| `inline-with-tags` | Flag | `inline-with-tags` | ✅ | ✅ | ❌ | Keep XML tags but render content inline |
+| **Code Formatting Options** ||||||||
+| `code` | Flag | `code` | ✅ | ✅ | ❌ | Auto-detect language from file extension |
+| `code-*` | Flag | `code-js`, `code-py`, etc. | ✅ | ✅ | ❌ | Format as code block in specified language |
+| **Heading Options** ||||||||
+| `h-[1-6]` | Flag | `h-1` through `h-6` | ✅ | ✅ | ❌ | Format as heading of specified level |
+| `h-inc` | Flag | `h-inc` | ✅ | ✅ | ❌ | Increment heading level (demote) |
+| `h-dec` | Flag | `h-dec` | ✅ | ✅ | ❌ | Decrement heading level (promote) |
+| `h-same` | Flag | `h-same` | ✅ | ✅ | ❌ | Keep same heading level |
+| `h-initial` | Flag | `h-initial` | ✅ | ✅ | ❌ | Replace first heading |
+| **Numbering Options** ||||||||
+| `num` | Flag | `num` | ✅ | ✅ | ❌ | Enable default numbering |
+| `num-heading-first` | Flag | `num-heading-first` | ✅ | ✅ | ❌ | Number first heading only |
+| `num-heading-last` | Flag | `num-heading-last` | ✅ | ✅ | ❌ | Number last heading only |
+| `num-tag-first` | Flag | `num-tag-first` | ✅ | ✅ | ❌ | Number first tag only |
+| `num-tag-last` | Flag | `num-tag-last` | ✅ | ✅ | ❌ | Number last tag only |
+| **Raw Notation Options** ||||||||
+| `raw-all` | Flag | `raw-all` | ✅ | ✅ | ❌ | Render everything as raw Mixdown notation |
+| `raw-content` | Flag | `raw-content` | ✅ | ✅ | ❌ | Process tags, preserve content as raw |
+| `raw-tags` | Flag | `raw-tags` | ✅ | ✅ | ❌ | Process content, preserve tags as raw |
+| **Import Filtering** ||||||||
+| `(+track)` | Parameter | `(+track-name)` | ❌ | ✅ | ❌ | Include only specific track from import |
+| `(!track)` | Parameter | `(!track-name)` | ❌ | ✅ | ❌ | Exclude specific track from import |
+| `(+track1 +track2)` | Parameter | `(+section-a +section-b)` | ❌ | ✅ | ❌ | Include multiple specific tracks |
+| `target:(+track)` | Combined | `cursor:(+section-a)` | ❌ | ✅ | ❌ | Target-specific track inclusion |
+| **Frontmatter Configuration** ||||||||
+| `mixdown.version` | YAML | `mixdown.version: 0.1.0` | ❌ | ❌ | ✅ | Mixdown format version for the file |
+| `description` | YAML | `description: "Project rules"` | ❌ | ❌ | ✅ | Short description of the mix |
+| `name` | YAML | `name: my-rules` | ❌ | ❌ | ✅ | Unique identifier for the mix (defaults to filename) |
+| `version` | YAML | `version: 2.0` | ❌ | ❌ | ✅ | Version number for this mix file |
+| `labels` | YAML | `labels: ["core", "security"]` | ❌ | ❌ | ✅ | Categorization tags for the mix |
+| `globs` | YAML | `globs: ["**/*.{txt,md}"]` | ❌ | ❌ | ✅ | File patterns for tool-specific support |
+| `target.include` | YAML | `target.include: ["cursor"]` | ❌ | ❌ | ✅ | List of targets to include this mix for |
+| `target.exclude` | YAML | `target.exclude: ["claude-code"]` | ❌ | ❌ | ✅ | List of targets to exclude this mix from |
+| `target.path` | YAML | `target.path: "./custom/path"` | ❌ | ❌ | ✅ | Custom output path for outputs |
+| `allow-bare-xml-tags` | YAML | `allow-bare-xml-tags: true` | ❌ | ❌ | ✅ | Allow using bare XML tags |
+| `[target-id]` | YAML | `cursor: { ... }` | ❌ | ❌ | ✅ | Target-specific configuration block |
+
+#### Common Option Patterns and Languages
+
+**Code Languages (`code-*`):**
+Most common programming languages are supported using the `code-language` pattern, including:
+`code-js` (JavaScript), `code-ts` (TypeScript), `code-py` (Python), `code-java` (Java), `code-go` (Go), 
+`code-html`, `code-css`, `code-sql`, `code-sh` (Shell/Bash), `code-yaml`, `code-json`, `code-md` (Markdown), etc.
+
+**Common Option Combinations:**
+
+```markdown
+<!-- Basic formatting options -->
+{{track tag-omit}}                    <!-- Remove XML tags, keep block formatting -->
+{{track inline}}                      <!-- Render inline without tags -->
+{{track code-js tag-omit}}           <!-- JavaScript code block without XML wrapper -->
+
+<!-- Target scoping options -->
+{{track +cursor !windsurf}}          <!-- Include for Cursor, exclude for Windsurf -->
+{{track +ide:[code-js]}}             <!-- Include for all IDE targets with code-js formatting -->
+{{track cursor:tag-omit}}            <!-- Apply tag-omit only for Cursor -->
+
+<!-- Import options -->
+{{> @snippet code-js}}               <!-- Import snippet as JavaScript code block -->
+{{> mix-file(+track-a !track-b)}}    <!-- Import only track-a from file, exclude track-b -->
+{{> rules#section cursor:[inline]}}  <!-- Import rules#section with cursor-specific inline formatting -->
+```
+
+#### Option Extension Rules
+
+1. **Prefixed Families**: Options like `code-*` and `h-*` follow consistent naming with a prefix identifying the family.
+
+2. **Parameter Values**: Options requiring values use parentheses syntax: `name(value)`.
+
+3. **Target Scoping**: Target scoping follows the `target:option` or `target:[option1 option2]` pattern.
+
+4. **Custom Attributes**: Any `key="value"` pair not matching a defined option is treated as a custom XML attribute.
+
+5. **Option Precedence**: When multiple options might conflict, the last specified option takes precedence (left-to-right evaluation).
+
+6. **Frontmatter to Target**: Target-specific frontmatter (e.g., `cursor: { ... }`) overrides global values for that target.
 
 *© 2025 Mixdown contributors – MIT License.*
