@@ -13,6 +13,8 @@ This document proposes a comprehensive approach to Mixdown options, designed to 
 5. **Separation of Concerns** - Group options logically by their purpose and effect
 6. **Composability** - Options should combine elegantly without interference
 
+This proposal builds upon and replaces the simplified approach outlined in the simplified-option-syntax.md document, incorporating a more structured and comprehensive system while maintaining the same core benefits of simplicity and intuitiveness.
+
 ## Delimiter Roles
 
 The Mixdown options syntax follows strict delimiter rules to maintain consistency and clarity:
@@ -26,6 +28,16 @@ The Mixdown options syntax follows strict delimiter rules to maintain consistenc
 | `!` | Exclusion | `!target`, `!track-two` | Indicates exclusion of a target or track |
 
 These delimiters always maintain their role throughout the syntax, making the language more intuitive and easier to learn.
+
+### Option Order
+
+Options are processed in left-to-right order. This is particularly important for inclusion/exclusion modifiers, where the order determines the final result. For example:
+
+```markdown
+{{rules +cursor !cursor:option}}
+```
+
+Here, the track is first included for cursor, then a cursor-specific exclusion is applied with an option.
 
 ## Key Challenges Addressed
 
@@ -93,6 +105,18 @@ All options follow a consistent prefix pattern for categorization:
 | `h-initial`           | Replace first heading      | `{{rules h-initial}}`              |
 | `heading`             | Add heading (shortcut)     | `{{rules heading}}`                |
 
+#### Heading Shortcut
+
+For convenience, you can use a string as the first item in a track to automatically create a heading:
+
+```markdown
+{{section "Section Name" h-3}}
+Section content goes here.
+{{/section}}
+```
+
+This is equivalent to specifying the heading within the content but provides a more visible and consolidated way to name sections.
+
 #### Numbering Options (num-* family)
 
 | Option                | Description                | Example                              |
@@ -120,6 +144,40 @@ All options follow a consistent prefix pattern for categorization:
 | `name(important-rules)`      | Rename the track (useful for imports)              | `{{> rules name(important-rules)}}`          |
 | `{{> imported-rules(+item1 !item2)}}`               | Filter imported tracks (import markers) | `{{> my-rules(+included cursor:+also !excluded)}}`        |
 | `+cursor[name(Custom Title)]`| Target-scoped override      | `{{rules +cursor[name(Custom Title)]}}`  |
+
+#### Custom XML Attributes
+
+Any option written in the standard `attribute="value"` format that isn't recognized as a special option will be passed through to the XML tag untouched:
+
+```markdown
+{{rules data-id="123" role="example"}}
+Content with tags including the custom attributes
+{{/rules}}
+```
+
+This would render as:
+
+```xml
+<rules data-id="123" role="example">
+Content with tags including the custom attributes
+</rules>
+```
+
+The tag-omit option affects how custom attributes are rendered:
+
+```markdown
+{{instructions data-id="123" tag-omit}}
+Content without tags (data-id doesn't appear)
+{{/instructions}}
+
+{{instructions data-id="123" role="example"}}
+Content with tags including the custom attributes
+{{/instructions}}
+```
+
+The first example renders without tags, so the custom attributes don't appear. The second example includes the tags with all custom attributes.
+
+This approach eliminates the need for any special escape mechanism for preserving custom attributes, making the syntax more intuitive and consistent.
 
 ### 4. Grouping Options
 
@@ -316,3 +374,12 @@ This combines the track filtering approach with target-specific options into a u
 - **Unified Pattern**: Uses the same `target:option` pattern established for other options
 
 This simplified yet powerful approach reduces cognitive load when writing imports while enabling complex conditional inclusion patterns through a single unified syntax.
+
+## Terminology
+
+In Mixdown, we use these specific terms:
+
+- **Track options**: Options applied to content tracks like `{{instructions}}` or `{{code}}`
+- **Import-specific options**: Options that only apply to imports like `{{> snippet}}`
+
+This terminology clearly separates the different types of options based on where they can be applied.
