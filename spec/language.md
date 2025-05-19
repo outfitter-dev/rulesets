@@ -14,6 +14,8 @@ This document provides terminology guidance for consistent language in Mixdown d
 | **Import** | A reference to another mix file or track | "Import common guidelines into multiple files." |
 | **Variable** | Dynamic values replaced at build time | "Use variables to include dynamic data." |
 | **Snippet** | Modular content component stored in `/_snippets` | "Import commonly used content as snippets." |
+| **Option** | A configuration applied to tracks or imports | "Apply the tag-omit option to remove XML tags in output." |
+| **Scope** | A target-specific context for options | "Use target:option to apply options in a specific scope." |
 
 ## Linguistic Conventions
 
@@ -46,6 +48,15 @@ This document provides terminology guidance for consistent language in Mixdown d
 - ✅ "Converted to" (for transformation descriptions)
 - ❌ "Rendered as" (avoid when possible)
 
+#### Options Terminology
+
+- ✅ "Apply options to" (when adding configuration to tracks)
+- ✅ "Scope options to" (when targeting options to specific tools)
+- ✅ "Include with `+`" (when referring to inclusion)
+- ✅ "Exclude with `!`" (when referring to exclusion)
+- ❌ "Option settings" (use "option values" instead)
+- ❌ "Target-specific options" (use "scoped options" instead)
+
 #### XML Generation
 
 - ✅ "Converted to XML tags"
@@ -75,9 +86,21 @@ Mixdown uses audio production terminology to reinforce its brand identity:
 | **Track** | Individual audio component | Individual content block in a mix |
 | **Snippet** | Reusable code fragment | Modular, reusable content component |
 
+## Delimiter Usage
+
+Mixdown uses specific delimiters consistently throughout the syntax:
+
+| Delimiter | Role | Example | Purpose |
+|-----------|------|---------|---------|
+| `:` | Scope indicator | `target:code-js` | Indicates that options are scoped to a specific target |
+| `()` | Value container | `name(value)` | Contains values for a specific option |
+| `[]` | Option grouping | `target:[option-1 option-2]` | Groups multiple options within a scope |
+| `+` | Inclusion | `+target`, `+track-one` | Indicates inclusion of a target or track |
+| `!` | Exclusion | `!target`, `!track-two` | Indicates exclusion of a target or track |
+
 ## Markdown Formatting
 
-- Heads (`#` notation)
+- Headings (`#` notation)
   - Must be preceded and followed by blank lines
   - Must not end with `:`
 - Code blocks
