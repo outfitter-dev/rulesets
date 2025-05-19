@@ -6,14 +6,19 @@ This document provides terminology guidance for consistent language in Mixdown d
 
 | Term | Definition | Usage Examples |
 |------|------------|----------------|
-| **Mix** | Source instruction files, written in Mixdown Syntax | "Write your code standards in a mix file." |
-| **Record** | Target-specific output files generated from mixes | "Compile your mixes into records for each tool." |
+| **Mix** | Source instruction files, written in Mixdown Notation | "Write your code standards in a mix file." |
+| **Output** | Target-specific output files generated from mixes | "Compile your mixes into outputs for each tool." |
 | **Target** | A supported tool (e.g., Cursor, Claude Code) | "Each target has specific formatting requirements." |
-| **Tag** | Syntax element using `{{...}}` notation | "Use tags to direct the compiler." |
-| **Section** | Delimited blocks marked with `{{tag}}...{{/tag}}` | "Define a section for agent instructions." |
-| **Remix** | A reference to another mix file or section | "Remix common guidelines into multiple files." |
-| **Insertion** | Dynamic values replaced at build time | "Use insertions to include variable data." |
-| **Stem** | Modular content component stored in `/_stems` | "Mix in commonly used content as stems." |
+| **Notation Marker** | Element using `{{...}}` notation | "Use notation markers to direct the compiler." |
+| **Track** | Delimited blocks marked with `{{track}}...{{/track}}` | "Define a track for agent instructions." |
+| **Import** | A reference to another mix file or track | "Import common guidelines into multiple files." |
+| **Variable** | Dynamic values replaced at build time | "Use variables to include dynamic data." |
+| **Snippet** | Modular content component stored in `/_snippets` | "Import commonly used content as snippets." |
+| **Option** | A configuration applied to tracks or imports | "Apply the tag-omit option to remove XML tags in output." |
+| **Scope** | A target-specific context for options | "Use target:option to apply options in a specific scope." |
+| **Option Family** | Group of related options sharing a prefix | "The code-* family includes language-specific formatting." |
+| **Option Parameter** | Value enclosed in parentheses after an option | "The name(value) parameter sets the XML name attribute." |
+| **Modifier** | Special option that changes inclusion/exclusion | "Use the + modifier to include content for a target." |
 
 ## Linguistic Conventions
 
@@ -27,16 +32,16 @@ This document provides terminology guidance for consistent language in Mixdown d
 
 #### Compilation Process
 
-- ✅ "Compile mixes into records"
+- ✅ "Compile mixes into outputs"
 - ✅ "Generate tool-specific outputs"
-- ✅ "Transform mix into target-specific records"
+- ✅ "Transform mix into target-specific outputs"
 - ❌ "Render artifacts" (outdated)
 
-#### Record Generation
+#### Output Generation
 
 - ✅ "Output" (as a noun for the compilation result)
-- ✅ "Records are written to their respective locations"
-- ✅ "The mix file is transformed into records"
+- ✅ "Outputs are written to their respective locations"
+- ✅ "The mix file is transformed into outputs"
 - ❌ "The rendered artifact" (outdated)
 
 #### Content Display
@@ -45,6 +50,20 @@ This document provides terminology guidance for consistent language in Mixdown d
 - ✅ "Displayed as" (for visual presentation)
 - ✅ "Converted to" (for transformation descriptions)
 - ❌ "Rendered as" (avoid when possible)
+
+#### Options Terminology
+
+- ✅ "Apply options to" (when adding configuration to tracks)
+- ✅ "Scope options to" (when targeting options to specific tools)
+- ✅ "Include with `+`" (when referring to inclusion)
+- ✅ "Exclude with `!`" (when referring to exclusion)
+- ✅ "Option family" (for groups of related options like `code-*` or `h-*`)
+- ✅ "Option pattern" (for consistent naming conventions like `prefix-*`)
+- ✅ "Target-scoped options" (for options applied to specific targets)
+- ✅ "Option parameter" (for values in parentheses like `name(value)`)
+- ❌ "Option settings" (use "option values" or "option parameters" instead)
+- ❌ "Target-specific options" (use "target-scoped options" instead)
+- ❌ "Attribute" (use "option" for Mixdown directives, "XML attribute" for output)
 
 #### XML Generation
 
@@ -60,8 +79,8 @@ This document provides terminology guidance for consistent language in Mixdown d
 | Mix files | `kebab-case.md` | `coding-standards.md` |
 | Directory | `kebab-case` | `_samples` |
 | Config files | `kebab-case.config.json` | `mixdown.config.json` |
-| Section tags | `kebab-case` | `{{user-instructions}}` |
-| Section tags in output records | `snake_case` | `<user_instructions>` |
+| Track markers | `kebab-case` | `{{user-instructions}}` |
+| Track markers in outputs | `snake_case` | `<user_instructions>` |
 
 ## Musical Theme Alignment
 
@@ -71,13 +90,26 @@ Mixdown uses audio production terminology to reinforce its brand identity:
 |------|--------------|-----------------|
 | **Mix** | Source audio tracks | Source instruction file |
 | **Mixdown** | Process of combining audio | Process of compiling instructions |
-| **Record** | Final audio product | Final compiled output |
-| **Track** | Individual audio component | Individual section in a mix |
-| **Stem** | Isolated, reusable track | Modular, reusable content component |
+| **Output** | Final audio product | Final compiled output |
+| **Track** | Individual audio component | Individual content block in a mix |
+| **Snippet** | Reusable code fragment | Modular, reusable content component |
+
+## Delimiter Usage
+
+Mixdown uses specific delimiters consistently throughout the syntax:
+
+| Delimiter | Role | Example | Purpose |
+|-----------|------|---------|---------|
+| `:` | Scope indicator | `target:code-js` | Indicates that options are scoped to a specific target |
+| `()` | Parameter container | `name(value)` | Contains parameter values for options |
+| `[]` | Option grouping | `target:[option-1 option-2]` | Groups multiple options for readability |
+| `+` | Inclusion modifier | `+target`, `+track-one` | Indicates inclusion of a target or track |
+| `!` | Exclusion modifier | `!target`, `!track-two` | Indicates exclusion of a target or track |
+| `""` | Attribute value | `priority="high"` | Contains custom XML attribute values |
 
 ## Markdown Formatting
 
-- Headers (`#` syntax)
+- Headings (`#` notation)
   - Must be preceded and followed by blank lines
   - Must not end with `:`
 - Code blocks
