@@ -102,9 +102,17 @@ globs: ["**/*.py", "**/*.ipynb"]
 Windsurf supports file pattern matching to apply rules only to relevant files.
 
 ### Model Decision Activation
-**Tools**: Windsurf
+**Tools**: Windsurf, Cursor
 
 Windsurf allows the AI to decide whether to include a rule based on relevance.
+
+Cursor implements this through "Agent-Requested" rules with a description field:
+```yaml
+---
+description: "USE WHEN working with database schema"
+---
+```
+The AI sees these descriptions and can fetch the full rule content if deemed relevant to the user's query.
 
 ### Manual Activation
 **Tools**: Windsurf, Aider, Cursor
@@ -159,13 +167,20 @@ Tables and relationships...
 - Rules get automatic hot-reload when instructions file is saved
 
 ### Cursor
-- Supports nested rules in subdirectories
-- Uses .mdc files with YAML front-matter
-- Supports glob patterns for file matching
-- Has "Always Apply" capability
-- Four rule types: Always Apply, Auto-Attached, Agent-Requested, Manual
+- Supports nested rules in subdirectories (v0.50+)
+- Uses .mdc files with YAML front-matter in `.cursor/rules/` directories
+- Supports glob patterns for file matching with some limitations (no brace expansion)
+- File referencing with `@filename` syntax to include external content
+- Four rule types based on activation mechanism:
+  - **Always Apply**: Rules always included (alwaysApply: true)
+  - **Auto-Attached**: Rules that apply when matching file patterns (globs pattern)
+  - **Agent-Requested**: Rules that the AI fetches by relevance (description field)
+  - **Manual**: Rules applied only when explicitly referenced
+- Two-stage rule processing: injection followed by activation
 - Shows which rules are active in the context panel
-- UI integration for rule management
+- UI integration for rule management (Cmd+Shift+P > "New Cursor Rule")
+- Recommends keeping rules under ~500 lines for optimal performance
+- Legacy support for .cursorrules at project root (deprecated)
 
 ### Claude Code
 - Hierarchical loading from multiple directories

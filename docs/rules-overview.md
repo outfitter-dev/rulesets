@@ -23,7 +23,7 @@ Different AI tools use different file locations and naming conventions:
 | Tool | Project Rules | Global/User Rules | Format |
 |------|--------------|-------------------|--------|
 | **[Claude Code](./targets/claude-code/rules-use.md)** | `CLAUDE.md` in root and/or subdirs | `~/.claude/CLAUDE.md` | Markdown with `@file` imports |
-| **[Cursor](./targets/cursor/rules-use.md)** | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based) | Markdown with YAML front-matter |
+| **[Cursor](./targets/cursor/rules-use.md)** | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based) | Markdown with YAML front-matter and `@filename` imports |
 | **[Windsurf](./targets/windsurf/rules-use.md)** | `.windsurf/rules/*.md` files (v1.8.2+) | `~/.codeium/windsurf/memories/global_rules.md` | Markdown with activation modes |
 | **[Roo Code](./targets/roo-code/rules-use.md)** | `.roo/rules/` and `.roo/rules-{mode}/` folders | No built-in global file | Markdown files in folders |
 | **[OpenAI Codex CLI](./targets/codex-cli/rules-use.md)** | `codex.md` in root | `~/.codex/instructions.md` | Markdown text |
@@ -93,6 +93,9 @@ sequenceDiagram
    - [Roo Code](./targets/roo-code/rules-use.md): Mode-specific folders (rules-{mode}/)
    - [OpenAI Codex AGENTS](./targets/codex-agent/rules-use.md): Directory-based loading (upward path walking) with section merging
 3. **Format:** Most use Markdown for human-readability and structure
+4. **Import/Reference Mechanisms:**
+   - [Claude Code](./targets/claude-code/rules-use.md): Uses `@file` syntax to import content from other files
+   - [Cursor](./targets/cursor/rules-use.md): Uses `@filename` syntax to include external file content
 
 ## Best Practices for AI Rules
 
@@ -147,9 +150,10 @@ flowchart TD
     
     B --> B1[Always Apply]
     B --> B2[Auto-Attach by glob]
-    B --> B3[Agent-Requested]
-    B --> B4[Manual]
+    B --> B3[Agent-Requested by description]
+    B --> B4[Manual reference]
     B --> B5[Nested rules in subdirs]
+    B --> B6[File referencing with @filename]
     
     C --> C1[Recursive file discovery]
     C --> C2[Import with @file syntax]
