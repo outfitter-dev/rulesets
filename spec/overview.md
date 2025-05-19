@@ -19,6 +19,7 @@
   - [Quick Start](#quick-start)
 - [Notation Reference](#notation-reference)
   - [Design Goals](#design-goals)
+  - [Delimiter Roles](#delimiter-roles)
   - [Tracks](#tracks)
     - [Track Notation Markers](#track-notation-markers)
     - [Track Marker Names](#track-marker-names)
@@ -26,6 +27,7 @@
     - [Target-scoped Option Overrides](#target-scoped-option-overrides)
     - [Target-scoped Multiple Options](#target-scoped-multiple-options)
     - [Option Processing Order](#option-processing-order)
+    - [Target Filtering Options](#target-filtering-options)
     - [Self-Closing Tags](#self-closing-tags)
     - [Multi-line Markers for Readability](#multi-line-markers-for-readability)
     - [Track Options](#track-options)
@@ -178,6 +180,21 @@ mixdown build     # writes outputs to .mixdown/outputs/
 | 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc. |
 | 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new notation. |
 
+### Delimiter Roles
+
+Mixdown's syntax follows strict delimiter rules to maintain consistency and clarity. Each character serves a specific purpose:
+
+| Delimiter | Role | Example | Purpose |
+|-----------|------|---------|---------| 
+| `:` | Scope indicator | `target:code-js` | Indicates that options are scoped to a specific target |
+| `()` | Value container | `name(value)` | Contains values for a specific option |
+| `[]` | Option grouping | `target:[option-1 option-2]` | Groups multiple options within a scope |
+| `+` | Inclusion | `+target`, `+track-one` | Indicates inclusion of a target or track |
+| `!` | Exclusion | `!target`, `!track-two` | Indicates exclusion of a target or track |
+| `#` | Track reference | `#track-name`, `#[track1 track2]` | References tracks in imports |
+
+These delimiters always maintain their role throughout the syntax, making the language more intuitive and easier to learn.
+
 ### Tracks
 
 Tracks are the core building block of Mixdown and are a direct stand in for XML tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other tracks or mixes.
@@ -206,7 +223,7 @@ Tracks are the core building block of Mixdown and are a direct stand in for XML 
 Content A
 {{/track-one}}
 
-{{track-two +* !claude-code}}
+{{track-two +all !claude-code}}
 Content B
 {{/track-two}}
 
@@ -290,6 +307,27 @@ The track would use heading level 3 because `h-3` appears last and overrides `h-
 
 > [!NOTE]
 > While options are processed left-to-right, certain option types like `name()` might have special handling if specified multiple times. When in doubt about complex combinations, the last specified option for a particular feature usually takes precedence.
+
+#### Target Filtering Options
+
+Target filtering options control which targets receive content. These provide powerful ways to include or exclude content for specific targets or groups of targets:
+
+| Option | Description | Example |
+|--------|-------------|--------|
+| `+target` | Include for a specific target | `{{track +cursor}}` |
+| `!target` | Exclude for a specific target | `{{track !windsurf}}` |
+| `+all` | Include for all configured targets | `{{track +all}}` |
+| `+group` | Include for all targets in a group | `{{track +ide}}` |
+
+The `+all` option is particularly useful for explicitly indicating that content should be included for all targets. This is helpful when you want to be explicit about inclusion, even though the default behavior is already to include content for all targets.
+
+```markdown
+{{instructions +all !claude-code}}
+This content is explicitly included for all targets except claude-code.
+{{/instructions}}
+```
+
+When combined with exclusions, `+all` helps make it clear that the content is intentionally included everywhere except for the excluded targets.
 
 #### Self-Closing Tags
 
@@ -449,13 +487,22 @@ Heading options control how headings are processed:
 | `h-same` | Keep same heading level | `{{section h-same}}` |
 | `h-initial` | Replace first heading | `{{section h-initial}}` |
 
-You can also use a string as the first item to create a heading:
+**Heading Shortcut:**
+
+For convenience, you can use a string as the first item in a track to automatically create a heading:
 
 ```markdown
 {{section "Section Name" h-3}}
 Section content goes here.
 {{/section}}
 ```
+
+This is equivalent to specifying the heading within the content but provides a more visible and consolidated way to name sections. It's particularly useful when creating structured documents with many subsections.
+
+The heading shortcut will automatically:
+- Set the heading level (via h-* options)
+- Use the provided text as the heading
+- Apply the heading to the beginning of the track content
 
 **Numbering Options (num-* family):**
 
@@ -534,6 +581,7 @@ The following table provides a quick reference to common invocation patterns for
 | Inclusion for Target + Scoped Multi Opts  | `{{track +target:[opt1 opt2]}}`                 | Includes block only for `target`, applying `opt1` and `opt2`.               |
 | Exclusion for Target (scoped opts moot)     | `{{track !target:opt1}}` or `!target:[opt1]`  | Excludes block for `target`.                                                |
 | Group Inclusion + Member Exclusion          | `{{track +group:[opt1] !member}}`               | Includes for `group` with `opt1`, but excludes for `member`.                |
+| All Targets Inclusion                      | `{{track +all}}`                                | Explicitly includes content for all configured targets.                     |
 
 When used with snippets, if the language is omitted (`code`), the system will automatically determine the language based on the snippet file's extension:
 
@@ -677,8 +725,8 @@ Imports allow you to reuse content across multiple mixes by embedding mixes, tra
 <!-- Embed a track from within the existing file -->
 {{> #track-name}}
 
-<!-- Import a mix with multiple specific tracks -->
-{{> my-rules(+track-name !track-name-to-exclude)}}
+<!-- Import a mix with multiple specific tracks, with exclusion -->
+{{> my-rules#[track-one track-two !track-three]}}
 ```
 
 Example:
@@ -704,17 +752,19 @@ Important: Be sure to follow the style guide:
 
 #### Import Attributes
 
-All [track options](#track-attributes) can be applied to imports. Additionally, imports support filtering of tracks using parentheses syntax:
+All [track options](#track-attributes) can be applied to imports. Additionally, imports support filtering of tracks using `#[...]` square bracket syntax:
 
 ```markdown
-{{> my-rules(+track-one !track-two)}}
+{{> my-rules#[track-one !track-two]}}
 ```
 
 This allows you to filter which tracks from the mix are included/excluded on render:
-- Prefix included tracks with `+` (consistent with target inclusion)
-- Prefix excluded tracks with `!` (consistent with target exclusion)
+
+- For included tracks, use the track name without any prefix
+- For excluded tracks, prefix the track name with `!` e.g. `!track-two`
 
 For formatting options:
+
 - `tag-omit` will remove the surrounding XML tags from the output
 - `inline` will render the content inline without XML tags
 - `inline-with-tags` will render the content inline with XML tags (all on a single line)
@@ -723,15 +773,15 @@ For formatting options:
 Examples:
 
 ```markdown
-{{> my-rules(!less-important-considerations)}}
+{{> my-rules#[!less-important-considerations]}}
 
 <!-- 👆 This would include all tracks from `my-rules.md`
      except for `less-important-considerations`. -->
 
-{{> my-rules(+important-considerations)}}
+{{> my-rules#[track-one track-two]}}
 
-<!-- 👆 This would include only the `important-considerations`
-     track from `my-rules.md`. -->
+<!-- 👆 This would include only the `track-one` and `track-two`
+     tracks from `my-rules.md`. -->
 ```
 
 #### Target-Specific Track Filtering
@@ -739,13 +789,14 @@ Examples:
 You can also apply target-specific track filtering for imports:
 
 ```markdown
-{{> my-rules(+common-track cursor:+cursor-specific !legacy-track)}}
+{{> my-rules#[common-track !legacy-track cursor:cursor-specific-track]}}
 ```
 
 This would:
-- Include "common-track" for all targets
-- Additionally include "cursor-specific" only when building for the cursor target
-- Exclude "legacy-track" for all targets
+
+- Include `common-track` for all targets
+  - Additionally include `cursor-specific-track` only when building for the `cursor` target
+- Exclude `legacy-track` for all targets
 
 ### Imports vs. Inclusions
 
@@ -891,7 +942,7 @@ Testing is required for all new features.
 ```markdown
 {{> @coding-standards}}
 
-{{> my-mix#specific-section}}
+{{> my-mix#specific-track}}
 ```
 
 **Using variables:**
@@ -961,6 +1012,7 @@ The table below organizes options by their categories with comprehensive informa
 | `+target` | Flag | `+cursor` | ✅ | ✅ | ❌ | Include content for specific target |
 | `!target` | Flag | `!windsurf` | ✅ | ✅ | ❌ | Exclude content for specific target |
 | `+group` | Flag | `+ide` | ✅ | ✅ | ❌ | Include for all targets in a group |
+| `+all` | Flag | `+all` | ✅ | ✅ | ❌ | Include content for all configured targets |
 | `!group` | Flag | `!cli` | ✅ | ✅ | ❌ | Exclude for all targets in a group |
 | **Target-Scoped Options** ||||||||
 | `target:option` | Scoped | `cursor:tag-omit` | ✅ | ✅ | ❌ | Apply option only for specified target |
@@ -995,10 +1047,10 @@ The table below organizes options by their categories with comprehensive informa
 | `raw-content` | Flag | `raw-content` | ✅ | ✅ | ❌ | Process tags, preserve content as raw |
 | `raw-tags` | Flag | `raw-tags` | ✅ | ✅ | ❌ | Process content, preserve tags as raw |
 | **Import Filtering** ||||||||
-| `(+track)` | Parameter | `(+track-name)` | ❌ | ✅ | ❌ | Include only specific track from import |
-| `(!track)` | Parameter | `(!track-name)` | ❌ | ✅ | ❌ | Exclude specific track from import |
-| `(+track1 +track2)` | Parameter | `(+section-a +section-b)` | ❌ | ✅ | ❌ | Include multiple specific tracks |
-| `target:(+track)` | Combined | `cursor:(+section-a)` | ❌ | ✅ | ❌ | Target-specific track inclusion |
+| `#track` | Single track | `#track-name` | ❌ | ✅ | ❌ | Include specific track from import |
+| `#!track` | Single exclusion | `#!track-name` | ❌ | ✅ | ❌ | Exclude specific track from import |
+| `#[track1 track2]` | Multiple tracks | `#[section-a section-b]` | ❌ | ✅ | ❌ | Include multiple specific tracks |
+| `#[target:track]` | Scoped track | `#[cursor:section-a]` | ❌ | ✅ | ❌ | Target-specific track inclusion |
 | **Frontmatter Configuration** ||||||||
 | `mixdown.version` | YAML | `mixdown.version: 0.1.0` | ❌ | ❌ | ✅ | Mixdown format version for the file |
 | `description` | YAML | `description: "Project rules"` | ❌ | ❌ | ✅ | Short description of the mix |
@@ -1034,7 +1086,7 @@ Most common programming languages are supported using the `code-language` patter
 
 <!-- Import options -->
 {{> @snippet code-js}}               <!-- Import snippet as JavaScript code block -->
-{{> mix-file(+track-a !track-b)}}    <!-- Import only track-a from file, exclude track-b -->
+{{> mix-file#[track-a !track-b]}}    <!-- Import only track-a from file, exclude track-b -->
 {{> rules#section cursor:[inline]}}  <!-- Import rules#section with cursor-specific inline formatting -->
 ```
 
@@ -1046,7 +1098,23 @@ Most common programming languages are supported using the `code-language` patter
 
 3. **Target Scoping**: Target scoping follows the `target:option` or `target:[option1 option2]` pattern.
 
-4. **Custom Attributes**: Any `key="value"` pair not matching a defined option is treated as a custom XML attribute.
+4. **Custom Attributes**: Any `key="value"` pair not matching a defined option is treated as a custom XML attribute. These attributes are passed through to the output XML tags:
+
+   ```markdown
+   {{rules data-id="123" role="example"}}
+   Content with tags including the custom attributes
+   {{/rules}}
+   ```
+
+   Renders as:
+
+   ```xml
+   <rules data-id="123" role="example">
+   Content with tags including the custom attributes
+   </rules>
+   ```
+
+   Note that when using `tag-omit`, custom XML attributes won't appear in the output since the tags themselves are removed.
 
 5. **Option Precedence**: When multiple options might conflict, the last specified option takes precedence (left-to-right evaluation).
 
