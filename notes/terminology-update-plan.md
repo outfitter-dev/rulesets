@@ -293,7 +293,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 2. **docs/rules-overview.md**
    - Update all terminology consistently
 
-3. **docs/targets/*/rules-use.md**
+3. **docs/plugins/*/rules-use.md**
    - Update "target" to "destination" in all target-specific documentation
    - Update "mix" to "Source Rules" throughout
    - Update "track" to "stem" in all examples

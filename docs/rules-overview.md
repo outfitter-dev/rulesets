@@ -22,14 +22,14 @@ Different AI tools use different file locations and naming conventions:
 
 | Tool | Project Rules | Global/User Rules | Format |
 |------|--------------|-------------------|--------|
-| **[Claude Code](./targets/claude-code/rules-use.md)** | `CLAUDE.md` in root and/or subdirs | `~/.claude/CLAUDE.md` | Markdown with `@file` imports |
-| **[Cursor](./targets/cursor/rules-use.md)** | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based) | Markdown with YAML front-matter and `@filename` imports |
-| **[Windsurf](./targets/windsurf/rules-use.md)** | `.windsurf/rules/*.md` files (v1.9+) | `~/.config/windsurf/global_rules.md` | Markdown with YAML-ish front-matter and `@path` imports |
-| **[Roo Code](./targets/roo-code/rules-use.md)** | `.roo/rules/` and `.roo/rules-{mode}/` folders | No built-in global file | Markdown files in folders |
-| **[OpenAI Codex CLI](./targets/codex-cli/rules-use.md)** | `codex.md` in root | `~/.codex/instructions.md` | Markdown text |
-| **[OpenAI Codex AGENTS](./targets/codex-agent/rules-use.md)** | `AGENTS.md` in root and/or subdirs | `~/.codex/AGENTS.md` | Pure Markdown with section headings |
-| **[Cline](./targets/cline/rules-use.md)** | `.clinerules` in root | None | Plain text |
-| **[Aider](./targets/aider/rules-use.md)** | `.aider.memory.md` (manually included) | None | Markdown |
+| **[Claude Code](./plugins/claude-code/rules-use.md)** | `CLAUDE.md` in root and/or subdirs | `~/.claude/CLAUDE.md` | Markdown with `@file` imports |
+| **[Cursor](./plugins/cursor/rules-use.md)** | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based) | Markdown with YAML front-matter and `@filename` imports |
+| **[Windsurf](./plugins/windsurf/rules-use.md)** | `.windsurf/rules/*.md` files (v1.9+) | `~/.config/windsurf/global_rules.md` | Markdown with YAML-ish front-matter and `@path` imports |
+| **[Roo Code](./plugins/roo-code/rules-use.md)** | `.roo/rules/` and `.roo/rules-{mode}/` folders | No built-in global file | Markdown files in folders |
+| **[OpenAI Codex CLI](./plugins/codex-cli/rules-use.md)** | `codex.md` in root | `~/.codex/instructions.md` | Markdown text |
+| **[OpenAI Codex AGENTS](./plugins/codex-agent/rules-use.md)** | `AGENTS.md` in root and/or subdirs | `~/.codex/AGENTS.md` | Pure Markdown with section headings |
+| **[Cline](./plugins/cline/rules-use.md)** | `.clinerules` in root | None | Plain text |
+| **[Aider](./plugins/aider/rules-use.md)** | `.aider.memory.md` (manually included) | None | Markdown |
 
 ## Directory Structure Comparison
 
@@ -87,16 +87,16 @@ sequenceDiagram
 
 1. **Layered Context:** Global rules apply to all projects, project rules override for specific projects
 2. **Scoping Mechanisms:**
-   - [Cursor](./targets/cursor/rules-use.md): Rule types (always, auto-attached, agent-requested, manual) + nested rules
-   - [Windsurf](./targets/windsurf/rules-use.md): Trigger types (`always_on`, `glob`, `model_decision`, `manual`) with char limits
-   - [Claude Code](./targets/claude-code/rules-use.md): Directory-based (subdirectory CLAUDE.md files)
-   - [Roo Code](./targets/roo-code/rules-use.md): Mode-specific folders (rules-{mode}/)
-   - [OpenAI Codex AGENTS](./targets/codex-agent/rules-use.md): Directory-based loading (upward path walking) with section merging
+   - [Cursor](./plugins/cursor/rules-use.md): Rule types (always, auto-attached, agent-requested, manual) + nested rules
+   - [Windsurf](./plugins/windsurf/rules-use.md): Trigger types (`always_on`, `glob`, `model_decision`, `manual`) with char limits
+   - [Claude Code](./plugins/claude-code/rules-use.md): Directory-based (subdirectory CLAUDE.md files)
+   - [Roo Code](./plugins/roo-code/rules-use.md): Mode-specific folders (rules-{mode}/)
+   - [OpenAI Codex AGENTS](./plugins/codex-agent/rules-use.md): Directory-based loading (upward path walking) with section merging
 3. **Format:** Most use Markdown for human-readability and structure
 4. **Import/Reference Mechanisms:**
-   - [Claude Code](./targets/claude-code/rules-use.md): Uses `@file` syntax to import content from other files
-   - [Cursor](./targets/cursor/rules-use.md): Uses `@filename` syntax to include external file content
-   - [Windsurf](./targets/windsurf/rules-use.md): Uses `@relative/path.ext` syntax to include file contents
+   - [Claude Code](./plugins/claude-code/rules-use.md): Uses `@file` syntax to import content from other files
+   - [Cursor](./plugins/cursor/rules-use.md): Uses `@filename` syntax to include external file content
+   - [Windsurf](./plugins/windsurf/rules-use.md): Uses `@relative/path.ext` syntax to include file contents
 
 ## Best Practices for AI Rules
 
@@ -243,10 +243,10 @@ graph TB
 
 For detailed information about each AI tool's rules implementation, see:
 
-- [Cursor Rules System](./targets/cursor/rules-use.md)
-- [Claude Code Memory System](./targets/claude-code/rules-use.md)
-- [Windsurf Rules System](./targets/windsurf/rules-use.md)
-- [Roo Code Rules System](./targets/roo-code/rules-use.md)
-- [OpenAI Codex AGENTS System](./targets/codex-agent/rules-use.md)
-- [OpenAI Codex CLI System](./targets/codex-cli/rules-use.md)
-- [Simpler Implementations](./targets/simpler-tools/rules-use.md)
+- [Cursor Rules System](./plugins/cursor/rules-use.md)
+- [Claude Code Memory System](./plugins/claude-code/rules-use.md)
+- [Windsurf Rules System](./plugins/windsurf/rules-use.md)
+- [Roo Code Rules System](./plugins/roo-code/rules-use.md)
+- [OpenAI Codex AGENTS System](./plugins/codex-agent/rules-use.md)
+- [OpenAI Codex CLI System](./plugins/codex-cli/rules-use.md)
+- [Simpler Implementations](./plugins/simpler-tools/rules-use.md)
