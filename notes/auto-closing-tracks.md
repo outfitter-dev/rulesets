@@ -215,7 +215,7 @@ Content 2
 Content 3
 ```
 
-Propertys:
+Properties:
 - Close all previous stems (resulting in sequential stems)
 - Only auto-close stems of the same level (allowing nesting)
 
@@ -289,7 +289,7 @@ Content 1
     Content 3
 ```
 
-Propertys:
+Properties:
 - Preserve original indentation (simpler)
 - Adjust indentation to reflect nesting (more complex but potentially more readable)
 

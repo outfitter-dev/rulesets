@@ -381,7 +381,7 @@ Next chapter content (becomes "2. Chapter" with heading output)
 {{/chapter}}
 ```
 
-### 2. Numbering Placement Propertys
+### 2. Numbering Placement Properties
 
 Control where numbering appears in output:
 

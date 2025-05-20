@@ -10,26 +10,26 @@ This document outlines how Mixdown integrates with markdown linting tools (parti
 2. **User-configurable properties**: Provide user-friendly configuration that maps to underlying lint rules
 3. **Override hierarchy**: Clear precedence for global, per-mix, and per-stem settings
 
-## Configuration Propertys
+## Configuration Properties
 
-### Heading Style Propertys
+### Heading Style Properties
 
 ```yaml
 ---
 mixdown:
   markdown:
     style:
-      heading_blank_lines: "after"   # Propertys: "none", "before", "after", "both"
+      heading_blank_lines: "after"   # Properties: "none", "before", "after", "both"
       list_indentation: 2            # Number of spaces for list indentation (default: 2)
-      code_block_style: "fenced"     # Propertys: "fenced", "indented"
-      emphasis_style: "asterisk"     # Propertys: "asterisk", "underscore"
-      strong_style: "asterisk"       # Propertys: "asterisk", "underscore"
+      code_block_style: "fenced"     # Properties: "fenced", "indented"
+      emphasis_style: "asterisk"     # Properties: "asterisk", "underscore"
+      strong_style: "asterisk"       # Properties: "asterisk", "underscore"
 ---
 ```
 
 These user-friendly properties map to underlying markdownlint rules and are applied during transformation.
 
-### Line Break Control Propertys
+### Line Break Control Properties
 
 ```yaml
 ---
