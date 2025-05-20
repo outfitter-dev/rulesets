@@ -31,6 +31,15 @@
   - [ e.g., import/include mechanisms ]
   - [ e.g., variable substitution ]
   - [ e.g., conditional rule sections ]
+- **Rule Types / Modes:**
+  - [ e.g., Always-on vs. Model-decision vs. Manual ]
+  - [ e.g., mode-specific folders like `rules-architect/` ]
+- **File Naming Conventions:**
+  - [ Canonical filenames (`AGENTS.md`, `.windsurfrules`, `.cursor/rules/*.mdc`, etc.) ]
+  - [ Legacy aliases or deprecated names ]
+- **Token / Size Constraints:**
+  - [ Per-file and cumulative limits, if applicable ]
+  - [ Behaviour when limits are exceeded (truncation, warnings) ]
 
 ## Canonical Locations & Precedence
 
@@ -41,6 +50,7 @@
 <project_root>/.[ provider ]/rules.md   # Project-level rules
 <project_root>/path/to/.rules.md        # Component-specific rules
 [ Additional locations if applicable ]
+<cwd>/rules.md                         # Working-directory overrides, if supported
 ```
 
 ## Directory Structure Example
@@ -57,6 +67,14 @@ $HOME/
             └── moduleA/
                 └── .rules.md   # Module-specific rules
 ```
+
+## Version & Verification
+
+| Aspect | Placeholder |
+|--------|-------------|
+| **Last-verified version / commit** | `[ e.g., v0.48.2 (2025-05-10) ]` |
+| **Documentation source & date**    | `[ link + absolute date ]` |
+| **Staleness warning**              | `[ Flag info > 6 months old ]` |
 
 <!-- AI: The example above is just a placeholder. The specific directory structure will vary based on the provider. -->
 
@@ -148,6 +166,9 @@ This is a React application using TypeScript and Tailwind CSS.
 
 ## Best Practices
 
+[ Best practices for writing (provider-name) rules. Follow the example below.]
+
+<best_practices_example>
 - **Be specific:**
   - Provide clear, actionable guidance rather than vague suggestions
   - Include concrete examples of what to do and what to avoid
@@ -173,6 +194,7 @@ This is a React application using TypeScript and Tailwind CSS.
   - Store project rules in your repository
   - Document the history and rationale for rule changes
   - Use PRs for significant rule modifications
+</best_practices_example>
 
 ## Limitations and Considerations
 
@@ -180,6 +202,9 @@ This is a React application using TypeScript and Tailwind CSS.
   - [ Maximum size of rule files supported by the provider ]
   - [ Performance impacts as file size increases ]
   - [ Strategies for managing large rule sets ]
+  - [ Token window constraints of the underlying model, if applicable ]
+  - [ Truncation or summarisation behaviour when exceeded, if applicable ]
+<!-- AI: Only include token constraints if relevant to this provider. Some providers may not have explicit token limits, in which case this can be omitted -->
 - **Rule conflicts:**
   - [ How contradictory instructions are handled ]
   - [ Precedence rules between different rule sources ]
@@ -199,14 +224,23 @@ This is a React application using TypeScript and Tailwind CSS.
   - [ GitHub repository - link with brief description ]
   - [ Official documentation - link with key sections highlighted ]
   - [ API reference - if applicable ]
+  - ...
 - **Examples & Templates:**
   - [ Example rule files - with descriptions of what each demonstrates ]
   - [ Rule templates for common use cases ]
   - [ Community-contributed rules repositories ]
+  - ...
 - **Community Resources:**
   - [ Blog posts or articles about this provider ]
   - [ Forums or discussion groups ]
   - [ Video tutorials or presentations ]
+  - ...
+
+<optional_content>
+
+[ Include additional content as may be relevant to the specific provider. Follow similar structure to the above. ]
+
+</optional_content>
 
 </content>
 
@@ -238,17 +272,17 @@ Example content:
 ```markdown
 # {{$section}}
 
-{{> [ template-name ]}}
+{{> template-name }}
 
 # {{$section}}
 
-{{> [ template-name ]}}
+{{> template-name }}
 ```
 
 ## Internal Documentation
 
 - **Mixdown Integration:**
-  - [ [provider name] Rules Overview](../../rules-overview.md)
+  - [[provider name] Rules Overview](../../rules-overview.md)
   - [ Provider implementation details - with brief explanation ]
   - [ Target-specific configuration options ]
 - **Provider Implementation:**
