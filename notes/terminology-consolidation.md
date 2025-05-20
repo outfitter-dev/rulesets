@@ -4,16 +4,16 @@
 
 ## Source Content
 
-### Rule Definition
+### Source Rules
 
 - **Description:** The source files that define rules for AI assistants
-- **Current:** "Source rules files", "Source mix files", "Mix files", "Source Markdown file", "Mixdown files"
-- **Recommendation:** Standardize on a clear term that emphasizes definition rather than mixing.
-- **Decision:** We should use **Rule Definition** as the primary term for source files that define AI assistant rules.
+- **Current:** "Source rules files", "Source mix files", "Mix files", "Source Markdown file", "Mixdown files", "Rule Definition"
+- **Recommendation:** Standardize on a clear term that emphasizes the source aspect and creates a clean pairing with the output.
+- **Decision:** We should use **Source Rules** as the primary term for source files that define AI assistant rules.
 - **Proposed:**
-  1. ✴️ "Rule Definition" ← "Mix files", "Source rules files", "Source mix files"
-     - Reasoning: "Rule Definition" clearly communicates the primary purpose (defining rules) and creates a logical pair with "Compiled Rules."
-     - Example: "Rule Definitions are written in 100% previewable Markdown"
+  1. ✴️ "Source Rules" ← "Mix files", "Rule Definition", "Source mix files"
+     - Reasoning: "Source Rules" clearly communicates the source nature and creates a logical pair with "Compiled Rules."
+     - Example: "Source Rules are written in 100% previewable Markdown"
   2. "Rules Source" ← "Source rules files", "Mixdown files"
      - Reasoning: Emphasizes the source nature of these files.
      - Example: "Rules Source files contain the instructions that will be compiled"
@@ -21,9 +21,9 @@
      - Reasoning: Maintains brand identity while clarifying purpose.
      - Example: "Create Mixdown Definitions that compile to multiple destinations"
 - **Decision:**
-  - We should use **Rule Definition** as the primary term for all documentation and code comments.
-  - We should rename the `.mixdown/mixes` directory to `.mixdown/definitions/` to better reflect the purpose of the directory.
-  - This creates a logical flow: Rule Definitions → Compilation → Compiled Rules → Destinations.
+  - We should use **Source Rules** as the primary term for all documentation and code comments.
+  - We should rename the `.mixdown/mixes` directory to `.mixdown/src/` to align with standard software development conventions.
+  - This creates a clean, intuitive flow: Source Rules → Compilation → Compiled Rules.
 
 ## Target Terminology
 
@@ -49,7 +49,7 @@
     - `target` in specific contexts should be `destination`
     - "Destination Directory" refers to a specific rules directory and may not apply to all circumstances. `**/.cursor/rules` is a destination directory, but where `CLAUDE.md` would be placed does not apply.
       - Claude Code doesn't use a specific directory for `CLAUDE.md` but for their slash commands, they do use `.claude/commands` so this would be a destination directory.
-    - "Destination Path" refers to the path of compiled rules.
+    - "Destination Path" refers to the file system location where compiled rules are placed for use by AI assistants.
 
 ## Output Terminology
 
@@ -63,18 +63,20 @@
   1. ✴️ "Target-specific rules files" ← "Tool-specific rules files", "Target-specific rules files", "Per-tool rules files", "Output"
      - Reasoning: "Target-specific" directly ties the rules files to their intended target and maintains consistency with other target-related terminology.
      - Example: "Mixdown compiles mix files into target-specific rules files"
-  2. "Compiled rules files" ← "Per-tool rules files"
-     - Reasoning: Emphasizes the compiled nature of the files, focusing on the transformation process rather than the destination.
-     - Example: "The compiler produces compiled rules files for each target tool"
+  2. "Destination rules files" ← "Per-tool rules files", "Compiled rules files"
+     - Reasoning: Emphasizes the destination aspect and creates a clear symmetry with "Source Rules".
+     - Example: "The compiler produces compiled rules files for each destination"
   3. "Target rules" ← "Tool-specific rules files", "Target-specific rules files" (for brevity in appropriate contexts)
      - Reasoning: A simplified version that maintains the essential meaning while being more concise.
      - Example: "Each target rules file is placed in its appropriate tool directory"
 - **Decision:**
-  - "Destination-ready rules" ← "Target-specific rules" / "Tool-specific rules" / "Per-tool rules"
-    - Refers to the process of compiling the source rules into destination-specific rules.
-    - Example sentence: "Mixdown compiles source rules into destination-ready rules"
-  - "Compiled rules" ← "Target-specific rules files"
-    - Refers to the final compilation artifacts that are placed in destination directories.
+  - "Compilation Artifacts" ← "Generated files", "Build artifacts"
+    - Refers to the intermediary files generated during the compilation process.
+    - Example sentence: "The compiler generates compilation artifacts during the build process."
+  - "Compiled Rules" ← "Target-specific rules" / "Tool-specific rules" / "Per-tool rules" / "Destination Rules"
+    - Refers to the final rules files that result from the compilation process.
+    - Example sentence: "Source rules are transformed into compiled rules for each destination."
+  - This creates a clear process flow: Source Rules → Compilation → Compilation Artifacts → Compiled Rules.
 
 ### Tool-Ready Rules
 
@@ -106,20 +108,20 @@
 - **Proposed:
   1. ✴️ ".mixdown/output/ directory" ← ".mixdown/output/builds/", ".mixdown/outputs/"
      - Reasoning: Using the full path with directory suffix provides clarity and precision when referring to the output location.
-     - Example: "Writes compiled rules files to the .mixdown/output/ directory"
+     - Example: "Writes compiled rules files to the .mixdown/dist/ directory"
   2. ✴️ "Output directory" ← "Output location", "Output path"
      - Reasoning: A simpler alternative for contexts where the full path isn't necessary.
      - Example: "The output directory contains all target-specific rules files"
 - **Decision:**
-  - `.mixdown/compiled` and "Compilation directory" work well.
-  - We should call the specific contents of the compilation directory `compilation artifacts`.
+  - `.mixdown/dist` is better aligned with standard software development conventions and should be used.
+  - We should call the specific contents of the dist directory `compilation artifacts`.
     - A compilation is a single run of the compiler.
   - We should therefore have:
-    - `.mixdown/compiled/latest/` ← Symlink to the latest compilation
-    - `.mixdown/compiled/runs/` ← Directory for all compilations and their artifacts
-    - `.mixdown/compiled/runs/run-<timestamp>.json` ← Compilation metadata for each run
-    - `.mixdown/compiled/logs/` ← Log files for all compilations
-    - `.mixdown/compiled/logs/run-<timestamp>.log` ← Compilation log for each run
+    - `.mixdown/dist/latest/` ← Symlink to the latest compilation
+    - `.mixdown/dist/runs/` ← Directory for all compilations and their artifacts
+    - `.mixdown/dist/runs/run-<timestamp>.json` ← Compilation metadata for each run
+    - `.mixdown/dist/logs/` ← Log files for all compilations
+    - `.mixdown/dist/logs/run-<timestamp>.log` ← Compilation log for each run
 
 ## Process Terminology
 
@@ -355,27 +357,22 @@
 
 ### Mixin
 
-- **Description:** Reusable, standalone components that can be imported into Rule Definitions
+- **Description:** Reusable, standalone components that can be imported into Source Rules
 - **Current:** "Snippet", "Reusable component", "Partial", "Include", "Fragment"
-- **Recommendation:** Standardize on a programming-familiar term that complements Rule Definitions
+- **Recommendation:** Standardize on a programming-familiar term that complements Source Rules
 - **Decision:** Use "Mixin" as the primary term for reusable components
 - **Proposed:**
   1. ✴️ "Mixin" ← "Snippet", "Reusable component", "Fragment"
      - Reasoning: In programming, mixins are reusable pieces of code that can be incorporated into different classes or components - exactly matching our use case.
-     - Example: "Import authentication mixins to add user authentication to your Rule Definitions."
+     - Example: "Import authentication mixins to add user authentication to your Source Rules."
   2. "Component" ← "Reusable component", "Fragment"
      - Reasoning: Generic but clear term that emphasizes the modular nature.
      - Example: "Store common components in the _components directory for reuse."
   3. "Sample" ← "Snippet", "Fragment"
      - Reasoning: Continues the music production theme alongside "stem".
-     - Example: "Import the header sample into multiple Rule Definitions."
+     - Example: "Import the header sample into multiple Source Rules files."
 - **Decision:**
-  - We should use **Mixin** as the standard term for reusable components that can be imported into Rule Definitions
-  - We should rename the `.mixdown/mixes/_snippets` directory to `.mixdown/definitions/_mixins`
+  - We should use **Mixin** as the standard term for reusable components that can be imported into Source Rules
+  - We should rename the `.mixdown/mixes/_snippets` directory to `.mixdown/src/_mixins`
   - A mixin typically contains one or more stems that perform a specific function
-  - A mixin can be imported into multiple Rule Definitions using the import notation `{{> mixin-name}}`
-
-### Rule Definition
-
-- **Decision:** Replace "Mix" and "Source rules files" with "Rule Definition"
-  - The core flow becomes: Rule Definition → Compilation → Compiled Rules → Destination
+  - A mixin can be imported into multiple Source Rules files using the import notation `{{> mixin-name}}`
