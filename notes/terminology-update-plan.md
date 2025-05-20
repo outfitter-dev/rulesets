@@ -2,6 +2,84 @@
 
 This document outlines all terminology changes from the terminology consolidation effort and provides explicit instructions for updating documents across the repository.
 
+## TODOs
+
+### Core Documentation
+- [ ] **README.md**
+  - [ ] Update "Mix" to "Source Rules" throughout
+  - [ ] Update "Track" to "Stem" throughout
+  - [ ] Update "Snippet" to "Mixin" throughout
+  - [ ] Update "Target" to "Destination" throughout
+  - [ ] Update "Output" to "Compiled Rules" throughout
+  - [ ] Update directory references to use `.mixdown/src/` and `.mixdown/dist/`
+  - [ ] Update directory structure example
+  - [ ] Update notation cheatsheet with new terminology and syntax
+
+- [ ] **spec/OVERVIEW.md**
+  - [ ] Update "Mix" to "Source Rules" throughout
+  - [ ] Update "Track" to "Stem" throughout
+  - [ ] Update "Snippet" to "Mixin" throughout
+  - [ ] Update "Target" to "Destination" throughout
+  - [ ] Update "Output" to "Compiled Rules" throughout
+  - [ ] Update all `property(value)` to `property-(value)` syntax
+  - [ ] Update import stem selection syntax to use parentheses
+  - [ ] Change `rules#[stem-1 stem-2]` to `rules#(stem-1 stem-2)`
+  - [ ] Update directory references to `.mixdown/src/` and `.mixdown/dist/`
+  - [ ] Update all core concepts definitions
+  - [ ] Update property naming conventions section
+
+- [ ] **spec/LANGUAGE.md**
+  - [ ] Ensure all terminology is consistent with decisions
+  - [ ] Double-check directory structure examples
+  - [ ] Verify compilation flow descriptions
+  - [ ] Update all code examples with new syntax
+
+### Documentation Directory
+- [ ] **docs/index.md**
+  - [ ] Update all instances of "mix" to "Source Rules"
+  - [ ] Update "target" to "destination"
+  - [ ] Update "track" to "stem"
+  - [ ] Update directory references
+
+- [ ] **docs/rules-overview.md**
+  - [ ] Update all terminology consistently
+  - [ ] Update examples with new property format
+
+- [ ] **docs/targets/** (all subdirectories)
+  - [ ] Update "target" to "destination" in all files
+  - [ ] Update "mix" to "Source Rules" throughout
+  - [ ] Update "track" to "stem" in all examples
+  - [ ] Update all property syntax
+
+### Notes Directory
+- [ ] **notes/ai-rules-guide.md**
+  - [ ] Update all terminology
+  - [ ] Update conceptual explanations
+
+- [ ] **notes/mixdown-compiler-patterns.md**
+  - [ ] Update to reference new directory structure
+  - [ ] Update all process terminology to use "Compile/Compilation"
+
+- [ ] **notes/prompt-rules-use.md**
+  - [ ] Update with new "Source Rules" and "Stem" terminology
+  - [ ] Update examples with new syntax
+
+- [ ] **notes/track-heading.md**
+  - [ ] Rename file to **notes/stem-heading.md**
+  - [ ] Update content to use "Stem" terminology
+
+### Directory Structure & Config
+- [ ] Update directory structure:
+  - [ ] Rename `.mixdown/mixes/` to `.mixdown/src/`
+  - [ ] Rename `.mixdown/mixes/_snippets/` to `.mixdown/src/_mixins/`
+  - [ ] Rename `.mixdown/output/` to `.mixdown/dist/`
+  - [ ] Create new structure under `.mixdown/dist/`
+
+### Final Steps
+- [ ] Add entry to CHANGELOG.md about terminology updates
+- [ ] Run terminology search to find any missed occurrences
+- [ ] Perform final verification pass
+
 ## Summary of Key Terminology Changes
 
 | Category | Old Term(s) | New Term(s) | Status |
