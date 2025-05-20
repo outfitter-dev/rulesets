@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a single *mix* file in Markdown and compile it into tool-specific instruction files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI prompts**: write once, target many, your agents, no matter the tool, on the (literal) same page.
+Mixdown is a **CommonMark-compliant rules compiler** that lets you author a single *mix* file in Markdown and compile it into tool-specific rules files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, target many, your agents, no matter the tool, on the (literal) same page.
 
 ## Critical Instructions
 
@@ -19,7 +19,7 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 ## Key Concepts
 
 - **Mix**
-  - Source instruction files, written in 100% previewable Markdown.
+  - Source rules files, written in 100% previewable Markdown.
   - Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
   - Compiled into tool-specific rules files:
     - `./mixdown/mixes/my-rule.md` → `.cursor/rules/my-rule.mdc`
@@ -28,12 +28,12 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
   - Defines tool-specific criteria for compiling mixes to rules files.
   - Provided through plugins.
 - **Output**
-  - Target-specific (tool) output files, rendered from the source mix.
+  - Target-specific (tool) rules files, rendered from the source mix.
   - Examples for a mix called `project-conventions.md`:
     - Cursor → `.cursor/rules/project-conventions.mdc`
     - Claude Code → `./CLAUDE.md#project-conventions`
     - OpenAI Codex → `./conventions.md`.
-  - When placed in tool directories, referred to as "tool-ready outputs".
+  - When placed in tool directories, referred to as "tool-ready rules".
 - **Notation Marker**
   - Syntax: `{{...}}`
   - Fundamental building block of Mixdown Notation
@@ -60,8 +60,8 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 ```text
 project/
 ├── .mixdown/
-│   ├── outputs/
-│   │   └── builds/         # compiled outputs
+│   ├── output/
+│   │   └── builds/         # compiled output
 │   ├── mixes/              # Mix files (*.md)
 │   │   └── _snippets/      # reusable content modules
 │   └── mixdown.config.json # Mixdown config file

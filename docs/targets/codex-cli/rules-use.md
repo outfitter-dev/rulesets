@@ -37,7 +37,7 @@ $HOME/
 
 ## File Structure Example
 
-Codex CLI instruction files use standard Markdown with clear headings and sections:
+Codex CLI rules files use standard Markdown with clear headings and sections:
 
 ```markdown
 # Coding Standards
@@ -75,7 +75,7 @@ flowchart TD
 
 ## Content Organization
 
-Effective instruction files typically include:
+Effective rules files typically include:
 
 1. **Project Overview**: High-level description of the project's purpose and architecture
 2. **Coding Standards**: Language-specific guidance and style preferences

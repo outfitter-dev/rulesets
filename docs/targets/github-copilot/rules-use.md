@@ -90,7 +90,7 @@ GitHub Copilot implements soft character limits:
 
 - **No explicit limit**: No hard constraint in documentation
 - **~600 tokens recommended**: Community reports suggest keeping under this threshold
-- **Silent truncation**: Very long instruction files may be truncated without notice
+- **Silent truncation**: Very long rules files may be truncated without notice
 
 ## Loading Process
 
@@ -116,7 +116,7 @@ When working with Copilot, the rules are processed as follows:
 
 ## Limitations & Considerations
 
-- **File size:** Long instruction files may be truncated without notice
+- **File size:** Long rules files may be truncated without notice
 - **Rule conflicts:** No formal conflict-resolution UI; ambiguous guidance may lower answer quality
 - **Model capabilities:** Instructions influence style but cannot force using libraries that contradict training
 - **Security:** File content is sent to GitHub's servers and the underlying LLM

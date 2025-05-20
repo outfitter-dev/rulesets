@@ -1,6 +1,6 @@
-# 💽 Mixdown: A CommonMark-Compliant Prompt Compiler
+# 💽 Mixdown: A Compiler for AI Rules Files
 
-Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a single *mix* file in Markdown and compile it into tool-specific instruction files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI prompts**: write once, target many, your agents, no matter the tool, on the (literal) same page.
+Mixdown simplifies rules management for tools like Cursor, Claude Code, Codex, etc. With Mixdown, you author rules (called "mixes") in previewable Markdown and compile them into tool-specific rules files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, target many, your agents, no matter the tool, on the (literal) same page.
 
 ## What is Mixdown?
 
@@ -16,14 +16,14 @@ The problem is, they all have different formats, behavior, and capabilities, whi
 
 ### Our Solution: What Mixdown Does
 
-Mixdown is "Terraform for AI prompts": declare your ideal prompt rules once, target dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative instructions—no copy‑paste, no drift, just high‑quality, version-controlled context.
+Mixdown is "Terraform for AI rules": declare your ideal rules once, target dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative rules—no copy‑paste, no drift, just high‑quality, version-controlled context.
 
 With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single "mix" file (`.md`). This mix is the "gold master" for your instructions, from which individual target-specific outputs are created in their respective format and sent to the right places.
 
 The app consists of:
 
 1. A Node.js app with a compiler (featuring a plugin architecture for different tools), an API, CLI, and Model Context Protocol implementation for managing prompts and instructions.
-2. A CommonMark-compliant markup specification for creating effective and reusable prompts, processed by the compiler to generate tool-specific outputs.
+2. A CommonMark-compliant markup specification for creating effective and reusable rules, processed by the compiler to generate tool-specific rules files.
 
 Result: *author once, distribute everywhere, zero drift.*
 
@@ -34,7 +34,7 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 ## Core Concepts
 
 **Mix**
-: Source instruction files, written in 100% previewable Markdown. Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
+: Source rules files, written in 100% previewable Markdown. Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
 
 **Output**
 : Target-specific output files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their target tool directories, these are referred to as "tool-ready outputs".
@@ -104,7 +104,7 @@ mixdown init      # scaffolds .mixdown/ directory structure
 
 mixdown import    # imports existing rules files into the mixdown format
 
-mixdown build     # writes outputs to .mixdown/outputs/
+mixdown build     # writes output to .mixdown/output/
 ```
 
 ## Directory Structure
@@ -112,8 +112,8 @@ mixdown build     # writes outputs to .mixdown/outputs/
 ```
 project/
 ├── .mixdown/
-│   ├── outputs/
-│   │   └── builds/         # compiled outputs
+│   ├── output/
+│   │   └── builds/         # compiled rules files
 │   ├── mixes/       # Mix files (*.md)
 │   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json # compiler config

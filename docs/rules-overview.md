@@ -1,6 +1,6 @@
 # AI Rules Overview
 
-This guide explains how AI coding assistants use persistent instruction files (often called "rules" or "memory" files) to maintain consistent behavior across sessions and projects.
+This guide explains how AI coding assistants use persistent rules files (often called "rules" or "memory" files) to maintain consistent behavior across sessions and projects.
 
 ## What are AI Rules Files?
 
@@ -123,7 +123,7 @@ graph LR
 
 ```markdown
 # Project Overview
-This is a CommonMark-compliant prompt compiler that converts Markdown to tool-specific outputs.
+This is a CommonMark-compliant rules compiler that converts Markdown to tool-specific rules files.
 
 # Key Terminology
 - **Mix**: Source files in Markdown format

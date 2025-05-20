@@ -1,14 +1,14 @@
 # Mixdown Architecture
 
-> A CommonMark-compliant prompt compiler for AI assistants
+> A CommonMark-compliant rules compiler for AI assistants
 
 ## Overview
 
-Mixdown is a compiler that transforms source "mix" files written in Markdown into tool-specific instruction files for various AI assistants. It follows the "write once, target many" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
+Mixdown is a compiler that transforms source "mix" files written in Markdown into tool-specific rules files for various AI assistants. It follows the "write once, target many" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
 
-```
+```text
 +---------------+      +----------------+      +------------------+
-| Source Mixes  | ---> | Mixdown Core   | ---> | Target Outputs   |
+| Source Mixes  | ---> | Mixdown Core   | ---> | Target Rules     |
 | (.md files)   |      | Compiler       |      | (Various formats)|
 +---------------+      +----------------+      +------------------+
                               ^
@@ -23,7 +23,7 @@ Mixdown is a compiler that transforms source "mix" files written in Markdown int
 
 The Mixdown project is organized as a monorepo using pnpm workspaces:
 
-```
+```text
 mixdown/
 ├── packages/
 │   ├── core/                 # Core compiler engine
@@ -44,36 +44,43 @@ mixdown/
 ## Core Components
 
 ### Parser
+
 - [packages/core/src/parser.ts](placeholder)
 - Responsible for parsing mix files into an AST
 - Handles Mixdown notation markers, tracks, imports, and variables
 
 ### Compiler
+
 - [packages/core/src/compiler.ts](placeholder)
 - Processes the AST and transforms it for target-specific output
 - Resolves imports and variables
 - Applies track filtering and other transformations
 
 ### Renderer
+
 - [packages/core/src/renderer.ts](placeholder)
 - Generates the final output files for each target
 - Handles different output formats (XML, markdown, etc.)
 
 ### Plugin System
+
 - [packages/core/src/plugin.ts](placeholder)
 - Manages target plugins that define how mix files are compiled for specific tools
 - Provides plugin registration and discovery
 
 ### Configuration
+
 - [packages/core/src/config.ts](placeholder)
 - Loads and validates configuration from mixdown.config.json
 - Manages project-level settings
 
 ### CLI
+
 - [packages/cli/src/index.ts](placeholder)
 - Provides command-line interface for building, validating, and initializing
 
 ### MCP Server
+
 - [packages/mcp/src/server.ts](placeholder)
 - Exposes an API endpoint for remote compilation
 
@@ -81,7 +88,7 @@ mixdown/
 
 ### Mix File Processing
 
-```
+```text
                +-------------+
                |  Mix File   |
                +------+------+
@@ -116,16 +123,19 @@ mixdown/
 ```
 
 #### Parsing and AST
+
 - How to represent Mixdown notation markers in the AST
 - Handling nested structures and track boundaries
 - Preserving the original source positions for error reporting
 
 #### Imports and References
+
 - Resolution of relative paths in imports
 - Handling circular dependencies
 - Tracking files for rebuilding when dependencies change
 
 #### Track Filtering
+
 - Implementing target-specific track inclusion/exclusion
 - Processing of target groups (e.g., `+ide`)
 - Order and precedence of filtering rules
@@ -134,7 +144,7 @@ mixdown/
 
 Different AI assistants use different terminology and mechanisms for when rules should be applied:
 
-```
+```text
 Mixdown "Activation" Abstraction
            +
            |
@@ -170,7 +180,7 @@ A stub for `mixdown.config.json`:
         "mixes": ".mixdown/mixes",
         "snippets": ".mixdown/mixes/_snippets"
       },
-      "output": ".mixdown/outputs",
+      "output": ".mixdown/output",
       "targets": {
         "include": ["cursor", "claude-code", "windsurf"],
         "exclude": []
@@ -224,7 +234,7 @@ A stub for `mixdown.config.json`:
      - Allows for specialized handling of different Mixdown constructs (tracks, imports, etc.)
      - More maintainable as the notation evolves
      - Still performs well by avoiding excessive metadata on all nodes
-   - **Decision:**
+   - **Decision:** C
 
 2. **Plugin System Architecture**
    - How should plugins integrate with the core?
@@ -247,7 +257,7 @@ A stub for `mixdown.config.json`:
      - Works well with TypeScript's type system for clear interfaces
      - Makes testing easier through mock implementations
      - Reduces coupling between core and plugin implementations
-   - **Decision:**
+   - **Decision:** C
 
 3. **Error Handling Strategy**
    - How should errors be reported and handled?
@@ -273,7 +283,7 @@ A stub for `mixdown.config.json`:
      - Can still throw exceptions for truly unexpected errors
      - Provides better feedback for complex mix files
      - Essential for multi-file projects where multiple errors may be related
-   - **Decision:**
+   - **Decision:** C
 
 4. **Configuration Management**
    - How should configuration be loaded and validated?
@@ -299,7 +309,7 @@ A stub for `mixdown.config.json`:
      - Runtime checks handle dynamic configurations
      - Worth the setup cost for a robust configuration system
      - Provides best developer and user experience despite added complexity
-   - **Decision:**
+   - **Decision:** C
 
 5. **Logging and Debug Information**
    - What logging strategy should be used?
@@ -325,7 +335,7 @@ A stub for `mixdown.config.json`:
      - Essential for a complex compiler with multiple processing stages
      - Helps users and developers troubleshoot issues
      - Standard practice in modern development tools
-   - **Decision:**
+   - **Decision:** C
 
 ### Target Handling
 
@@ -353,7 +363,7 @@ A stub for `mixdown.config.json`:
      - Balances flexibility and clarity
      - Allows plugins to participate only in relevant stages
      - More structured than event-based but more flexible than single-function
-   - **Decision:**
+   - **Decision:** B
 
 7. **Target-Specific Features**
    - How should target-specific features be handled?
@@ -379,7 +389,7 @@ A stub for `mixdown.config.json`:
      - Avoids lowest-common-denominator limitations
      - Can be combined with sensible defaults for common patterns
      - Clear model for extending capabilities target by target
-   - **Decision:**
+   - **Decision:** B
 
 8. **Output File Strategy**
    - How should output files be organized?
@@ -405,7 +415,7 @@ A stub for `mixdown.config.json`:
      - Essential for targets like Claude Code with single-file expectations
      - More complex but delivers best user experience
      - Allows each target to receive files in its optimal format
-   - **Decision:**
+   - **Decision:** C
 
 9. **Character/Token Limits**
    - How should character/token limits be handled?
@@ -431,7 +441,7 @@ A stub for `mixdown.config.json`:
      - Others may benefit from smarter strategies
      - Providing target-specific behavior delivers best user experience
      - Allows handling limits in the way most appropriate for each target
-   - **Decision:**
+   - **Decision:** C - Max error level: warning. Ignore warnings in `.mixdown.config.json` and configurable per-mix.
 
 ### Mixdown Notation Processing
 
@@ -459,7 +469,7 @@ A stub for `mixdown.config.json`:
       - Inheritance allows for sensible defaults with local overrides
       - Simpler to understand than track-level scoping
       - Similar to how CSS variables or programming language modules work
-    - **Decision:**
+    - **Decision:** B for now. I could see a future case where C would be interesting, but adds significant complexity.
 
 11. **Import Resolution**
     - How should imports be resolved?
@@ -485,7 +495,7 @@ A stub for `mixdown.config.json`:
       - Supports both simple local imports and complex project structures
       - Essential for reusable components and templates
       - Each path type has clear use cases and predictable behavior
-    - **Decision:**
+    - **Decision:** C
 
 12. **Track Filtering Precedence**
     - How should conflicting track filters be resolved?
@@ -511,7 +521,7 @@ A stub for `mixdown.config.json`:
       - Follows principle of least surprise
       - Clear precedence rules make behavior predictable
       - Strikes good balance between flexibility and predictability
-    - **Decision:**
+    - **Decision:** B for sure. We'll need to address in `OVERVIEW.md` to account for this vs. left-to-right precedence.
 
 13. **Option Extension**
     - How should option extension work?
@@ -537,7 +547,7 @@ A stub for `mixdown.config.json`:
       - More maintainable than simple strings for complex options
       - Common syntax across all targets with plugin-specific semantics
       - Powerful enough without introducing inconsistent syntax
-    - **Decision:**
+    - **Decision:** B
 
 ### Build and Runtime
 
@@ -565,7 +575,7 @@ A stub for `mixdown.config.json`:
       - Can fall back to full rebuild when needed
       - Reasonable complexity for the benefits provided
       - Standard approach in most modern build tools
-    - **Decision:**
+    - **Decision:** B for sure. Also need to account for this being used as a dev tool to compile rulesets, e.g. when a developer wants to include rules in their open source repository for immediate development use by their users.
 
 15. **Dependency Tracking**
     - How should file dependencies be tracked?
@@ -591,7 +601,7 @@ A stub for `mixdown.config.json`:
       - Better for incremental builds
       - More maintainable than pure hash-based approach
       - Good compromise between accuracy and complexity
-    - **Decision:**
+    - **Decision:** B
 
 16. **Template System**
     - How should templates be implemented?
@@ -617,7 +627,7 @@ A stub for `mixdown.config.json`:
       - Familiar pattern from template engines
       - Good balance of flexibility and maintainability
       - Enables creation of specialized templates that extend base ones
-    - **Decision:**
+    - **Decision:** B
 
 ### Integration and Extensibility
 
@@ -645,7 +655,7 @@ A stub for `mixdown.config.json`:
       - Reasonable complexity for the benefits
       - Maintains clear relationship with core functionality
       - Optimized for server deployment patterns
-    - **Decision:**
+    - **Decision:** B, but the MCP server should consume an API as provided by the core, and extend it with MCP-specific features.
 
 18. **Event System**
     - Should Mixdown have an event system?
@@ -671,7 +681,7 @@ A stub for `mixdown.config.json`:
       - Good balance of extensibility and simplicity
       - Can evolve to more comprehensive system if needed
       - Makes the system observable without excessive complexity
-    - **Decision:**
+    - **Decision:** B, but we'll also need to be able to observe file changes from other directories, e.g. when a rule is updated from outside of the .mixdown directory (log the change, and recommend an import of the change to update the rule, we'll need to account for this somewhere).
 
 19. **Extension Points**
     - Where should extension points be placed?
@@ -697,7 +707,7 @@ A stub for `mixdown.config.json`:
       - Allows extending core functionality
       - Supports monitoring and modifying the compilation process
       - Good balance of power and clarity
-    - **Decision:**
+    - **Decision:** B
 
 20. **Output Validation**
     - How should output validation work?
@@ -723,7 +733,7 @@ A stub for `mixdown.config.json`:
       - Fits with plugin architecture
       - Balance of thoroughness and maintainability
       - Distributed responsibility matches the plugin architecture
-    - **Decision:**
+    - **Decision:** B, but to whatever degree possible, we should try and reduce complexity for plugin authors. There should be as much built-in validation as possible, and the plugin authors should only need to provide validation for target-specific features. Even then there should be some abstraction and simplification for plugin authors, such that validating syntax, file structure, filenames, directory structure, etc. is very straightforward.
 
 ## Next Steps
 

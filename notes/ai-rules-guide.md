@@ -259,7 +259,7 @@ flowchart TD
 
 ```markdown
 # Project Overview
-This is a CommonMark-compliant prompt compiler that converts Markdown to tool-specific outputs.
+This is a CommonMark-compliant rules compiler that converts Markdown to tool-specific rules files.
 
 # Key Terminology
 - **Mix**: Source files in Markdown format

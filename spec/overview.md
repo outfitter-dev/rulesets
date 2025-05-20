@@ -1,6 +1,6 @@
 # 💽 Mixdown – v0 Overview
 
-> *Write prompts once, render tool-specific rules, zero drift.*
+> *Write rules once, render tool-specific rules, zero drift.*
 
 ## Table of Contents
 
@@ -65,7 +65,7 @@
 
 ### Overview
 
-Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a single *mix* file in Markdown and compile it into tool-specific instruction files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI prompts**: write once, target many, your agents, no matter the tool, on the (literal) same page.
+Mixdown is a **Markdown-previewable rules compiler** that lets you author a single *mix* file in Markdown and compile it into tool-specific rules files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, target many, your agents, no matter the tool, on the (literal) same page.
 
 ### The Problem
 
@@ -78,15 +78,15 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 Mixdown introduces a single source-of-truth rules notation written in pure Markdown (with a dash of specialized notation), which is processed into tool-specific files by a compiler that:
 
 1. Parses the mix into an AST (abstract syntax tree) to ensure a consistent format.
-2. Uses **tool-specific compilers** (as plugins) to transform the AST into per-tool rules files (outputs).
-3. Writes per-tool **outputs** to their respective locations, with the necessary filenames, formats, etc. all accounted for.
+2. Uses **tool-specific compilers** (as plugins) to transform the AST into per-tool rules files.
+3. Writes per-tool **rules files** to their respective locations, with the necessary filenames, formats, etc. all accounted for.
 
-Result: *Write prompts once, render tool-specific rules, zero drift.*
+Result: *Write rules once, render tool-specific rules, zero drift.*
 
 ## Core Concepts
 
 - **Mix**
-  - Source instruction files, written in 100% previewable Markdown.
+  - Source rules files, written in 100% previewable Markdown.
   - Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
   - Compiled into tool-specific rules files:
     - `./mixdown/mixes/my-rule.md` → `.cursor/rules/my-rule.mdc`
@@ -95,12 +95,12 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
   - Defines tool-specific criteria for compiling mixes to rules files.
   - Provided through plugins.
 - **Output**
-  - Target-specific (tool) output files, rendered from the source mix.
+  - Target-specific (tool) rules files, rendered from the source mix.
   - Examples for a mix called `project-conventions.md`:
     - Cursor → `.cursor/rules/project-conventions.mdc`
     - Claude Code → `./CLAUDE.md#project-conventions`
     - OpenAI Codex → `./conventions.md`.
-  - When placed in tool directories, referred to as "tool-ready outputs".
+  - When placed in tool directories, referred to as "tool-ready rules".
 - **Notation Marker**
   - Syntax: `{{...}}`
   - Fundamental building block of Mixdown Notation
@@ -166,7 +166,7 @@ mixdown init      # scaffolds .mixdown/ directory structure
 
 mixdown import    # imports existing rules files into the mixdown format
 
-mixdown build     # writes outputs to .mixdown/outputs/
+mixdown build     # writes output to .mixdown/output/
 ```
 
 ## Notation Reference
@@ -185,7 +185,7 @@ mixdown build     # writes outputs to .mixdown/outputs/
 Mixdown's syntax follows strict delimiter rules to maintain consistency and clarity. Each character serves a specific purpose:
 
 | Delimiter | Role | Example | Purpose |
-|-----------|------|---------|---------| 
+|-----------|------|---------|---------|
 | `:` | Scope indicator | `target:code-js` | Indicates that options are scoped to a specific target |
 | `()` | Value container | `name(value)` | Contains values for a specific option |
 | `[]` | Option grouping | `target:[option-1 option-2]` | Groups multiple options within a scope |
@@ -285,24 +285,31 @@ The evaluation follows this simple rule:
 - When conflict occurs, **the last directive wins**
 
 **Simple Example:**
+
 ```markdown
 {{track code-js tag-omit}}
 ```
+
 First applies `code-js` (JavaScript code block formatting), then applies `tag-omit` (removes surrounding XML tags).
 
 **Practical Target Example:**
+
 ```markdown
 {{track +ide !windsurf cursor:[tag-omit]}}
 ```
+
 This would:
+
 1. Include the track for all IDE targets (`+ide`)
 2. Exclude it specifically for Windsurf (`!windsurf`), even though Windsurf might be in the IDE group
 3. Apply the `tag-omit` option, but only when building for Cursor
 
 **Conflict Resolution Example:**
+
 ```markdown
 {{track h-2 h-3}}
 ```
+
 The track would use heading level 3 because `h-3` appears last and overrides `h-2`.
 
 > [!NOTE]
@@ -370,6 +377,7 @@ Self-closing tags render as empty XML tags in the output:
 
 > [!IMPORTANT]
 > Differentiating Scoped Options from Scoped Inclusion:
+>
 > - `target:[my-option]` means "If this track is rendered for `target`, apply `my-option`." The track's general inclusion is determined elsewhere (e.g. by default, or by a `+target` on its own).
 > - `+target:[my-option]` means "Render this track *only* for `target`, and when doing so, apply `my-option`." This controls both inclusion and target-specific options simultaneously.
 
@@ -500,6 +508,7 @@ Section content goes here.
 This is equivalent to specifying the heading within the content but provides a more visible and consolidated way to name sections. It's particularly useful when creating structured documents with many subsections.
 
 The heading shortcut will automatically:
+
 - Set the heading level (via h-* options)
 - Use the provided text as the heading
 - Apply the heading to the beginning of the track content
@@ -572,9 +581,7 @@ The following table provides a quick reference to common invocation patterns for
 | Pattern                                     | Example                                         | Description                                                                 |
 |---------------------------------------------|-------------------------------------------------|-----------------------------------------------------------------------------|
 | Basic Grouping                              | `{{track [opt1 opt2 opt3]}}`                    | Visually groups space-delimited options.                                    |
-| Multi-line Grouping                         | `{{track [opt1
-  opt2
-]}}`                     | Improves readability for many options.                                      |
+| Multi-line Grouping                         | `{{track [\n opt1 \n opt2 \n]}}`                     | Improves readability for many options.                                      |
 | Target-Scoped Single Option (no group)      | `{{track target:opt1}}`                         | Applies `opt1` only for `target`. Block included for all valid targets.     |
 | Target-Scoped Multiple Options (via group)  | `{{track target:[opt1 opt2]}}`                  | Applies `opt1` and `opt2` only for `target`. Block included for all.        |
 | Inclusion for Target + Scoped Single Opt  | `{{track +target:opt1}}`                        | Includes block only for `target`, applying `opt1`.                          |
@@ -752,7 +759,7 @@ Important: Be sure to follow the style guide:
 
 #### Import Attributes
 
-All [track options](#track-attributes) can be applied to imports. Additionally, imports support filtering of tracks using `#[...]` square bracket syntax:
+All [track options](#track-options) can be applied to imports. Additionally, imports support filtering of tracks using `#[...]` square bracket syntax:
 
 ```markdown
 {{> my-rules#[track-one !track-two]}}
@@ -807,7 +814,7 @@ While they may seem similar, imports and inclusions have different use cases and
 
 ### Snippets
 
-Snippets are modular, reusable content components, stored in the `/_snippets` directory. Like pieces of code that provide specific functionality, Mixdown snippets provide isolated content blocks that can be imported into multiple instruction files.
+Snippets are modular, reusable content components, stored in the `/_snippets` directory. Like pieces of code that provide specific functionality, Mixdown snippets provide isolated content blocks that can be imported into multiple rules files.
 
 - Snippets are converted to `<snippet_name>` tags in the final output. This can be disabled using the `tag-omit` or `inline` options.
 
@@ -965,8 +972,8 @@ To include a section in Mixdown use: {{section-name}}
 ```text
 project/
 ├── .mixdown/
-│   ├── outputs/
-│   │   └── builds/            # compiled outputs
+│   ├── output/
+│   │   └── builds/            # compiled output
 │   ├── mixes/                 # Mix files (*.md)
 │   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json    # compiler config
@@ -1008,50 +1015,50 @@ The table below organizes options by their categories with comprehensive informa
 
 | Option | Format | Example | Track | Import | Frontmatter | Description |
 |--------|--------|---------|-------|--------|-------------|-------------|
-| **Target Selection Options** ||||||||
+| **Target Selection Options** |||||||
 | `+target` | Flag | `+cursor` | ✅ | ✅ | ❌ | Include content for specific target |
 | `!target` | Flag | `!windsurf` | ✅ | ✅ | ❌ | Exclude content for specific target |
 | `+group` | Flag | `+ide` | ✅ | ✅ | ❌ | Include for all targets in a group |
 | `+all` | Flag | `+all` | ✅ | ✅ | ❌ | Include content for all configured targets |
 | `!group` | Flag | `!cli` | ✅ | ✅ | ❌ | Exclude for all targets in a group |
-| **Target-Scoped Options** ||||||||
+| **Target-Scoped Options** |||||||
 | `target:option` | Scoped | `cursor:tag-omit` | ✅ | ✅ | ❌ | Apply option only for specified target |
 | `target:[options]` | Scoped group | `cursor:[code-js name(rules)]` | ✅ | ✅ | ❌ | Apply multiple options only for specified target |
 | `+target:option` | Combined | `+cursor:tag-omit` | ✅ | ✅ | ❌ | Include for target and apply option to that target |
 | `!target:option` | Combined | `!windsurf:code-js` | ✅ | ✅ | ❌ | Exclude for target (option has no effect) |
-| **Metadata Options** ||||||||
+| **Metadata Options** |||||||
 | `name(value)` | Parameter | `name(important-rules)` | ✅ | ✅ | ✅ | Set XML name attribute; identifier in frontmatter |
 | `id(value)` | Parameter | `id(section-1)` | ✅ | ✅ | ❌ | Set id attribute for linking and references |
 | `custom="value"` | XML attribute | `priority="high"` | ✅ | ✅ | ❌ | Set custom XML attributes passed to output |
-| **Display Options** ||||||||
+| **Display Options** |||||||
 | `tag-omit` | Flag | `tag-omit` | ✅ | ✅ | ❌ | Remove XML tags from output, preserve formatting |
 | `inline` | Flag | `inline` | ✅ | ✅ | ❌ | Remove XML tags and render content inline |
 | `inline-with-tags` | Flag | `inline-with-tags` | ✅ | ✅ | ❌ | Keep XML tags but render content inline |
-| **Code Formatting Options** ||||||||
+| **Code Formatting Options** |||||||
 | `code` | Flag | `code` | ✅ | ✅ | ❌ | Auto-detect language from file extension |
 | `code-*` | Flag | `code-js`, `code-py`, etc. | ✅ | ✅ | ❌ | Format as code block in specified language |
-| **Heading Options** ||||||||
+| **Heading Options** |||||||
 | `h-[1-6]` | Flag | `h-1` through `h-6` | ✅ | ✅ | ❌ | Format as heading of specified level |
 | `h-inc` | Flag | `h-inc` | ✅ | ✅ | ❌ | Increment heading level (demote) |
 | `h-dec` | Flag | `h-dec` | ✅ | ✅ | ❌ | Decrement heading level (promote) |
 | `h-same` | Flag | `h-same` | ✅ | ✅ | ❌ | Keep same heading level |
 | `h-initial` | Flag | `h-initial` | ✅ | ✅ | ❌ | Replace first heading |
-| **Numbering Options** ||||||||
+| **Numbering Options** |||||||
 | `num` | Flag | `num` | ✅ | ✅ | ❌ | Enable default numbering |
 | `num-heading-first` | Flag | `num-heading-first` | ✅ | ✅ | ❌ | Number first heading only |
 | `num-heading-last` | Flag | `num-heading-last` | ✅ | ✅ | ❌ | Number last heading only |
 | `num-tag-first` | Flag | `num-tag-first` | ✅ | ✅ | ❌ | Number first tag only |
 | `num-tag-last` | Flag | `num-tag-last` | ✅ | ✅ | ❌ | Number last tag only |
-| **Raw Notation Options** ||||||||
+| **Raw Notation Options** |||||||
 | `raw-all` | Flag | `raw-all` | ✅ | ✅ | ❌ | Render everything as raw Mixdown notation |
 | `raw-content` | Flag | `raw-content` | ✅ | ✅ | ❌ | Process tags, preserve content as raw |
 | `raw-tags` | Flag | `raw-tags` | ✅ | ✅ | ❌ | Process content, preserve tags as raw |
-| **Import Filtering** ||||||||
+| **Import Filtering** |||||||
 | `#track` | Single track | `#track-name` | ❌ | ✅ | ❌ | Include specific track from import |
 | `#!track` | Single exclusion | `#!track-name` | ❌ | ✅ | ❌ | Exclude specific track from import |
 | `#[track1 track2]` | Multiple tracks | `#[section-a section-b]` | ❌ | ✅ | ❌ | Include multiple specific tracks |
 | `#[target:track]` | Scoped track | `#[cursor:section-a]` | ❌ | ✅ | ❌ | Target-specific track inclusion |
-| **Frontmatter Configuration** ||||||||
+| **Frontmatter Configuration** |||||||
 | `mixdown.version` | YAML | `mixdown.version: 0.1.0` | ❌ | ❌ | ✅ | Mixdown format version for the file |
 | `description` | YAML | `description: "Project rules"` | ❌ | ❌ | ✅ | Short description of the mix |
 | `name` | YAML | `name: my-rules` | ❌ | ❌ | ✅ | Unique identifier for the mix (defaults to filename) |
@@ -1067,9 +1074,7 @@ The table below organizes options by their categories with comprehensive informa
 #### Common Option Patterns and Languages
 
 **Code Languages (`code-*`):**
-Most common programming languages are supported using the `code-language` pattern, including:
-`code-js` (JavaScript), `code-ts` (TypeScript), `code-py` (Python), `code-java` (Java), `code-go` (Go), 
-`code-html`, `code-css`, `code-sql`, `code-sh` (Shell/Bash), `code-yaml`, `code-json`, `code-md` (Markdown), etc.
+Most common programming languages are supported using the `code-language` pattern, including: `code-js` (JavaScript), `code-ts` (TypeScript), etc.
 
 **Common Option Combinations:**
 

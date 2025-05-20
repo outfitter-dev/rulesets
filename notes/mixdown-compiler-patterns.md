@@ -1,11 +1,11 @@
 # Mixdown Compiler Implementation Patterns
 
 TLDR: Essential patterns and structures needed for the mixdown compiler implementation
-TLDR: Guidelines for transforming mix files into target-specific outputs
+TLDR: Guidelines for transforming mix files into target-specific rules files
 
-This document outlines key implementation patterns that the Mixdown compiler needs to handle based on analysis of various target systems. These patterns represent the diverse ways AI assistants manage rules and memory across different tools.
+This document outlines key implementation patterns that the Mixdown compiler needs to handle based on analysis of various target systems. These patterns represent the diverse ways AI assistants manage rules across different tools.
 
-The Mixdown compiler needs to convert a single source format (mixdown files) into tool-specific instruction files for different AI assistant platforms. Each target has unique requirements for file location, format, activation mechanisms, and content organization that must be handled appropriately.
+The Mixdown compiler needs to convert a single source format (mixdown files) into tool-specific rules files for different AI assistant platforms. Each target has unique requirements for file location, format, activation mechanisms, and content organization that must be handled appropriately.
 
 ## File Location and Loading Patterns
 

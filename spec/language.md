@@ -6,8 +6,8 @@ This document provides terminology guidance for consistent language in Mixdown d
 
 | Term | Definition | Usage Examples |
 |------|------------|----------------|
-| **Mix** | Source instruction files, written in Mixdown Notation | "Write your code standards in a mix file." |
-| **Output** | Target-specific output files generated from mixes | "Compile your mixes into outputs for each tool." |
+| **Mix** | Source rules files, written in Mixdown Notation | "Write your code standards in a mix file." |
+| **Output** | Target-specific rules files generated from mixes | "Compile your mixes into rules files for each tool." |
 | **Target** | A supported tool (e.g., Cursor, Claude Code) | "Each target has specific formatting requirements." |
 | **Notation Marker** | Element using `{{...}}` notation | "Use notation markers to direct the compiler." |
 | **Track** | Delimited blocks marked with `{{track}}...{{/track}}` | "Define a track for agent instructions." |
@@ -32,9 +32,9 @@ This document provides terminology guidance for consistent language in Mixdown d
 
 #### Compilation Process
 
-- ✅ "Compile mixes into outputs"
-- ✅ "Generate tool-specific outputs"
-- ✅ "Transform mix into target-specific outputs"
+- ✅ "Compile mixes into rules files"
+- ✅ "Generate tool-specific rules files"
+- ✅ "Transform mix into target-specific rules files"
 - ❌ "Render artifacts" (outdated)
 
 #### Output Generation
@@ -80,7 +80,7 @@ This document provides terminology guidance for consistent language in Mixdown d
 | Directory | `kebab-case` | `_samples` |
 | Config files | `kebab-case.config.json` | `mixdown.config.json` |
 | Track markers | `kebab-case` | `{{user-instructions}}` |
-| Track markers in outputs | `snake_case` | `<user_instructions>` |
+| Track markers in output | `snake_case` | `<user_instructions>` |
 
 ## Musical Theme Alignment
 
@@ -142,6 +142,11 @@ When referring to versions:
 - When new terms are introduced, add them to this language spec
 - Prefer clarity over cleverness in technical documentation
 - Use examples liberally to illustrate abstract concepts
+
+## Changelog
+
+- **2025-05-20:**
+  - `.mixdown/outputs` directory → `.mixdown/output` directory
 
 ---
 
