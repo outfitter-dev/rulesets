@@ -4,19 +4,26 @@
 
 ## Source Content
 
-### Mix
+### Rule Definition
 
-- **Description:** The source files written in Mixdown notation
+- **Description:** The source files that define rules for AI assistants
 - **Current:** "Source rules files", "Source mix files", "Mix files", "Source Markdown file", "Mixdown files"
-- **Recommendation**: Pick one term and use it consistently.
-- **Decision:** Standardize on "Mix files" for all documentation and code comments.
-- **Proposed:
-  1. ✴️ "Mix files" ← "Source rules files", "Source mix files", "Source Markdown file", "Mixdown files"
-     - Reasoning: "Mix" is a term that is unique to the Mixdown project to refer to the source files written in Mixdown notation. It is a more specific term that refers to the source files that are used to generate the target-specific rules files.
-     - Example: "Mix files are written in 100% previewable Markdown"
-  2. "Source rules" ← "Source rules files"
-     - Reasoning: "Source rules" can be a more descriptive term and maps more closely to the industry terminology of "rules."
-     - Example: "Source rules files are written in 100% previewable Markdown"
+- **Recommendation:** Standardize on a clear term that emphasizes definition rather than mixing.
+- **Decision:** We should use **Rule Definition** as the primary term for source files that define AI assistant rules.
+- **Proposed:**
+  1. ✴️ "Rule Definition" ← "Mix files", "Source rules files", "Source mix files"
+     - Reasoning: "Rule Definition" clearly communicates the primary purpose (defining rules) and creates a logical pair with "Compiled Rules."
+     - Example: "Rule Definitions are written in 100% previewable Markdown"
+  2. "Rules Source" ← "Source rules files", "Mixdown files"
+     - Reasoning: Emphasizes the source nature of these files.
+     - Example: "Rules Source files contain the instructions that will be compiled"
+  3. "Mixdown Definition" ← "Mix files", "Mixdown files"
+     - Reasoning: Maintains brand identity while clarifying purpose.
+     - Example: "Create Mixdown Definitions that compile to multiple destinations"
+- **Decision:**
+  - We should use **Rule Definition** as the primary term for all documentation and code comments.
+  - We should rename the `.mixdown/mixes` directory to `.mixdown/definitions/` to better reflect the purpose of the directory.
+  - This creates a logical flow: Rule Definitions → Compilation → Compiled Rules → Destinations.
 
 ## Target Terminology
 
@@ -36,6 +43,13 @@
   3. "Target platform" ← "Target", "Tool" (when emphasizing the platform aspect)
      - Reasoning: Emphasizes the platform nature of the target tool, useful when discussing technical integration aspects.
      - Example: "Mixdown supports multiple target platforms like Claude Code and Cursor"
+- **Decision:**
+  - We should consolidate around "Destination" as the base term for all things target-related.
+    - "Target tool" will simply be "destination"
+    - `target` in specific contexts should be `destination`
+    - "Destination Directory" refers to a specific rules directory and may not apply to all circumstances. `**/.cursor/rules` is a destination directory, but where `CLAUDE.md` would be placed does not apply.
+      - Claude Code doesn't use a specific directory for `CLAUDE.md` but for their slash commands, they do use `.claude/commands` so this would be a destination directory.
+    - "Destination Path" refers to the path of compiled rules.
 
 ## Output Terminology
 
@@ -55,6 +69,12 @@
   3. "Target rules" ← "Tool-specific rules files", "Target-specific rules files" (for brevity in appropriate contexts)
      - Reasoning: A simplified version that maintains the essential meaning while being more concise.
      - Example: "Each target rules file is placed in its appropriate tool directory"
+- **Decision:**
+  - "Destination-ready rules" ← "Target-specific rules" / "Tool-specific rules" / "Per-tool rules"
+    - Refers to the process of compiling the source rules into destination-specific rules.
+    - Example sentence: "Mixdown compiles source rules into destination-ready rules"
+  - "Compiled rules" ← "Target-specific rules files"
+    - Refers to the final compilation artifacts that are placed in destination directories.
 
 ### Tool-Ready Rules
 
@@ -72,6 +92,8 @@
   3. "Tool-installed rules" ← "Tool-ready rules", "Tool-ready output"
      - Reasoning: Clearly indicates that these rules have been placed in their tool-specific locations.
      - Example: "Tool-installed rules are automatically recognized by their respective target tools"
+- **Decision:**
+  - Refer to [rules files](#rules-files) for more information.
 
 ## Directory References
 
@@ -88,6 +110,16 @@
   2. ✴️ "Output directory" ← "Output location", "Output path"
      - Reasoning: A simpler alternative for contexts where the full path isn't necessary.
      - Example: "The output directory contains all target-specific rules files"
+- **Decision:**
+  - `.mixdown/compiled` and "Compilation directory" work well.
+  - We should call the specific contents of the compilation directory `compilation artifacts`.
+    - A compilation is a single run of the compiler.
+  - We should therefore have:
+    - `.mixdown/compiled/latest/` ← Symlink to the latest compilation
+    - `.mixdown/compiled/runs/` ← Directory for all compilations and their artifacts
+    - `.mixdown/compiled/runs/run-<timestamp>.json` ← Compilation metadata for each run
+    - `.mixdown/compiled/logs/` ← Log files for all compilations
+    - `.mixdown/compiled/logs/run-<timestamp>.log` ← Compilation log for each run
 
 ## Process Terminology
 
@@ -107,6 +139,8 @@
   3. "Build" ← "Generate", "Process" (alternative for build-system contexts)
      - Reasoning: When discussing the build pipeline or integration with other build systems, "build" provides familiar terminology.
      - Example: "The build process automatically builds all mix files into their target formats"
+- **Decision:**
+  - Compile is the best. Let's use it everywhere.
 
 ### Compiler
 
@@ -124,6 +158,9 @@
   3. "Rules processor" ← "Rules compiler", "Prompt compiler"
      - Reasoning: Alternative for contexts where "compilation" might imply a more complex transformation than what actually occurs.
      - Example: "The rules processor handles the transformation of mix files into their final format"
+- **Decision:**
+  - "Compiler" for times when we're referring to the component itself.
+  - "Rules compiler" for times when we're referring to the process of compiling rules or what Mixdown is.
 
 ## Notation Terminology
 
@@ -143,6 +180,10 @@
   3. "Marker" ← "Notation Marker" (for brevity in clear contexts)
      - Reasoning: A shortened form that can be used once the concept has been established.
      - Example: "Track markers and import markers follow the same basic syntax."
+- **Decision:**
+  - "Mixdown Notation" should be used when referring to the overall syntax system.
+  - "Mixdown Marker" or simply "Marker" should be used when referring to the individual `{{...}}` syntax elements.
+    - Where it's helpful, we can clarify that "Marker" == an XML `<tag>`
 
 ### Tracks
 
@@ -160,6 +201,15 @@
   3. "Track block" ← "Delimited content blocks" (alternative for emphasis on structure)
      - Reasoning: Emphasizes the block-like nature of tracks when discussing structural aspects.
      - Example: "A mix file can contain multiple track blocks."
+- **Decision:**
+  - We should rename "Track" to "Stem" to better reflect the concept of a track as a single, distinct unit of content and maintain the music production theme.
+  - "Stem" keeps an alliterative association with "Section" which is already well-established.
+  - "Stem" also connects well with "Structure" so where it's useful we can put those two words together in a sentence for greater discriptiveness.
+  - "Stem" refers to the full construct of an opening and closing marker and the content between them.
+  - "Stem content" refers to the content between the opening and closing markers.
+  - "Stem name" refers to the leading kebab-case or snake_case identifier that follows the `{{` opening marker.
+  - Example: "The instructions stem contains guidance for AI assistants."
+  - Example: "Stems consist of opening and closing markers that surround content."
 
 ## Configuration Terminology
 
@@ -179,6 +229,12 @@
   3. ✴️ "Modifier" ← "Inclusion modifier", "Exclusion modifier" (for special symbols)
      - Reasoning: Keep "Modifier" for the special inclusion/exclusion symbols as it's already well-established.
      - Example: "The `+` and `-` modifiers control target inclusion and exclusion."
+- **Decision:**
+  - Let's use "Property" or `prop` for short, replacing "option" universally.
+  - `value` or "property's value" for the value of a property, `val` for short.
+  - "Property scope" or "prop-scope" for the scope of a property. "Scoped property" is also acceptable e.g. "Destination-scoped property"
+  - "Property modifier" or "prop-mod" for short.
+  - "Scoped value" or "Destination-scoped value" refers to the value of a property that is scoped to a specific destination. "Override" simply refers to the process of overriding a property's value.
 
 ## Import Terminology
 
@@ -198,6 +254,12 @@
   3. "Import options" ← "Import attributes" (for configuration parameters)
      - Reasoning: Maintains consistency with the standardized "options" terminology.
      - Example: "Import options allow you to specify which tracks to include."
+- **Decision:**
+  - "Import" should be used everywhere that refers to the import mechanism, replacing "Inclusion", "Embed content", "References", etc.
+    - In instances where we're simply describing the action, we can say "Importing content" or "Importing tracks" or "Importing snippets" etc.
+  - "Import parameters" replaces "Import attributes/options"
+  - "Import scope" replaces "Track filtering"
+    - For when we're using `{{> my-rules[my-track] }}`
 
 ## Variable Terminology
 
@@ -217,6 +279,10 @@
   3. ✴️ "Variable substitution" ← (for the process)
      - Reasoning: Standard terminology that clearly describes the replacement process.
      - Example: "Variable substitution occurs during the compilation process."
+- **Decision:**
+  - "Variable" works, and should replace "Dynamic values"
+  - "System variable" should replace "Built-in variable"
+  - "Variable substitution" should replace "Variable replacement"
 
 ## XML Generation Terminology
 
@@ -236,6 +302,11 @@
   3. "Generates XML" ← "Outputs XML notation" (alternative for generation emphasis)
      - Reasoning: Emphasizes the generation aspect when discussing the compiler's output.
      - Example: "The compiler generates XML that target tools can interpret."
+- **Decision:**
+  - "Converted to XML tags" is the best.
+  - "Translated to XML" is good. This would be better than "Transformed into XML structure"
+  - IMPORTANT: "The compiler generates XML that…" makes it seem myopic. We should avoid this. XML is simply one potential type of output from Mixdown.
+    - "Mixdown compiles rules into pure Markdown, XML, or a combination of the two." or something like that would be better.
 
 ## Raw Notation Terminology
 
@@ -255,6 +326,8 @@
   3. "Escaped notation" ← (alternative emphasizing function)
      - Reasoning: Emphasizes the escaping function of the syntax.
      - Example: "Use escaped notation when you want to show notation syntax without it being processed."
+- **Decision:**
+  - "Raw notation" works. "Triple-brace" or "escaping" (where applicable and not escaped notation) should only be used to refer to the specific syntax used to preserve Mixdown notation.
 
 ## Code Formatting Terminology
 
@@ -274,3 +347,13 @@
   3. "code:format" ← (for special formatting options)
      - Reasoning: Provides a consistent pattern for additional code formatting options that may be added.
      - Example: "Future versions might support options like output=\"code:format=indent4\"."
+- **Decision:**
+  - `code-lang` is preferred. We can refer to specific languages when it's necessary for demonstration, but we shouldn't enumerate every possible language anywhere.
+  - Simply using `code` for the auto-language notation should be supported. `code-block` should not be used.
+
+## Additional Terminology Changes
+
+- "Mixin" to replace "Snippet"
+  - "A mixin is a reusable stem that can be imported into multiple Rule Definitions."
+- "Rule Definition" to replace "Mix" and "Source rules files"
+  - The core flow becomes: Rule Definition → Compilation → Compiled Rules → Destination
