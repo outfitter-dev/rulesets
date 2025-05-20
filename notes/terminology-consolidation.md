@@ -353,7 +353,29 @@
 
 ## Additional Terminology Changes
 
-- "Mixin" to replace "Snippet"
-  - "A mixin is a reusable stem that can be imported into multiple Rule Definitions."
-- "Rule Definition" to replace "Mix" and "Source rules files"
+### Mixin
+
+- **Description:** Reusable, standalone components that can be imported into Rule Definitions
+- **Current:** "Snippet", "Reusable component", "Partial", "Include", "Fragment"
+- **Recommendation:** Standardize on a programming-familiar term that complements Rule Definitions
+- **Decision:** Use "Mixin" as the primary term for reusable components
+- **Proposed:**
+  1. ✴️ "Mixin" ← "Snippet", "Reusable component", "Fragment"
+     - Reasoning: In programming, mixins are reusable pieces of code that can be incorporated into different classes or components - exactly matching our use case.
+     - Example: "Import authentication mixins to add user authentication to your Rule Definitions."
+  2. "Component" ← "Reusable component", "Fragment"
+     - Reasoning: Generic but clear term that emphasizes the modular nature.
+     - Example: "Store common components in the _components directory for reuse."
+  3. "Sample" ← "Snippet", "Fragment"
+     - Reasoning: Continues the music production theme alongside "stem".
+     - Example: "Import the header sample into multiple Rule Definitions."
+- **Decision:**
+  - We should use **Mixin** as the standard term for reusable components that can be imported into Rule Definitions
+  - We should rename the `.mixdown/mixes/_snippets` directory to `.mixdown/definitions/_mixins`
+  - A mixin typically contains one or more stems that perform a specific function
+  - A mixin can be imported into multiple Rule Definitions using the import notation `{{> mixin-name}}`
+
+### Rule Definition
+
+- **Decision:** Replace "Mix" and "Source rules files" with "Rule Definition"
   - The core flow becomes: Rule Definition → Compilation → Compiled Rules → Destination
