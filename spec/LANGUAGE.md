@@ -14,7 +14,7 @@ This document provides terminology guidance for consistent language in Mixdown d
 | **Stem Content** | The content between opening and closing stem markers | "The stem content contains the actual instructions for the AI assistant." |
 | **Stem Name** | The kebab-case or snake_case identifier after the opening `{{` | "Use a descriptive stem name like {{user-instructions}}." |
 | **Import** | A reference to another source rules file or stem | "Import common guidelines into multiple files." |
-| **Import Scope** | Selective filtering of stems during import | "Use import scope with `{{> my-rules[my-stem] }}` to import specific stems." |
+| **Import Scope** | Selective filtering of stems during import | "Use import scope with `{{> my-rules#(my-stem) }}` to import specific stems." |
 | **Variable** | Dynamic values replaced during compilation | "Use variables to include dynamic data." |
 | **System Variable** | Built-in variables provided by the compiler | "The `$destination` system variable contains the current destination ID." |
 | **Variable Substitution** | The process of replacing variables with their values | "Variable substitution happens automatically during compilation." |

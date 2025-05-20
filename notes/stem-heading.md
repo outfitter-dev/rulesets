@@ -1,3 +1,55 @@
+6. Stem numbering should:
+
+Be configurable at multiple levels (global, Source Rules file, stem)
+Support different formats for headings and tags
+Handle hierarchical relationships automatically
+}
+
+### Source Rule Configuration (frontmatter)
+
+```yaml
+---
+mixdown:
+  heading:
+    level:
+      min: 2             # Minimum heading level to start at (default: 2)
+      max: 5             # Maximum heading level (default: 5, capped at 6)
+    case: "title"        # Propertyal: stem name case transformation
+    line_breaks:
+      before: true       # Insert blank line before heading (default: true)
+      after: true        # Insert blank line after heading (default: true)
+  stem:
+    numbering:
+      heading: "before"     # before, after, or none
+      tag: "after"          # before, after, or none
+      children: 3           # max depth for hierarchical numbering
+      separator: "."        # separator between numbers (e.g., 1.[2.3])
+---
+content_copy
+download
+Use code with caution.
+5. Numbering Configuration
+Control numbering globally or per-Source-Rules-file:
+
+mixdown:
+  stem:
+    numbering:
+      heading: "before"      # before, after, or none
+      tag: "after"           # before, after, or none
+      children: 3            # max depth for hierarchical numbering
+      separator: "."         # separator between numbers (e.g., 1.[2.3])
+content_copy
+download
+Use code with caution.
+Yaml
+### 2. Numbering Placement Properties
+
+Control where numbering appears in output:
+## Implementation Considerations
+
+1. The processor would need to determine the nesting depth for each stem when rendering.
+2. Configuration merging (global → destination → Source Rules file → stem) would need clear precedence rules.
+3. Heading transformation would need to happen at render time to account for various transformations.
 # Heading-Based Output Format Proposal
 
 ## Overview
@@ -420,7 +472,7 @@ mixdown:
     numbering:
       heading: "before"      # before, after, or none
       tag: "after"           # before, after, or none
-      children: 3            # max depth for hierarchical numbering 
+      children: 3            # max depth for hierarchical numbering
       separator: "."         # separator between numbers (e.g., 1.[2.3])
 ```
 
