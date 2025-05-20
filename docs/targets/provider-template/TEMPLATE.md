@@ -1,123 +1,153 @@
-<template>
+# [Provider Name] Rules System
 
-<content>
+[Provider Name] (vX.Y+, Month YYYY) uses [brief description of how this provider implements AI instructions/rules in 1-3 sentences].
 
-# [ Provider Name ] Rules System
+## Key Features
 
-[ Brief description of how this provider implements AI instructions/rules ]
-
-<!-- AI: Include the provider's purpose, primary implementation approach, and what makes it unique, in 1-3 sentences -->
-
-## Rules System Highlights
-
-- **File Format:**
-  - [ e.g., Markdown with YAML front-matter ]
-  - [ Additional details about the file format structure ]
-  - [ Any format-specific limitations or capabilities ]
-- **Scoping Mechanisms:**
-  - [ e.g., global user-level rules ]
-  - [ e.g., project-level rules ]
-  - [ e.g., directory or component-specific rules ]
-- **Activation Method:**
-  - [ e.g., automatic loading at startup ]
-  - [ e.g., manual activation via commands ]
-  - [ e.g., conditional activation based on file types ]
-- **Integration:**
-  - [ e.g., IDE plugin with UI controls ]
-  - [ e.g., CLI commands for rule management ]
-  - [ e.g., web interface capabilities ]
-- **Special Features:**
-  - [ e.g., templating system for rules ]
-  - [ e.g., import/include mechanisms ]
-  - [ e.g., variable substitution ]
-  - [ e.g., conditional rule sections ]
-- **Rule Types / Modes:**
-  - [ e.g., Always-on vs. Model-decision vs. Manual ]
-  - [ e.g., mode-specific folders like `rules-architect/` ]
-- **File Naming Conventions:**
-  - [ Canonical filenames (`AGENTS.md`, `.windsurfrules`, `.cursor/rules/*.mdc`, etc.) ]
-  - [ Legacy aliases or deprecated names ]
-- **Token / Size Constraints:**
-  - [ Per-file and cumulative limits, if applicable ]
-  - [ Behaviour when limits are exceeded (truncation, warnings) ]
+- **Rule Types:** [e.g., Always Apply, Auto-Attached, Model-Decision, Manual]
+- **Scoping Mechanisms:** [e.g., global, project-level, directory-specific]
+- **File Format:** [e.g., Markdown with YAML front-matter, plain Markdown]
+- **Prompt Integration:** [how rules appear in the context/prompt]
+- **UI Integration:** [how rules are managed through provider interface]
+- **File Referencing:** [any file inclusion syntax if supported]
+- **Character Limits:** [any size or token limits for rules files]
 
 ## Canonical Locations & Precedence
 
-<!-- AI: Describe where rule files are stored and their precedence order -->
+[Provider Name] loads rules from both global and project-specific locations:
 
 ```text
-~/.config/[ provider ]/rules.md         # User-level rules
-<project_root>/.[ provider ]/rules.md   # Project-level rules
-<project_root>/path/to/.rules.md        # Component-specific rules
-[ Additional locations if applicable ]
-<cwd>/rules.md                         # Working-directory overrides, if supported
+~/.config/[provider]/rules.md         # Global user preferences
+<repo-root>/.[provider]/rules/*.md    # Project-specific rules
+<repo>/<subdirectory>/.[provider]/*.md # Nested module rules (if supported)
+(legacy) <repo>/.providerrules        # Single-file fallback (if applicable)
 ```
+
+Order of application: [describe precedence order and conflict resolution].
 
 ## Directory Structure Example
 
 ```text
-$HOME/
-├── .config/[ provider ]/
-│   └── rules.md                # Global rules
-└── projects/
-    └── myproject/
-        ├── .[ provider ]/      # Project rules
-        │   └── rules.md
-        └── src/
-            └── moduleA/
-                └── .rules.md   # Module-specific rules
+project/
+├── .[provider]/                      # Project root rules
+│   └── rules/
+│       ├── always-on-style.md        # Always-on rules example
+│       └── api-conventions.md        # Auto-attached example
+├── submodule/
+│   ├── .[provider]/                  # Subdirectory-specific rules (if supported)
+│   │   └── rules/
+│   │       └── submodule-standards.md
+└── ...
 ```
 
-## Version & Verification
+## YAML Front-matter Configuration
 
-| Aspect | Placeholder |
-|--------|-------------|
-| **Last-verified version / commit** | `[ e.g., v0.48.2 (2025-05-10) ]` |
-| **Documentation source & date**    | `[ link + absolute date ]` |
-| **Staleness warning**              | `[ Flag info > 6 months old ]` |
+[Provider Name] uses a YAML front-matter block to configure rules:
 
-<!-- AI: The example above is just a placeholder. The specific directory structure will vary based on the provider. -->
+```markdown
+---
+description: "Example rule description"
+globs: ["**/*.{js,ts}"]
+activation: "always_on"
+---
+# Rule Title
+
+- Rule content here
+```
+
+| Field | Purpose | Example |
+|-------|---------|---------|
+| `activation` | How the rule is activated | `activation: "always_on"` |
+| `description` | Summary of the rule's purpose | `description: "Database Schema"` |
+| `globs` | Path patterns for automatic activation | `globs: ["**/*.py", "**/*.ipynb"]` |
+| [other fields] | [their purpose] | [example value] |
+
+## Activation Modes
+
+[Provider Name] offers [number] ways to activate rules:
+
+1. **[Mode 1]**: [Description of activation mode]
+   - [When to use this mode]
+   - [Requirements for this mode]
+   ```yaml
+   ---
+   activation: "mode1"
+   ---
+   ```
+
+2. **[Mode 2]**: [Description of activation mode]
+   - [When to use this mode]
+   - [Requirements for this mode]
+   ```yaml
+   ---
+   activation: "mode2"
+   ---
+   ```
 
 ## File Structure Example
 
 ```markdown
 ---
-description: "Project coding standards"
-globs: ["**/*.js"]
-activation: "automatic"
+description: "Example rule file"
+globs: ["**/*.{js,ts}"]
+activation: "always_on"
 ---
 
-# Coding Standards
+# [Category] Standards
 
-- Always use ES6 features
-- Prefer async/await over Promises
-- Format code with Prettier
+- [Rule 1]
+- [Rule 2]
+- [Rule 3]
 
-# Testing Requirements
+# Additional Guidelines
 
-- Write unit tests for all functions
-- Maintain 80% test coverage
+- [Guideline 1]
+- [Guideline 2]
 ```
 
-<!-- AI: If the provider supports multiple file formats or structures, add additional examples. -->
-<!-- AI: Some tools have differences in frontmatter syntax, especially `globs` and otherwise. Use this purely as an example. -->
+## File Referencing
 
-## Activation Mechanisms
+[If applicable, describe how to include external file content]
 
-<!-- AI: Describe how rules are loaded and when they become active -->
+```markdown
+# [Category] Guidelines
 
-- **When rules are loaded:**
-  - [ Details around how rules are loaded (startup, file open, explicit command) ]
-  - [ Add additional details as needed with multiple sublist items ]
-- **Conditional activation:**
-  - [ Details around how rules are activated (file pattern matching, AI mode switching) ]
-  - [ Add additional details as needed with multiple sublist items ]
-- **Rule conflicts:**
-  - [ Details around how rules are resolved (provider-specific precedence) ]
-  - [ Add additional details as needed with multiple sublist items ]
-- **Dynamic updates:**
-  - [ Allow rules to be modified during a session if supported ]
-  - [ Add additional details as needed with multiple sublist items ]
+@[path/to/file.ext]
+
+# Additional Guidelines
+- [Guideline 1]
+- [Guideline 2]
+```
+
+## Character Limits
+
+[Provider Name] implements character limits to prevent context overload:
+
+- **[X] characters per rule file**: [Implications]
+- **[Y] characters total across all rules**: [Implications]
+- **UI indication**: [How limits are displayed]
+
+## Rule Content and Capabilities
+
+Rules can contain various types of guidance:
+
+| Type | Purpose | Example |
+|------|---------|---------|
+| **Coding Style Guides** | Naming conventions, formatting rules | Style guides, naming patterns |
+| **Architecture Decisions** | Project structure, design patterns | Technology choices, patterns |
+| **Boilerplate Templates** | Common code structures | Component templates, file skeletons |
+| **Workflow Instructions** | Step-by-step procedures | Deployment processes, review steps |
+| **Testing Checklists** | Quality criteria | Test coverage requirements |
+| **Knowledge Base** | Domain concepts, framework help | API explanations, domain models |
+
+## Loading Process
+
+When working with [Provider Name], the rules are processed as follows:
+
+1. [Step 1 of loading process]
+2. [Step 2 of loading process]
+3. [Step 3 of loading process]
+4. [Step 4 of loading process]
 
 ```mermaid
 flowchart TD
@@ -130,168 +160,44 @@ flowchart TD
     F --> G
 ```
 
-## Typical Rule Content
+## UI Integration
 
-Effective [ provider name ] rules typically include:
+[Provider Name] provides a dedicated UI for managing rules:
 
-- **Project Context:**
-  - [ Technology stack descriptions (frameworks, languages) ]
-  - [ Architecture overview (components, services) ]
-  - [ Project goals and principles ]
-  - [ Team structure and responsibilities ]
-- **Coding Standards:**
-  - [ Style guidelines (indentation, naming conventions) ]
-  - [ Patterns to use (architectural patterns, design patterns) ]
-  - [ Anti-patterns to avoid ]
-  - [ Code organization principles ]
-- **Workflow Guidelines:**
-  - [ PR process and requirements ]
-  - [ Testing standards and expectations ]
-  - [ Documentation expectations ]
-  - [ Version control practices ]
+- **Creating Rules:** [How to create new rules]
+- **Viewing/Editing:** [How to view and edit existing rules]
+- **Version Control:** [How rules integrate with version control]
+- **Updates:** [How rule changes are applied]
+- **Generating Rules:** [Any automated rule generation features]
 
-Example:
+## Best Practices for [Provider Name] Rules
 
-```markdown
-# Project Overview
-This is a React application using TypeScript and Tailwind CSS.
+- **[Best Practice 1]**: [Description and explanation]
+- **[Best Practice 2]**: [Description and explanation]
+- **[Best Practice 3]**: [Description and explanation]
+- **[Best Practice 4]**: [Description and explanation]
+- **[Best Practice 5]**: [Description and explanation]
+- **[Best Practice 6]**: [Description and explanation]
+- **[Best Practice 7]**: [Description and explanation]
+- **[Best Practice 8]**: [Description and explanation]
 
-# Coding Standards
-- Follow AirBnB style guide
-- Use functional components with hooks
+## Limitations & Considerations
 
-# Testing Requirements
-- Write tests for all components
-```
+- **[Limitation 1]:** [Description and implications]
+- **[Limitation 2]:** [Description and implications]
+- **[Limitation 3]:** [Description and implications]
+- **[Limitation 4]:** [Description and implications]
+- **[Limitation 5]:** [Description and implications]
 
-## Best Practices
+## Version Information
 
-[ Best practices for writing (provider-name) rules. Follow the example below.]
+| Aspect | Details |
+|--------|---------|
+| Last-verified release | vX.Y.Z (Month YYYY) |
+| Primary docs | [Provider Name] documentation website |
+| Front-matter specification | Updated in vX.Y (Month YYYY) |
 
-<best_practices_example>
-- **Be specific:**
-  - Provide clear, actionable guidance rather than vague suggestions
-  - Include concrete examples of what to do and what to avoid
-  - Use precise language that leaves little room for interpretation
-- **Use structure:**
-  - Organize content with consistent headings and subheadings
-  - Utilize lists and tables for better scanability
-  - Include code blocks for technical guidance
-  - Maintain a logical flow of information
-- **Include examples:**
-  - Show ideal code patterns alongside guidelines
-  - Contrast good examples with anti-patterns
-  - Use realistic examples from your actual codebase
-- **Scope appropriately:**
-  - Apply rules only where they make sense
-  - Use file globs or path specifications for targeted rules
-  - Consider different rules for different parts of the codebase
-- **Keep updated:**
-  - Revise rules as the project evolves
-  - Schedule regular reviews of rule content
-  - Communicate changes to the team
-- **Version control:**
-  - Store project rules in your repository
-  - Document the history and rationale for rule changes
-  - Use PRs for significant rule modifications
-</best_practices_example>
+## Mixdown Integration
 
-## Limitations and Considerations
-
-- **File size limits:**
-  - [ Maximum size of rule files supported by the provider ]
-  - [ Performance impacts as file size increases ]
-  - [ Strategies for managing large rule sets ]
-  - [ Token window constraints of the underlying model, if applicable ]
-  - [ Truncation or summarisation behaviour when exceeded, if applicable ]
-<!-- AI: Only include token constraints if relevant to this provider. Some providers may not have explicit token limits, in which case this can be omitted -->
-- **Rule conflicts:**
-  - [ How contradictory instructions are handled ]
-  - [ Precedence rules between different rule sources ]
-  - [ Debugging tools for rule conflict resolution ]
-- **Model capabilities:**
-  - [ Effectiveness depends on the underlying AI model ]
-  - [ Areas where rule following is particularly strong/weak ]
-  - [ Handling of ambiguous or complex instructions ]
-- **Security:**
-  - [ Avoid storing sensitive information in rules ]
-  - [ How rule content is processed and stored ]
-  - [ Permissions considerations for rule access ]
-
-## External Documentation
-
-- **Official Resources:**
-  - [ GitHub repository - link with brief description ]
-  - [ Official documentation - link with key sections highlighted ]
-  - [ API reference - if applicable ]
-  - ...
-- **Examples & Templates:**
-  - [ Example rule files - with descriptions of what each demonstrates ]
-  - [ Rule templates for common use cases ]
-  - [ Community-contributed rules repositories ]
-  - ...
-- **Community Resources:**
-  - [ Blog posts or articles about this provider ]
-  - [ Forums or discussion groups ]
-  - [ Video tutorials or presentations ]
-  - ...
-
-<optional_content>
-
-[ Include additional content as may be relevant to the specific provider. Follow similar structure to the above. ]
-
-</optional_content>
-
-</content>
-
-<mixdown_specific_content>
-
-<instructions>
-    - Only include the following content if the provider is supported by the Mixdown compiler **today**.
-    - If the provider is not supported by Mixdown today, do not include the following content.
-</instructions>
-
-<documentation_template>
-## Integration with Mixdown
-
-When using Mixdown to generate [ provider name ] rules files:
-
-```yaml
----
-mixdown:
-  version: 0.1.0
-description: "[ Description ]"
-[ provider-specific ]:
-  setting1: value1
-  setting2: value2
----
-```
-
-Example content:
-
-```markdown
-# {{$section}}
-
-{{> template-name }}
-
-# {{$section}}
-
-{{> template-name }}
-```
-
-## Internal Documentation
-
-- **Mixdown Integration:**
-  - [[provider name] Rules Overview](../../rules-overview.md)
-  - [ Provider implementation details - with brief explanation ]
-  - [ Target-specific configuration options ]
-- **Provider Implementation:**
-  - [ Link to related internal provider documentation ]
-  - [ Architecture diagrams or explanations ]
-  - [ Integration points with other systems ]
-
-</documentation_template>
-
-</mixdown_specific_content>
-
-</template>
+> [!NOTE]
+> 🚧 Pending Mixdown integration
