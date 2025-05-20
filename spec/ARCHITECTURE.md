@@ -4,11 +4,13 @@
 
 ## Overview
 
-Mixdown is a compiler that transforms *source rules* files written in Markdown into destination-specific rules files for various AI assistants. It follows the "write once, compile for many destinations" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
+Mixdown is a compiler that transforms *source rules* files into destination-specific rules files for various AI tools & coding agents. It follows the "write once, compile for many destinations" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
+
+The compiler processes multiple source files simultaneously and can output to multiple destinations in a single compilation run, ensuring that all source rules files are consistently applied across all enabled destinations.
 
 ```text
 +-----------------+      +----------------+      +----------------------+
-| source rules    | ---> | Mixdown Core   | ---> | destination-specific |
+| Source rules    | ---> | Mixdown Core   | ---> | Destination-specific |
 | (.md files)     |      | Compiler       |      | rules files          |
 +-----------------+      +----------------+      +----------------------+
                               ^
@@ -182,6 +184,14 @@ Cursor   Windsurf  Claude     Roo      GitHub
 
 ## Build Process and Workflow
 
+### Batch Compilation
+
+- Processes multiple source files in a single compilation run
+- Handles dependencies between source files
+- Applies changes consistently across all enabled destinations
+- Optimizes compilation by sharing common resources and processing steps
+- Ensures consistency across all destination outputs
+
 ### Incremental Builds
 
 - Build process is based on file changes rather than full rebuilds
@@ -277,6 +287,10 @@ A stub for `mixdown.config.json`:
       "destinationGroups": {
         "ide": ["cursor", "windsurf"],
         "cli": ["claude-code", "codex-cli"]
+      },
+      "compile": {
+        "batchSize": 10,
+        "parallelism": 4
       }
     }
   }
