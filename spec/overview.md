@@ -65,7 +65,7 @@
 
 ### Overview
 
-Mixdown is a **Markdown-previewable rules compiler** that lets you author a single Source Rules file in Markdown and compile it into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
+Mixdown is a **Markdown-previewable rules compiler** that lets you author a single rules file (Source Rules) in Markdown and compile it into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
 
 ### The Problem
 
@@ -77,7 +77,7 @@ Mixdown is a **Markdown-previewable rules compiler** that lets you author a sing
 
 Mixdown introduces a single source-of-truth rules notation written in pure Markdown (with a dash of specialized notation), which is processed into tool-specific files by a compiler that:
 
-1. Parses the Source Rules into an AST (abstract syntax tree) to ensure a consistent format.
+1. Parses source rules files into an AST (abstract syntax tree) to ensure a consistent format.
 2. Uses **tool-specific compilers** (as plugins) to transform the AST into per-tool rules files.
 3. Writes per-tool **rules files** to their respective locations, with the necessary filenames, formats, etc. all accounted for.
 
@@ -86,7 +86,7 @@ Result: *Write rules once, render tool-specific rules, zero drift.*
 ## Core Concepts
 
 - **Source Rules**
-  - Source rules files, written in 100% previewable Markdown.
+  - Rules files that serve as the compilation source, written in 100% previewable Markdown.
   - Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
   - Compiled into destination-specific rules files:
     - `./mixdown/src/my-rule.md` → `.cursor/rules/my-rule.mdc`
@@ -197,7 +197,7 @@ These delimiters always maintain their role throughout the syntax, making the la
 
 ### Stems
 
-Stems are the core building block of Mixdown and are a direct stand in for XML tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other stems or Source Rules files.
+Stems are the core building block of Mixdown and are a direct stand in for XML tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other stems or source rules.
 
 ```markdown
 {{instructions +cursor !claude-code}}
@@ -530,7 +530,7 @@ Numbering properties control how content is numbered:
 > [!NOTE]
 > This section has been added to document the new property grouping syntax.
 
-By default, properties are space-delimited. You can propertyally wrap a list of properties in square brackets for visual grouping and better readability:
+By default, properties are space-delimited. You can optionally wrap a list of properties in square brackets for visual grouping and better readability:
 
 ```markdown
 {{rules [ tag-omit code-js +cursor name-(important-rules) ]}}
@@ -572,7 +572,7 @@ Important: You cannot nest property groups within other property groups:
 {{rules [code-js tag-omit] destination:[property-a property-b]}}  # ✅ Valid, separate property groups
 ```
 
-Leading and trailing whitespace within the property group brackets `[]` is propertyal and will be ignored by the parser. Spaces between properties within the brackets are necessary delimiters. For example, `[ property1  property2 ]` is equivalent to `[property1 property2]`.
+Leading and trailing whitespace within the property group brackets `[]` is optional and will be ignored by the parser. Spaces between properties within the brackets are necessary delimiters. For example, `[ property1  property2 ]` is equivalent to `[property1 property2]`.
 
 #### Property Grouping & Scoping: Common Patterns
 
@@ -633,9 +633,9 @@ Renders as:
 ---
 # .mixdown/src/my-rule.md
 mixdown:
-  version: 0.1.0 # propertyal, version number for the Mixdown format used
-description: "Rules for this project" # propertyal, may be useful for tools that use descriptions, such as Cursor, Windsurf, etc.
-globs: ["**/*.{txt,md,mdc}"] # propertyal, globs re-written based on destination-specific needs
+  version: 0.1.0 # optional, version number for the Mixdown format used
+description: "Rules for this project" # optional, may be useful for tools that use descriptions, such as Cursor, Windsurf, etc.
+globs: ["**/*.{txt,md,mdc}"] # optional, globs re-written based on destination-specific needs
 # Destination filter examples using standard keys:
 destination:
   include: ["cursor", "windsurf"]
@@ -649,20 +649,20 @@ cursor:
 windsurf:
   trigger: globs
 # Add additional metadata to the mix:
-name: my-rule # propertyal, defaults to filename
-version: 2.0 # propertyal, version number for this file
-created: 2025-05-13 # propertyal, date of creation, automatically included by default
-updated: 2025-05-14 # propertyal, date of last update, automatically included by default
-labels: ["core", "security"] # propertyal, categorization tags for the mix, available for future use
+name: my-rule # optional, defaults to filename
+version: 2.0 # optional, version number for this file
+created: 2025-05-13 # optional, date of creation, automatically included by default
+updated: 2025-05-14 # optional, date of last update, automatically included by default
+labels: ["core", "security"] # optional, categorization tags for the mix, available for future use
 ---
 ```
 
 Frontmatter is used to provide metadata about the Source Rules file and control how it's compiled. Basic frontmatter includes:
 
 - `mixdown.version`: Metadata about the Mixdown format used
-- `name`: Unique identifier for the Source Rules (propertyal, defaults to filename)
-- `description`: Propertyal description of the mix, rendered for tools that use them (e.g. Cursor, Windsurf, etc.)
-- `globs`: Propertyal globs to be rewritten based on destination-specific needs
+- `name`: Unique identifier for the Source Rules (optional, defaults to filename)
+- `description`: Optional description of the mix, rendered for tools that use them (e.g. Cursor, Windsurf, etc.)
+- `globs`: Optional globs to be rewritten based on destination-specific needs
 - `destination`: Control how this Source Rules is processed for destinations
   - `include`/`exclude`: Control which destinations receive this mix
   - `path`: Specify a custom output path for outputs
@@ -676,7 +676,7 @@ Frontmatter is used to provide metadata about the Source Rules file and control 
 
 #### External & Mixdown File Internal Links
 
-Standard Markdown links work as expected external links, and links to other Source Rules files:
+Standard Markdown links work as expected external links, and links to other source rules:
 
 - Regular links: `[Text](url)`
 - Links to other Source Rules files: `[Text](other-mix.md)`
@@ -918,7 +918,7 @@ While the AI may not always follow the instructions in the placeholder precisely
 
 Mixdown has specific rules for whitespace to ensure consistent parsing and output:
 
-- Space after opening `{{` and before closing `}}` is propertyal
+- Space after opening `{{` and before closing `}}` is optional
   - Example: `{{instructions}}` is equivalent to `{{ instructions }}`
 - No spaces are allowed around the `=` sign in attribute declarations
 - Attributes must be separated by spaces or newlines
