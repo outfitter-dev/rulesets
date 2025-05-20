@@ -10,17 +10,17 @@ This documentation provides comprehensive information about how different AI cod
 
 ### IDE Integrations
 
-- [Cursor Rules System](./targets/cursor/rules-use.md) - Multi-file system with YAML front-matter and nested rules
-- [Windsurf Rules System](./targets/windsurf/rules-use.md) - Multiple files with activation modes
-- [Roo Code Rules System](./targets/roo-code/rules-use.md) - Mode-specific directories
+- [Cursor Rules System](./plugins/cursor/rules-use.md) - Multi-file system with YAML front-matter and nested rules
+- [Windsurf Rules System](./plugins/windsurf/rules-use.md) - Multiple files with activation modes
+- [Roo Code Rules System](./plugins/roo-code/rules-use.md) - Mode-specific directories
 
 ### CLI Tools
 
-- [Claude Code Memory System](./targets/claude-code/rules-use.md) - Hierarchical with @file imports
-- [OpenAI Codex CLI System](./targets/codex-cli/rules-use.md) - Layered instructions for terminal use
-- [OpenAI Codex AGENTS System](./targets/codex-agent/rules-use.md) - Section-based merging with hierarchical loading
+- [Claude Code Memory System](./plugins/claude-code/rules-use.md) - Hierarchical with @file imports
+- [OpenAI Codex CLI System](./plugins/codex-cli/rules-use.md) - Layered instructions for terminal use
+- [OpenAI Codex AGENTS System](./plugins/codex-agent/rules-use.md) - Section-based merging with hierarchical loading
 
 ### Other Implementations
 
-- [Cline Rules System](./targets/cline/rules-use.md) - Single file approach with plain text format
-- [Aider Memory System](./targets/aider/rules-use.md) - Manual memory inclusion with session persistence
+- [Cline Rules System](./plugins/cline/rules-use.md) - Single file approach with plain text format
+- [Aider Memory System](./plugins/aider/rules-use.md) - Manual memory inclusion with session persistence

@@ -5,7 +5,7 @@ TLDR: Guidelines for transforming Source Rules files into destination-specific r
 
 This document outlines key implementation patterns that the Mixdown compiler needs to handle based on analysis of various destination systems. These patterns represent the diverse ways AI assistants manage rules across different tools.
 
-The Mixdown compiler needs to convert a single source format (mixdown files) into tool-specific rules files for different AI assistant platforms. Each destination has unique requirements for file location, format, activation mechanisms, and content organization that must be handled appropriately.
+The Mixdown compiler needs to convert a single source format (Source Rules files) into tool-specific rules files for different AI assistant platforms. Each destination has unique requirements for file location, format, activation mechanisms, and content organization that must be handled appropriately.
 
 ## File Location and Loading Patterns
 
@@ -258,8 +258,8 @@ The compiler must handle:
 ### Content Transformation
 The compiler must support:
 - Converting Mixdown notation to destination-specific formats
-- Generating appropriate YAML front-matter for targets that require it
-- Preserving plain markdown content for most targets
+- Generating appropriate YAML front-matter for destinations that require it
+- Preserving plain markdown content for most destinations
 
 ### Destination Configuration
 Each destination needs configuration for:

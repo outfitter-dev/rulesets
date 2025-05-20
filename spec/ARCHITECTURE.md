@@ -4,19 +4,19 @@
 
 ## Overview
 
-Mixdown is a compiler that transforms source "mix" files written in Markdown into tool-specific rules files for various AI assistants. It follows the "write once, target many" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
+Mixdown is a compiler that transforms source "Source Rules" files written in Markdown into destination-specific rules files for various AI assistants. It follows the "write once, compile for many destinations" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
 
 ```text
-+---------------+      +----------------+      +------------------+
-| Source Mixes  | ---> | Mixdown Core   | ---> | Target Rules     |
-| (.md files)   |      | Compiler       |      | (Various formats)|
-+---------------+      +----------------+      +------------------+
++-----------------+      +----------------+      +----------------------+
+| Source Rules    | ---> | Mixdown Core   | ---> | Compiled Rules       |
+| (.md files)     |      | Compiler       |      | (for Destinations)   |
++-----------------+      +----------------+      +----------------------+
                               ^
                               |
-                       +------+--------+
-                       | Plugin System |
-                       | (Target Defs) |
-                       +---------------+
+                       +-----------------+
+                       | Plugin System   |
+                       | (Destination Defs)|
+                       +-----------------+
 ```
 
 ## Project Structure
@@ -29,16 +29,16 @@ mixdown/
 │   ├── core/                 # Core compiler engine
 │   ├── cli/                  # Command-line interface
 │   ├── mcp/                  # MCP server implementation
-│   ├── targets/              # Target plugins directory
-│   │   ├── cursor/           # Cursor target implementation
-│   │   ├── claude-code/      # Claude Code target implementation
-│   │   ├── windsurf/         # Windsurf target implementation
-│   │   └── ...               # Other target implementations
+│   ├── destinations/         # Destination plugins directory
+│   │   ├── cursor/           # Cursor destination implementation
+│   │   ├── claude-code/      # Claude Code destination implementation
+│   │   ├── windsurf/         # Windsurf destination implementation
+│   │   └── ...               # Other destination implementations
 │   └── utils/                # Shared utilities
-├── examples/                 # Example mix files and configurations
+├── examples/                 # Example Source Rules files and configurations
 ├── docs/                     # Documentation
 ├── tests/                    # Integration tests
-└── templates/                # Default mix file templates
+└── templates/                # Default Source Rules file templates
 ```
 
 ## Core Components
@@ -46,8 +46,8 @@ mixdown/
 ### Parser
 
 - [packages/core/src/parser.ts](placeholder)
-- Responsible for parsing mix files into an AST
-- Handles Mixdown notation markers, tracks, imports, and variables
+- Responsible for parsing Source Rules files into an AST
+- Handles Mixdown notation markers, stems, imports, and variables
 
 ### Compiler
 
@@ -59,13 +59,13 @@ mixdown/
 ### Renderer
 
 - [packages/core/src/renderer.ts](placeholder)
-- Generates the final output files for each target
+- Generates the final Compiled Rules files for each destination
 - Handles different output formats (XML, markdown, etc.)
 
 ### Plugin System
 
 - [packages/core/src/plugin.ts](placeholder)
-- Manages target plugins that define how mix files are compiled for specific tools
+- Manages destination plugins that define how Source Rules files are compiled for specific tools
 - Provides plugin registration and discovery
 
 ### Configuration
@@ -84,46 +84,43 @@ mixdown/
 - [packages/mcp/src/server.ts](placeholder)
 - Exposes an API endpoint for remote compilation
 
-## Key Concepts and Implementation Concerns
-
-### Mix File Processing
-
-```text
-               +-------------+
-               |  Mix File   |
-               +------+------+
-                      |
-                      v
+Key Concepts and Implementation Concerns
+Source Rules File Processing
++--------------------+
+               | Source Rules File  |
+               +--------+-----------+
+                        |
+                        v
                +-------------+
                |    Parse    |
                +------+------+
-                      |
-                      v
+                        |
+                        v
 +------------+  +-------------+  +------------+
 | Frontmatter|->|  Process    |<-| Variables  |
 +------------+  |  Directives |  +------------+
                 +------+------+
-                      |
-                      v
+                        |
+                        v
 +------------+  +-------------+  +------------+
-|  Imports   |->| Compile AST |<-|   Tracks   |
+|  Imports   |->| Compile AST |<-|   Stems    |
 +------------+  +------+------+  +------------+
-                      |
-                      v
+                        |
+                        v
                +-------------+
-               |   Target    |
+               | Destination |
                |  Renderers  |
                +------+------+
-                      |
-                      v
-               +-------------+
-               |   Output    |
-               |    Files    |
-               +-------------+
-```
-
-#### Parsing and AST
-
+                        |
+                        v
+               +--------------------+
+               | Compiled Rules     |
+               | Files              |
+               +--------------------+
+content_copy
+download
+Use code with caution.
+Text
 - How to represent Mixdown notation markers in the AST
 - Handling nested structures and track boundaries
 - Preserving the original source positions for error reporting
@@ -174,40 +171,40 @@ A stub for `mixdown.config.json`:
 ```json
 {
   "version": "0.1.0",
-  "projects": {
-    "default": {
-      "sources": {
-        "mixes": ".mixdown/mixes",
-        "snippets": ".mixdown/mixes/_snippets"
-      },
-      "output": ".mixdown/output",
-      "targets": {
+        "projects": {
+        "default": {
+        "sources": {
+        "sourceRules": ".mixdown/src", // Key "mixes" changed to "sourceRules"
+        "mixins": ".mixdown/src/_mixins" // Key "snippets" changed to "mixins"
+        },
+        "dist": ".mixdown/dist", // Key "output" changed to "dist"
+        "destinations": { // Key "targets" changed to "destinations"
         "include": ["cursor", "claude-code", "windsurf"],
         "exclude": []
-      },
-      "aliases": {
+        },
+        "aliases": {
         "project": "Mixdown",
         "author": "Maybe Good"
-      },
-      "targetOptions": {
+        },
+        "destinationOptions": { // Key "targetOptions" changed to "destinationOptions"
         "cursor": {
-          "output": {
-            "path": ".cursor/rules"
-          }
+        "output": { // This "output" is specific to Cursor's config, may remain
+        "path": ".cursor/rules"
+        }
         },
         "claude-code": {
-          "output": {
-            "path": "./CLAUDE.md"
-          }
+        "output": { // This "output" is specific to Claude's config, may remain
+        "path": "./CLAUDE.md"
         }
-      },
-      "targetGroups": {
+        }
+        },
+        "destinationGroups": { // Key "targetGroups" changed to "destinationGroups"
         "ide": ["cursor", "windsurf"],
         "cli": ["claude-code", "codex-cli"]
-      }
-    }
-  }
-}
+        }
+        }
+        }
+        }
 ```
 
 ## Open Questions and Decisions
@@ -446,108 +443,109 @@ A stub for `mixdown.config.json`:
 ### Mixdown Notation Processing
 
 10. **Variable Scope**
-    - How should variable scope be determined?
-    - Options:
-      - A) Global only
-        - *Simplest implementation*
-        - *Variables are consistent throughout all files*
-        - *Limited flexibility for component-specific values*
-        - *Could lead to variable naming conflicts in large projects*
-      - B) Mix file scopes with inheritance
-        - *Variables defined at mix file level*
-        - *Supports inheritance from parent to imported files*
-        - *Balance of flexibility and simplicity*
-        - *Clear inheritance model from parent to child files*
-      - C) Track-level scoping
-        - *Most granular control*
-        - *Allows track-specific variable definitions*
-        - *Complex to implement and reason about*
-        - *Potentially confusing variable shadowing behavior*
-    - **Recommendation:** B - Mix file scopes with inheritance
-      - Provides good balance of flexibility and predictability
-      - Variables naturally scope to the file where they're defined
-      - Inheritance allows for sensible defaults with local overrides
-      - Simpler to understand than track-level scoping
-      - Similar to how CSS variables or programming language modules work
-    - **Decision:** B for now. I could see a future case where C would be interesting, but adds significant complexity.
-
-11. **Import Resolution**
-    - How should imports be resolved?
-    - Options:
-      - A) Relative to current mix file only
-        - *Simple and predictable*
-        - *Works like standard imports in many languages*
-        - *Limited flexibility for complex projects*
-        - *Clear path resolution but constraining for large projects*
-      - B) Configurable lookup paths
-        - *More powerful for shared components*
-        - *Can define search paths for snippets and common files*
-        - *More complex configuration*
-        - *Good for large projects but adds configuration complexity*
-      - C) Mix-relative, project-relative, and absolute paths
-        - *Most flexible approach*
-        - *Supports different path types for different needs*
-        - *Clear syntax for each path type*
-        - *Combines strengths of other approaches with clear syntax*
-    - **Recommendation:** C - Mix-relative, project-relative, and absolute paths
-      - Most flexible and intuitive approach
-      - Familiar to developers (similar to module resolution in many systems)
-      - Supports both simple local imports and complex project structures
-      - Essential for reusable components and templates
-      - Each path type has clear use cases and predictable behavior
+        - How should variable scope be determined?
+        - Options:
+        - A) Global only
+        - Simplest implementation
+        - Variables are consistent throughout all files
+        - Limited flexibility for component-specific values
+        - Could lead to variable naming conflicts in large projects
+        - B) Source Rules file scopes with inheritance
+        - Variables defined at Source Rules file level
+        - Supports inheritance from parent to imported files
+        - Balance of flexibility and simplicity
+        - Clear inheritance model from parent to child files
+        - C) Stem-level scoping
+        - Most granular control
+        - Allows stem-specific variable definitions
+        - Complex to implement and reason about
+        - Potentially confusing variable shadowing behavior
+        - Recommendation: B - Source Rules file scopes with inheritance
+        - Provides good balance of flexibility and predictability
+        - Variables naturally scope to the file where they're defined
+        - Inheritance allows for sensible defaults with local overrides
+        - Simpler to understand than stem-level scoping
+        - Similar to how CSS variables or programming language modules work
+        - Decision: B for now. I could see a future case where C would be interesting, but adds significant complexity.
+        
+        Import Resolution
+        How should imports be resolved?
+        Options:
+        A) Relative to current Source Rules file only
+        Simple and predictable
+        Works like standard imports in many languages
+        Limited flexibility for complex projects
+        Clear path resolution but constraining for large projects
+        B) Configurable lookup paths
+        More powerful for shared components
+        Can define search paths for mixins and common files
+        More complex configuration
+        Good for large projects but adds configuration complexity
+        C) Source-Rules-file-relative, project-relative, and absolute paths
+        Most flexible approach
+        Supports different path types for different needs
+        Clear syntax for each path type
+        Combines strengths of other approaches with clear syntax
+        Recommendation: C - Source-Rules-file-relative, project-relative, and absolute paths
+        Most flexible and intuitive approach
+        Familiar to developers (similar to module resolution in many systems)
+        Supports both simple local imports and complex project structures
+        Essential for reusable components and templates
+        Each path type has clear use cases and predictable behavior
+        Decision: C
     - **Decision:** C
 
-12. **Track Filtering Precedence**
-    - How should conflicting track filters be resolved?
-    - Options:
-      - A) Last filter wins
-        - *Simple rule that's easy to implement*
-        - *Might lead to unexpected behavior*
-        - *Order-dependent which can be confusing*
-        - *Users must carefully order their filters*
-      - B) Explicit over implicit (e.g., +cursor overrides +ide)
-        - *More intuitive behavior*
-        - *Specific filters take precedence over group filters*
-        - *Requires understanding filter hierarchy*
-        - *Clear precedence regardless of order*
-      - C) Configurable precedence rules
-        - *Most flexible but complex*
-        - *Can be tailored to specific needs*
-        - *Harder to predict without understanding configuration*
-        - *Powerful but potentially confusing*
-    - **Recommendation:** B - Explicit over implicit
-      - More intuitive than simple last-wins
-      - Specific target filters should override group-based ones
-      - Follows principle of least surprise
-      - Clear precedence rules make behavior predictable
-      - Strikes good balance between flexibility and predictability
-    - **Decision:** B for sure. We'll need to address in `OVERVIEW.md` to account for this vs. left-to-right precedence.
+12. **Import Scope Precedence**
+- How should conflicting import scope definitions be resolved?
+- Options:
+- A) Last filter wins
+- *Simple rule that's easy to implement*
+- *Might lead to unexpected behavior*
+- *Order-dependent which can be confusing*
+- *Users must carefully order their filters*
+- B) Explicit over implicit (e.g., +destinationName overrides +destinationGroup)
+- *More intuitive behavior*
+- *Specific filters take precedence over group filters*
+- *Requires understanding filter hierarchy*
+- *Clear precedence regardless of order*
+- C) Configurable precedence rules
+- *Most flexible but complex*
+- *Can be tailored to specific needs*
+- *Harder to predict without understanding configuration*
+- *Powerful but potentially confusing*
+- **Recommendation:** B - Explicit over implicit
+- More intuitive than simple last-wins
+- Specific destination filters should override group-based ones
+- Follows principle of least surprise
+- Clear precedence rules make behavior predictable
+- Strikes good balance between flexibility and predictability
+- **Decision:** B for sure. We'll need to address this in documentation to account for this vs. left-to-right precedence.
 
-13. **Option Extension**
-    - How should option extension work?
-    - Options:
-      - A) Simple string-based options only
-        - *Easiest to implement and use*
-        - *Limited expressiveness*
-        - *May lead to many similar options*
-        - *Simple but potentially verbose for complex options*
-      - B) Structured options with inheritance
-        - *More powerful with hierarchical options*
-        - *Can express complex configurations concisely*
-        - *More complex parsing and processing*
-        - *Balance of power and consistency*
-      - C) Plugin-defined option processors
-        - *Most flexible approach*
-        - *Plugins can define custom option formats*
-        - *Potential consistency issues across plugins*
-        - *Maximum flexibility but less consistency*
-    - **Recommendation:** B - Structured options with inheritance
-      - Good balance of power and consistency
-      - Supports hierarchical option structures
-      - More maintainable than simple strings for complex options
-      - Common syntax across all targets with plugin-specific semantics
-      - Powerful enough without introducing inconsistent syntax
-    - **Decision:** B
+13. **Property Extension**
+- How should property extension work?
+- Options:
+- A) Simple string-based properties only
+- *Easiest to implement and use*
+- *Limited expressiveness*
+- *May lead to many similar properties*
+- *Simple but potentially verbose for complex properties*
+- B) Structured properties with inheritance
+- *More powerful with hierarchical properties*
+- *Can express complex configurations concisely*
+- *More complex parsing and processing*
+- *Balance of power and consistency*
+- C) Plugin-defined property processors
+- *Most flexible approach*
+- *Plugins can define custom property formats*
+- *Potential consistency issues across plugins*
+- *Maximum flexibility but less consistency*
+- **Recommendation:** B - Structured properties with inheritance
+- Good balance of power and consistency
+- Supports hierarchical property structures
+- More maintainable than simple strings for complex properties
+- Common syntax across all destinations with plugin-specific semantics
+- Powerful enough without introducing inconsistent syntax
+- **Decision:** B
 
 ### Build and Runtime
 
@@ -575,7 +573,7 @@ A stub for `mixdown.config.json`:
       - Can fall back to full rebuild when needed
       - Reasonable complexity for the benefits provided
       - Standard approach in most modern build tools
-    - **Decision:** B for sure. Also need to account for this being used as a dev tool to compile rulesets, e.g. when a developer wants to include rules in their open source repository for immediate development use by their users.
+    - **Decision:** B for sure. Also need to account for this being used as a dev tool to compile rulesets, e.g. when a developer wants to include Source Rules files in their open source repository for immediate development use by their users.
 
 15. **Dependency Tracking**
     - How should file dependencies be tracked?
@@ -681,7 +679,7 @@ A stub for `mixdown.config.json`:
       - Good balance of extensibility and simplicity
       - Can evolve to more comprehensive system if needed
       - Makes the system observable without excessive complexity
-    - **Decision:** B, but we'll also need to be able to observe file changes from other directories, e.g. when a rule is updated from outside of the .mixdown directory (log the change, and recommend an import of the change to update the rule, we'll need to account for this somewhere).
+    - **Decision:** B, but we'll also need to be able to observe file changes from other directories, e.g. when a Source Rules file is updated from outside of the .mixdown directory (log the change, and recommend an import of the change to update the rule, we'll need to account for this somewhere).
 
 19. **Extension Points**
     - Where should extension points be placed?
@@ -709,39 +707,39 @@ A stub for `mixdown.config.json`:
       - Good balance of power and clarity
     - **Decision:** B
 
-20. **Output Validation**
-    - How should output validation work?
-    - Options:
-      - A) Basic format checks only
-        - *Simple validation of output structure*
-        - *Limited guarantees about target compatibility*
-        - *Easier to implement*
-        - *Minimal approach that may miss target-specific issues*
-      - B) Target-specific validators
-        - *Each target plugin handles its own validation*
-        - *Better guarantees of compatibility*
-        - *More complex with distributed responsibility*
-        - *Leverages target-specific knowledge*
-      - C) Schema-based validation with custom rules
-        - *Formal validation against defined schemas*
-        - *Clear feedback on validation errors*
-        - *Most comprehensive but most complex*
-        - *Most rigorous but highest implementation cost*
-    - **Recommendation:** B - Target-specific validators
-      - Each target knows its requirements best
-      - Allows specialized validation logic
-      - Fits with plugin architecture
-      - Balance of thoroughness and maintainability
-      - Distributed responsibility matches the plugin architecture
-    - **Decision:** B, but to whatever degree possible, we should try and reduce complexity for plugin authors. There should be as much built-in validation as possible, and the plugin authors should only need to provide validation for target-specific features. Even then there should be some abstraction and simplification for plugin authors, such that validating syntax, file structure, filenames, directory structure, etc. is very straightforward.
-
-## Next Steps
-
-1. Finalize architecture decisions
-2. Create detailed component specifications
-3. Implement core parsing and AST
-4. Build initial plugin system
-5. Develop basic target implementations
-6. Create CLI and build process
+Compiled Rules Validation
+How should Compiled Rules validation work?
+Options:
+A) Basic format checks only
+Simple validation of Compiled Rules structure
+Limited guarantees about destination compatibility
+Easier to implement
+Minimal approach that may miss destination-specific issues
+B) Destination-specific validators
+Each destination plugin handles its own validation
+Better guarantees of compatibility
+More complex with distributed responsibility
+Leverages destination-specific knowledge
+C) Schema-based validation with custom rules
+Formal validation against defined schemas
+Clear feedback on validation errors
+Most comprehensive but most complex
+Most rigorous but highest implementation cost
+Recommendation: B - Destination-specific validators
+Each destination knows its requirements best
+Allows specialized validation logic
+Fits with plugin architecture
+Balance of thoroughness and maintainability
+Distributed responsibility matches the plugin architecture
+Decision: B, but to whatever degree possible, we should try and reduce complexity for plugin authors. There should be as much built-in validation as possible, and the plugin authors should only need to provide validation for destination-specific features. Even then there should be some abstraction and simplification for plugin authors, such that validating syntax, file structure, filenames, directory structure, etc. is very straightforward.
+Next Steps
+Finalize architecture decisions
+Create detailed component specifications
+Implement core parsing and AST
+Build initial plugin system
+Develop basic destination implementations
+Create CLI and build process
+Add MCP server integration
+Establish test framework
 7. Add MCP server integration
 8. Establish test framework

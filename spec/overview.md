@@ -25,12 +25,12 @@
     - [Stem Marker Names](#stem-marker-names)
     - [Stem Marker Parsing](#stem-marker-parsing)
     - [Destination-scoped Property Overrides](#destination-scoped-property-overrides)
-    - [Destination-scoped Multiple Propertys](#destination-scoped-multiple-propertys)
+    - [Destination-scoped Multiple Properties](#destination-scoped-multiple-properties)
     - [Property Processing Order](#property-processing-order)
-    - [Destination Filtering Propertys](#destination-filtering-propertys)
+    - [Destination Filtering Properties](#destination-filtering-properties)
     - [Self-Closing Tags](#self-closing-tags)
     - [Multi-line Markers for Readability](#multi-line-markers-for-readability)
-    - [Stem Propertys](#stem-propertys)
+    - [Stem Properties](#stem-properties)
     - [Output Format](#output-format)
     - [Property Grouping](#property-grouping)
       - [Multi-line Property Grouping](#multi-line-property-grouping)
@@ -186,9 +186,9 @@ Mixdown's syntax follows strict delimiter rules to maintain consistency and clar
 
 | Delimiter | Role | Example | Purpose |
 |-----------|------|---------|---------|
-| `:` | Scope indicator | `destination:code-js` | Indicates that propertys are scoped to a specific destination |
+| `:` | Scope indicator | `destination:code-js` | Indicates that properties are scoped to a specific destination |
 | `()` | Value container | `name-(value)` | Contains values for a specific property |
-| `[]` | Property grouping | `destination:[property-1 property-2]` | Groups multiple propertys within a scope |
+| `[]` | Property grouping | `destination:[property-1 property-2]` | Groups multiple properties within a scope |
 | `+` | Inclusion | `+destination`, `+stem-one` | Indicates inclusion of a destination or stem |
 | `!` | Exclusion | `!destination`, `!stem-two` | Indicates exclusion of a destination or stem |
 | `#` | Stem reference | `#stem-name`, `#(stem1 stem2)` | References stems in imports |
@@ -261,27 +261,27 @@ In this example the stem will use the name "cursor-instructions" when compiled f
 
 Note: You can also use the `+destination` notation to both include the stem for specific destinations *and* apply destination-specific overrides.
 
-#### Destination-scoped Multiple Propertys
+#### Destination-scoped Multiple Properties
 
-For multiple destination-specific propertys, you can use square brackets after the colon:
+For multiple destination-specific properties, you can use square brackets after the colon:
 
 ```markdown
 {{instructions cursor:[name-(cursor-rules) code-js]}}
 ```
 
-This applies both `name-(cursor-rules)` and `code-js` propertys only when building for the cursor destination, without affecting other destinations. The square brackets group the propertys that are scoped to that specific destination.
+This applies both `name-(cursor-rules)` and `code-js` properties only when building for the cursor destination, without affecting other destinations. The square brackets group the properties that are scoped to that specific destination.
 
 #### Property Processing Order
 
-Propertys within a stem marker are processed sequentially from left to right. This processing order affects three main categories of propertys:
+Properties within a stem marker are processed sequentially from left to right. This processing order affects three main categories of properties:
 
-1. **Basic Propertys**: Simple formatting propertys like `tag-omit` or `code-js`
+1. **Basic Properties**: Simple formatting properties like `tag-omit` or `code-js`
 2. **Destination Inclusion/Exclusion**: Modifiers like `+destination` and `!destination`
-3. **Destination-Scoped Propertys**: Special formatting for specific destinations using `destination:[propertys]`
+3. **Destination-Scoped Properties**: Special formatting for specific destinations using `destination:[properties]`
 
 The evaluation follows this simple rule:
 
-- Propertys are applied **in the exact order they appear** (left to right)
+- Properties are applied **in the exact order they appear** (left to right)
 - When conflict occurs, **the last directive wins**
 
 **Simple Example:**
@@ -313,11 +313,11 @@ This would:
 The stem would use heading level 3 because `h-3` appears last and overrides `h-2`.
 
 > [!NOTE]
-> While propertys are processed left-to-right, certain property types like `name-()` might have special handling if specified multiple times. When in doubt about complex combinations, the last specified property for a particular feature usually takes precedence.
+> While properties are processed left-to-right, certain property types like `name-()` might have special handling if specified multiple times. When in doubt about complex combinations, the last specified property for a particular feature usually takes precedence.
 
-#### Destination Filtering Propertys
+#### Destination Filtering Properties
 
-Destination filtering propertys control which destinations receive content. These provide powerful ways to include or exclude content for specific destinations or groups of destinations:
+Destination filtering properties control which destinations receive content. These provide powerful ways to include or exclude content for specific destinations or groups of destinations:
 
 | Property | Description | Example |
 |--------|-------------|--------|
@@ -363,7 +363,7 @@ Self-closing tags render as empty XML tags in the output:
   `{{instructions +cursor:name-(only-for-cursor)}}`
   *(Includes this stem *only* for the `cursor` destination, and for `cursor`, it uses `name-(only-for-cursor)`.)*
 
-- **Inclusion for a destination with multiple specific propertys:**
+- **Inclusion for a destination with multiple specific properties:**
   `{{instructions +cursor:[name-(cursor-rules) code-js]}}`
   *(Includes this stem *only* for the `cursor` destination, applying both `name-(cursor-rules)` and `code-js` for `cursor`.)*
 
@@ -371,19 +371,19 @@ Self-closing tags render as empty XML tags in the output:
   `{{instructions !cursor:name-(ignored-for-cursor)}}`
   *(Excludes this stem for the `cursor` destination. The `name-(ignored-for-cursor)` property would not apply as the stem is excluded for `cursor`.)*
 
-- **Group inclusion with member exclusion and scoped propertys for the group:**
+- **Group inclusion with member exclusion and scoped properties for the group:**
   `{{instructions +ide:[code-block] !cursor}}`
   *(Includes this stem for all destinations in the `ide` group, applying the `code-block` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `mixdown.config.json`.)*
 
 > [!IMPORTANT]
-> Differentiating Scoped Propertys from Scoped Inclusion:
+> Differentiating Scoped Properties from Scoped Inclusion:
 >
 > - `destination:[my-property]` means "If this stem is rendered for `destination`, apply `my-property`." The stem's general inclusion is determined elsewhere (e.g. by default, or by a `+destination` on its own).
-> - `+destination:[my-property]` means "Render this stem *only* for `destination`, and when doing so, apply `my-property`." This controls both inclusion and destination-specific propertys simultaneously.
+> - `+destination:[my-property]` means "Render this stem *only* for `destination`, and when doing so, apply `my-property`." This controls both inclusion and destination-specific properties simultaneously.
 
 #### Multi-line Markers for Readability
 
-Propertys can be split across lines for readability. The parser preserves this formatting when writing XML tags:
+Properties can be split across lines for readability. The parser preserves this formatting when writing XML tags:
 
 ```markdown
 <!-- Multi-line section marker in Mixdown format -->
@@ -406,21 +406,21 @@ Output:
 </instructions>
 ```
 
-#### Stem Propertys
+#### Stem Properties
 
 | Property | Type | Purpose |
 |--------|------|---------|
 | `+/!destination` | flag | Include/exclude for specific destinations (e.g., `+cursor !windsurf`). |
 | `name-(value)` | value | Sets a name with a specified value for the stem. |
 | `tag-omit`, `inline`, etc. | flag | Controls how content is processed (see [Output Format](#output-format) below). |
-| `code-*`, `h-*`, `num-*` | flag | Family-specific propertys for code blocks, headings, and numbering. |
-| `[property1 property2]` | group | Groups multiple propertys together for readability. |
-| `destination:[propertys]` | scoped | Destination-specific property group. |
+| `code-*`, `h-*`, `num-*` | flag | Family-specific properties for code blocks, headings, and numbering. |
+| `[property1 property2]` | group | Groups multiple properties together for readability. |
+| `destination:[properties]` | scoped | Destination-specific property group. |
 | *Custom* `key="value"` | attribute | Any key-value pair is passed through to XML output. |
 
 #### Output Format
 
-Output propertys provide flexible control over how content is formatted in the final output. These propertys are available for stems, imports, and inclusions.
+Output properties provide flexible control over how content is formatted in the final output. These properties are available for stems, imports, and inclusions.
 
 ```markdown
 {{instructions tag-omit}}
@@ -440,12 +440,12 @@ Content without surrounding XML tags
 | `inline` | Content rendered inline without XML tags (simple, concise format) |
 | `inline-with-tags` | Content rendered inline with XML tags preserved (all on a single line) |
 | `tag-omit` | Remove XML tags from output but maintain block formatting |
-| `code-*` | Render content as a code block in specified language (see Code Block Propertys below) |
+| `code-*` | Render content as a code block in specified language (see Code Block Properties below) |
 | `raw-all` | Render everything as raw Mixdown Notation |
 | `raw-content` | Process tags normally, keep content as raw notation |
 | `raw-tags` | Process content normally, keep tags as raw notation |
 
-Multiple propertys can be applied together (space-separated):
+Multiple properties can be applied together (space-separated):
 
 ```markdown
 {{instructions inline tag-omit}}
@@ -453,7 +453,7 @@ This content will appear without tags and inline
 {{/instructions}}
 ```
 
-**Code Block Propertys (code-* family):**
+**Code Block Properties (code-* family):**
 
 The `code-*` property family renders content as a code block in the specified language. For example:
 
@@ -483,9 +483,9 @@ Common language shortcuts include:
 | `code-yaml` | YAML |
 | `code-json` | JSON |
 
-**Heading Propertys (h-* family):**
+**Heading Properties (h-* family):**
 
-Heading propertys control how headings are processed:
+Heading properties control how headings are processed:
 
 | Property | Description | Example |
 |--------|-------------|--------|
@@ -509,13 +509,13 @@ This is equivalent to specifying the heading within the content but provides a m
 
 The heading shortcut will automatically:
 
-- Set the heading level (via h-* propertys)
+- Set the heading level (via h-* properties)
 - Use the provided text as the heading
 - Apply the heading to the beginning of the stem content
 
-**Numbering Propertys (num-* family):**
+**Numbering Properties (num-* family):**
 
-Numbering propertys control how content is numbered:
+Numbering properties control how content is numbered:
 
 | Property | Description | Example |
 |--------|-------------|--------|
@@ -530,7 +530,7 @@ Numbering propertys control how content is numbered:
 > [!NOTE]
 > This section has been added to document the new property grouping syntax.
 
-By default, propertys are space-delimited. You can propertyally wrap a list of propertys in square brackets for visual grouping and better readability:
+By default, properties are space-delimited. You can propertyally wrap a list of properties in square brackets for visual grouping and better readability:
 
 ```markdown
 {{rules [ tag-omit code-js +cursor name-(important-rules) ]}}
@@ -538,11 +538,11 @@ By default, propertys are space-delimited. You can propertyally wrap a list of p
 {{/rules}}
 ```
 
-All propertys inside `[...]` behave exactly the same as if they were space-delimited. This is particularly useful for complex property combinations.
+All properties inside `[...]` behave exactly the same as if they were space-delimited. This is particularly useful for complex property combinations.
 
 ##### Multi-line Property Grouping
 
-Property grouping allows for improved readability with multi-line propertys:
+Property grouping allows for improved readability with multi-line properties:
 
 ```markdown
 {{rules [
@@ -557,9 +557,9 @@ Property grouping allows for improved readability with multi-line propertys:
 
 ##### Property Bracketing Rules
 
-Property groups (brackets) cannot be nested. All propertys within a group must be space-delimited and cannot themselves contain another propertys group.
+Property groups (brackets) cannot be nested. All properties within a group must be space-delimited and cannot themselves contain another properties group.
 
-For destination-scoped propertys with multiple propertys, use square brackets after the colon:
+For destination-scoped properties with multiple properties, use square brackets after the colon:
 
 ```markdown
 {{rules destination:[code-js name-(destination-rules)]}}
@@ -568,11 +568,11 @@ For destination-scoped propertys with multiple propertys, use square brackets af
 Important: You cannot nest property groups within other property groups:
 
 ```markdown
-{{rules [code-js tag-omit destination:[property-a property-b]]}}  # ❌ Invalid, nested propertys groups
+{{rules [code-js tag-omit destination:[property-a property-b]]}}  # ❌ Invalid, nested properties groups
 {{rules [code-js tag-omit] destination:[property-a property-b]}}  # ✅ Valid, separate property groups
 ```
 
-Leading and trailing whitespace within the property group brackets `[]` is propertyal and will be ignored by the parser. Spaces between propertys within the brackets are necessary delimiters. For example, `[ property1  property2 ]` is equivalent to `[property1 property2]`.
+Leading and trailing whitespace within the property group brackets `[]` is propertyal and will be ignored by the parser. Spaces between properties within the brackets are necessary delimiters. For example, `[ property1  property2 ]` is equivalent to `[property1 property2]`.
 
 #### Property Grouping & Scoping: Common Patterns
 
@@ -580,10 +580,10 @@ The following table provides a quick reference to common invocation patterns for
 
 | Pattern                                     | Example                                         | Description                                                                 |
 |---------------------------------------------|-------------------------------------------------|-----------------------------------------------------------------------------|
-| Basic Grouping                              | `{{stem [opt1 opt2 opt3]}}`                    | Visually groups space-delimited propertys.                                    |
-| Multi-line Grouping                         | `{{stem [\n opt1 \n opt2 \n]}}`                     | Improves readability for many propertys.                                      |
+| Basic Grouping                              | `{{stem [opt1 opt2 opt3]}}`                    | Visually groups space-delimited properties.                                    |
+| Multi-line Grouping                         | `{{stem [\n opt1 \n opt2 \n]}}`                     | Improves readability for many properties.                                      |
 | Destination-Scoped Single Property (no group)      | `{{stem destination:opt1}}`                         | Applies `opt1` only for `destination`. Block included for all valid destinations.     |
-| Destination-Scoped Multiple Propertys (via group)  | `{{stem destination:[opt1 opt2]}}`                  | Applies `opt1` and `opt2` only for `destination`. Block included for all.        |
+| Destination-Scoped Multiple Properties (via group)  | `{{stem destination:[opt1 opt2]}}`                  | Applies `opt1` and `opt2` only for `destination`. Block included for all.        |
 | Inclusion for Destination + Scoped Single Opt  | `{{stem +destination:opt1}}`                        | Includes block only for `destination`, applying `opt1`.                          |
 | Inclusion for Destination + Scoped Multi Opts  | `{{stem +destination:[opt1 opt2]}}`                 | Includes block only for `destination`, applying `opt1` and `opt2`.               |
 | Exclusion for Destination (scoped opts moot)     | `{{stem !destination:opt1}}` or `!destination:[opt1]`  | Excludes block for `destination`.                                                |
@@ -666,7 +666,7 @@ Frontmatter is used to provide metadata about the Source Rules file and control 
 - `destination`: Control how this Source Rules is processed for destinations
   - `include`/`exclude`: Control which destinations receive this mix
   - `path`: Specify a custom output path for outputs
-  - Propertys include any destination providers registered in `.mixdown.config.json`
+  - Properties include any destination providers registered in `.mixdown.config.json`
 - `version`: Version information
 - `labels`: Categorization tags
 - `[cursor|windsurf|claude-code|...]`: Destination-specific key/value pairs
@@ -759,7 +759,7 @@ Important: Be sure to follow the style guide:
 
 #### Import Attributes
 
-All [stem propertys](#stem-propertys) can be applied to imports. Additionally, imports support filtering of stems using `#[...]` square bracket syntax:
+All [stem properties](#stem-properties) can be applied to imports. Additionally, imports support filtering of stems using `#[...]` square bracket syntax:
 
 ```markdown
 {{> my-rules#[stem-one !stem-two]}}
@@ -770,7 +770,7 @@ This allows you to filter which stems from the Source Rules are included/exclude
 - For included stems, use the stem name without any prefix
 - For excluded stems, prefix the stem name with `!` e.g. `!stem-two`
 
-For formatting propertys:
+For formatting properties:
 
 - `tag-omit` will remove the surrounding XML tags from the output
 - `inline` will render the content inline without XML tags
@@ -994,15 +994,15 @@ Features planned for v0.x releases:
 
 ### Comprehensive Property Reference
 
-This section provides a complete reference for all propertys supported in Mixdown v0.x, organized by their purpose and usage patterns.
+This section provides a complete reference for all properties supported in Mixdown v0.x, organized by their purpose and usage patterns.
 
 #### Property Naming Conventions
 
-Mixdown uses consistent naming patterns to make propertys discoverable and intuitive:
+Mixdown uses consistent naming patterns to make properties discoverable and intuitive:
 
 | Pattern | Description | Examples |
 |---------|-------------|----------|
-| `prefix-*` | Family of related propertys | `code-js`, `h-2` |
+| `prefix-*` | Family of related properties | `code-js`, `h-2` |
 | `name-(value)` | Property with parameter value | `name-(important-rules)` |
 | `+/-prefix` | Inclusion/exclusion modifiers | `+cursor`, `!windsurf` |
 | `destination:property` | Destination-scoped single property | `cursor:tag-omit` |
@@ -1011,45 +1011,45 @@ Mixdown uses consistent naming patterns to make propertys discoverable and intui
 
 #### Property Categories and Usage
 
-The table below organizes propertys by their categories with comprehensive information about where they can be used.
+The table below organizes properties by their categories with comprehensive information about where they can be used.
 
 | Property | Format | Example | Stem | Import | Frontmatter | Description |
 |--------|--------|---------|-------|--------|-------------|-------------|
-| **Destination Selection Propertys** |||||||
+| **Destination Selection Properties** |||||||
 | `+destination` | Flag | `+cursor` | ✅ | ✅ | ❌ | Include content for specific destination |
 | `!destination` | Flag | `!windsurf` | ✅ | ✅ | ❌ | Exclude content for specific destination |
 | `+group` | Flag | `+ide` | ✅ | ✅ | ❌ | Include for all destinations in a group |
 | `+all` | Flag | `+all` | ✅ | ✅ | ❌ | Include content for all configured destinations |
 | `!group` | Flag | `!cli` | ✅ | ✅ | ❌ | Exclude for all destinations in a group |
-| **Destination-Scoped Propertys** |||||||
+| **Destination-Scoped Properties** |||||||
 | `destination:property` | Scoped | `cursor:tag-omit` | ✅ | ✅ | ❌ | Apply property only for specified destination |
-| `destination:[propertys]` | Scoped group | `cursor:[code-js name-(rules)]` | ✅ | ✅ | ❌ | Apply multiple propertys only for specified destination |
+| `destination:[properties]` | Scoped group | `cursor:[code-js name-(rules)]` | ✅ | ✅ | ❌ | Apply multiple properties only for specified destination |
 | `+destination:property` | Combined | `+cursor:tag-omit` | ✅ | ✅ | ❌ | Include for destination and apply property to that destination |
 | `!destination:property` | Combined | `!windsurf:code-js` | ✅ | ✅ | ❌ | Exclude for destination (property has no effect) |
-| **Metadata Propertys** |||||||
+| **Metadata Properties** |||||||
 | `name-(value)` | Parameter | `name-(important-rules)` | ✅ | ✅ | ✅ | Set XML name attribute; identifier in frontmatter |
 | `id-(value)` | Parameter | `id-(section-1)` | ✅ | ✅ | ❌ | Set id attribute for linking and references |
 | `custom="value"` | XML attribute | `priority="high"` | ✅ | ✅ | ❌ | Set custom XML attributes passed to output |
-| **Display Propertys** |||||||
+| **Display Properties** |||||||
 | `tag-omit` | Flag | `tag-omit` | ✅ | ✅ | ❌ | Remove XML tags from output, preserve formatting |
 | `inline` | Flag | `inline` | ✅ | ✅ | ❌ | Remove XML tags and render content inline |
 | `inline-with-tags` | Flag | `inline-with-tags` | ✅ | ✅ | ❌ | Keep XML tags but render content inline |
-| **Code Formatting Propertys** |||||||
+| **Code Formatting Properties** |||||||
 | `code` | Flag | `code` | ✅ | ✅ | ❌ | Auto-detect language from file extension |
 | `code-*` | Flag | `code-js`, `code-py`, etc. | ✅ | ✅ | ❌ | Format as code block in specified language |
-| **Heading Propertys** |||||||
+| **Heading Properties** |||||||
 | `h-[1-6]` | Flag | `h-1` through `h-6` | ✅ | ✅ | ❌ | Format as heading of specified level |
 | `h-inc` | Flag | `h-inc` | ✅ | ✅ | ❌ | Increment heading level (demote) |
 | `h-dec` | Flag | `h-dec` | ✅ | ✅ | ❌ | Decrement heading level (promote) |
 | `h-same` | Flag | `h-same` | ✅ | ✅ | ❌ | Keep same heading level |
 | `h-initial` | Flag | `h-initial` | ✅ | ✅ | ❌ | Replace first heading |
-| **Numbering Propertys** |||||||
+| **Numbering Properties** |||||||
 | `num` | Flag | `num` | ✅ | ✅ | ❌ | Enable default numbering |
 | `num-heading-first` | Flag | `num-heading-first` | ✅ | ✅ | ❌ | Number first heading only |
 | `num-heading-last` | Flag | `num-heading-last` | ✅ | ✅ | ❌ | Number last heading only |
 | `num-tag-first` | Flag | `num-tag-first` | ✅ | ✅ | ❌ | Number first tag only |
 | `num-tag-last` | Flag | `num-tag-last` | ✅ | ✅ | ❌ | Number last tag only |
-| **Raw Notation Propertys** |||||||
+| **Raw Notation Properties** |||||||
 | `raw-all` | Flag | `raw-all` | ✅ | ✅ | ❌ | Render everything as raw Mixdown notation |
 | `raw-content` | Flag | `raw-content` | ✅ | ✅ | ❌ | Process tags, preserve content as raw |
 | `raw-tags` | Flag | `raw-tags` | ✅ | ✅ | ❌ | Process content, preserve tags as raw |
@@ -1079,12 +1079,12 @@ Most common programming languages are supported using the `code-language` patter
 **Common Property Combinations:**
 
 ```markdown
-<!-- Basic formatting propertys -->
+<!-- Basic formatting properties -->
 {{stem tag-omit}}                    <!-- Remove XML tags, keep block formatting -->
 {{stem inline}}                      <!-- Render inline without tags -->
 {{stem code-js tag-omit}}           <!-- JavaScript code block without XML wrapper -->
 
-<!-- Destination scoping propertys -->
+<!-- Destination scoping properties -->
 {{stem +cursor !windsurf}}          <!-- Include for Cursor, exclude for Windsurf -->
 {{stem +ide:[code-js]}}             <!-- Include for all IDE destinations with code-js formatting -->
 {{stem cursor:tag-omit}}            <!-- Apply tag-omit only for Cursor -->
@@ -1097,9 +1097,9 @@ Most common programming languages are supported using the `code-language` patter
 
 #### Property Extension Rules
 
-1. **Prefixed Families**: Propertys like `code-*` and `h-*` follow consistent naming with a prefix identifying the family.
+1. **Prefixed Families**: Properties like `code-*` and `h-*` follow consistent naming with a prefix identifying the family.
 
-2. **Parameter Values**: Propertys requiring values use parentheses syntax: `name-(value)`.
+2. **Parameter Values**: Properties requiring values use parentheses syntax: `name-(value)`.
 
 3. **Destination Scoping**: Destination scoping follows the `destination:property` or `destination:[property1 property2]` pattern.
 
@@ -1121,7 +1121,7 @@ Most common programming languages are supported using the `code-language` patter
 
    Note that when using `tag-omit`, custom XML attributes won't appear in the output since the tags themselves are removed.
 
-5. **Property Precedence**: When multiple propertys might conflict, the last specified property takes precedence (left-to-right evaluation).
+5. **Property Precedence**: When multiple properties might conflict, the last specified property takes precedence (left-to-right evaluation).
 
 6. **Frontmatter to Destination**: Destination-specific frontmatter (e.g., `cursor: { ... }`) overrides global values for that destination.
 
