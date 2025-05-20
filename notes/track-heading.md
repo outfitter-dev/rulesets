@@ -129,7 +129,7 @@ mixdown:
     level:
       min: 2      # Minimum heading level to start at (default: 2)
       max: 5      # Maximum heading level (default: 5, capped at 6)
-    case: "title" # Propertyal: stem name case transformation
+    case: "title" # Optional: stem name case transformation
     line_breaks:
       before: true # Insert blank line before heading (default: true)
       after: true   # Insert blank line after heading (default: true)
@@ -199,7 +199,7 @@ Another inner section with explicit heading level
 Third inner section with shorthand heading notation
 ```
 
-## Configuration Propertys
+## Configuration Properties
 
 ### Global Configuration (mixdown.config.json)
 
@@ -251,7 +251,7 @@ mixdown:
 ---
 ```
 
-### Heading Text Case Propertys
+### Heading Text Case Properties
 
 - `title`: Title Case (`stem-name` → `# Stem Name`)
 - `sentence`: Sentence case (`stem-name` → `# Stem name`)
@@ -306,7 +306,7 @@ mixdown:
 
 6. **Quoted String Heading Derivation**: When using the simplified `{{"Heading"}}` syntax:
    - XML tag string is derived from heading (e.g., `{{"Getting Started"}}` → `<getting_started>`)
-   - Nesting is automatically stemed for proper heading levels
+   - Nesting is automatically stemmed for proper heading levels
    - No XML tags appear in the output
    - Configuration properties like `level` and `case` still apply
    - `#` characters are not supported within quoted titles

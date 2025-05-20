@@ -190,5 +190,5 @@ Mixdown aims to produce outputs that work well with existing markdown linting to
 
 1. **Linting rule generation**: Automatically generate .markdownlint.json based on Mixdown settings
 2. **Style validation**: Test Source Rules files against linting rules before compilation
-3. **Style correction**: Propertyally correct style issues during compilation
+3. **Style correction**: Automatically correct style issues during compilation
 4. **Additional style controls**: Expand to cover more markdown formatting concerns
