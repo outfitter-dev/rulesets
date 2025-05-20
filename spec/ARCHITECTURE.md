@@ -272,7 +272,7 @@ A stub for `mixdown.config.json`:
         "project": "Mixdown",
         "author": "Maybe Good"
       },
-      "destinationOptions": {
+      "plugins": {
         "cursor": {
           "output": {
             "path": ".cursor/rules"
