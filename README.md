@@ -1,6 +1,6 @@
 # 💽 Mixdown: A Compiler for AI Rules Files
 
-Mixdown simplifies rules management for tools like Cursor, Claude Code, Codex, etc. With Mixdown, you author rules (called "Source Rules") in previewable Markdown and compile them into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
+Mixdown simplifies rules management for tools like Cursor, Claude Code, Codex, etc. With Mixdown, you author rules (called "source rules") in previewable Markdown and compile them into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
 
 ## What is Mixdown?
 
@@ -18,12 +18,12 @@ The problem is, they all have different formats, behavior, and capabilities, whi
 
 Mixdown is "Terraform for AI rules": declare your ideal rules once, compile for dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative rules—no copy‑paste, no drift, just high‑quality, version-controlled context.
 
-With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single Source Rules file (`.md`). This Source Rules file is the "gold master" for your instructions, from which individual compiled rules are created for each destination and sent to the right places.
+With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single source rules file (`.md`). This source rules file is the "gold master" for your instructions, from which individual compiled rules are created for each destination and sent to the right places.
 
 The app consists of:
 
 1. A Node.js app with a compiler (featuring a plugin architecture for different tools), an API, CLI, and Model Context Protocol implementation for managing prompts and instructions.
-2. A CommonMark-compliant markup specification for creating effective and reusable rules, processed by the compiler to generate tool-specific rules files.
+2. A CommonMark-compliant markup specification for creating effective and reusable rules, processed by the compiler to generate destination-specific rules files.
 
 Result: *author once, distribute everywhere, zero drift.*
 
@@ -33,17 +33,17 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 
 ## Core Concepts
 
-**Source Rules**
-: Source rules files, written in 100% previewable Markdown. Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
+**source rules**
+: source rules files, written in 100% previewable Markdown. Written in Mixdown notation and use `{{...}}` notation markers to direct the compiler.
 
-**Compiled Rules**
+**compiled rules**
 : Destination-specific compiled files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their destination directories, these are referred to as "tool-ready rules".
 
 **Stem**
 : Delimited, reusable blocks of content using notation like `{{instructions}}...{{/instructions}}` with optional properties. They are 1:1 translations of XML tags (e.g., `{{instructions}}` → `<instructions>`), but readable in Markdown previewers.
 
 **Import**
-: A reference to another Source Rules file, stem, mixin, or template (`{{> my-rule}}`). Embeds content from another source.
+: A reference to another source rules file, stem, mixin, or template (`{{> my-rule}}`). Embeds content from another source.
 
 **Variable**
 : Dynamic value replaced inline at compile time (e.g., `{{$key}}` for aliases, `{{$.frontmatter.key}}` for frontmatter data, `{{$destination}}` for the current destination name).
@@ -55,7 +55,7 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 : Modular, reusable content component stored in `/_mixins`.
 
 **Destination**
-: A supported tool (Cursor, Roo Code, etc.) identified by a `kebab-case` ID (e.g., `cursor`, `roo-code`). Defines tool-specific criteria for compiling Source Rules into compiled rules and is provided through plugins.
+: A supported tool (Cursor, Roo Code, etc.) identified by a `kebab-case` ID (e.g., `cursor`, `roo-code`). Defines destination-specific criteria for compiling source rules into compiled rules and is provided through plugins.
 
 **Destination Group**
 : Named set of destinations (`@cursor`, `@ide`, `@cli`) for property filtering (a planned feature for easier filtering).
@@ -79,7 +79,7 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 ### Mixdown Notation
 
 - **100% Preview-able Markdown** – Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
-- **Granular Stems** – Filter stems within a single Source Rules file for per-destination inclusion/exclusion.
+- **Granular Stems** – Filter stems within a single source rules file for per-destination inclusion/exclusion.
 - **Build-time Variables** – Aliases and frontmatter data injection.
 
 ### Compiler & Integration
@@ -102,7 +102,7 @@ npx @mixdown/cli init
 ```bash
 mixdown init      # scaffolds .mixdown/ directory structure
 
-mixdown import    # imports existing rules files into the Source Rules format
+mixdown import    # imports existing rules files into the source rules format
 
 mixdown build     # writes compiled rules to .mixdown/dist/
 ```
@@ -111,12 +111,12 @@ mixdown build     # writes compiled rules to .mixdown/dist/
 
 ```
 project/
-├── .mixdown/
-│   ├── dist/
-│   │   └── latest/         # compiled rules files
-│   ├── src/       # Source Rules files (*.md)
-│   │   └── _mixins/         # reusable content modules
-│   └── mixdown.config.json # compiler config
+├── `.mixdown/`
+│   ├── `dist/`
+│   │   └── `latest/`         # compiled rules files
+│   ├── `src/`         # source rules files (*.md)
+│   │   └── `_mixins/`         # reusable content modules
+│   └── `mixdown.config.json` # compiler config
 ```
 
 ## Notation Cheatsheet
@@ -125,7 +125,7 @@ project/
 |-----------------|---------|-------|
 | **Stem** | `{{instructions name-("Rules") +cli}}...{{/instructions}}` | Properties control name & export. |
 | **Front-matter** | `---\nname: foo\n---` | YAML at file top. |
-| **Import** | `{{> legal}}` | Embed content from another Source Rules file. |
+| **Import** | `{{> legal}}` | Embed content from another source rules file. |
 | **Import Stem** | `{{> conventions#(stem-name)}}` | Embed a specific stem. |
 | **Internal Link** | `[Read more](rules.md)` | Standard Markdown links. |
 | **Absolute Link** | `{{link [\"Link Title\"] /path/to/file.ts}}` | Links to project files. |

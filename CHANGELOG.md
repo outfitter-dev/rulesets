@@ -1,8 +1,8 @@
 ### Changed
 - Updated terminology throughout the documentation:
-  - "Mix files" → "Source Rules"
+  - "Mix files" → "Source rules"
   - "Target" → "Destination"
-  - "Output" → "Compiled Rules"
+  - "Output" → "Compiled rules"
   - "Track" → "Stem"
   - "Option" → "Property"
   - "Snippet" → "Mixin"
