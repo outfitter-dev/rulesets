@@ -14,16 +14,16 @@ You are a senior software architect and product manager and an expert in analyzi
 
 ## Core Concepts
 
-1.  **Single Active Folder:** The `.ai/tasks/` directory holds *all* currently relevant task files, regardless of their status (pending, inprogress, failed). Task status is tracked *within* each file's YAML frontmatter.
-2.  **Master Checklist:** The `.ai/TASKS.md` file acts as the primary human-readable overview and control interface. It's a simple Markdown checklist that **must** mirror the state of tasks currently in `.ai/tasks/`. **The agent is responsible for keeping this file synchronized with the YAML status in the individual task files.**
-3.  **Archive:** The `.ai/memory/tasks/` directory is used exclusively for storing task files that are fully completed or failed and no longer need active tracking in `.ai/TASKS.md`. The `.ai/memory/` directory itself contains the log file.
-4.  **Archive Log:** The `.ai/memory/TASKS_LOG.md` file is a persistent, append-only log. When tasks are archived from `.ai/tasks/` to `.ai/memory/tasks/`, a summary line for each is added here.
+1. **Single Active Folder:** The `.ai/tasks/` directory holds *all* currently relevant task files, regardless of their status (pending, in-progress, failed). Task status is tracked *within* each file's YAML frontmatter.
+2. **Master Checklist:** The `.ai/TASKS.md` file acts as the primary human-readable overview and control interface. It's a simple Markdown checklist that **must** mirror the state of tasks currently in `.ai/tasks/`. **The agent is responsible for keeping this file synchronized with the YAML status in the individual task files.**
+3. **Archive:** The `.ai/memory/tasks/` directory is used exclusively for storing task files that are fully completed or failed and no longer need active tracking in `.ai/TASKS.md`. The `.ai/memory/` directory itself contains the log file.
+4. **Archive Log:** The `.ai/memory/TASKS_LOG.md` file is a persistent, append-only log. When tasks are archived from `.ai/tasks/` to `.ai/memory/tasks/`, a summary line for each is added here.
 
 ## Directory Structure
 
-```
+```text
 .ai/
-  tasks/          # Holds ALL active task files (task{id}_name.md)
+  tasks/          # Holds ALL active task files (task[id]_name.md)
   memory/         # Parent directory for archive
     tasks/        # Archive for completed/failed task files
     TASKS_LOG.md  # Append-only log of archived tasks
@@ -43,7 +43,7 @@ When working with the task system, the agent should always follow these best pra
 
 3. **Use Safe File Operations:**
    - When moving files (e.g., during archival):
-     - **Identify the source path (e.g., `.ai/tasks/task{id}_name.md`) and the destination directory (e.g., `.ai/memory/tasks/`).**
+     - **Identify the source path (e.g., `.ai/tasks/task[id]_name.md`) and the destination directory (e.g., `.ai/memory/tasks/`).**
      - **Ensure the destination directory (e.g., `.ai/memory/tasks/`) exists. Use `list_dir` on the parent directory (e.g., `.ai/memory/`) or `file_search` to check. If it doesn't exist, it can be implicitly created when using `edit_file` to write a file within that path (as `edit_file` creates necessary parent directories), or the `mv` command might create it if it's a direct child.**
      - **Confirm the source file exists using `file_search` or `list_dir` before attempting the `mv` command.**
    - When appending to files, read the existing content with `read_file`, append the new content to what was read, and then use `edit_file` to write the combined content back to the file.
@@ -61,15 +61,16 @@ Each task is a Markdown file (`.md`) with YAML frontmatter.
 
 **Filename Convention:**
 
-Use the format `task{id}_descriptive_name.md`, where `{id}` is a **unique sequential integer ID** for top-level tasks, and `descriptive_name` is a short, kebab-case summary of the task title (e.g., `prompt_list_page`). Sub-task filenames follow `task{parent_id}.{sub_id}_descriptive_name.md`. **Always refer to tasks by their full ID (e.g., `7` for a top-level task, `7.1` for a sub-task) in dependencies and commands.**
+Use the format `task[id]_descriptive_name.md`, where `[id]` is a **unique sequential integer ID** for top-level tasks, and `descriptive_name` is a short, kebab-case summary of the task title (e.g., `prompt_list_page`). Sub-task filenames follow `task[parent_id].[sub_id]_descriptive_name.md`. **Always refer to tasks by their full ID (e.g., `7` for a top-level task, `7.1` for a sub-task) in dependencies and commands.**
 
-**Determining the Next Task ID (`{id}` for top-level tasks):**
+**Determining the Next Task ID (`[id]` for top-level tasks):**
 
 When creating a new top-level task, determine the next available sequential integer ID. To do this, the agent should:
+
 1. Use the `list_dir` tool to get the contents of the `.ai/tasks/` directory.
 2. Use the `list_dir` tool to get the contents of the `.ai/memory/tasks/` directory.
-3. Combine the file listings. From this combined list, identify all filenames that *only* match the pattern `task{id}_descriptive_name.md` (e.g., `task1_init.md`, `task123_another_feature.md`). This pattern specifically targets top-level tasks, ensuring filenames like `task1.2_sub_feature.md` are excluded from this specific ID generation.
-4. For each matching filename, parse the numeric `{id}` part. This involves extracting the number between "task" and the first underscore.
+3. Combine the file listings. From this combined list, identify all filenames that *only* match the pattern `task[id]_descriptive_name.md` (e.g., `task1_init.md`, `task123_another_feature.md`). This pattern specifically targets top-level tasks, ensuring filenames like `task1.2_sub_feature.md` are excluded from this specific ID generation.
+4. For each matching filename, parse the numeric `[id]` part. This involves extracting the number between "task" and the first underscore.
 5. Find the highest numeric ID among all parsed IDs for top-level tasks.
 6. The next top-level task ID is this highest ID + 1.
 7. If no top-level task files are found in either directory, the first top-level task ID is `1`.
@@ -82,42 +83,46 @@ For tasks that are particularly large or complex, they can be expanded into sub-
 
 **If the `task-magic/expand.md` rule (or the user directly) recommends expanding a task, the following process is used to create the sub-tasks:**
 
-1.  **Receive Sub-Task Definitions:** The agent receives a list of proposed sub-tasks, typically including titles, descriptions, priorities, and their inter-dependencies, as well as the ID of the parent task (e.g., parent task ID `42`).
-2.  **Sub-Task Filename Convention:**
-    *   For each proposed sub-task, determine its filename using the format: `task{parent_id}.{sub_id}_descriptive_name.md`
-        *   `{parent_id}`: The numeric ID of the original parent task (e.g., `42`).
-        *   `{sub_id}`: A sequential integer for the sub-task (e.g., 1, 2, 3), unique *within the scope of that parent*.
-        *   Example: `task42.1_implement_user_model.md`, `task42.2_create_api_endpoints.md`.
-    *   To determine the next `{sub_id}` for a given `{parent_id}`:
-        1.  Use `list_dir` on `.ai/tasks/` and `.ai/memory/tasks/`.
-        2.  Filter for files matching `task{parent_id}.*_*.md` (e.g., `task42.*_*.md`).
-        3.  Parse the `{sub_id}` from these filenames (the number between the first dot and the subsequent underscore).
-        4.  The next `{sub_id}` is the highest found + 1, or 1 if no relevant sub-task files exist for that parent.
-3.  **Create Sub-Task Files:**
-    *   For each defined sub-task:
-        *   Create the corresponding `.md` file in the `.ai/tasks/` directory using `edit_file`.
-        *   The YAML frontmatter `id` field **must be the full sub-task ID string**, e.g., `id: 42.1`.
-        *   Populate the YAML frontmatter (`title`, `status: pending`, `priority`, `feature` (this could be the parent task's feature or title, or a more specific sub-feature), `dependencies`, `created_at`).
-            *   Dependencies for sub-tasks can refer to other sub-tasks of the same parent (e.g., `42.2` depends on `42.1`) or external/top-level tasks (e.g., `15`).
-        *   Add the `## Description`, `## Details`, and `## Test Strategy` sections as provided or generated.
-4.  **Update Parent Task File:**
-    *   Modify the original parent task's file (e.g., `task42_implement_user_feature.md`) using `edit_file`:
-        *   Update its `## Description` to note that it has been expanded and now serves as a Parent Task or tracker.
-        *   In its `## Details` section, add a list like:
-            ```markdown
-            **Sub-tasks:**
-            - task42.1_implement_user_model.md
-            - task42.2_create_api_endpoints.md
-            ```
-        *   The parent task's `status` might remain `pending` or `inprogress`. Its completion is typically dependent on all its sub-tasks being `completed`.
-5.  **Update `TASKS.md` Master Checklist:**
-    *   Using `read_file` then `edit_file` on `.ai/TASKS.md`:
-        *   For each newly created sub-task, add a new entry following the standard format. The ID displayed should be the full sub-task ID (e.g., `ID 42.1`).
-        *   The entry for the parent task in `TASKS.md` should also be updated to reflect its new role as a Parent Task/tracker, potentially by modifying its description.
+1. **Receive Sub-Task Definitions:** The agent receives a list of proposed sub-tasks, typically including titles, descriptions, priorities, and their inter-dependencies, as well as the ID of the parent task (e.g., parent task ID `42`).
+2. **Sub-Task Filename Convention:**
+   - For each proposed sub-task, determine its filename using the format: `task[parent_id].[sub_id]_descriptive_name.md`
+     - `[parent_id]`: The numeric ID of the original parent task (e.g., `42`).
+     - `[sub_id]`: A sequential integer for the sub-task (e.g., 1, 2, 3), unique *within the scope of that parent*.
+     - Example: `task42.1_implement_user_model.md`, `task42.2_create_api_endpoints.md`.
+   - To determine the next `[sub_id]` for a given `[parent_id]`:
+     1. Use `list_dir` on `.ai/tasks/` and `.ai/memory/tasks/`.
+     2. Filter for files matching `task[parent_id].*_*.md` (e.g., `task42.*_*.md`).
+     3. Parse the `[sub_id]` from these filenames (the number between the first dot and the subsequent underscore).
+     4. The next `[sub_id]` is the highest found + 1, or 1 if no relevant sub-task files exist for that parent.
+3. **Create Sub-Task Files:**
+   - For each defined sub-task:
+     - Create the corresponding `.md` file in the `.ai/tasks/` directory using `edit_file`.
+     - The YAML frontmatter `id` field **must be the full sub-task ID string**, e.g., `id: 42.1`.
+     - Populate the YAML frontmatter (`title`, `status: pending`, `priority`, `feature` (this could be the parent task's feature or title, or a more specific sub-feature), `dependencies`, `created_at`).
+       - Dependencies for sub-tasks can refer to other sub-tasks of the same parent (e.g., `42.2` depends on `42.1`) or external/top-level tasks (e.g., `15`).
+     - Add the `## Description`, `## Details`, and `## Test Strategy` sections as provided or generated.
+4. **Update Parent Task File:**
+   - Modify the original parent task's file (e.g., `task42_implement_user_feature.md`) using `edit_file`:
+     - Update its `## Description` to note that it has been expanded and now serves as a Parent Task or tracker.
+     - In its `## Details` section, add a list like:
+
+       ```markdown
+       **Sub-tasks:**
+       - task42.1_implement_user_model.md
+       - task42.2_create_api_endpoints.md
+       ```
+
+       - The parent task's `status` might remain `pending` or `in-progress`. Its completion is typically dependent on all its sub-tasks being `completed`.
+5. **Update `TASKS.md` Master Checklist:**
+   - Using `read_file` then `edit_file` on `.ai/TASKS.md`:
+     - For each newly created sub-task, add a new entry following the standard format. The ID displayed should be the full sub-task ID (e.g., `ID 42.1`).
+     - The entry for the parent task in `TASKS.md` should also be updated to reflect its new role as a Parent Task/tracker, potentially by modifying its description.
 
 **YAML `id` field for Sub-Tasks:**
 Crucially, the `id` field in the YAML frontmatter for a sub-task **must use the dot-notation string**, not just the sub-id number.
+
 Example for `task42.1_implement_user_model.md`:
+
 ```yaml
 ---
 id: 42.1 # Full sub-task ID
@@ -133,16 +138,18 @@ dependencies:
 
 **Dependencies involving Sub-Tasks:**
 When listing dependencies:
+
 - A sub-task can depend on another sub-task of the *same parent*: e.g., `task42.2` might have `42.1` in its `dependencies` list.
 - A sub-task can depend on a regular task: e.g., `task42.1` might have `15` in its `dependencies`.
 - A regular task can depend on a sub-task: e.g., `task43` might have `42.2` in its `dependencies`.
+
 **Always use the full task ID string (e.g., `42.1`, `15`) in the `dependencies` list.**
 
 ```yaml
 ---
-id: {id}                   # Unique Task ID. Numeric for top-level tasks (e.g., 42). String with dot-notation for sub-tasks (e.g., "42.1").
+id: [id]                   # Unique Task ID. Numeric for top-level tasks (e.g., 42). String with dot-notation for sub-tasks (e.g., "42.1").
 title: 'Example Task Title'  # Human-readable title
-status: pending            # Current status: pending, inprogress, completed, failed
+status: pending            # Current status: pending, in-progress, completed, failed
 priority: medium           # Task priority: critical, high, medium, low
 feature: Example Feature   # Feature area or logical grouping
 dependencies:              # List of task IDs (numeric or string like "42.1") this task depends on
@@ -150,7 +157,7 @@ dependencies:              # List of task IDs (numeric or string like "42.1") th
   - 5.2
 assigned_agent: null       # Agent currently working (null if pending/blocked/done)
 created_at: "YYYY-MM-DDTHH:MM:SSZ" # Set using the output of the date -u +"%Y-%m-%dT%H:%M:%SZ" command. Never hardcode or guess the value.
-started_at: null           # Set using `date` command when status -> inprogress
+started_at: null           # Set using `date` command when status -> in-progress
 completed_at: null         # Set using `date` command when status -> completed or failed
 error_log: null            # Reason if status: failed
 ---
@@ -160,26 +167,26 @@ error_log: null            # Reason if status: failed
 
 When creating a new task, the agent must assign a `priority` in the YAML frontmatter. The available priorities are `critical`, `high`, `medium`, and `low`. To choose the correct priority, consider the following:
 
-*   **`critical`**:
-    *   The task is absolutely essential for the core functionality of the project or feature.
-    *   The project/feature cannot proceed or be considered complete without this task.
-    *   It might also be a task that, if not done immediately, blocks a large number of other `critical` or `high` priority tasks.
-*   **`high`**:
-    *   The task implements a key part of a feature or fixes an important bug.
-    *   It is a significant step towards a major goal.
-    *   It might block several other `medium` or `high` priority tasks.
-*   **`medium`** (Default):
-    *   This is for standard development tasks, regular feature work, or improvements that are valuable but not immediately blocking.
-    *   Use this as the default if the task doesn't clearly fit into `critical`, `high`, or `low`.
-*   **`low`**:
-    *   The task is a "nice-to-have," a minor improvement, a cosmetic fix, or can be deferred without significant impact.
-    *   It does not block any other tasks or only blocks other `low` priority tasks.
+- **`critical`**:
+  - The task is absolutely essential for the core functionality of the project or feature.
+  - The project/feature cannot proceed or be considered complete without this task.
+  - It might also be a task that, if not done immediately, blocks a large number of other `critical` or `high` priority tasks.
+- **`high`**:
+  - The task implements a key part of a feature or fixes an important bug.
+  - It is a significant step towards a major goal.
+  - It might block several other `medium` or `high` priority tasks.
+- **`medium`** (Default):
+  - This is for standard development tasks, regular feature work, or improvements that are valuable but not immediately blocking.
+  - Use this as the default if the task doesn't clearly fit into `critical`, `high`, or `low`.
+- **`low`**:
+  - The task is a "nice-to-have," a minor improvement, a cosmetic fix, or can be deferred without significant impact.
+  - It does not block any other tasks or only blocks other `low` priority tasks.
 
 **Process for deciding priority:**
 
-1.  **Evaluate Inherent Criticality:** How vital is this specific task to the overall user request or feature being built?
-2.  **Analyze Dependencies:** Does this task unblock other tasks? If so, what are the priorities of those dependent tasks? A task that unblocks `critical` or `high` priority work should have its priority elevated accordingly.
-3.  **Default to Medium:** If there's no strong reason to assign a different priority, `medium` is often appropriate.
+1. **Evaluate Inherent Criticality:** How vital is this specific task to the overall user request or feature being built?
+2. **Analyze Dependencies:** Does this task unblock other tasks? If so, what are the priorities of those dependent tasks? A task that unblocks `critical` or `high` priority work should have its priority elevated accordingly.
+3. **Default to Medium:** If there's no strong reason to assign a different priority, `medium` is often appropriate.
 
 ## Description
 
@@ -205,29 +212,26 @@ When breaking down a feature or user story into tasks, aim for a balance between
 
 **General Principles:**
 
-*   **Self-Contained:** Each task should ideally represent a logical step that can be implemented and potentially tested independently. For example, implementing the core logic of a job and its unit tests makes a good task.
-*   **Meaningful Progress:** Completing a task should represent clear progress towards the overall feature goal.
-*   **Avoid Micro-Tasks:** Don't break down single operations into multiple tiny tasks if they are always performed together (e.g., extracting data and storing it within the same job might be one task, not two or three).
+- **Self-Contained:** Each task should ideally represent a logical step that can be implemented and potentially tested independently. For example, implementing the core logic of a job and its unit tests makes a good task.
+- **Meaningful Progress:** Completing a task should represent clear progress towards the overall feature goal.
+- **Avoid Micro-Tasks:** Don't break down single operations into multiple tiny tasks if they are always performed together (e.g., extracting data and storing it within the same job might be one task, not two or three).
 
 **Recommended Workflow Structure:**
 
 Instead of breaking down every single implementation detail, consider structuring tasks around logical phases of development:
 
-1.  **Scaffolding Task:**
-    *   **Goal:** Create the necessary file structure and boilerplate code for the feature.
-    *   **Details:** This might involve creating new modules, classes, functions, or files (e.g., for commands, background jobs, data models, service utilities, tests) with basic structure (e.g., function signatures, class definitions) and dummy implementations according to the project's chosen language and framework.
-
-2.  **Core Logic Implementation Task(s):**
-    *   **Goal:** Implement the primary business logic of the feature.
-    *   **Details:** This involves writing the actual code within the scaffolded files (e.g., the logic inside a job's main execution function/method) and the corresponding unit tests.
-
-3.  **Integration/Control Task(s):**
-    *   **Goal:** Implement how the core logic is triggered or integrated into the application.
-    *   **Details:** This might involve implementing a command-line interface, an API endpoint, a user interface action, or a service call that uses the core logic. Include relevant tests for this integration layer.
-
-4.  **UI/Frontend Task(s) (If Applicable):**
-    *   **Goal:** Implement any necessary user interface elements.
-    *   **Details:** Create or modify user interface templates, components, or views relevant to the chosen UI framework/library.
+1. **Scaffolding Task:**
+   - **Goal:** Create the necessary file structure and boilerplate code for the feature.
+   - **Details:** This might involve creating new modules, classes, functions, or files (e.g., for commands, background jobs, data models, service utilities, tests) with basic structure (e.g., function signatures, class definitions) and dummy implementations according to the project's chosen language and framework.
+2. **Core Logic Implementation Task(s):**
+   - **Goal:** Implement the primary business logic of the feature.
+   - **Details:** This involves writing the actual code within the scaffolded files (e.g., the logic inside a job's main execution function/method) and the corresponding unit tests.
+3. **Integration/Control Task(s):**
+   - **Goal:** Implement how the core logic is triggered or integrated into the application.
+   - **Details:** This might involve implementing a command-line interface, an API endpoint, a user interface action, or a service call that uses the core logic. Include relevant tests for this integration layer.
+4. **UI/Frontend Task(s) (If Applicable):**
+   - **Goal:** Implement any necessary user interface elements.
+   - **Details:** Create or modify user interface templates, components, or views relevant to the chosen UI framework/library.
 
 This structure helps ensure each task is substantial enough to be meaningful while maintaining a logical flow for feature development.
 
@@ -240,21 +244,21 @@ This file provides a quick, human-readable overview of all tasks currently in th
 **Format:** Each task is represented by a list item:
 
 ```markdown
-- [ICON] **ID {id}: {Title}** (Priority: {priority}){STATUS_NOTE}
-> Dependencies: {dep_id1}, {dep_id2}... (Only shown if dependencies exist)
-> {Description}
+- [ICON] **ID [id]: [Title]** (Priority: [priority])[STATUS_NOTE]
+> Dependencies: [dep_id1], [dep_id2]... (Only shown if dependencies exist)
+> [Description]
 ```
 
--   **`[ICON]`**:
-    -   `[ ]`: Pending
-    -   `[-]`: In Progress
-    -   `[x]`: Completed
-    -   `[!]`: Failed
--   **`{id}`**: The full task ID (e.g., `15` or `15.1`).
--   **`{STATUS_NOTE}`**:
-    -   `(Failed)`: If status is `failed`.
--   **`Dependencies`**: Line is omitted if the `dependencies` list in YAML is empty or null. IDs are full task IDs (e.g., `1`, `4.2`).
--   **`Description`**: Pulled from the `## Description` section of the task file.
+- **`[ICON]`**:
+  - `[ ]`: Pending
+  - `[-]`: In Progress
+  - `[x]`: Completed
+  - `[!]`: Failed
+- **`[id]`**: The full task ID (e.g., `15` or `15.1`).
+- **`[STATUS_NOTE]`**:
+  - `(Failed)`: If status is `failed`.
+- **`Dependencies`**: Line is omitted if the `dependencies` list in YAML is empty or null. IDs are full task IDs (e.g., `1`, `4.2`).
+- **`Description`**: Pulled from the `## Description` section of the task file.
 
 **Example `TASKS.md` Entry:**
 
@@ -268,20 +272,20 @@ This file provides a quick, human-readable overview of all tasks currently in th
 
 The workflow for the Task Magic system is illustrated in a separate diagram. Please refer to [task-magic/workflow.md](mdc:.cursor/rules/task-magic/workflow.md) for the detailed process of task creation, execution, and archival.
 
-## Workflow
+## Workflow Sequence
 
 ```mermaid
 graph TD
-    A[User Request: Create Tasks from Plan/PRD] --> B{Plan All Tasks};
+    A[User Request: Create Tasks from Plan/PRD] --> B[Plan All Tasks];
     B --> C[Update .ai/TASKS.md with ALL Planned Tasks];
-    C --> D{For Each Task in .ai/TASKS.md};
-    D -- Loop --> E[Create Individual task{id}_name.md in .ai/tasks/];
+    C --> D[For Each Task in .ai/TASKS.md];
+    D -- Loop --> E[Create Individual task[id]_name.md in .ai/tasks/];
     E --> F[Populate YAML and Markdown Body];
     F -- End Loop --> G[All Task Files Created];
-    G --> H{User asks agent to work?};
+    G --> H[User asks agent to work?];
     H -- Yes --> I[Agent reads TASKS.md, finds first pending task '[ ]'];
-    I --> J{Check Dependencies for selected task};
-    J -- Met --> K[Update Task File YAML status: inprogress];
+    I --> J[Check Dependencies for selected task];
+    J -- Met --> K[Update Task File YAML status: in-progress];
     K --> L[Update TASKS.md entry: [-]];
     L --> M[Execute Task];
     M -- Success --> N[Update YAML status: completed];
@@ -289,7 +293,7 @@ graph TD
     M -- Failure --> P[Update YAML status: failed, add error_log];
     P --> Q[Update TASKS.md entry: [!], (Failed)];
     J -- Not Met --> R[Inform User: Dependencies Missing];
-    S{User asks to archive?} --> T[Agent finds completed/failed tasks in .ai/tasks/];
+    S[User asks to archive?] --> T[Agent finds completed/failed tasks in .ai/tasks/];
     T --> U[Move task files to .ai/memory/tasks/];
     U --> V[Append summary to .ai/memory/TASKS_LOG.md];
     V --> W[Remove corresponding entries from .ai/TASKS.md];
@@ -297,21 +301,21 @@ graph TD
 
 **Key Agent Responsibilities:**
 
-1.  **Synchronization:** Keep `.ai/TASKS.md` perfectly aligned with the `status` fields in the `.ai/tasks/*.md` files. Update `TASKS.md` *immediately* after updating a task file's YAML status.
-2.  **Dependency Check:** Before changing a task's status to `inprogress` (**after identifying it as pending in `TASKS.md`**), verify *each* ID listed in its `dependencies` corresponds to a task file (in `.ai/tasks/` OR `.ai/memory/tasks/`) with `status: completed` in its YAML. IDs can be numeric (e.g., `12`) or string (e.g., `12.1`). **If not met, the agent cannot start the task and must inform the user.**
-3.  **Status Updates:**
-    *   **Start:** Update task file YAML (`status: inprogress`, `assigned_agent`, `started_at`). Update `TASKS.md` line (`[-]`).
-    *   **Complete:** Update task file YAML (`status: completed`, `assigned_agent: null`, `completed_at`). Update `TASKS.md` line (`[x]`).
-    *   **Fail:** Update task file YAML (`status: failed`, `assigned_agent: null`, `completed_at`, `error_log`). Update `TASKS.md` line (`[!]`, add `(Failed)`).
-4.  **Archival:** When instructed by the user (interpreting intent like "archive completed tasks", "clean up finished tasks"), perform the archive steps:
-    *   Find completed/failed tasks **in `.ai/tasks/`** by reading their YAML status (use `read_file` for each task file identified by `list_dir` in `.ai/tasks/`).
-    *   For each task to be archived:
-        *   Read its full content (YAML frontmatter and Description section) using `read_file` **(this is needed for logging to TASKS_LOG.md).**
-        *   **Identify the source path (e.g., `.ai/tasks/task{id}_name.md`) and the destination directory (`.ai/memory/tasks/`).**
-        *   **Ensure the destination directory `.ai/memory/tasks/` exists (e.g., using `list_dir` or `file_search`). If not, it will typically be created by `edit_file` if a file is written into it, or the `mv` command might create it.**
-        *   **Use `run_terminal_cmd` to execute an `mv` command (e.g., `mv .ai/tasks/task{id}_name.md .ai/memory/tasks/`).**
-    *   Log the summary (including description and dependencies) to `TASKS_LOG.md` by reading its current content, appending the new log entries, and using `edit_file` to write it back.
-    *   Remove corresponding entries from `.ai/TASKS.md` via `read_file` and `edit_file`.
+1. **Synchronization:** Keep `.ai/TASKS.md` perfectly aligned with the `status` fields in the `.ai/tasks/*.md` files. Update `TASKS.md` *immediately* after updating a task file's YAML status.
+2. **Dependency Check:** Before changing a task's status to `in-progress` (**after identifying it as pending in `TASKS.md`**), verify *each* ID listed in its `dependencies` corresponds to a task file (in `.ai/tasks/` OR `.ai/memory/tasks/`) with `status: completed` in its YAML. IDs can be numeric (e.g., `12`) or string (e.g., `12.1`). **If not met, the agent cannot start the task and must inform the user.**
+3. **Status Updates:**
+   - **Start:** Update task file YAML (`status: in-progress`, `assigned_agent`, `started_at`). Update `TASKS.md` line (`[-]`).
+   - **Complete:** Update task file YAML (`status: completed`, `assigned_agent: null`, `completed_at`). Update `TASKS.md` line (`[x]`).
+   - **Fail:** Update task file YAML (`status: failed`, `assigned_agent: null`, `completed_at`, `error_log`). Update `TASKS.md` line (`[!]`, add `(Failed)`).
+4. **Archival:** When instructed by the user (interpreting intent like "archive completed tasks", "clean up finished tasks"), perform the archive steps:
+   - Find completed/failed tasks **in `.ai/tasks/`** by reading their YAML status (use `read_file` for each task file identified by `list_dir` in `.ai/tasks/`).
+   - For each task to be archived:
+     - Read its full content (YAML frontmatter and Description section) using `read_file` **(this is needed for logging to TASKS_LOG.md).**
+     - **Identify the source path (e.g., `.ai/tasks/task[id]_name.md`) and the destination directory (`.ai/memory/tasks/`).**
+     - **Ensure the destination directory `.ai/memory/tasks/` exists (e.g., using `list_dir` or `file_search`). If not, it will typically be created by `edit_file` if a file is written into it, or the `mv` command might create it.**
+     - **Use `run_terminal_cmd` to execute an `mv` command (e.g., `mv .ai/tasks/task[id]_name.md .ai/memory/tasks/`).**
+   - Log the summary (including description and dependencies) to `TASKS_LOG.md` by reading its current content, appending the new log entries, and using `edit_file` to write it back.
+   - Remove corresponding entries from `.ai/TASKS.md` via `read_file` and `edit_file`.
 
 ## `TASKS_LOG.md` Format
 
@@ -320,55 +324,55 @@ When archiving, append an entry for each task to `.ai/memory/TASKS_LOG.md`. If a
 **Extract the task Title, Description (from markdown body), and Dependencies (from YAML) before moving the file.**
 
 ```markdown
-- Archived **ID {id}: {Title}** (Status: {completed/failed}) on {YYYY-MM-DDTHH:MM:SSZ}
-> Dependencies: {dep_id1}, {dep_id2}... (Only shown if dependencies exist in YAML, use full IDs like 15 or 15.1)
-> {Description} (Extracted from task file)
+- Archived **ID [id]: [Title]** (Status: [completed/failed]) on [YYYY-MM-DDTHH:MM:SSZ]
+> Dependencies: [dep_id1], [dep_id2]... (Only shown if dependencies exist in YAML, use full IDs like 15 or 15.1)
+> [Description] (Extracted from task file)
 ```
 
 ## Agent Command Interpretation
 
 The agent should interpret user requests and map them to the following actions. Use full task IDs (numeric for top-level, string like "7.1" for sub-tasks) when referring to tasks.
 
-*   **Show/List Tasks:** Read and display the current content of `.ai/TASKS.md`.
-*   **Create Task / Create Sub-Tasks:**
-    *   **If creating a regular top-level task or multiple tasks (from a plan/PRD):**
-        *   First, plan all tasks to be created, determining their IDs, titles, priorities, dependencies, and descriptions.
-        *   Update `.ai/TASKS.md` with entries for ALL planned tasks using `read_file` and `edit_file`.
-        *   Then, for each task now listed in `.ai/TASKS.md`, create the individual `task{id}_descriptive_name.md` file in `.ai/tasks/` using `edit_file`, populating YAML and markdown body.
-    *   **If creating sub-tasks for an existing `parent_id` (based on a recommendation from `@expand.md` or user):**
-        *   Follow the same process: plan all sub-tasks, update `.ai/TASKS.md` with all sub-task entries, then create each `task{parent_id}.{sub_id}_descriptive_name.md` file in `.ai/tasks/`.
-        *   Update the parent task file's description and details to list the new sub-tasks using `edit_file`.
-        *   Update the parent task's entry in `TASKS.md` if its description needs to change, using `read_file` and `edit_file`.
-*   **Start/Work on Next Task / Continue:**
-    *   Read `.ai/TASKS.md` and identify the **first** task listed with the `[ ]` (pending) icon.
-    *   If no pending tasks are found, inform the user.
-    *   If a pending task is found, proceed to check its dependencies (by reading the task file if needed).
-    *   If dependencies met: Update task file YAML (`status: inprogress`, etc.) and update the corresponding line in `TASKS.md` to `[-]`. Announce which task is being started.
-    *   If dependencies not met: Inform the user, stating which task is blocked and which dependencies are missing.
-*   **Start/Work on Specific Task {id}:**
-    *   Verify task {id} (e.g., `15` or `15.1`) exists in `.ai/TASKS.md` and its status is `[ ]` (pending). If not, inform the user.
-    *   Check dependencies for task {id}.
-    *   If met: Update task {id} YAML (`status: inprogress`, etc.) and update `TASKS.md`.
-    *   If not met: Inform the user that dependencies are missing.
-*   **Verify Task Completion (MANDATORY PRE-COMPLETION STEP):**
-    *   **ALWAYS** check if the task file (e.g., `task{id}_name.md`) contains a `## Test Strategy` section after completing the implementation work.
-    *   If a `## Test Strategy` section exists: **DO NOT** mark the task as complete yet. You **MUST** explicitly ask the user: "This task has a Test Strategy. Would you like to run the tests (preferably by triggering the dispatching command/action if applicable), or should I mark it as complete based on your verification?"
-    *   If no `## Test Strategy` section exists, or if the user confirms after being asked about the tests: Proceed to the "Complete Task {id}" step.
-*   **Complete Task {id}:**
-    *   **Cleanup:** Before marking as complete, review the code changes made for this task and remove any temporary logging or print statements (e.g., language-specific debug prints, verbose console logs) that were added for debugging or testing purposes. Only leave logs that are essential for production monitoring (e.g., errors, critical warnings).
-    *   **Update:** Update task {id} YAML (`status: completed`, `assigned_agent: null`, `completed_at`) and update the corresponding line in `TASKS.md` to `[x]`.
-*   **Fail Task {id} "{Reason}":** Update task {id} YAML (`status: failed`, `error_log`, etc.) and update `TASKS.md`.
-*   **Show Task {id} Details:** Read the full content (YAML and Markdown) of `task{id}_name.md` (checking both `.ai/tasks` and `.ai/memory/tasks` for files like `task15_...md` or `task15.1_...md`) and display it.
-*   **Archive Tasks:**
-    *   Identify tasks in `.ai/tasks/` with `status: completed` or `status: failed` in their YAML (use `list_dir` then `read_file` for each task to check status).
-    *   For each identified task file:
-        * Read its YAML frontmatter (to get Title, Status, Dependencies) and its Markdown body (to get the Description) using `read_file`.
-    *   Move identified files:
-        *   **Construct the source path (e.g., `.ai/tasks/task{id}_name.md`) and destination directory (`.ai/memory/tasks/`).**
-        *   **Ensure the destination directory `.ai/memory/tasks/` exists (e.g., using `list_dir` or `file_search`). If not, it will typically be created by `edit_file` if a file is written into it, or the `mv` command might create it.**
-        *   **Use `run_terminal_cmd` to execute an `mv` command (e.g., `mv .ai/tasks/task{id}_name.md .ai/memory/tasks/`).**
-    *   Append entries to `.ai/memory/TASKS_LOG.md` using the new format (Title, Status, Timestamp, Dependencies, Description) via `read_file` and `edit_file`.
-    *   Remove corresponding entries from `.ai/TASKS.md` via `read_file` and `edit_file`.
+- **Show/List Tasks:** Read and display the current content of `.ai/TASKS.md`.
+- **Create Task / Create Sub-Tasks:**
+  - **If creating a regular top-level task or multiple tasks (from a plan/PRD):**
+    - First, plan all tasks to be created, determining their IDs, titles, priorities, dependencies, and descriptions.
+    - Update `.ai/TASKS.md` with entries for ALL planned tasks using `read_file` and `edit_file`.
+    - Then, for each task now listed in `.ai/TASKS.md`, create the individual `task[id]_descriptive_name.md` file in `.ai/tasks/` using `edit_file`, populating YAML and markdown body.
+  - **If creating sub-tasks for an existing `parent_id` (based on a recommendation from `@expand.md` or user):**
+    - Follow the same process: plan all sub-tasks, update `.ai/TASKS.md` with all sub-task entries, then create each `task[parent_id].[sub_id]_descriptive_name.md` file in `.ai/tasks/`.
+    - Update the parent task file's description and details to list the new sub-tasks using `edit_file`.
+    - Update the parent task's entry in `TASKS.md` if its description needs to change, using `read_file` and `edit_file`.
+- **Start/Work on Next Task / Continue:**
+  - Read `.ai/TASKS.md` and identify the **first** task listed with the `[ ]` (pending) icon.
+  - If no pending tasks are found, inform the user.
+  - If a pending task is found, proceed to check its dependencies (by reading the task file if needed).
+  - If dependencies met: Update task file YAML (`status: in-progress`, etc.) and update the corresponding line in `TASKS.md` to `[-]`. Announce which task is being started.
+  - If dependencies not met: Inform the user, stating which task is blocked and which dependencies are missing.
+- **Start/Work on Specific Task [id]:**
+  - Verify task [id] (e.g., `15` or `15.1`) exists in `.ai/TASKS.md` and its status is `[ ]` (pending). If not, inform the user.
+  - Check dependencies for task [id].
+  - If met: Update task [id] YAML (`status: in-progress`, etc.) and update `TASKS.md`.
+  - If not met: Inform the user that dependencies are missing.
+- **Verify Task Completion (MANDATORY PRE-COMPLETION STEP):**
+  - **ALWAYS** check if the task file (e.g., `task[id]_name.md`) contains a `## Test Strategy` section after completing the implementation work.
+  - If a `## Test Strategy` section exists: **DO NOT** mark the task as complete yet. You **MUST** explicitly ask the user: "This task has a Test Strategy. Would you like to run the tests (preferably by triggering the dispatching command/action if applicable), or should I mark it as complete based on your verification?"
+  - If no `## Test Strategy` section exists, or if the user confirms after being asked about the tests: Proceed to the "Complete Task [id]" step.
+- **Complete Task [id]:**
+  - **Cleanup:** Before marking as complete, review the code changes made for this task and remove any temporary logging or print statements (e.g., language-specific debug prints, verbose console logs) that were added for debugging or testing purposes. Only leave logs that are essential for production monitoring (e.g., errors, critical warnings).
+  - **Update:** Update task [id] YAML (`status: completed`, `assigned_agent: null`, `completed_at`) and update the corresponding line in `TASKS.md` to `[x]`.
+- **Fail Task [id] "[Reason]":** Update task [id] YAML (`status: failed`, `error_log`, etc.) and update `TASKS.md`.
+- **Show Task [id] Details:** Read the full content (YAML and Markdown) of `task[id]_name.md` (checking both `.ai/tasks` and `.ai/memory/tasks` for files like `task15_...md` or `task15.1_...md`) and display it.
+- **Archive Tasks:**
+  - Identify tasks in `.ai/tasks/` with `status: completed` or `status: failed` in their YAML (use `list_dir` then `read_file` for each task to check status).
+  - For each identified task file:
+    - Read its YAML frontmatter (to get Title, Status, Dependencies) and its Markdown body (to get the Description) using `read_file`.
+  - Move identified files:
+    - **Construct the source path (e.g., `.ai/tasks/task[id]_name.md`) and destination directory (`.ai/memory/tasks/`).**
+    - **Ensure the destination directory `.ai/memory/tasks/` exists (e.g., using `list_dir` or `file_search`). If not, it will typically be created by `edit_file` if a file is written into it, or the `mv` command might create it.**
+    - **Use `run_terminal_cmd` to execute an `mv` command (e.g., `mv .ai/tasks/task[id]_name.md .ai/memory/tasks/`).**
+  - Append entries to `.ai/memory/TASKS_LOG.md` using the new format (Title, Status, Timestamp, Dependencies, Description) via `read_file` and `edit_file`.
+  - Remove corresponding entries from `.ai/TASKS.md` via `read_file` and `edit_file`.
 
 ## Utilities
 

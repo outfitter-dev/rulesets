@@ -16,7 +16,7 @@ graph TD
     G --> H{User asks agent to work?};
     H -- Yes --> I[Agent reads TASKS.md, finds first pending task];
     I --> J{Check Dependencies for selected task};
-    J -- Met --> K[Update Task File YAML status: inprogress];
+    J -- Met --> K[Update Task File YAML status: in-progress];
     K --> L[Update TASKS.md entry: progress marker];
     L --> M[Execute Task];
     M -- Success --> N[Update YAML status: completed];
