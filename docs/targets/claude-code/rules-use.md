@@ -50,6 +50,7 @@ See @docs/ARCHITECTURE.md for the system overview.
 ```
 
 When Claude Code encounters `@docs/ARCHITECTURE.md`, it will:
+
 1. Resolve the path relative to the current CLAUDE.md file
 2. Load the content of the referenced file
 3. Include that content in the context provided to the AI
@@ -101,6 +102,14 @@ Expectations for test coverage and methodology.
 - **Maintain a clear hierarchy**: Global preferences → project standards → component-specific guidance
 - **Use plain Markdown**: Avoid complex formatting that might distract from content
 - **Update regularly**: Keep the content current with project evolution
+
+## Version Information
+
+| Aspect | Details |
+|--------|---------|
+| Last-verified release | v1.5.0 (May 2025) |
+| Primary docs | Claude Code documentation website |
+| Memory specification | Updated in v1.5 (May 2025) |
 
 ## Mixdown Integration
 

@@ -109,8 +109,15 @@ Roo Code rule files typically organize content with clear headings and structure
 - **Use clear filenames**: Make it obvious what's in each rule file
 - **Regular maintenance**: Remove outdated rules and update content as the project evolves
 
+## Version Information
+
+| Aspect | Details |
+|--------|---------|
+| Last-verified release | v1.0.0 (May 2025) |
+| Primary docs | Roo Code documentation website |
+| Rules specification | Updated in v1.0 (May 2025) |
+
 ## Mixdown Integration
 
 > [!NOTE]
 > 🚧 Pending Mixdown integration
-

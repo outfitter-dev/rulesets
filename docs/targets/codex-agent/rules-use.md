@@ -117,12 +117,20 @@ Effective AGENTS.md files use a clear heading structure with concise, actionable
 - **Create clear PR templates**: Include expectations for title format, body content, and review process
 - **Focus on project-specific concerns**: Emphasize things the AI couldn't easily infer from the codebase
 
-## Limitations and Future Features
+## Limitations and Considerations
 
 - **No YAML front-matter support**: Currently not supported, but may be added in future
 - **No hard size limit documented**: Context ceiling is at model-level (192k tokens)
 - **No glob/path selectors**: Currently requested by community but not implemented
 - **Alphabetical concatenation**: Current loader concatenates alphabetically
+
+## Version Information
+
+| Aspect | Details |
+|--------|---------|
+| Last-verified release | v2.0.0 (May 2025) |
+| Primary docs | OpenAI Codex documentation website |
+| AGENTS specification | Updated in v2.0 (May 2025) |
 
 ## Mixdown Integration
 

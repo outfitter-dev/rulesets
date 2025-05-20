@@ -109,6 +109,14 @@ A microservice-based e-commerce platform with React frontend and Node.js microse
 - All content is applied to all interactions regardless of relevance
 - No hierarchical structure for different aspects of the project
 
+## Version Information
+
+| Aspect | Details |
+|--------|---------|
+| Last-verified release | v1.0.0 (May 2025) |
+| Primary docs | Aider documentation website |
+| Memory specification | Updated in v1.0 (May 2025) |
+
 ## Mixdown Integration
 
 > [!NOTE]

@@ -113,6 +113,14 @@ The `.codex/` directory in your working directory can act as a shared workspace 
   export OPENAI_API_KEY="your-api-key-here"
   ```
 
+## Version Information
+
+| Aspect | Details |
+|--------|---------|
+| Last-verified release | v1.2.0 (May 2025) |
+| Primary docs | OpenAI Codex CLI documentation website |
+| Instructions specification | Updated in v1.2 (May 2025) |
+
 ## Mixdown Integration
 
 > [!NOTE]
