@@ -24,7 +24,7 @@ Different AI tools use different file locations and naming conventions:
 |------|--------------|-------------------|--------|
 | **[Claude Code](./targets/claude-code/rules-use.md)** | `CLAUDE.md` in root and/or subdirs | `~/.claude/CLAUDE.md` | Markdown with `@file` imports |
 | **[Cursor](./targets/cursor/rules-use.md)** | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based) | Markdown with YAML front-matter and `@filename` imports |
-| **[Windsurf](./targets/windsurf/rules-use.md)** | `.windsurf/rules/*.md` files (v1.8.2+) | `~/.codeium/windsurf/memories/global_rules.md` | Markdown with activation modes |
+| **[Windsurf](./targets/windsurf/rules-use.md)** | `.windsurf/rules/*.md` files (v1.9+) | `~/.config/windsurf/global_rules.md` | Markdown with YAML-ish front-matter and `@path` imports |
 | **[Roo Code](./targets/roo-code/rules-use.md)** | `.roo/rules/` and `.roo/rules-{mode}/` folders | No built-in global file | Markdown files in folders |
 | **[OpenAI Codex CLI](./targets/codex-cli/rules-use.md)** | `codex.md` in root | `~/.codex/instructions.md` | Markdown text |
 | **[OpenAI Codex AGENTS](./targets/codex-agent/rules-use.md)** | `AGENTS.md` in root and/or subdirs | `~/.codex/AGENTS.md` | Pure Markdown with section headings |
@@ -88,7 +88,7 @@ sequenceDiagram
 1. **Layered Context:** Global rules apply to all projects, project rules override for specific projects
 2. **Scoping Mechanisms:**
    - [Cursor](./targets/cursor/rules-use.md): Rule types (always, auto-attached, agent-requested, manual) + nested rules
-   - [Windsurf](./targets/windsurf/rules-use.md): Activation modes (Always On, Manual, Model Decision, Glob) with char limits
+   - [Windsurf](./targets/windsurf/rules-use.md): Trigger types (`always_on`, `glob`, `model_decision`, `manual`) with char limits
    - [Claude Code](./targets/claude-code/rules-use.md): Directory-based (subdirectory CLAUDE.md files)
    - [Roo Code](./targets/roo-code/rules-use.md): Mode-specific folders (rules-{mode}/)
    - [OpenAI Codex AGENTS](./targets/codex-agent/rules-use.md): Directory-based loading (upward path walking) with section merging
@@ -96,6 +96,7 @@ sequenceDiagram
 4. **Import/Reference Mechanisms:**
    - [Claude Code](./targets/claude-code/rules-use.md): Uses `@file` syntax to import content from other files
    - [Cursor](./targets/cursor/rules-use.md): Uses `@filename` syntax to include external file content
+   - [Windsurf](./targets/windsurf/rules-use.md): Uses `@relative/path.ext` syntax to include file contents
 
 ## Best Practices for AI Rules
 

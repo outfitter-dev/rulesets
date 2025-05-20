@@ -89,6 +89,13 @@ alwaysApply: true
 ---
 ```
 
+Windsurf example (v1.9+):
+```yaml
+---
+trigger: always_on
+---
+```
+
 ### Pattern-Based (Glob) Activation
 **Tools**: Cursor, Windsurf
 
@@ -99,12 +106,26 @@ globs: ["**/*.py", "**/*.ipynb"]
 ---
 ```
 
-Windsurf supports file pattern matching to apply rules only to relevant files.
+Windsurf example (v1.9+):
+```yaml
+---
+trigger: glob
+globs: "**/*.tsx"
+---
+```
+
+Both tools support file pattern matching to apply rules only to relevant files.
 
 ### Model Decision Activation
 **Tools**: Windsurf, Cursor
 
-Windsurf allows the AI to decide whether to include a rule based on relevance.
+Windsurf implements this through the `model_decision` trigger type with a description field:
+```yaml
+---
+trigger: model_decision
+description: "USE WHEN working with database schema"
+---
+```
 
 Cursor implements this through "Agent-Requested" rules with a description field:
 ```yaml
@@ -112,12 +133,21 @@ Cursor implements this through "Agent-Requested" rules with a description field:
 description: "USE WHEN working with database schema"
 ---
 ```
-The AI sees these descriptions and can fetch the full rule content if deemed relevant to the user's query.
+
+In both tools, the AI sees these descriptions and can fetch the full rule content if deemed relevant to the user's query.
 
 ### Manual Activation
 **Tools**: Windsurf, Aider, Cursor
 
 Rules that are only applied when explicitly selected by the user.
+
+Windsurf example (v1.9+):
+```yaml
+---
+trigger: manual
+---
+```
+These are activated only when the user types `@rule-name` in Windsurf.
 
 ## Resource Management
 
@@ -192,13 +222,17 @@ Tables and relationships...
 - Uses clear heading structure for organization
 
 ### Windsurf
-- Multiple activation modes (Always On, Manual, Model Decision, Glob)
+- YAML-ish front-matter with explicit `trigger` field (v1.9+, May 2025)
+- Four activation modes via trigger types: `always_on`, `glob`, `model_decision`, `manual`
 - Character limits (6K per file, 12K total across all rules)
 - UI integration for toggling and editing rules
 - Dedicated UI with visual indicators for active rules
-- Global rules at `$HOME/.codeium/windsurf/memories/global_rules.md`
+- File referencing with `@relative/path.ext` syntax
+- Global rules at `~/.config/windsurf/global_rules.md`
 - Project rules at `<repo-root>/.windsurf/rules/*.md`
-- File prefixes (e.g., `01-basics.md`) to control loading order
+- Nested module rules at `<repo>/<sub>/.windsurf/rules/*.md`
+- Front-matter fields: `trigger`, `description`, `globs`, `name`
+- Legacy support for `.windsurfrules` at project root (deprecated)
 
 ### Roo Code
 - Mode-specific rules folders (.roo/rules-{mode}/)
@@ -279,9 +313,15 @@ See @docs/ARCHITECTURE.md for the system overview.
 - Document all functions with JSDoc comments
 ```
 
-### Windsurf (.md)
+### Windsurf (.md) with Front-matter (v1.9+)
 
 ```markdown
+---
+trigger: model_decision
+description: "TypeScript best practices for the project"
+globs: "**/*.ts?(x)"
+---
+
 # TypeScript Best Practices
 
 ## Typing
