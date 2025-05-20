@@ -1,41 +1,41 @@
-# Auto-Closing Tracks Proposal
+# Auto-Closing Stems Proposal
 
 ## Overview
 
-This document outlines a proposal for implementing "auto-closing tracks" in Mixdown. Auto-closing tracks would allow users to write sequential track markers without explicitly closing previous ones. The compiler would automatically close tracks in the appropriate order.
+This document outlines a proposal for implementing "auto-closing stems" in Mixdown. Auto-closing stems would allow users to write sequential stem markers without explicitly closing previous ones. The compiler would automatically close stems in the appropriate order.
 
 ## Core Concept
 
-In traditional XML and Mixdown's current implementation, explicit closing tags are required. With auto-closing tracks, users could write:
+In traditional XML and Mixdown's current implementation, explicit closing tags are required. With auto-closing stems, users could write:
 
 ```markdown
-{{track-1}}
+{{stem-1}}
 
-Content for track 1
+Content for stem 1
 
-{{track-2}}
+{{stem-2}}
 
-Content for track 2
+Content for stem 2
 
-{{track-3}}
+{{stem-3}}
 
-Content for track 3
+Content for stem 3
 ```
 
 The output would automatically add closing tags in last-in-first-out (LIFO) order:
 
 ```xml
-<track_1>
-Content for track 1
+<stem_1>
+Content for stem 1
 
-<track_2>
-Content for track 2
+<stem_2>
+Content for stem 2
 
-<track_3>
-Content for track 3
-</track_3>
-</track_2>
-</track_1>
+<stem_3>
+Content for stem 3
+</stem_3>
+</stem_2>
+</stem_1>
 ```
 
 ## Benefits
@@ -47,46 +47,46 @@ Content for track 3
 
 ## Implementation Details
 
-### 1. Track Stack Management
+### 1. Stem Stack Management
 
-The compiler would maintain a stack of open tracks:
+The compiler would maintain a stack of open stems:
 
-1. When a new `{{track-name}}` marker is encountered, push it onto the stack
-2. When an explicit closing `{{/track-name}}` marker is encountered:
-   - Pop the matching track from the stack
+1. When a new `{{stem-name}}` marker is encountered, push it onto the stack
+2. When an explicit closing `{{/stem-name}}` marker is encountered:
+   - Pop the matching stem from the stack
    - Check that it matches the expected name (error if not)
 3. At the end of the document:
-   - Pop and close all remaining tracks in the stack in reverse order
+   - Pop and close all remaining stems in the stack in reverse order
 
-### 2. Track Level Inference
+### 2. Stem Level Inference
 
-The level/nesting of tracks would be determined by their appearance in the document:
+The level/nesting of stems would be determined by their appearance in the document:
 
 ```markdown
-{{outer-track}}
+{{outer-stem}}
 Outer content
 
-{{inner-track}}
+{{inner-stem}}
 Inner content
 
-{{deeper-track}}
+{{deeper-stem}}
 Deeper content
 ```
 
 Would produce:
 
 ```xml
-<outer_track>
+<outer_stem>
 Outer content
 
-<inner_track>
+<inner_stem>
 Inner content
 
-<deeper_track>
+<deeper_stem>
 Deeper content
-</deeper_track>
-</inner_track>
-</outer_track>
+</deeper_stem>
+</inner_stem>
+</outer_stem>
 ```
 
 ### 3. Mixed Explicit and Auto-Closing
@@ -94,184 +94,184 @@ Deeper content
 Users should be able to mix explicit closing and auto-closing as needed:
 
 ```markdown
-{{track-1}}
+{{stem-1}}
 Content
 
-{{track-2}}
+{{stem-2}}
 More content
-{{/track-2}}
+{{/stem-2}}
 
-{{track-3}}
+{{stem-3}}
 Even more content
 ```
 
 Would produce:
 
 ```xml
-<track_1>
+<stem_1>
 Content
 
-<track_2>
+<stem_2>
 More content
-</track_2>
+</stem_2>
 
-<track_3>
+<stem_3>
 Even more content
-</track_3>
-</track_1>
+</stem_3>
+</stem_1>
 ```
 
 ### 4. End-of-File Behavior
 
-At the end of the file, all open tracks would be automatically closed in reverse order:
+At the end of the file, all open stems would be automatically closed in reverse order:
 
 ```markdown
-{{track-1}}
+{{stem-1}}
 Content 1
 
-{{track-2}}
+{{stem-2}}
 Content 2
 
-{{track-3}}
+{{stem-3}}
 Content 3
 ```
 
 Produces:
 
 ```xml
-<track_1>
+<stem_1>
 Content 1
 
-<track_2>
+<stem_2>
 Content 2
 
-<track_3>
+<stem_3>
 Content 3
-</track_3>
-</track_2>
-</track_1>
+</stem_3>
+</stem_2>
+</stem_1>
 ```
 
-### 5. Heading-Derived Tracks
+### 5. Heading-Derived Stems
 
 This feature would be particularly useful when combined with the heading-based output formats:
 
 ```markdown
-{{track-1 output="heading"}}
+{{stem-1 output="heading"}}
 Content 1
 
-{{track-2 output="heading"}}
+{{stem-2 output="heading"}}
 Content 2
 
-{{track-3 output="heading"}}
+{{stem-3 output="heading"}}
 Content 3
 ```
 
 Would produce:
 
 ```markdown
-## Track 1
+## Stem 1
 
 Content 1
 
-### Track 2
+### Stem 2
 
 Content 2
 
-#### Track 3
+#### Stem 3
 
 Content 3
 ```
 
 ## Considerations and Edge Cases
 
-### 1. Explicit vs. Implicit Track Closure
+### 1. Explicit vs. Implicit Stem Closure
 
-When an explicit closing tag is encountered, the compiler must ensure it matches the expected track:
+When an explicit closing tag is encountered, the compiler must ensure it matches the expected stem:
 
 ```markdown
-{{track-1}}
+{{stem-1}}
 Content 1
 
-{{track-2}}
+{{stem-2}}
 Content 2
-{{/track-1}} <!-- ERROR: Expected closing track-2 -->
+{{/stem-1}} <!-- ERROR: Expected closing stem-2 -->
 ```
 
-This would result in a compilation error because we expected `{{/track-2}}`.
+This would result in a compilation error because we expected `{{/stem-2}}`.
 
 ### 2. Auto-closing at Same Level
 
-Special handling may be needed for tracks at the same level:
+Special handling may be needed for stems at the same level:
 
 ```markdown
-{{track-1}}
+{{stem-1}}
 Content 1
 
-{{track-2}}
+{{stem-2}}
 Content 2
 
-{{track-3}}
+{{stem-3}}
 Content 3
 ```
 
-Options:
-- Close all previous tracks (resulting in sequential tracks)
-- Only auto-close tracks of the same level (allowing nesting)
+Propertys:
+- Close all previous stems (resulting in sequential stems)
+- Only auto-close stems of the same level (allowing nesting)
 
-Recommendation: Track distinct levels, closing only when necessary to maintain proper nesting.
+Recommendation: Stem distinct levels, closing only when necessary to maintain proper nesting.
 
-### 3. Self-Closing Tags vs. Auto-Closing Tracks
+### 3. Self-Closing Tags vs. Auto-Closing Stems
 
 It's important to distinguish between:
 
-- **Self-closing tags**: `{{track-name/}}` (a single tag with no content)
-- **Auto-closing tracks**: `{{track-1}}...{{track-2}}...` (tracks closed by inference)
+- **Self-closing tags**: `{{stem-name/}}` (a single tag with no content)
+- **Auto-closing stems**: `{{stem-1}}...{{stem-2}}...` (stems closed by inference)
 
-### 4. Option Inheritance
+### 4. Property Inheritance
 
-Consider whether options should be inherited between adjacent auto-closed tracks:
+Consider whether properties should be inherited between adjacent auto-closed stems:
 
 ```markdown
-{{track-1 option="value"}}
+{{stem-1 property="value"}}
 Content 1
 
-{{track-2}}
+{{stem-2}}
 Content 2
 ```
 
-Options:
-- No inheritance (each track has its own options)
-- Inherit non-conflicting options from parent
-- Inherit specifically marked options
+Properties:
+- No inheritance (each stem has its own properties)
+- Inherit non-conflicting properties from parent
+- Inherit specifically marked properties
 
-Recommendation: No inheritance by default, with an opt-in inheritance option.
+Recommendation: No inheritance by default, with an opt-in inheritance property.
 
-### 5. Target Filtering Implications
+### 5. Destination Filtering Implications
 
-When tracks are filtered out for specific targets, auto-closing needs to maintain proper structure:
+When stems are filtered out for specific targets, auto-closing needs to maintain proper structure:
 
 ```markdown
-{{track-1}}
+{{stem-1}}
 Content 1
 
-{{track-2 -cursor}}
+{{stem-2 -cursor}}
 Content 2 (excluded for Cursor)
 
-{{track-3}}
+{{stem-3}}
 Content 3
 ```
 
 For Cursor, this would need to produce:
 
 ```xml
-<track_1>
+<stem_1>
 Content 1
 
-<track_3>
+<stem_3>
 Content 3
-</track_3>
-</track_1>
+</stem_3>
+</stem_1>
 ```
 
 ### 6. Indentation and Whitespace
@@ -279,17 +279,17 @@ Content 3
 Consider whether auto-closed sections should adjust indentation to reflect nesting level:
 
 ```markdown
-{{track-1}}
+{{stem-1}}
 Content 1
 
-  {{track-2}}
+  {{stem-2}}
   Content 2
 
-    {{track-3}}
+    {{stem-3}}
     Content 3
 ```
 
-Options:
+Propertys:
 - Preserve original indentation (simpler)
 - Adjust indentation to reflect nesting (more complex but potentially more readable)
 
@@ -302,13 +302,13 @@ Recommendation: Preserve original indentation to maintain maximum fidelity with 
 An alternative could be to provide a special notation that explicitly indicates auto-closing behavior:
 
 ```markdown
-{{track-1>}}  <!-- '>' indicates this track will close when another track appears -->
+{{stem-1>}}  <!-- '>' indicates this stem will close when another stem appears -->
 Content 1
 
-{{track-2>}}
+{{stem-2>}}
 Content 2
 
-{{track-3}}
+{{stem-3}}
 Content 3
 ```
 
@@ -317,13 +317,13 @@ Content 3
 Explicit level markers could be added:
 
 ```markdown
-{{1:track-1}}  <!-- Level 1 -->
+{{1:stem-1}}  <!-- Level 1 -->
 Content 1
 
-{{2:track-2}}  <!-- Level 2 -->
+{{2:stem-2}}  <!-- Level 2 -->
 Content 2
 
-{{3:track-3}}  <!-- Level 3 -->
+{{3:stem-3}}  <!-- Level 3 -->
 Content 3
 ```
 
@@ -345,60 +345,60 @@ mixdown:
   auto-close: true
 ---
 
-{{track-1}}
-Content for track 1
+{{stem-1}}
+Content for stem 1
 
-{{track-2}}
-Content for track 2
+{{stem-2}}
+Content for stem 2
 
-{{track-3}}
-Content for track 3
+{{stem-3}}
+Content for stem 3
 ```
 
 Output:
 
 ```xml
-<track_1>
-Content for track 1
+<stem_1>
+Content for stem 1
 
-<track_2>
-Content for track 2
+<stem_2>
+Content for stem 2
 
-<track_3>
-Content for track 3
-</track_3>
-</track_2>
-</track_1>
+<stem_3>
+Content for stem 3
+</stem_3>
+</stem_2>
+</stem_1>
 ```
 
 ### 2. Mixed Explicit and Auto-Closing
 
 ```markdown
-{{track-1}}
+{{stem-1}}
 Content 1
 
-{{track-2}}
+{{stem-2}}
 Content 2
-{{/track-2}}
+{{/stem-2}}
 
-{{track-3}}
+{{stem-3}}
 Content 3
 ```
 
 Output:
 
 ```xml
-<track_1>
+<stem_1>
 Content 1
 
-<track_2>
+<stem_2>
 Content 2
-</track_2>
+</stem_2>
 
-<track_3>
+<stem_3>
 Content 3
-</track_3>
-</track_1>
+</stem_3>
+</stem_1>
 ```
 
 ### 3. With Heading Output Format
@@ -447,16 +447,16 @@ This is another subsection.
 
 ## Comparison with Self-Closing Tags
 
-Auto-closing tracks are different from self-closing tags, which should still be implemented separately:
+Auto-closing stems are different from self-closing tags, which should still be implemented separately:
 
 1. **Self-closing tags** (`{{tag-name/}}`) represent an empty element with no content or children
-2. **Auto-closing tracks** represent the implied closing of a parent tag when a new sibling appears
+2. **Auto-closing stems** represent the implied closing of a parent tag when a new sibling appears
 
 Both features would be complementary within the Mixdown ecosystem.
 
 ## Conclusion
 
-Auto-closing tracks would provide a more intuitive and efficient way to author hierarchical content in Mixdown. The implementation would need careful consideration of edge cases, but would result in cleaner source documents with less redundancy.
+Auto-closing stems would provide a more intuitive and efficient way to author hierarchical content in Mixdown. The implementation would need careful consideration of edge cases, but would result in cleaner source documents with less redundancy.
 
 This feature would be particularly valuable when:
 - Creating deeply nested document structures

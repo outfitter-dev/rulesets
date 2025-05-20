@@ -2,34 +2,34 @@
 
 ## Overview
 
-This document outlines how Mixdown integrates with markdown linting tools (particularly markdownlint) and provides configuration options for controlling stylistic elements like line breaks after headings.
+This document outlines how Mixdown integrates with markdown linting tools (particularly markdownlint) and provides configuration properties for controlling stylistic elements like line breaks after headings.
 
 ## Core Concepts
 
 1. **Lint-aware transformations**: Mixdown's output format respects common markdown linting rules
-2. **User-configurable options**: Provide user-friendly configuration that maps to underlying lint rules
-3. **Override hierarchy**: Clear precedence for global, per-mix, and per-track settings
+2. **User-configurable properties**: Provide user-friendly configuration that maps to underlying lint rules
+3. **Override hierarchy**: Clear precedence for global, per-mix, and per-stem settings
 
-## Configuration Options
+## Configuration Propertys
 
-### Heading Style Options
+### Heading Style Propertys
 
 ```yaml
 ---
 mixdown:
   markdown:
     style:
-      heading_blank_lines: "after"   # Options: "none", "before", "after", "both"
+      heading_blank_lines: "after"   # Propertys: "none", "before", "after", "both"
       list_indentation: 2            # Number of spaces for list indentation (default: 2)
-      code_block_style: "fenced"     # Options: "fenced", "indented"
-      emphasis_style: "asterisk"     # Options: "asterisk", "underscore"
-      strong_style: "asterisk"       # Options: "asterisk", "underscore"
+      code_block_style: "fenced"     # Propertys: "fenced", "indented"
+      emphasis_style: "asterisk"     # Propertys: "asterisk", "underscore"
+      strong_style: "asterisk"       # Propertys: "asterisk", "underscore"
 ---
 ```
 
-These user-friendly options map to underlying markdownlint rules and are applied during transformation.
+These user-friendly properties map to underlying markdownlint rules and are applied during transformation.
 
-### Line Break Control Options
+### Line Break Control Propertys
 
 ```yaml
 ---
@@ -110,9 +110,9 @@ Mixdown provides a simplified interface to common markdown style concerns, while
 
 ### Precedence Rules
 
-1. **Track-level options**: Options specified directly in track notation
-2. **Mix-level options**: Frontmatter settings for the specific mix file
-3. **Global options**: Project-wide settings in mixdown.config.json
+1. **Stem-level properties**: Properties specified directly in stem notation
+2. **Mix-level properties**: Frontmatter settings for the specific Source Rules file
+3. **Global properties**: Project-wide settings in mixdown.config.json
 4. **Defaults**: Built-in defaults designed to follow common markdown conventions
 
 ## Implementation Considerations
@@ -182,13 +182,13 @@ Mixdown aims to produce outputs that work well with existing markdown linting to
 ## Benefits
 
 1. **Consistent markdown**: Outputs follow established markdown conventions
-2. **User-friendly controls**: Simple, descriptive configuration options
+2. **User-friendly controls**: Simple, descriptive configuration properties
 3. **Linting compatibility**: Works well with existing linting workflows
 4. **Flexibility**: Can override specific rules when needed
 
 ## Future Enhancements
 
 1. **Linting rule generation**: Automatically generate .markdownlint.json based on Mixdown settings
-2. **Style validation**: Test mix files against linting rules before compilation
-3. **Style correction**: Optionally correct style issues during compilation
+2. **Style validation**: Test Source Rules files against linting rules before compilation
+3. **Style correction**: Propertyally correct style issues during compilation
 4. **Additional style controls**: Expand to cover more markdown formatting concerns

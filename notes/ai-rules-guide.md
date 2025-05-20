@@ -263,8 +263,8 @@ This is a CommonMark-compliant rules compiler that converts Markdown to tool-spe
 
 # Key Terminology
 - **Mix**: Source files in Markdown format
-- **Target**: Output destination (tool-specific)
-- **Track**: Delimited content blocks with attributes
+- **Destination**: Output destination (tool-specific)
+- **Stem**: Delimited content blocks with attributes
 
 # Coding Standards
 - Follow SOLID principles and conventional commits
@@ -669,7 +669,7 @@ GitHub Copilot (May 2025) accepts natural-language rules written in Markdown to 
 ```text
 GitHub Profile → Custom Instructions       # Personal rules (set via GitHub UI)
 <repo-root>/.github/copilot-instructions.md  # Repository-specific rules
-<repo-root>/prompts/*.prompt.md           # Optional prompt files (VS Code only)
+<repo-root>/prompts/*.prompt.md           # Propertyal prompt files (VS Code only)
 ```
 
 **Activation Mechanisms:**
@@ -755,4 +755,4 @@ graph TB
 7. Consider tools like Mixdown to manage rules across multiple AI assistants
 8. Update rules as your project evolves to keep AI assistance relevant
 9. Most recent tools include UI integrations for easier rule management
-10. Version-tracking your rules files is important for team consistency
+10. Version-steming your rules files is important for team consistency

@@ -13,29 +13,29 @@
 - [Key Features](#key-features)
   - [Mixdown Notation](#mixdown-notation)
   - [Compiler \& Integration](#compiler--integration)
-- [Target Providers](#target-providers)
+- [Destination Providers](#destination-providers)
 - [Getting Started](#getting-started)
   - [Installation](#installation)
   - [Quick Start](#quick-start)
 - [Notation Reference](#notation-reference)
   - [Design Goals](#design-goals)
   - [Delimiter Roles](#delimiter-roles)
-  - [Tracks](#tracks)
-    - [Track Notation Markers](#track-notation-markers)
-    - [Track Marker Names](#track-marker-names)
-    - [Track Marker Parsing](#track-marker-parsing)
-    - [Target-scoped Option Overrides](#target-scoped-option-overrides)
-    - [Target-scoped Multiple Options](#target-scoped-multiple-options)
-    - [Option Processing Order](#option-processing-order)
-    - [Target Filtering Options](#target-filtering-options)
+  - [Stems](#stems)
+    - [Stem Notation Markers](#stem-notation-markers)
+    - [Stem Marker Names](#stem-marker-names)
+    - [Stem Marker Parsing](#stem-marker-parsing)
+    - [Destination-scoped Property Overrides](#destination-scoped-property-overrides)
+    - [Destination-scoped Multiple Propertys](#destination-scoped-multiple-propertys)
+    - [Property Processing Order](#property-processing-order)
+    - [Destination Filtering Propertys](#destination-filtering-propertys)
     - [Self-Closing Tags](#self-closing-tags)
     - [Multi-line Markers for Readability](#multi-line-markers-for-readability)
-    - [Track Options](#track-options)
+    - [Stem Propertys](#stem-propertys)
     - [Output Format](#output-format)
-    - [Option Grouping](#option-grouping)
-      - [Multi-line Option Grouping](#multi-line-option-grouping)
-      - [Option Bracketing Rules](#option-bracketing-rules)
-    - [Option Grouping \& Scoping: Common Patterns](#option-grouping--scoping-common-patterns)
+    - [Property Grouping](#property-grouping)
+      - [Multi-line Property Grouping](#multi-line-property-grouping)
+      - [Property Bracketing Rules](#property-bracketing-rules)
+    - [Property Grouping \& Scoping: Common Patterns](#property-grouping--scoping-common-patterns)
     - [Using bare XML tags](#using-bare-xml-tags)
   - [Mixdown Frontmatter](#mixdown-frontmatter)
   - [Links](#links)
@@ -44,9 +44,9 @@
   - [Variables](#variables)
   - [Imports](#imports)
     - [Import Attributes](#import-attributes)
-    - [Target-Specific Track Filtering](#target-specific-track-filtering)
+    - [Destination-Specific Stem Filtering](#destination-specific-stem-filtering)
   - [Imports vs. Inclusions](#imports-vs-inclusions)
-  - [Snippets](#snippets)
+  - [Mixins](#mixins)
   - [Rendering Raw Mixdown Notation](#rendering-raw-mixdown-notation)
   - [Instruction Placeholders](#instruction-placeholders)
     - [Placeholder Formatting](#placeholder-formatting)
@@ -55,17 +55,17 @@
 - [Directory Structure](#directory-structure)
 - [Future Releases](#future-releases)
 - [Appendix](#appendix)
-  - [Comprehensive Option Reference](#comprehensive-option-reference)
-    - [Option Naming Conventions](#option-naming-conventions)
-    - [Option Categories and Usage](#option-categories-and-usage)
-    - [Common Option Patterns and Languages](#common-option-patterns-and-languages)
-    - [Option Extension Rules](#option-extension-rules)
+  - [Comprehensive Property Reference](#comprehensive-property-reference)
+    - [Property Naming Conventions](#property-naming-conventions)
+    - [Property Categories and Usage](#property-categories-and-usage)
+    - [Common Property Patterns and Languages](#common-property-patterns-and-languages)
+    - [Property Extension Rules](#property-extension-rules)
 
 ## Purpose & Vision
 
 ### Overview
 
-Mixdown is a **Markdown-previewable rules compiler** that lets you author a single *mix* file in Markdown and compile it into tool-specific rules files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, target many, your agents, no matter the tool, on the (literal) same page.
+Mixdown is a **Markdown-previewable rules compiler** that lets you author a single Source Rules file in Markdown and compile it into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
 
 ### The Problem
 
@@ -77,7 +77,7 @@ Mixdown is a **Markdown-previewable rules compiler** that lets you author a sing
 
 Mixdown introduces a single source-of-truth rules notation written in pure Markdown (with a dash of specialized notation), which is processed into tool-specific files by a compiler that:
 
-1. Parses the mix into an AST (abstract syntax tree) to ensure a consistent format.
+1. Parses the Source Rules into an AST (abstract syntax tree) to ensure a consistent format.
 2. Uses **tool-specific compilers** (as plugins) to transform the AST into per-tool rules files.
 3. Writes per-tool **rules files** to their respective locations, with the necessary filenames, formats, etc. all accounted for.
 
@@ -85,57 +85,57 @@ Result: *Write rules once, render tool-specific rules, zero drift.*
 
 ## Core Concepts
 
-- **Mix**
+- **Source Rules**
   - Source rules files, written in 100% previewable Markdown.
   - Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
-  - Compiled into tool-specific rules files:
-    - `./mixdown/mixes/my-rule.md` → `.cursor/rules/my-rule.mdc`
-- **Target**
+  - Compiled into destination-specific rules files:
+    - `./mixdown/src/my-rule.md` → `.cursor/rules/my-rule.mdc`
+- **Destination**
   - A supported tool, such as `cursor`, `windsurf`, or `claude-code`.
-  - Defines tool-specific criteria for compiling mixes to rules files.
+  - Defines destination-specific criteria for compiling Source Rules to compiled rules.
   - Provided through plugins.
-- **Output**
-  - Target-specific (tool) rules files, rendered from the source mix.
-  - Examples for a mix called `project-conventions.md`:
+- **Compiled Rules**
+  - Destination-specific rules files rendered from the Source Rules.
+  - Examples for a Source Rules file called `project-conventions.md`:
     - Cursor → `.cursor/rules/project-conventions.mdc`
     - Claude Code → `./CLAUDE.md#project-conventions`
     - OpenAI Codex → `./conventions.md`.
-  - When placed in tool directories, referred to as "tool-ready rules".
+  - When placed in destination directories, referred to as "tool-ready rules".
 - **Notation Marker**
   - Syntax: `{{...}}`
   - Fundamental building block of Mixdown Notation
-  - Used to direct the compiler for various purposes (tracks, imports, variables)
+  - Used to direct the compiler for various purposes (stems, imports, variables)
   - All Mixdown directives use marker notation, but serve different functions
   - Similar to `<xml-tags>`, but fully Markdown-previewable.
-- **Track**
-  - Syntax: `{{track-name}}...{{/track-name}}`
+- **Stem**
+  - Syntax: `{{stem-name}}...{{/stem-name}}`
   - A specific application of notation markers that creates delimited content blocks
-  - Translates directly to XML tags in output: `<track_name>...</track_name>`
+  - Translates directly to XML tags in output: `<stem_name>...</stem_name>`
   - Has opening and closing notation markers that surround content
   - Can contain attributes that control rendering behavior
   - Example: `{{instructions}}This is instruction content{{/instructions}}`
 - **Import**
   - Syntax: `{{> my-rule }}`
-  - Embed content from another mix, track, snippet, or template.
+  - Embed content from another Source Rules file, stem, mixin, or template.
 - **Variable**
   - Syntax: `{{$key}}` or `$key` if used within a `{{...}}` marker.
   - Dynamic values replaced inline at build time.
-  - Examples: `{{$target}}`, `{{$.frontmatter.key}}`, `{{$alias}}`
+  - Examples: `{{$destination}}`, `{{$.frontmatter.key}}`, `{{$alias}}`
 
 ## Key Features
 
 ### Mixdown Notation
 
 - **100% Preview-able Markdown:** Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
-- **Granular Tracks:** Filter tracks within a single mix for per-target inclusion/exclusion.
+- **Granular Stems:** Filter stems within a single Source Rules for per-destination inclusion/exclusion.
 - **Build-time Variables:** Aliases and frontmatter data injection.
 
 ### Compiler & Integration
 
-- **Plugin Architecture:** Add new targets via `MixdownPluginProvider` without touching core.
+- **Plugin Architecture:** Add new destinations via `MixdownPluginProvider` without touching core.
 - **CLI & API:** `mixdown build`, `mixdown validate`, and `POST /compile` endpoint.
 
-## Target Providers
+## Destination Providers
 
 | ID | Tool | Type |
 |----|------|------|
@@ -166,7 +166,7 @@ mixdown init      # scaffolds .mixdown/ directory structure
 
 mixdown import    # imports existing rules files into the mixdown format
 
-mixdown build     # writes output to .mixdown/output/
+mixdown build     # writes compiled rules to .mixdown/dist/
 ```
 
 ## Notation Reference
@@ -186,18 +186,18 @@ Mixdown's syntax follows strict delimiter rules to maintain consistency and clar
 
 | Delimiter | Role | Example | Purpose |
 |-----------|------|---------|---------|
-| `:` | Scope indicator | `target:code-js` | Indicates that options are scoped to a specific target |
-| `()` | Value container | `name-(value)` | Contains values for a specific option |
-| `[]` | Option grouping | `target:[option-1 option-2]` | Groups multiple options within a scope |
-| `+` | Inclusion | `+target`, `+track-one` | Indicates inclusion of a target or track |
-| `!` | Exclusion | `!target`, `!track-two` | Indicates exclusion of a target or track |
-| `#` | Track reference | `#track-name`, `#[track1 track2]` | References tracks in imports |
+| `:` | Scope indicator | `destination:code-js` | Indicates that propertys are scoped to a specific destination |
+| `()` | Value container | `name-(value)` | Contains values for a specific property |
+| `[]` | Property grouping | `destination:[property-1 property-2]` | Groups multiple propertys within a scope |
+| `+` | Inclusion | `+destination`, `+stem-one` | Indicates inclusion of a destination or stem |
+| `!` | Exclusion | `!destination`, `!stem-two` | Indicates exclusion of a destination or stem |
+| `#` | Stem reference | `#stem-name`, `#(stem1 stem2)` | References stems in imports |
 
 These delimiters always maintain their role throughout the syntax, making the language more intuitive and easier to learn.
 
-### Tracks
+### Stems
 
-Tracks are the core building block of Mixdown and are a direct stand in for XML tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other tracks or mixes.
+Stems are the core building block of Mixdown and are a direct stand in for XML tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other stems or Source Rules files.
 
 ```markdown
 {{instructions +cursor !claude-code}}
@@ -205,51 +205,51 @@ Tracks are the core building block of Mixdown and are a direct stand in for XML 
 {{/instructions}}
 ```
 
-#### Track Notation Markers
+#### Stem Notation Markers
 
-- **1:1 Markdown-to-XML Translation**: Write tracks as `{{track-name}}` and they will be converted to `<track_name>` in the output.
-- **Open/Close** `{{track-name ... }}` [ track content ] `{{/track-name}}`
+- **1:1 Markdown-to-XML Translation**: Write stems as `{{stem-name}}` and they will be converted to `<stem_name>` in the output.
+- **Open/Close** `{{stem-name ... }}` [ stem content ] `{{/stem-name}}`
 
-#### Track Marker Names
+#### Stem Marker Names
 
-- `kebab-case` is recommended for track names (to avoid accidental Markdown emphasis rendering)
+- `kebab-case` is recommended for stem names (to avoid accidental Markdown emphasis rendering)
 - Regardless of the naming convention, XML tags in outputs will be formatted as `<snake_case>` (which is configurable)
 
-#### Track Marker Parsing
+#### Stem Marker Parsing
 
 ```markdown
 <!-- Mixdown input -->
-{{track-one}}
+{{stem-one}}
 Content A
-{{/track-one}}
+{{/stem-one}}
 
-{{track-two +all !claude-code}}
+{{stem-two +all !claude-code}}
 Content B
-{{/track-two}}
+{{/stem-two}}
 
 ---
 
 Output for all configured tools (except `claude-code` in this example):
 <!-- XML output -->
-<track-one>
+<stem-one>
 Content A
-</track-one>
-<track-two>
+</stem-one>
+<stem-two>
 Content B
-</track-two>
+</stem-two>
 ```
 
 While Claude Code output will be:
 
 ```markdown
-<track-one>
+<stem-one>
 Content A
-</track-one>
+</stem-one>
 ```
 
-#### Target-scoped Option Overrides
+#### Destination-scoped Property Overrides
 
-Any option can be given a per-target override by suffixing the target ID with a **`:`** delimiter (colon):
+Any property can be given a per-destination override by suffixing the destination ID with a **`:`** delimiter (colon):
 
 ```markdown
 {{instructions cursor:name-(cursor-instructions)}}
@@ -257,133 +257,133 @@ Any option can be given a per-target override by suffixing the target ID with a 
 {{/instructions}}
 ```
 
-In this example the track will use the name "cursor-instructions" when compiled for the *cursor* target. The same pattern works with groups once they arrive (e.g. `ide:name-(ide-instructions)`).
+In this example the stem will use the name "cursor-instructions" when compiled for the *cursor* destination. The same pattern works with groups once they arrive (e.g. `ide:name-(ide-instructions)`).
 
-Note: You can also use the `+target` notation to both include the track for specific targets *and* apply target-specific overrides.
+Note: You can also use the `+destination` notation to both include the stem for specific destinations *and* apply destination-specific overrides.
 
-#### Target-scoped Multiple Options
+#### Destination-scoped Multiple Propertys
 
-For multiple target-specific options, you can use square brackets after the colon:
+For multiple destination-specific propertys, you can use square brackets after the colon:
 
 ```markdown
 {{instructions cursor:[name-(cursor-rules) code-js]}}
 ```
 
-This applies both `name-(cursor-rules)` and `code-js` options only when building for the cursor target, without affecting other targets. The square brackets group the options that are scoped to that specific target.
+This applies both `name-(cursor-rules)` and `code-js` propertys only when building for the cursor destination, without affecting other destinations. The square brackets group the propertys that are scoped to that specific destination.
 
-#### Option Processing Order
+#### Property Processing Order
 
-Options within a track marker are processed sequentially from left to right. This processing order affects three main categories of options:
+Propertys within a stem marker are processed sequentially from left to right. This processing order affects three main categories of propertys:
 
-1. **Basic Options**: Simple formatting options like `tag-omit` or `code-js`
-2. **Target Inclusion/Exclusion**: Modifiers like `+target` and `!target`
-3. **Target-Scoped Options**: Special formatting for specific targets using `target:[options]`
+1. **Basic Propertys**: Simple formatting propertys like `tag-omit` or `code-js`
+2. **Destination Inclusion/Exclusion**: Modifiers like `+destination` and `!destination`
+3. **Destination-Scoped Propertys**: Special formatting for specific destinations using `destination:[propertys]`
 
 The evaluation follows this simple rule:
 
-- Options are applied **in the exact order they appear** (left to right)
+- Propertys are applied **in the exact order they appear** (left to right)
 - When conflict occurs, **the last directive wins**
 
 **Simple Example:**
 
 ```markdown
-{{track code-js tag-omit}}
+{{stem code-js tag-omit}}
 ```
 
 First applies `code-js` (JavaScript code block formatting), then applies `tag-omit` (removes surrounding XML tags).
 
-**Practical Target Example:**
+**Practical Destination Example:**
 
 ```markdown
-{{track +ide !windsurf cursor:[tag-omit]}}
+{{stem +ide !windsurf cursor:[tag-omit]}}
 ```
 
 This would:
 
-1. Include the track for all IDE targets (`+ide`)
+1. Include the stem for all IDE destinations (`+ide`)
 2. Exclude it specifically for Windsurf (`!windsurf`), even though Windsurf might be in the IDE group
-3. Apply the `tag-omit` option, but only when building for Cursor
+3. Apply the `tag-omit` property, but only when building for Cursor
 
 **Conflict Resolution Example:**
 
 ```markdown
-{{track h-2 h-3}}
+{{stem h-2 h-3}}
 ```
 
-The track would use heading level 3 because `h-3` appears last and overrides `h-2`.
+The stem would use heading level 3 because `h-3` appears last and overrides `h-2`.
 
 > [!NOTE]
-> While options are processed left-to-right, certain option types like `name-()` might have special handling if specified multiple times. When in doubt about complex combinations, the last specified option for a particular feature usually takes precedence.
+> While propertys are processed left-to-right, certain property types like `name-()` might have special handling if specified multiple times. When in doubt about complex combinations, the last specified property for a particular feature usually takes precedence.
 
-#### Target Filtering Options
+#### Destination Filtering Propertys
 
-Target filtering options control which targets receive content. These provide powerful ways to include or exclude content for specific targets or groups of targets:
+Destination filtering propertys control which destinations receive content. These provide powerful ways to include or exclude content for specific destinations or groups of destinations:
 
-| Option | Description | Example |
+| Property | Description | Example |
 |--------|-------------|--------|
-| `+target` | Include for a specific target | `{{track +cursor}}` |
-| `!target` | Exclude for a specific target | `{{track !windsurf}}` |
-| `+all` | Include for all configured targets | `{{track +all}}` |
-| `+group` | Include for all targets in a group | `{{track +ide}}` |
+| `+destination` | Include for a specific destination | `{{stem +cursor}}` |
+| `!destination` | Exclude for a specific destination | `{{stem !windsurf}}` |
+| `+all` | Include for all configured destinations | `{{stem +all}}` |
+| `+group` | Include for all destinations in a group | `{{stem +ide}}` |
 
-The `+all` option is particularly useful for explicitly indicating that content should be included for all targets. This is helpful when you want to be explicit about inclusion, even though the default behavior is already to include content for all targets.
+The `+all` property is particularly useful for explicitly indicating that content should be included for all destinations. This is helpful when you want to be explicit about inclusion, even though the default behavior is already to include content for all destinations.
 
 ```markdown
 {{instructions +all !claude-code}}
-This content is explicitly included for all targets except claude-code.
+This content is explicitly included for all destinations except claude-code.
 {{/instructions}}
 ```
 
-When combined with exclusions, `+all` helps make it clear that the content is intentionally included everywhere except for the excluded targets.
+When combined with exclusions, `+all` helps make it clear that the content is intentionally included everywhere except for the excluded destinations.
 
 #### Self-Closing Tags
 
-For tracks with no content, you can use a self-closing tag format:
+For stems with no content, you can use a self-closing tag format:
 
 ```markdown
-{{empty-track/}}
+{{empty-stem/}}
 
 <!-- Which is equivalent to: -->
-{{empty-track}}{{/empty-track}}
+{{empty-stem}}{{/empty-stem}}
 ```
 
 Self-closing tags render as empty XML tags in the output:
 
 ```xml
-<empty_track />
+<empty_stem />
 ```
 
-**Further Target Scoping Examples:**
+**Further Destination Scoping Examples:**
 
-- **Target-specific option (block included for all targets unless otherwise specified):**
+- **Destination-specific property (block included for all destinations unless otherwise specified):**
   `{{instructions cursor:name-(cursor-specific-rules)}}`
-  *(Applies `name-(cursor-specific-rules)` only for the `cursor` target. The block itself is included for all targets by default.)*
+  *(Applies `name-(cursor-specific-rules)` only for the `cursor` destination. The block itself is included for all destinations by default.)*
 
-- **Inclusion for a target with a specific option:**
+- **Inclusion for a destination with a specific property:**
   `{{instructions +cursor:name-(only-for-cursor)}}`
-  *(Includes this track *only* for the `cursor` target, and for `cursor`, it uses `name-(only-for-cursor)`.)*
+  *(Includes this stem *only* for the `cursor` destination, and for `cursor`, it uses `name-(only-for-cursor)`.)*
 
-- **Inclusion for a target with multiple specific options:**
+- **Inclusion for a destination with multiple specific propertys:**
   `{{instructions +cursor:[name-(cursor-rules) code-js]}}`
-  *(Includes this track *only* for the `cursor` target, applying both `name-(cursor-rules)` and `code-js` for `cursor`.)*
+  *(Includes this stem *only* for the `cursor` destination, applying both `name-(cursor-rules)` and `code-js` for `cursor`.)*
 
-- **Exclusion for a target, even if a scoped option is present:**
+- **Exclusion for a destination, even if a scoped property is present:**
   `{{instructions !cursor:name-(ignored-for-cursor)}}`
-  *(Excludes this track for the `cursor` target. The `name-(ignored-for-cursor)` option would not apply as the track is excluded for `cursor`.)*
+  *(Excludes this stem for the `cursor` destination. The `name-(ignored-for-cursor)` property would not apply as the stem is excluded for `cursor`.)*
 
-- **Group inclusion with member exclusion and scoped options for the group:**
+- **Group inclusion with member exclusion and scoped propertys for the group:**
   `{{instructions +ide:[code-block] !cursor}}`
-  *(Includes this track for all targets in the `ide` group, applying the `code-block` option, but explicitly excludes it for the `cursor` target, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `mixdown.config.json`.)*
+  *(Includes this stem for all destinations in the `ide` group, applying the `code-block` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `mixdown.config.json`.)*
 
 > [!IMPORTANT]
-> Differentiating Scoped Options from Scoped Inclusion:
+> Differentiating Scoped Propertys from Scoped Inclusion:
 >
-> - `target:[my-option]` means "If this track is rendered for `target`, apply `my-option`." The track's general inclusion is determined elsewhere (e.g. by default, or by a `+target` on its own).
-> - `+target:[my-option]` means "Render this track *only* for `target`, and when doing so, apply `my-option`." This controls both inclusion and target-specific options simultaneously.
+> - `destination:[my-property]` means "If this stem is rendered for `destination`, apply `my-property`." The stem's general inclusion is determined elsewhere (e.g. by default, or by a `+destination` on its own).
+> - `+destination:[my-property]` means "Render this stem *only* for `destination`, and when doing so, apply `my-property`." This controls both inclusion and destination-specific propertys simultaneously.
 
 #### Multi-line Markers for Readability
 
-Options can be split across lines for readability. The parser preserves this formatting when writing XML tags:
+Propertys can be split across lines for readability. The parser preserves this formatting when writing XML tags:
 
 ```markdown
 <!-- Multi-line section marker in Mixdown format -->
@@ -406,21 +406,21 @@ Output:
 </instructions>
 ```
 
-#### Track Options
+#### Stem Propertys
 
-| Option | Type | Purpose |
+| Property | Type | Purpose |
 |--------|------|---------|
-| `+/!target` | flag | Include/exclude for specific targets (e.g., `+cursor !windsurf`). |
-| `name-(value)` | value | Sets a name with a specified value for the track. |
+| `+/!destination` | flag | Include/exclude for specific destinations (e.g., `+cursor !windsurf`). |
+| `name-(value)` | value | Sets a name with a specified value for the stem. |
 | `tag-omit`, `inline`, etc. | flag | Controls how content is processed (see [Output Format](#output-format) below). |
-| `code-*`, `h-*`, `num-*` | flag | Family-specific options for code blocks, headings, and numbering. |
-| `[option1 option2]` | group | Groups multiple options together for readability. |
-| `target:[options]` | scoped | Target-specific option group. |
+| `code-*`, `h-*`, `num-*` | flag | Family-specific propertys for code blocks, headings, and numbering. |
+| `[property1 property2]` | group | Groups multiple propertys together for readability. |
+| `destination:[propertys]` | scoped | Destination-specific property group. |
 | *Custom* `key="value"` | attribute | Any key-value pair is passed through to XML output. |
 
 #### Output Format
 
-Output options provide flexible control over how content is formatted in the final output. These options are available for tracks, imports, and inclusions.
+Output propertys provide flexible control over how content is formatted in the final output. These propertys are available for stems, imports, and inclusions.
 
 ```markdown
 {{instructions tag-omit}}
@@ -432,7 +432,7 @@ Content without surrounding XML tags
 {{> @code-example code-js}}
 ```
 
-**Output Option Values:**
+**Output Property Values:**
 
 | Value | Description |
 |-------|-------------|
@@ -440,12 +440,12 @@ Content without surrounding XML tags
 | `inline` | Content rendered inline without XML tags (simple, concise format) |
 | `inline-with-tags` | Content rendered inline with XML tags preserved (all on a single line) |
 | `tag-omit` | Remove XML tags from output but maintain block formatting |
-| `code-*` | Render content as a code block in specified language (see Code Block Options below) |
+| `code-*` | Render content as a code block in specified language (see Code Block Propertys below) |
 | `raw-all` | Render everything as raw Mixdown Notation |
 | `raw-content` | Process tags normally, keep content as raw notation |
 | `raw-tags` | Process content normally, keep tags as raw notation |
 
-Multiple options can be applied together (space-separated):
+Multiple propertys can be applied together (space-separated):
 
 ```markdown
 {{instructions inline tag-omit}}
@@ -453,9 +453,9 @@ This content will appear without tags and inline
 {{/instructions}}
 ```
 
-**Code Block Options (code-* family):**
+**Code Block Propertys (code-* family):**
 
-The `code-*` option family renders content as a code block in the specified language. For example:
+The `code-*` property family renders content as a code block in the specified language. For example:
 
 ```markdown
 {{section code-js}}
@@ -467,7 +467,7 @@ function hello() {
 
 Common language shortcuts include:
 
-| Option | Language |
+| Property | Language |
 |--------|----------|
 | `code-js` | JavaScript |
 | `code-ts` | TypeScript |
@@ -483,11 +483,11 @@ Common language shortcuts include:
 | `code-yaml` | YAML |
 | `code-json` | JSON |
 
-**Heading Options (h-* family):**
+**Heading Propertys (h-* family):**
 
-Heading options control how headings are processed:
+Heading propertys control how headings are processed:
 
-| Option | Description | Example |
+| Property | Description | Example |
 |--------|-------------|--------|
 | `h-1` to `h-6` | Set specific heading level | `{{section h-2}}` |
 | `h-inc` | Increment heading level | `{{section h-inc}}` |
@@ -497,7 +497,7 @@ Heading options control how headings are processed:
 
 **Heading Shortcut:**
 
-For convenience, you can use a string as the first item in a track to automatically create a heading:
+For convenience, you can use a string as the first item in a stem to automatically create a heading:
 
 ```markdown
 {{section "Section Name" h-3}}
@@ -509,15 +509,15 @@ This is equivalent to specifying the heading within the content but provides a m
 
 The heading shortcut will automatically:
 
-- Set the heading level (via h-* options)
+- Set the heading level (via h-* propertys)
 - Use the provided text as the heading
-- Apply the heading to the beginning of the track content
+- Apply the heading to the beginning of the stem content
 
-**Numbering Options (num-* family):**
+**Numbering Propertys (num-* family):**
 
-Numbering options control how content is numbered:
+Numbering propertys control how content is numbered:
 
-| Option | Description | Example |
+| Property | Description | Example |
 |--------|-------------|--------|
 | `num` | Enable default numbering | `{{chapter num}}` |
 | `num-heading-first` | Number first heading | `{{chapter num-heading-first}}` |
@@ -525,12 +525,12 @@ Numbering options control how content is numbered:
 | `num-tag-first` | Number first tag | `{{chapter num-tag-first}}` |
 | `num-tag-last` | Number last tag | `{{chapter num-tag-last}}` |
 
-#### Option Grouping
+#### Property Grouping
 
 > [!NOTE]
-> This section has been added to document the new option grouping syntax.
+> This section has been added to document the new property grouping syntax.
 
-By default, options are space-delimited. You can optionally wrap a list of options in square brackets for visual grouping and better readability:
+By default, propertys are space-delimited. You can propertyally wrap a list of propertys in square brackets for visual grouping and better readability:
 
 ```markdown
 {{rules [ tag-omit code-js +cursor name-(important-rules) ]}}
@@ -538,11 +538,11 @@ By default, options are space-delimited. You can optionally wrap a list of optio
 {{/rules}}
 ```
 
-All options inside `[...]` behave exactly the same as if they were space-delimited. This is particularly useful for complex option combinations.
+All propertys inside `[...]` behave exactly the same as if they were space-delimited. This is particularly useful for complex property combinations.
 
-##### Multi-line Option Grouping
+##### Multi-line Property Grouping
 
-Option grouping allows for improved readability with multi-line options:
+Property grouping allows for improved readability with multi-line propertys:
 
 ```markdown
 {{rules [
@@ -555,42 +555,42 @@ Option grouping allows for improved readability with multi-line options:
 {{/rules}}
 ```
 
-##### Option Bracketing Rules
+##### Property Bracketing Rules
 
-Option groups (brackets) cannot be nested. All options within a group must be space-delimited and cannot themselves contain another options group.
+Property groups (brackets) cannot be nested. All propertys within a group must be space-delimited and cannot themselves contain another propertys group.
 
-For target-scoped options with multiple options, use square brackets after the colon:
-
-```markdown
-{{rules target:[code-js name-(target-rules)]}}
-```
-
-Important: You cannot nest option groups within other option groups:
+For destination-scoped propertys with multiple propertys, use square brackets after the colon:
 
 ```markdown
-{{rules [code-js tag-omit target:[option-a option-b]]}}  # ❌ Invalid, nested options groups
-{{rules [code-js tag-omit] target:[option-a option-b]}}  # ✅ Valid, separate option groups
+{{rules destination:[code-js name-(destination-rules)]}}
 ```
 
-Leading and trailing whitespace within the option group brackets `[]` is optional and will be ignored by the parser. Spaces between options within the brackets are necessary delimiters. For example, `[ option1  option2 ]` is equivalent to `[option1 option2]`.
+Important: You cannot nest property groups within other property groups:
 
-#### Option Grouping & Scoping: Common Patterns
+```markdown
+{{rules [code-js tag-omit destination:[property-a property-b]]}}  # ❌ Invalid, nested propertys groups
+{{rules [code-js tag-omit] destination:[property-a property-b]}}  # ✅ Valid, separate property groups
+```
 
-The following table provides a quick reference to common invocation patterns for option grouping and target scoping:
+Leading and trailing whitespace within the property group brackets `[]` is propertyal and will be ignored by the parser. Spaces between propertys within the brackets are necessary delimiters. For example, `[ property1  property2 ]` is equivalent to `[property1 property2]`.
+
+#### Property Grouping & Scoping: Common Patterns
+
+The following table provides a quick reference to common invocation patterns for property grouping and destination scoping:
 
 | Pattern                                     | Example                                         | Description                                                                 |
 |---------------------------------------------|-------------------------------------------------|-----------------------------------------------------------------------------|
-| Basic Grouping                              | `{{track [opt1 opt2 opt3]}}`                    | Visually groups space-delimited options.                                    |
-| Multi-line Grouping                         | `{{track [\n opt1 \n opt2 \n]}}`                     | Improves readability for many options.                                      |
-| Target-Scoped Single Option (no group)      | `{{track target:opt1}}`                         | Applies `opt1` only for `target`. Block included for all valid targets.     |
-| Target-Scoped Multiple Options (via group)  | `{{track target:[opt1 opt2]}}`                  | Applies `opt1` and `opt2` only for `target`. Block included for all.        |
-| Inclusion for Target + Scoped Single Opt  | `{{track +target:opt1}}`                        | Includes block only for `target`, applying `opt1`.                          |
-| Inclusion for Target + Scoped Multi Opts  | `{{track +target:[opt1 opt2]}}`                 | Includes block only for `target`, applying `opt1` and `opt2`.               |
-| Exclusion for Target (scoped opts moot)     | `{{track !target:opt1}}` or `!target:[opt1]`  | Excludes block for `target`.                                                |
-| Group Inclusion + Member Exclusion          | `{{track +group:[opt1] !member}}`               | Includes for `group` with `opt1`, but excludes for `member`.                |
-| All Targets Inclusion                      | `{{track +all}}`                                | Explicitly includes content for all configured targets.                     |
+| Basic Grouping                              | `{{stem [opt1 opt2 opt3]}}`                    | Visually groups space-delimited propertys.                                    |
+| Multi-line Grouping                         | `{{stem [\n opt1 \n opt2 \n]}}`                     | Improves readability for many propertys.                                      |
+| Destination-Scoped Single Property (no group)      | `{{stem destination:opt1}}`                         | Applies `opt1` only for `destination`. Block included for all valid destinations.     |
+| Destination-Scoped Multiple Propertys (via group)  | `{{stem destination:[opt1 opt2]}}`                  | Applies `opt1` and `opt2` only for `destination`. Block included for all.        |
+| Inclusion for Destination + Scoped Single Opt  | `{{stem +destination:opt1}}`                        | Includes block only for `destination`, applying `opt1`.                          |
+| Inclusion for Destination + Scoped Multi Opts  | `{{stem +destination:[opt1 opt2]}}`                 | Includes block only for `destination`, applying `opt1` and `opt2`.               |
+| Exclusion for Destination (scoped opts moot)     | `{{stem !destination:opt1}}` or `!destination:[opt1]`  | Excludes block for `destination`.                                                |
+| Group Inclusion + Member Exclusion          | `{{stem +group:[opt1] !member}}`               | Includes for `group` with `opt1`, but excludes for `member`.                |
+| All Destinations Inclusion                      | `{{stem +all}}`                                | Explicitly includes content for all configured destinations.                     |
 
-When used with snippets, if the language is omitted (`code`), the system will automatically determine the language based on the snippet file's extension:
+When used with mixins, if the language is omitted (`code`), the system will automatically determine the language based on the mixin file's extension:
 
 ```markdown
 {{> @my-script.js code}}
@@ -612,74 +612,74 @@ If the file extension is not recognized (and isn't a `.md` file), it will defaul
 > [!WARNING]
 > Bare XML tags are not valid Markdown, so Markdown previewers may be likely to render them differently or not at all.
 
-When `allow-bare-xml-tags` is set to `true` in frontmatter or `.mixdown.config.json`, you can use bare XML tags for track names. The outputs will be rendered verbatim, but note:
+When `allow-bare-xml-tags` is set to `true` in frontmatter or `.mixdown.config.json`, you can use bare XML tags for stem names. The outputs will be rendered verbatim, but note:
 
 ```markdown
 <!-- XML tags with `allow-bare-xml-tags` set to `true` -->
-<track_name>
+<stem_name>
   ...
-</track_name>
+</stem_name>
 
 Renders as:
 
-<track_name>
+<stem_name>
   ...
-</track_name>
+</stem_name>
 ```
 
 ### Mixdown Frontmatter
 
 ```yaml
 ---
-# .mixdown/mixes/my-rule.md
+# .mixdown/src/my-rule.md
 mixdown:
-  version: 0.1.0 # optional, version number for the Mixdown format used
-description: "Rules for this project" # optional, may be useful for tools that use descriptions, such as Cursor, Windsurf, etc.
-globs: ["**/*.{txt,md,mdc}"] # optional, globs re-written based on target-specific needs
-# Target filter examples using standard keys:
-target:
+  version: 0.1.0 # propertyal, version number for the Mixdown format used
+description: "Rules for this project" # propertyal, may be useful for tools that use descriptions, such as Cursor, Windsurf, etc.
+globs: ["**/*.{txt,md,mdc}"] # propertyal, globs re-written based on destination-specific needs
+# Destination filter examples using standard keys:
+destination:
   include: ["cursor", "windsurf"]
   exclude: ["claude-code"]
   path: "./custom/output/path"
-# Provide target-specific frontmatter which is included in their respective outputs:
+# Provide destination-specific frontmatter which is included in their respective outputs:
 cursor:
   alwaysApply: false
-  target:
+  destination:
     path: "./custom/.cursor/rules"
 windsurf:
   trigger: globs
 # Add additional metadata to the mix:
-name: my-rule # optional, defaults to filename
-version: 2.0 # optional, version number for this file
-created: 2025-05-13 # optional, date of creation, automatically included by default
-updated: 2025-05-14 # optional, date of last update, automatically included by default
-labels: ["core", "security"] # optional, categorization tags for the mix, available for future use
+name: my-rule # propertyal, defaults to filename
+version: 2.0 # propertyal, version number for this file
+created: 2025-05-13 # propertyal, date of creation, automatically included by default
+updated: 2025-05-14 # propertyal, date of last update, automatically included by default
+labels: ["core", "security"] # propertyal, categorization tags for the mix, available for future use
 ---
 ```
 
-Frontmatter is used to provide metadata about the mix file and control how it's compiled. Basic frontmatter includes:
+Frontmatter is used to provide metadata about the Source Rules file and control how it's compiled. Basic frontmatter includes:
 
 - `mixdown.version`: Metadata about the Mixdown format used
-- `name`: Unique identifier for the mix (optional, defaults to filename)
-- `description`: Optional description of the mix, rendered for tools that use them (e.g. Cursor, Windsurf, etc.)
-- `globs`: Optional globs to be rewritten based on target-specific needs
-- `target`: Control how this mix is processed for targets
-  - `include`/`exclude`: Control which targets receive this mix
+- `name`: Unique identifier for the Source Rules (propertyal, defaults to filename)
+- `description`: Propertyal description of the mix, rendered for tools that use them (e.g. Cursor, Windsurf, etc.)
+- `globs`: Propertyal globs to be rewritten based on destination-specific needs
+- `destination`: Control how this Source Rules is processed for destinations
+  - `include`/`exclude`: Control which destinations receive this mix
   - `path`: Specify a custom output path for outputs
-  - Options include any target providers registered in `.mixdown.config.json`
+  - Propertys include any destination providers registered in `.mixdown.config.json`
 - `version`: Version information
 - `labels`: Categorization tags
-- `[cursor|windsurf|claude-code|...]`: Target-specific key/value pairs
-  - Can include `target.path` to override the global path for specific targets
+- `[cursor|windsurf|claude-code|...]`: Destination-specific key/value pairs
+  - Can include `destination.path` to override the global path for specific destinations
 
 ### Links
 
 #### External & Mixdown File Internal Links
 
-Standard Markdown links work as expected external links, and links to other mix files:
+Standard Markdown links work as expected external links, and links to other Source Rules files:
 
 - Regular links: `[Text](url)`
-- Links to other mix files: `[Text](other-mix.md)`
+- Links to other Source Rules files: `[Text](other-mix.md)`
 
 Mixdown also provides a `{{link}}` notation marker to allow for more expressive link notation.
 
@@ -689,7 +689,7 @@ Mixdown also provides a `{{link}}` notation marker to allow for more expressive 
 ```
 
 > [!NOTE]
-> Standard Markdown links will work in previews as expected within the `.mixdown/mixes` directory, but `{{link ...}}` will not, as it requires compilation by Mixdown to resolve paths relative to the final output directory and apply any target-specific link transformations.
+> Standard Markdown links will work in previews as expected within the `.mixdown/src` directory, but `{{link ...}}` will not, as it requires compilation by Mixdown to resolve paths relative to the final compiled rules directory and apply any destination-specific link transformations.
 
 #### Linking to Project Files
 
@@ -711,34 +711,34 @@ Variables are dynamic values using the `{{$...}}` notation. They are replaced in
 |------|--------|-------|
 | **Alias** | `{{$key}}` | Alias lookup in `.mixdown.config.json` under `aliases` key. |
 | **Frontmatter value** | `{{$.key}}` | Access values from thecurrent file's frontmatter. |
-| **Target** | `{{$target}}` or `{{$target.id}}` | Display name from the provider manifest (e.g. `Cursor`, `Claude Code`). The current target ID in kebab-case can be accessed by adding `.id` to the end (`cursor`, `claude-code`, etc.) |
+| **Destination** | `{{$destination}}` or `{{$destination.id}}` | Display name from the provider manifest (e.g. `Cursor`, `Claude Code`). The current destination ID in kebab-case can be accessed by adding `.id` to the end (`cursor`, `claude-code`, etc.) |
 
 **Built-in System Variables**:
 
-- `{{$target}}` → display name from the provider manifest (e.g. `Cursor`, `Claude Code`, etc.)
-- `{{$target.id}}` → current target ID in kebab-case (`cursor`, `claude-code`, etc.)
+- `{{$destination}}` → display name from the provider manifest (e.g. `Cursor`, `Claude Code`, etc.)
+- `{{$destination.id}}` → current destination ID in kebab-case (`cursor`, `claude-code`, etc.)
 
 ### Imports
 
-Imports allow you to reuse content across multiple mixes by embedding mixes, tracks within a mix, or snippets into rendered outputs. They are denoted by the `{{> ...}}` notation.
+Imports allow you to reuse content across multiple Source Rules files by embedding Source Rules, stems within a file, or mixins into compiled outputs. They are denoted by the `{{> ...}}` notation.
 
 ```markdown
-<!-- Embeds `/_snippets/legal.md` -->
+<!-- Embeds `/_mixins/legal.md` -->
 {{> @legal}}
 
-<!-- Embed a specific track from the `conventions.md` mix file -->
-{{> conventions#track-name}}
+<!-- Embed a specific stem from the `conventions.md` Source Rules file -->
+{{> conventions#stem-name}}
 
-<!-- Embed a track from within the existing file -->
-{{> #track-name}}
+<!-- Embed a stem from within the existing file -->
+{{> #stem-name}}
 
-<!-- Import a mix with multiple specific tracks, with exclusion -->
-{{> my-rules#[track-one track-two !track-three]}}
+<!-- Import a Source Rules with multiple specific stems, with exclusion -->
+{{> my-rules#[stem-one stem-two !stem-three]}}
 ```
 
 Example:
 
-Let's say that we have a mix file called `conventions.md` that contains a track called `style-guide`. We can import it into another mix file called `my-rules.md` and include only the `style-guide` track:
+Let's say that we have a Source Rules file called `conventions.md` that contains a stem called `style-guide`. We can import it into another Source Rules file called `my-rules.md` and include only the `style-guide` stem:
 
 ```markdown
 <!-- my-rules.md -->
@@ -759,18 +759,18 @@ Important: Be sure to follow the style guide:
 
 #### Import Attributes
 
-All [track options](#track-options) can be applied to imports. Additionally, imports support filtering of tracks using `#[...]` square bracket syntax:
+All [stem propertys](#stem-propertys) can be applied to imports. Additionally, imports support filtering of stems using `#[...]` square bracket syntax:
 
 ```markdown
-{{> my-rules#[track-one !track-two]}}
+{{> my-rules#[stem-one !stem-two]}}
 ```
 
-This allows you to filter which tracks from the mix are included/excluded on render:
+This allows you to filter which stems from the Source Rules are included/excluded on render:
 
-- For included tracks, use the track name without any prefix
-- For excluded tracks, prefix the track name with `!` e.g. `!track-two`
+- For included stems, use the stem name without any prefix
+- For excluded stems, prefix the stem name with `!` e.g. `!stem-two`
 
-For formatting options:
+For formatting propertys:
 
 - `tag-omit` will remove the surrounding XML tags from the output
 - `inline` will render the content inline without XML tags
@@ -782,28 +782,28 @@ Examples:
 ```markdown
 {{> my-rules#[!less-important-considerations]}}
 
-<!-- 👆 This would include all tracks from `my-rules.md`
+<!-- 👆 This would include all stems from `my-rules.md`
      except for `less-important-considerations`. -->
 
-{{> my-rules#[track-one track-two]}}
+{{> my-rules#[stem-one stem-two]}}
 
-<!-- 👆 This would include only the `track-one` and `track-two`
-     tracks from `my-rules.md`. -->
+<!-- 👆 This would include only the `stem-one` and `stem-two`
+     stems from `my-rules.md`. -->
 ```
 
-#### Target-Specific Track Filtering
+#### Destination-Specific Stem Filtering
 
-You can also apply target-specific track filtering for imports:
+You can also apply destination-specific stem filtering for imports:
 
 ```markdown
-{{> my-rules#[common-track !legacy-track cursor:cursor-specific-track]}}
+{{> my-rules#[common-stem !legacy-stem cursor:cursor-specific-stem]}}
 ```
 
 This would:
 
-- Include `common-track` for all targets
-  - Additionally include `cursor-specific-track` only when building for the `cursor` target
-- Exclude `legacy-track` for all targets
+- Include `common-stem` for all destinations
+  - Additionally include `cursor-specific-stem` only when building for the `cursor` destination
+- Exclude `legacy-stem` for all destinations
 
 ### Imports vs. Inclusions
 
@@ -812,26 +812,26 @@ While they may seem similar, imports and inclusions have different use cases and
 - **Imports** `{{> ...}}` **will** render the surrounding tag in the final output.
 - **Inclusions** `{{$...}}` are replaced outright and **will not** render the surrounding tag in the final output.
 
-### Snippets
+### Mixins
 
-Snippets are modular, reusable content components, stored in the `/_snippets` directory. Like pieces of code that provide specific functionality, Mixdown snippets provide isolated content blocks that can be imported into multiple rules files.
+Mixins are modular, reusable content components, stored in the `/_mixins` directory. Like pieces of code that provide specific functionality, Mixdown mixins provide isolated content blocks that can be imported into multiple rules files.
 
-- Snippets are converted to `<snippet_name>` tags in the final output. This can be disabled using the `tag-omit` or `inline` options.
+- Mixins are converted to `<mixin_name>` tags in the final output. This can be disabled using the `tag-omit` or `inline` properties.
 
 Example:
 
 ```markdown
-<!-- Snippet: `/_snippets/remember.md` -->
+<!-- Mixin: `/_mixins/remember.md` -->
 1. Always follow the code conventions.
 2. Never commit directly to `main`
 3. Use conventional commit messages.
 
 ---
 
-<!-- Mix: `my-rules.md` -->
+<!-- Source Rules: `my-rules.md` -->
 # My Rules
 
-...rest of mix content...
+...rest of Source Rules content...
 
 {{> @remember}}
 
@@ -860,8 +860,8 @@ Triple-brace `{{{...}}}` to skip processing of the content and render it in the 
 
 ```markdown
 > Triple braces will preserve the Mixdown Notation on render.
-> Adding `tag-omit` will remove those track tags from the output.
-> Adding `+cursor` will only include the section for the `cursor` target.
+> Adding `tag-omit` will remove those stem tags from the output.
+> Adding `+cursor` will only include the section for the `cursor` destination.
 
 {{{examples tag-omit +cursor}}}
   {{example}}
@@ -877,7 +877,7 @@ The above will render (in Cursor only) as:
 - Rules
 {{/example}}
 
-Without the `tag-omit` option, it would render as:
+Without the `tag-omit` property, it would render as:
 
 <examples>
   <example>
@@ -918,7 +918,7 @@ While the AI may not always follow the instructions in the placeholder precisely
 
 Mixdown has specific rules for whitespace to ensure consistent parsing and output:
 
-- Space after opening `{{` and before closing `}}` is optional
+- Space after opening `{{` and before closing `}}` is propertyal
   - Example: `{{instructions}}` is equivalent to `{{ instructions }}`
 - No spaces are allowed around the `=` sign in attribute declarations
 - Attributes must be separated by spaces or newlines
@@ -949,7 +949,7 @@ Testing is required for all new features.
 ```markdown
 {{> @coding-standards}}
 
-{{> my-mix#specific-track}}
+{{> my-mix#specific-stem}}
 ```
 
 **Using variables:**
@@ -972,10 +972,10 @@ To include a section in Mixdown use: {{section-name}}
 ```text
 project/
 ├── .mixdown/
-│   ├── output/
-│   │   └── builds/            # compiled output
-│   ├── mixes/                 # Mix files (*.md)
-│   │   └── _snippets/         # reusable content modules
+│   ├── dist/
+│   │   └── latest/            # compiled rules
+│   ├── src/                   # Source Rules files (*.md)
+│   │   └── _mixins/           # reusable content modules
 │   └── mixdown.config.json    # compiler config
 ```
 
@@ -984,7 +984,7 @@ project/
 Features planned for v0.x releases:
 
 - Self-closing section tags
-- Target groups for easier filtering of multiple targets
+- Destination groups for easier filtering of multiple destinations
 - Template support with placeholder filling
 - Mode support for tools like Roo Code
 - Slash command support for Claude Code
@@ -992,118 +992,118 @@ Features planned for v0.x releases:
 
 ## Appendix
 
-### Comprehensive Option Reference
+### Comprehensive Property Reference
 
-This section provides a complete reference for all options supported in Mixdown v0.x, organized by their purpose and usage patterns.
+This section provides a complete reference for all propertys supported in Mixdown v0.x, organized by their purpose and usage patterns.
 
-#### Option Naming Conventions
+#### Property Naming Conventions
 
-Mixdown uses consistent naming patterns to make options discoverable and intuitive:
+Mixdown uses consistent naming patterns to make propertys discoverable and intuitive:
 
 | Pattern | Description | Examples |
 |---------|-------------|----------|
-| `prefix-*` | Family of related options | `code-js`, `h-2` |
-| `name-(value)` | Option with parameter value | `name-(important-rules)` |
+| `prefix-*` | Family of related propertys | `code-js`, `h-2` |
+| `name-(value)` | Property with parameter value | `name-(important-rules)` |
 | `+/-prefix` | Inclusion/exclusion modifiers | `+cursor`, `!windsurf` |
-| `target:option` | Target-scoped single option | `cursor:tag-omit` |
-| `target:[opts]` | Target-scoped option group | `cursor:[tag-omit code-js]` |
+| `destination:property` | Destination-scoped single property | `cursor:tag-omit` |
+| `destination:[opts]` | Destination-scoped property group | `cursor:[tag-omit code-js]` |
 | `custom="value"` | Custom XML attribute | `priority="high"` |
 
-#### Option Categories and Usage
+#### Property Categories and Usage
 
-The table below organizes options by their categories with comprehensive information about where they can be used.
+The table below organizes propertys by their categories with comprehensive information about where they can be used.
 
-| Option | Format | Example | Track | Import | Frontmatter | Description |
+| Property | Format | Example | Stem | Import | Frontmatter | Description |
 |--------|--------|---------|-------|--------|-------------|-------------|
-| **Target Selection Options** |||||||
-| `+target` | Flag | `+cursor` | ✅ | ✅ | ❌ | Include content for specific target |
-| `!target` | Flag | `!windsurf` | ✅ | ✅ | ❌ | Exclude content for specific target |
-| `+group` | Flag | `+ide` | ✅ | ✅ | ❌ | Include for all targets in a group |
-| `+all` | Flag | `+all` | ✅ | ✅ | ❌ | Include content for all configured targets |
-| `!group` | Flag | `!cli` | ✅ | ✅ | ❌ | Exclude for all targets in a group |
-| **Target-Scoped Options** |||||||
-| `target:option` | Scoped | `cursor:tag-omit` | ✅ | ✅ | ❌ | Apply option only for specified target |
-| `target:[options]` | Scoped group | `cursor:[code-js name-(rules)]` | ✅ | ✅ | ❌ | Apply multiple options only for specified target |
-| `+target:option` | Combined | `+cursor:tag-omit` | ✅ | ✅ | ❌ | Include for target and apply option to that target |
-| `!target:option` | Combined | `!windsurf:code-js` | ✅ | ✅ | ❌ | Exclude for target (option has no effect) |
-| **Metadata Options** |||||||
+| **Destination Selection Propertys** |||||||
+| `+destination` | Flag | `+cursor` | ✅ | ✅ | ❌ | Include content for specific destination |
+| `!destination` | Flag | `!windsurf` | ✅ | ✅ | ❌ | Exclude content for specific destination |
+| `+group` | Flag | `+ide` | ✅ | ✅ | ❌ | Include for all destinations in a group |
+| `+all` | Flag | `+all` | ✅ | ✅ | ❌ | Include content for all configured destinations |
+| `!group` | Flag | `!cli` | ✅ | ✅ | ❌ | Exclude for all destinations in a group |
+| **Destination-Scoped Propertys** |||||||
+| `destination:property` | Scoped | `cursor:tag-omit` | ✅ | ✅ | ❌ | Apply property only for specified destination |
+| `destination:[propertys]` | Scoped group | `cursor:[code-js name-(rules)]` | ✅ | ✅ | ❌ | Apply multiple propertys only for specified destination |
+| `+destination:property` | Combined | `+cursor:tag-omit` | ✅ | ✅ | ❌ | Include for destination and apply property to that destination |
+| `!destination:property` | Combined | `!windsurf:code-js` | ✅ | ✅ | ❌ | Exclude for destination (property has no effect) |
+| **Metadata Propertys** |||||||
 | `name-(value)` | Parameter | `name-(important-rules)` | ✅ | ✅ | ✅ | Set XML name attribute; identifier in frontmatter |
 | `id-(value)` | Parameter | `id-(section-1)` | ✅ | ✅ | ❌ | Set id attribute for linking and references |
 | `custom="value"` | XML attribute | `priority="high"` | ✅ | ✅ | ❌ | Set custom XML attributes passed to output |
-| **Display Options** |||||||
+| **Display Propertys** |||||||
 | `tag-omit` | Flag | `tag-omit` | ✅ | ✅ | ❌ | Remove XML tags from output, preserve formatting |
 | `inline` | Flag | `inline` | ✅ | ✅ | ❌ | Remove XML tags and render content inline |
 | `inline-with-tags` | Flag | `inline-with-tags` | ✅ | ✅ | ❌ | Keep XML tags but render content inline |
-| **Code Formatting Options** |||||||
+| **Code Formatting Propertys** |||||||
 | `code` | Flag | `code` | ✅ | ✅ | ❌ | Auto-detect language from file extension |
 | `code-*` | Flag | `code-js`, `code-py`, etc. | ✅ | ✅ | ❌ | Format as code block in specified language |
-| **Heading Options** |||||||
+| **Heading Propertys** |||||||
 | `h-[1-6]` | Flag | `h-1` through `h-6` | ✅ | ✅ | ❌ | Format as heading of specified level |
 | `h-inc` | Flag | `h-inc` | ✅ | ✅ | ❌ | Increment heading level (demote) |
 | `h-dec` | Flag | `h-dec` | ✅ | ✅ | ❌ | Decrement heading level (promote) |
 | `h-same` | Flag | `h-same` | ✅ | ✅ | ❌ | Keep same heading level |
 | `h-initial` | Flag | `h-initial` | ✅ | ✅ | ❌ | Replace first heading |
-| **Numbering Options** |||||||
+| **Numbering Propertys** |||||||
 | `num` | Flag | `num` | ✅ | ✅ | ❌ | Enable default numbering |
 | `num-heading-first` | Flag | `num-heading-first` | ✅ | ✅ | ❌ | Number first heading only |
 | `num-heading-last` | Flag | `num-heading-last` | ✅ | ✅ | ❌ | Number last heading only |
 | `num-tag-first` | Flag | `num-tag-first` | ✅ | ✅ | ❌ | Number first tag only |
 | `num-tag-last` | Flag | `num-tag-last` | ✅ | ✅ | ❌ | Number last tag only |
-| **Raw Notation Options** |||||||
+| **Raw Notation Propertys** |||||||
 | `raw-all` | Flag | `raw-all` | ✅ | ✅ | ❌ | Render everything as raw Mixdown notation |
 | `raw-content` | Flag | `raw-content` | ✅ | ✅ | ❌ | Process tags, preserve content as raw |
 | `raw-tags` | Flag | `raw-tags` | ✅ | ✅ | ❌ | Process content, preserve tags as raw |
 | **Import Filtering** |||||||
-| `#track` | Single track | `#track-name` | ❌ | ✅ | ❌ | Include specific track from import |
-| `#!track` | Single exclusion | `#!track-name` | ❌ | ✅ | ❌ | Exclude specific track from import |
-| `#[track1 track2]` | Multiple tracks | `#[section-a section-b]` | ❌ | ✅ | ❌ | Include multiple specific tracks |
-| `#[target:track]` | Scoped track | `#[cursor:section-a]` | ❌ | ✅ | ❌ | Target-specific track inclusion |
+| `#stem` | Single stem | `#stem-name` | ❌ | ✅ | ❌ | Include specific stem from import |
+| `#!stem` | Single exclusion | `#!stem-name` | ❌ | ✅ | ❌ | Exclude specific stem from import |
+| `#[stem1 stem2]` | Multiple stems | `#[section-a section-b]` | ❌ | ✅ | ❌ | Include multiple specific stems |
+| `#[destination:stem]` | Scoped stem | `#[cursor:section-a]` | ❌ | ✅ | ❌ | Destination-specific stem inclusion |
 | **Frontmatter Configuration** |||||||
 | `mixdown.version` | YAML | `mixdown.version: 0.1.0` | ❌ | ❌ | ✅ | Mixdown format version for the file |
-| `description` | YAML | `description: "Project rules"` | ❌ | ❌ | ✅ | Short description of the mix |
-| `name` | YAML | `name: my-rules` | ❌ | ❌ | ✅ | Unique identifier for the mix (defaults to filename) |
-| `version` | YAML | `version: 2.0` | ❌ | ❌ | ✅ | Version number for this mix file |
-| `labels` | YAML | `labels: ["core", "security"]` | ❌ | ❌ | ✅ | Categorization tags for the mix |
+| `description` | YAML | `description: "Project rules"` | ❌ | ❌ | ✅ | Short description of the Source Rules |
+| `name` | YAML | `name: my-rules` | ❌ | ❌ | ✅ | Unique identifier for the Source Rules (defaults to filename) |
+| `version` | YAML | `version: 2.0` | ❌ | ❌ | ✅ | Version number for this Source Rules file |
+| `labels` | YAML | `labels: ["core", "security"]` | ❌ | ❌ | ✅ | Categorization tags for the Source Rules |
 | `globs` | YAML | `globs: ["**/*.{txt,md}"]` | ❌ | ❌ | ✅ | File patterns for tool-specific support |
-| `target.include` | YAML | `target.include: ["cursor"]` | ❌ | ❌ | ✅ | List of targets to include this mix for |
-| `target.exclude` | YAML | `target.exclude: ["claude-code"]` | ❌ | ❌ | ✅ | List of targets to exclude this mix from |
-| `target.path` | YAML | `target.path: "./custom/path"` | ❌ | ❌ | ✅ | Custom output path for outputs |
+| `destination.include` | YAML | `destination.include: ["cursor"]` | ❌ | ❌ | ✅ | List of destinations to include this Source Rules for |
+| `destination.exclude` | YAML | `destination.exclude: ["claude-code"]` | ❌ | ❌ | ✅ | List of destinations to exclude this Source Rules from |
+| `destination.path` | YAML | `destination.path: "./custom/path"` | ❌ | ❌ | ✅ | Custom output path for outputs |
 | `allow-bare-xml-tags` | YAML | `allow-bare-xml-tags: true` | ❌ | ❌ | ✅ | Allow using bare XML tags |
-| `[target-id]` | YAML | `cursor: { ... }` | ❌ | ❌ | ✅ | Target-specific configuration block |
+| `[destination-id]` | YAML | `cursor: { ... }` | ❌ | ❌ | ✅ | Destination-specific configuration block |
 
-#### Common Option Patterns and Languages
+#### Common Property Patterns and Languages
 
 **Code Languages (`code-*`):**
 Most common programming languages are supported using the `code-language` pattern, including: `code-js` (JavaScript), `code-ts` (TypeScript), etc.
 
-**Common Option Combinations:**
+**Common Property Combinations:**
 
 ```markdown
-<!-- Basic formatting options -->
-{{track tag-omit}}                    <!-- Remove XML tags, keep block formatting -->
-{{track inline}}                      <!-- Render inline without tags -->
-{{track code-js tag-omit}}           <!-- JavaScript code block without XML wrapper -->
+<!-- Basic formatting propertys -->
+{{stem tag-omit}}                    <!-- Remove XML tags, keep block formatting -->
+{{stem inline}}                      <!-- Render inline without tags -->
+{{stem code-js tag-omit}}           <!-- JavaScript code block without XML wrapper -->
 
-<!-- Target scoping options -->
-{{track +cursor !windsurf}}          <!-- Include for Cursor, exclude for Windsurf -->
-{{track +ide:[code-js]}}             <!-- Include for all IDE targets with code-js formatting -->
-{{track cursor:tag-omit}}            <!-- Apply tag-omit only for Cursor -->
+<!-- Destination scoping propertys -->
+{{stem +cursor !windsurf}}          <!-- Include for Cursor, exclude for Windsurf -->
+{{stem +ide:[code-js]}}             <!-- Include for all IDE destinations with code-js formatting -->
+{{stem cursor:tag-omit}}            <!-- Apply tag-omit only for Cursor -->
 
-<!-- Import options -->
-{{> @snippet code-js}}               <!-- Import snippet as JavaScript code block -->
-{{> mix-file#[track-a !track-b]}}    <!-- Import only track-a from file, exclude track-b -->
+<!-- Import properties -->
+{{> @mixin code-js}}               <!-- Import mixin as JavaScript code block -->
+{{> mix-file#[stem-a !stem-b]}}    <!-- Import only stem-a from file, exclude stem-b -->
 {{> rules#section cursor:[inline]}}  <!-- Import rules#section with cursor-specific inline formatting -->
 ```
 
-#### Option Extension Rules
+#### Property Extension Rules
 
-1. **Prefixed Families**: Options like `code-*` and `h-*` follow consistent naming with a prefix identifying the family.
+1. **Prefixed Families**: Propertys like `code-*` and `h-*` follow consistent naming with a prefix identifying the family.
 
-2. **Parameter Values**: Options requiring values use parentheses syntax: `name-(value)`.
+2. **Parameter Values**: Propertys requiring values use parentheses syntax: `name-(value)`.
 
-3. **Target Scoping**: Target scoping follows the `target:option` or `target:[option1 option2]` pattern.
+3. **Destination Scoping**: Destination scoping follows the `destination:property` or `destination:[property1 property2]` pattern.
 
-4. **Custom Attributes**: Any `key="value"` pair not matching a defined option is treated as a custom XML attribute. These attributes are passed through to the output XML tags:
+4. **Custom Attributes**: Any `key="value"` pair not matching a defined property is treated as a custom XML attribute. These attributes are passed through to the output XML tags:
 
    ```markdown
    {{rules data-id="123" role="example"}}
@@ -1121,8 +1121,8 @@ Most common programming languages are supported using the `code-language` patter
 
    Note that when using `tag-omit`, custom XML attributes won't appear in the output since the tags themselves are removed.
 
-5. **Option Precedence**: When multiple options might conflict, the last specified option takes precedence (left-to-right evaluation).
+5. **Property Precedence**: When multiple propertys might conflict, the last specified property takes precedence (left-to-right evaluation).
 
-6. **Frontmatter to Target**: Target-specific frontmatter (e.g., `cursor: { ... }`) overrides global values for that target.
+6. **Frontmatter to Destination**: Destination-specific frontmatter (e.g., `cursor: { ... }`) overrides global values for that destination.
 
 *© 2025 Mixdown contributors – MIT License.*
