@@ -187,7 +187,7 @@ Mixdown's syntax follows strict delimiter rules to maintain consistency and clar
 | Delimiter | Role | Example | Purpose |
 |-----------|------|---------|---------|
 | `:` | Scope indicator | `target:code-js` | Indicates that options are scoped to a specific target |
-| `()` | Value container | `name(value)` | Contains values for a specific option |
+| `()` | Value container | `name-(value)` | Contains values for a specific option |
 | `[]` | Option grouping | `target:[option-1 option-2]` | Groups multiple options within a scope |
 | `+` | Inclusion | `+target`, `+track-one` | Indicates inclusion of a target or track |
 | `!` | Exclusion | `!target`, `!track-two` | Indicates exclusion of a target or track |
@@ -252,12 +252,12 @@ Content A
 Any option can be given a per-target override by suffixing the target ID with a **`:`** delimiter (colon):
 
 ```markdown
-{{instructions cursor:name(cursor-instructions)}}
+{{instructions cursor:name-(cursor-instructions)}}
 ...
 {{/instructions}}
 ```
 
-In this example the track will use the name "cursor-instructions" when compiled for the *cursor* target. The same pattern works with groups once they arrive (e.g. `ide:name(ide-instructions)`).
+In this example the track will use the name "cursor-instructions" when compiled for the *cursor* target. The same pattern works with groups once they arrive (e.g. `ide:name-(ide-instructions)`).
 
 Note: You can also use the `+target` notation to both include the track for specific targets *and* apply target-specific overrides.
 
@@ -266,10 +266,10 @@ Note: You can also use the `+target` notation to both include the track for spec
 For multiple target-specific options, you can use square brackets after the colon:
 
 ```markdown
-{{instructions cursor:[name(cursor-rules) code-js]}}
+{{instructions cursor:[name-(cursor-rules) code-js]}}
 ```
 
-This applies both `name(cursor-rules)` and `code-js` options only when building for the cursor target, without affecting other targets. The square brackets group the options that are scoped to that specific target.
+This applies both `name-(cursor-rules)` and `code-js` options only when building for the cursor target, without affecting other targets. The square brackets group the options that are scoped to that specific target.
 
 #### Option Processing Order
 
@@ -313,7 +313,7 @@ This would:
 The track would use heading level 3 because `h-3` appears last and overrides `h-2`.
 
 > [!NOTE]
-> While options are processed left-to-right, certain option types like `name()` might have special handling if specified multiple times. When in doubt about complex combinations, the last specified option for a particular feature usually takes precedence.
+> While options are processed left-to-right, certain option types like `name-()` might have special handling if specified multiple times. When in doubt about complex combinations, the last specified option for a particular feature usually takes precedence.
 
 #### Target Filtering Options
 
@@ -356,20 +356,20 @@ Self-closing tags render as empty XML tags in the output:
 **Further Target Scoping Examples:**
 
 - **Target-specific option (block included for all targets unless otherwise specified):**
-  `{{instructions cursor:name(cursor-specific-rules)}}`
-  *(Applies `name(cursor-specific-rules)` only for the `cursor` target. The block itself is included for all targets by default.)*
+  `{{instructions cursor:name-(cursor-specific-rules)}}`
+  *(Applies `name-(cursor-specific-rules)` only for the `cursor` target. The block itself is included for all targets by default.)*
 
 - **Inclusion for a target with a specific option:**
-  `{{instructions +cursor:name(only-for-cursor)}}`
-  *(Includes this track *only* for the `cursor` target, and for `cursor`, it uses `name(only-for-cursor)`.)*
+  `{{instructions +cursor:name-(only-for-cursor)}}`
+  *(Includes this track *only* for the `cursor` target, and for `cursor`, it uses `name-(only-for-cursor)`.)*
 
 - **Inclusion for a target with multiple specific options:**
-  `{{instructions +cursor:[name(cursor-rules) code-js]}}`
-  *(Includes this track *only* for the `cursor` target, applying both `name(cursor-rules)` and `code-js` for `cursor`.)*
+  `{{instructions +cursor:[name-(cursor-rules) code-js]}}`
+  *(Includes this track *only* for the `cursor` target, applying both `name-(cursor-rules)` and `code-js` for `cursor`.)*
 
 - **Exclusion for a target, even if a scoped option is present:**
-  `{{instructions !cursor:name(ignored-for-cursor)}}`
-  *(Excludes this track for the `cursor` target. The `name(ignored-for-cursor)` option would not apply as the track is excluded for `cursor`.)*
+  `{{instructions !cursor:name-(ignored-for-cursor)}}`
+  *(Excludes this track for the `cursor` target. The `name-(ignored-for-cursor)` option would not apply as the track is excluded for `cursor`.)*
 
 - **Group inclusion with member exclusion and scoped options for the group:**
   `{{instructions +ide:[code-block] !cursor}}`
@@ -389,12 +389,12 @@ Options can be split across lines for readability. The parser preserves this for
 <!-- Multi-line section marker in Mixdown format -->
 
 {{instructions
-  name(important-rules)
+  name-(important-rules)
 }}
 This is the content of the instructions section.
 {{/instructions}}
 
-<!-- Note: Using the name(value) syntax specifically sets the 'name' attribute 
+<!-- Note: Using the name-(value) syntax specifically sets the 'name' attribute 
   (e.g., name="important-rules") in the rendered XML output. -->
 
 ---
@@ -411,7 +411,7 @@ Output:
 | Option | Type | Purpose |
 |--------|------|---------|
 | `+/!target` | flag | Include/exclude for specific targets (e.g., `+cursor !windsurf`). |
-| `name(value)` | value | Sets a name with a specified value for the track. |
+| `name-(value)` | value | Sets a name with a specified value for the track. |
 | `tag-omit`, `inline`, etc. | flag | Controls how content is processed (see [Output Format](#output-format) below). |
 | `code-*`, `h-*`, `num-*` | flag | Family-specific options for code blocks, headings, and numbering. |
 | `[option1 option2]` | group | Groups multiple options together for readability. |
@@ -533,7 +533,7 @@ Numbering options control how content is numbered:
 By default, options are space-delimited. You can optionally wrap a list of options in square brackets for visual grouping and better readability:
 
 ```markdown
-{{rules [ tag-omit code-js +cursor name(important-rules) ]}}
+{{rules [ tag-omit code-js +cursor name-(important-rules) ]}}
 ...
 {{/rules}}
 ```
@@ -548,7 +548,7 @@ Option grouping allows for improved readability with multi-line options:
 {{rules [
   tag-omit
   code-js
-  name(important-rules)
+  name-(important-rules)
   +cursor
   ]}}
 ...
@@ -562,7 +562,7 @@ Option groups (brackets) cannot be nested. All options within a group must be sp
 For target-scoped options with multiple options, use square brackets after the colon:
 
 ```markdown
-{{rules target:[code-js name(target-rules)]}}
+{{rules target:[code-js name-(target-rules)]}}
 ```
 
 Important: You cannot nest option groups within other option groups:
@@ -929,7 +929,7 @@ Mixdown has specific rules for whitespace to ensure consistent parsing and outpu
 **Section with attributes:**
 
 ```markdown
-{{instructions name(core-rules) +cursor !windsurf}}
+{{instructions name-(core-rules) +cursor !windsurf}}
 All code must follow consistent formatting.
 
 Testing is required for all new features.
@@ -1003,7 +1003,7 @@ Mixdown uses consistent naming patterns to make options discoverable and intuiti
 | Pattern | Description | Examples |
 |---------|-------------|----------|
 | `prefix-*` | Family of related options | `code-js`, `h-2` |
-| `name(value)` | Option with parameter value | `name(important-rules)` |
+| `name-(value)` | Option with parameter value | `name-(important-rules)` |
 | `+/-prefix` | Inclusion/exclusion modifiers | `+cursor`, `!windsurf` |
 | `target:option` | Target-scoped single option | `cursor:tag-omit` |
 | `target:[opts]` | Target-scoped option group | `cursor:[tag-omit code-js]` |
@@ -1023,12 +1023,12 @@ The table below organizes options by their categories with comprehensive informa
 | `!group` | Flag | `!cli` | ✅ | ✅ | ❌ | Exclude for all targets in a group |
 | **Target-Scoped Options** |||||||
 | `target:option` | Scoped | `cursor:tag-omit` | ✅ | ✅ | ❌ | Apply option only for specified target |
-| `target:[options]` | Scoped group | `cursor:[code-js name(rules)]` | ✅ | ✅ | ❌ | Apply multiple options only for specified target |
+| `target:[options]` | Scoped group | `cursor:[code-js name-(rules)]` | ✅ | ✅ | ❌ | Apply multiple options only for specified target |
 | `+target:option` | Combined | `+cursor:tag-omit` | ✅ | ✅ | ❌ | Include for target and apply option to that target |
 | `!target:option` | Combined | `!windsurf:code-js` | ✅ | ✅ | ❌ | Exclude for target (option has no effect) |
 | **Metadata Options** |||||||
-| `name(value)` | Parameter | `name(important-rules)` | ✅ | ✅ | ✅ | Set XML name attribute; identifier in frontmatter |
-| `id(value)` | Parameter | `id(section-1)` | ✅ | ✅ | ❌ | Set id attribute for linking and references |
+| `name-(value)` | Parameter | `name-(important-rules)` | ✅ | ✅ | ✅ | Set XML name attribute; identifier in frontmatter |
+| `id-(value)` | Parameter | `id-(section-1)` | ✅ | ✅ | ❌ | Set id attribute for linking and references |
 | `custom="value"` | XML attribute | `priority="high"` | ✅ | ✅ | ❌ | Set custom XML attributes passed to output |
 | **Display Options** |||||||
 | `tag-omit` | Flag | `tag-omit` | ✅ | ✅ | ❌ | Remove XML tags from output, preserve formatting |
@@ -1099,7 +1099,7 @@ Most common programming languages are supported using the `code-language` patter
 
 1. **Prefixed Families**: Options like `code-*` and `h-*` follow consistent naming with a prefix identifying the family.
 
-2. **Parameter Values**: Options requiring values use parentheses syntax: `name(value)`.
+2. **Parameter Values**: Options requiring values use parentheses syntax: `name-(value)`.
 
 3. **Target Scoping**: Target scoping follows the `target:option` or `target:[option1 option2]` pattern.
 
