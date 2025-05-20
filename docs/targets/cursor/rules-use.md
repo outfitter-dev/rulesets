@@ -1,6 +1,6 @@
 # Cursor Rules System
 
-Cursor uses Markdown files with YAML front-matter (`.mdc` extension) organized in rules directories to guide the AI assistant, providing persistent context and instructions that shape the assistant's behavior.
+Cursor (v0.50+, May 2025) uses Markdown files with YAML front-matter (`.mdc` extension) organized in rules directories to guide the AI assistant, providing persistent context and instructions that shape the assistant's behavior.
 
 ## Key Features
 
@@ -12,7 +12,18 @@ Cursor uses Markdown files with YAML front-matter (`.mdc` extension) organized i
 - **File Referencing:** Supports `@filename` syntax to include external file content
 - **Character Limits:** Recommended to keep each rule under ~500 lines for optimal performance
 
-## Directory Structure
+## Canonical Locations & Precedence
+
+Cursor loads rules from both global and project-specific locations:
+
+```text
+Cursor Settings > "Rules for AI"          # Global user preferences
+<repo-root>/.cursor/rules/*.mdc           # Project-specific rules
+<repo>/<subdirectory>/.cursor/rules/*.mdc # Nested module rules (subdirectory-specific)
+(legacy) <repo>/.cursorrules              # Single-file fallback (deprecated but supported)
+```
+
+## Directory Structure Example
 
 ```text
 project/
@@ -27,16 +38,11 @@ project/
 └── ...
 ```
 
-## Rule Locations and Scope
+## YAML Front-matter Configuration
 
-- **User Rules (Global):** Configured via Cursor Settings > "Rules for AI" in the UI, apply to all projects
-- **Project Rules:** Stored in `.cursor/rules/` at the project root, apply only within that project
-- **Nested Rules:** Stored in `.cursor/rules/` directories in subdirectories, apply only to files in those subdirectories
-- **Legacy Support:** `.cursorrules` file at project root (deprecated, but still supported)
+Cursor uses a YAML front-matter block to configure rules:
 
-## YAML Front-matter Example
-
-```yaml
+```markdown
 ---
 description: React Component Standards  
 globs: ["**/components/**/*.tsx"]
@@ -47,9 +53,19 @@ alwaysApply: false
 - Follow naming pattern: ComponentName.tsx
 ```
 
-## Rule Types and Activation
+| Field | Purpose | Example |
+|-------|---------|---------|
+| `alwaysApply` | Whether rule is automatically included in all contexts | `alwaysApply: true` |
+| `description` | One-sentence summary of the rule's purpose | `description: "Database Schema"` |
+| `globs` | Path patterns for automatic rule activation | `globs: ["**/*.py", "**/*.ipynb"]` |
+
+## Activation Modes
+
+Cursor offers four ways to activate rules:
 
 1. **Always Apply**: Rules that are always included in context for every operation
+   - Best for critical project information, style guides, and core concepts
+   - Use sparingly to avoid using up the context token limit
    ```yaml
    ---
    alwaysApply: true
@@ -57,6 +73,8 @@ alwaysApply: false
    ```
 
 2. **Auto-Attached**: Rules that apply only when working with matching files
+   - Perfect for language-specific or framework-specific guidance
+   - Requires `globs` field to specify file patterns
    ```yaml
    ---
    globs: ["**/*.py", "**/*.ipynb"]
@@ -64,6 +82,8 @@ alwaysApply: false
    ```
 
 3. **Agent-Requested**: Rules that are only added when the AI specifically requests them
+   - Useful for reference material that may or may not be needed
+   - Requires `description` field for the AI to determine relevance
    ```yaml
    ---
    description: "Database Schema"
@@ -71,11 +91,28 @@ alwaysApply: false
    ```
 
 4. **Manual**: Rules that are only applied when manually selected by the user
+   - For specialized knowledge that's only occasionally needed
    ```yaml
    ---
    # No special metadata - will only be used when explicitly referenced
    ---
    ```
+
+## File Structure Example
+
+```markdown
+---
+description: React Component Standards
+globs: ["**/components/**/*.tsx"]
+alwaysApply: false
+---
+
+# React Component Guidelines
+
+- Use functional components with hooks
+- Follow naming pattern: ComponentName.tsx
+- Implement error boundaries
+```
 
 ## Nested Rules Feature (v0.50+, May 2025)
 
@@ -113,18 +150,7 @@ flowchart TD
     style G1 fill:#dfd,stroke:#333
 ```
 
-## Rule Content and Capabilities
-
-Rules can contain various types of guidance:
-
-- **Coding Style Guides:** Naming conventions, formatting rules, API usage guidelines
-- **Architecture and Design Decisions:** Project structure, design patterns, technology choices
-- **Boilerplate Templates:** Templates for common code structures, component patterns
-- **Workflow Instructions:** Step-by-step procedures for common tasks
-- **Testing and QA Checklists:** Quality criteria, security practices, review procedures
-- **Project Knowledge Base:** Domain concepts, framework explanations, module structure
-
-### File Referencing
+## File Referencing
 
 Use `@filename` syntax to include external file content:
 
@@ -137,6 +163,26 @@ Use `@filename` syntax to include external file content:
 - Always include PropTypes
 - Add JSDoc comments for all props
 ```
+
+## Character Limits
+
+Cursor implements character limits to prevent context overload:
+
+- **~500 lines per rule file**: Encourages concise, focused content
+- **UI indication**: Shows when the rule is approaching limits
+
+## Rule Content and Capabilities
+
+Rules can contain various types of guidance:
+
+| Type | Purpose | Example |
+|------|---------|---------|
+| **Coding Style Guides** | Naming conventions, formatting rules | Style guides, naming patterns |
+| **Architecture Decisions** | Project structure, design patterns | Technology choices, patterns |
+| **Boilerplate Templates** | Common code structures | Component templates, file skeletons |
+| **Workflow Instructions** | Step-by-step procedures | Deployment processes, review steps |
+| **Testing Checklists** | Quality criteria | Test coverage requirements |
+| **Knowledge Base** | Domain concepts, framework help | API explanations, domain models |
 
 ## Loading Process
 
@@ -166,7 +212,9 @@ flowchart TD
     end
 ```
 
-## Managing Rules
+## UI Integration
+
+Cursor provides a dedicated UI for managing rules:
 
 - **Creating Rules:** Use Command Palette (Cmd + Shift + P) > "New Cursor Rule"
 - **Viewing/Editing:** Access in Cursor Settings > Project Rules, or edit `.mdc` files directly
@@ -194,13 +242,21 @@ flowchart TD
 - **Regularly audit and update**: Remove outdated rules and ensure content stays relevant
 - **Prefer globs over always-apply for subdirectories**: More precise control over when rules are loaded
 
-## Limitations and Considerations
+## Limitations & Considerations
 
 - **No Native Templating Language:** The `.mdc` format doesn't support dynamic placeholders
 - **Glob Pattern Limitations:** Brace expansion (e.g., `{ts,tsx}`) is not supported
 - **Dynamic Updates:** Rule changes only apply to new conversations, not ongoing ones
 - **No Cross-Project Rules Linking:** Each project's rules are isolated to that project
 - **Rules Only Guide, Not Dictate:** The AI might still occasionally produce output that doesn't follow a rule
+
+## Version Information
+
+| Aspect | Details |
+|--------|---------|
+| Last-verified release | v0.50.0 (May 2025) |
+| Primary docs | Cursor documentation website |
+| Front-matter specification | Updated in v0.50 (May 2025) |
 
 ## Mixdown Integration
 
