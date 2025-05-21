@@ -6,7 +6,7 @@ You are a Staff Software Engineer charged with boot-strapping **Mixdown v0**—a
 
 You will be given all the necessary context to complete your task. If you need additional information, ask the human for clarification.
 
-Your deliverable to the human is a *sequenced planning document* (`PLAN.md`) that other agents can execute. This document should include clearly defined phases with specific tasks, dependencies, and acceptance criteria for each component of the Mixdown system.
+Your deliverable to the human is a *sequenced planning document* (`PLAN.md`) that other agents can execute. This document should include a clear implementation checklist with nested tasks for each component of the Mixdown system, along with implementation details organized by specific files and modules.
 
 ---
 
@@ -273,37 +273,46 @@ When creating the `PLAN.md` document, use this structure:
 
 [Brief description of Mixdown and its purpose]
 
-## Project Phases
+## Implementation Checklist
 
-### Phase 1: Repository Setup (Day 1)
+- [ ] Repository Setup
+  - [ ] Initialize monorepo structure with pnpm workspaces
+  - [ ] Configure TypeScript, ESLint, and Prettier
+  - [ ] Set up Turborepo pipeline
+  - [ ] Implement CI/CD with GitHub Actions
 
-- [ ] Task 1.1: Initialize monorepo structure with pnpm workspaces
-- [ ] Task 1.2: Configure TypeScript, ESLint, and Prettier
-- [ ] Task 1.3: Set up Turborepo pipeline
-- [ ] Task 1.4: Implement CI/CD with GitHub Actions
+- [ ] Core Package Implementation
+  - [ ] Parser Module
+    - [ ] Create parser interface
+    - [ ] Implement Markdown parsing
+    - [ ] Add frontmatter support
+    - [ ] Process Mixdown notation markers
+  - [ ] Compiler Module
+    - [ ] Create compiler interface
+    - [ ] Implement stem processing
+    - [ ] Add variable substitution
+    - [ ] Handle destination-specific output
+  - [ ] Linter Module
+    - [ ] Create linter interface
+    - [ ] Implement validation rules
+    - [ ] Add error reporting
+  - [ ] Core API
+    - [ ] Define public interfaces
+    - [ ] Implement integration between modules
+    - [ ] Add configuration options
 
-### Phase 2: Core Package Implementation (Days 2-4)
+- [ ] Destination Plugins
+  - [ ] Cursor Plugin
+    - [ ] Implement plugin interface
+    - [ ] Add Cursor-specific transformations
+  - [ ] Windsurf Plugin
+    - [ ] Implement plugin interface
+    - [ ] Add Windsurf-specific transformations
 
-- [ ] Task 2.1: Create parser module and tests
-  - Acceptance Criteria: Can parse Mixdown notation with frontmatter
-- [ ] Task 2.2: Create compiler module and tests
-  - Acceptance Criteria: Can transform source rules into compiled rules
-- [ ] Task 2.3: Create linter module and tests
-  - Acceptance Criteria: Can validate source rules against Language spec
-- [ ] Task 2.4: Integrate all modules and create public API
-
-### Phase 3: Destination Plugins (Days 5-6)
-
-- [ ] Task 3.1: Implement Cursor plugin
-  - Acceptance Criteria: Can generate valid Cursor-compatible rules
-- [ ] Task 3.2: Implement Windsurf plugin
-  - Acceptance Criteria: Can generate valid Windsurf-compatible rules
-
-### Phase 4: Documentation and Release (Day 7)
-
-- [ ] Task 4.1: Write comprehensive README and API docs
-- [ ] Task 4.2: Set up Changesets for version management
-- [ ] Task 4.3: Package and release to npm
+- [ ] Documentation and Release
+  - [ ] Create README documentation
+  - [ ] Write API documentation
+  - [ ] Configure release process
 
 ## Engineering Conventions
 
@@ -311,15 +320,48 @@ When creating the `PLAN.md` document, use this structure:
 
 ## Implementation Details
 
-[Detailed technical specifications for each component]
+### Repository Structure
 
-## Timeline and Milestones
+```text
+[Package layout diagram]
+```
 
-[Key dates and deliverables]
+### Configuration Files
+
+#### package.json
+
+```json
+[package.json content]
+```
+
+#### turbo.json
+
+```json
+[turbo.json content]
+```
+
+#### tsconfig.base.json
+
+```json
+[tsconfig content]
+```
+
+### Core Interfaces
+
+```typescript
+[Core interfaces]
+```
+
+### Plugin Contract
+
+```typescript
+[Plugin contract]
+```
 
 ## Open Questions
 
-[List of questions that need to be resolved during implementation]
+- [Question 1]
+- [Question 2]
 ```
 
 **You now have your mandate.**
