@@ -23,9 +23,10 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 ### Source rules
 
 - Source files defining rules, written in 100% previewable Markdown.
+- Use `.mix.md` extension (preferred) or `.md` extension.
 - Written in Mixdown notation and use `{{...}}` notation markers to direct the compiler.
 - Compiled into destination-specific rules files:
-  - `./mixdown/src/my-rule.md` → `.cursor/rules/my-rule.mdc`
+  - `./mixdown/src/my-rule.mix.md` → `.cursor/rules/my-rule.mdc`
 
 ### Destination
 
@@ -77,7 +78,7 @@ project/
 ├── .mixdown/
 │   ├── dist/
 │   │   └── latest/         # compiled rules
-│   ├── src/                # source rules files (*.md)
+│   ├── src/                # source rules files (*.mix.md, *.md)
 │   │   └── _mixins/        # reusable content modules
 │   └── mixdown.config.json # Mixdown config file
 ```
@@ -193,7 +194,7 @@ version: 2.0 # version number for this file
 
 ## Naming Conventions
 
-- Source rules files: `kebab-case.md` (e.g., `coding-standards.md`)
+- Source rules files: `kebab-case.mix.md` (preferred) or `kebab-case.md` (e.g., `coding-standards.mix.md`)
 - Directories: `kebab-case` (e.g., `_mixins`)
 - Config files: `kebab-case.config.json` (e.g., `mixdown.config.json`)
 - Stem names: `kebab-case` (e.g., `{{user-instructions}}`)

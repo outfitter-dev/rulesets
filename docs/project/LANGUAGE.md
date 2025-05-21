@@ -93,7 +93,7 @@ This document provides terminology guidance for consistent language in Mixdown d
 
 | Entity Type | Naming Convention | Example |
 |-------------|-------------------|---------|
-| Source Rules files | `kebab-case.md` | `coding-standards.md` |
+| Source Rules files | `kebab-case.mix.md` or `kebab-case.md` | `coding-standards.mix.md` |
 | Directory | `kebab-case` | `_mixins` |
 | Config files | `kebab-case.config.json` | `mixdown.config.json` |
 | Stem markers | `kebab-case` | `{{user-instructions}}` |
