@@ -4,14 +4,14 @@
   "description": "Rules compiler for AI tools",
   "private": true,
   "scripts": {
-    "build": "pnpm --filter=\"@mixdown/*\" build",
-    "dev": "pnpm --filter=\"@mixdown/core\" dev",
-    "test": "pnpm --filter=\"@mixdown/*\" test",
-    "lint": "pnpm --filter=\"@mixdown/*\" lint",
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "test": "turbo test",
+    "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "changeset": "changeset",
-    "version": "changeset version",
-    "release": "changeset publish"
+    "version-packages": "changeset version",
+    "release": "turbo build --filter=@mixdown/core && changeset publish"
   },
   "author": "Maybe Good Systems",
   "license": "MIT",
@@ -23,6 +23,7 @@
     "@changesets/cli": "^2.26.2",
     "eslint": "8.37.0",
     "prettier": "^3.0.3",
-    "@types/node": "20.5.1"
+    "@types/node": "20.5.1",
+    "turbo": "^2.0.6"
   }
 }
