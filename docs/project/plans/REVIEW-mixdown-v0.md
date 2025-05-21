@@ -1,10 +1,10 @@
 # Mixdown v0 Implementation Review
 
 > [!NOTE]
-> When implementing code based on this plan, include version marker comments to identify code with limited implementation that will be expanded in future versions. For example:
+> When implementing code based on this plan, include version marker comments to identify code with limited implementation that will be expanded in future versions. Use a single TLDR line and optional TODO:
 > ```typescript
-> // mixd-v0: Simple pass-through implementation that doesn't process markers
-> // TODO(mixd-v0.1): Add support for stem parsing
+> // TLDR: Simple pass-through implementation that doesn't process markers (mixd-v0)
+> // TODO (mixd-v0.1): Add support for stem parsing
 > function parseContent(content: string) {
 >   // Simple implementation for v0
 >   return { body: content };
@@ -21,7 +21,7 @@ This document outlines the checklist for reviewing the Mixdown v0 implementation
 
 The following end-to-end scenarios must be manually tested and verified:
 
-- [ ] **Test 1: Basic Source Rules Parsing and Compilation** // mixd-v0
+- [ ] **Test 1: Basic Source Rules Parsing and Compilation**
   - **Action**: Create a minimal `test.mix.md` file with valid frontmatter and a simple Markdown body.
   - **Command**: Execute the main Mixdown v0 script/function pointing to `test.mix.md`.
   - **Expected Result**:
@@ -29,31 +29,31 @@ The following end-to-end scenarios must be manually tested and verified:
     - Output files (`.mixdown/dist/cursor/test.md` and `.mixdown/dist/windsurf/test.md`) are created.
     - The content of the output files exactly matches the raw Markdown body of `test.mix.md`.
     - Stubbed plugin `write` methods log expected messages.
-- [ ] **Test 2: Source Rules File with No Frontmatter** // mixd-v0
+- [ ] **Test 2: Source Rules File with No Frontmatter**
   - **Action**: Create `no-fm.mix.md` with only a Markdown body (no `---` frontmatter block).
   - **Command**: Execute the main Mixdown v0 script/function.
   - **Expected Result**:
     - Parser should handle this gracefully (e.g., `frontmatter` field is empty or undefined).
     - Linter may report a warning/error if frontmatter is considered mandatory by its v0 schema.
     - Compiler should still pass through the raw body to output files.
-- [ ] **Test 3: Source Rules File with Invalid Frontmatter** // mixd-v0
+- [ ] **Test 3: Source Rules File with Invalid Frontmatter**
   - **Action**: Create `invalid-fm.mix.md` with syntactically incorrect YAML frontmatter or frontmatter that violates the Linter's v0 schema.
   - **Command**: Execute the main Mixdown v0 script/function.
   - **Expected Result**:
     - Parser might return errors or an empty frontmatter object.
     - Linter should report errors detailing the schema violations or syntax issues.
     - Compilation might be skipped or proceed with warnings, depending on error severity. No output files should be generated if critical linting errors occur.
-- [ ] **Test 4: Invocation of Destination Plugins** // mixd-v0
+- [ ] **Test 4: Invocation of Destination Plugins**
   - **Action**: Use a valid `my-rules.mix.md` (as defined in `PLAN-mixdown-v0.md`).
   - **Command**: Execute the main Mixdown v0 script/function.
   - **Expected Result**:
     - Logs or other indicators (e.g., mock file writes) confirm that both `CursorPlugin.write()` and `WindsurfPlugin.write()` were called with the correct `CompiledDoc.output.content` and `destPath`.
-- [ ] **Test 5: Output Directory Creation** // mixd-v0
+- [ ] **Test 5: Output Directory Creation**
   - **Action**: Ensure the `.mixdown/dist/` directory (and subdirectories like `cursor`, `windsurf`) does not exist before running.
   - **Command**: Execute the main Mixdown v0 script/function with a valid source file.
   - **Expected Result**: The `.mixdown/dist/` directory and necessary subdirectories are created automatically.
 
-## Code Quality Review // mixd-v0
+## Code Quality Review
 
 - [ ] **Verify Engineering Conventions**:
   - All files start with a `TLDR:` comment line describing purpose.
@@ -74,7 +74,7 @@ The following end-to-end scenarios must be manually tested and verified:
   - `DestinationPlugin` interface matches the agreed-upon contract.
   - Core modules (Parser, Linter, Compiler) have clear and logical public APIs for their v0 functionality.
 
-## Release Readiness // mixd-v0
+## Release Readiness
 
 - [ ] **Verify All Tests Pass**:
   - **Action**: Run `pnpm turbo test` in the root.
