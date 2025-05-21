@@ -2,6 +2,17 @@
 
 Mixdown simplifies rules management for tools like Cursor, Claude Code, Codex, etc. With Mixdown, you author rules (called "source rules") in previewable Markdown and compile them into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
 
+## Current Status: Mixdown v0
+
+This is the initial v0 implementation of Mixdown, with the following limitations:
+
+- Parser extracts frontmatter and raw Markdown body only (no `{{...}}` marker processing)
+- Compiler is a pass-through implementation (no marker transformations)
+- Linter validates frontmatter against a basic schema
+- Destination plugins are stubs for Cursor and Windsurf
+
+The v0 implementation proves the end-to-end flow by processing a `my-rules.mix.md` file, writing compiled rules to `.mixdown/dist/`, and invoking destination plugins. Future versions will add support for Mixdown notation markers, stems, imports, and variables.
+
 ## What is Mixdown?
 
 If you're reading this, you're probably already familiar with at least one of the AI coding tools that Mixdown is [designed to work with](#supported-destinations). Each tool has its own unique way of being provided context, guidance, and operational instructions for your projects e.g. Cursor's rules (`.cursor/rules`), OpenAI Codex instructions (`codex.md`), Claude Code's instructions (`CLAUDE.md`), etc.
@@ -22,10 +33,38 @@ With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agenti
 
 The app consists of:
 
-1. A Node.js app with a compiler (featuring a plugin architecture for different tools), an API, CLI, and Model Context Protocol implementation for managing prompts and instructions.
+1. A Node.js package with a compiler (featuring a plugin architecture for different tools)
 2. A CommonMark-compliant markup specification for creating effective and reusable rules, processed by the compiler to generate destination-specific rules files.
 
+Future versions will add:
+- A CLI for easy command-line usage
+- An API for integration with other tools
+- Model Context Protocol implementation for managing prompts and instructions
+
 Result: *author once, distribute everywhere, zero drift.*
+
+## Getting Started
+
+### Installation
+
+```bash
+npm install @mixdown/core
+# or
+pnpm add @mixdown/core
+# or
+yarn add @mixdown/core
+```
+
+### Usage
+
+```typescript
+import { runMixdownV0, ConsoleLogger } from '@mixdown/core';
+
+const logger = new ConsoleLogger();
+runMixdownV0('my-rules.mix.md', logger)
+  .then(() => console.log('Mixdown processing completed!'))
+  .catch(error => console.error('Mixdown processing failed:', error));
+```
 
 ## What's with the name?
 
