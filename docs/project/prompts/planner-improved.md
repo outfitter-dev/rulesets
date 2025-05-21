@@ -281,7 +281,7 @@ The following components will need to be implemented for Mixdown v0. This is a r
 
 When creating the `PLAN-mixdown-v0.md` document, use this structure:
 
-```markdown
+````markdown
 # Mixdown v0 Implementation Plan
 
 ## Overview
@@ -361,9 +361,8 @@ When creating the `PLAN-mixdown-v0.md` document, use this structure:
 
 ### Technical Risks and Mitigations
 
-Include a section that identifies potential risks and their mitigations:
+[Include a section that identifies potential risks and their mitigations:]
 
-```markdown
 ## Technical Risks and Mitigations
 
 - **Risk**: [Description of a potential technical risk]
@@ -372,13 +371,11 @@ Include a section that identifies potential risks and their mitigations:
 - **Risk**: [Description of another potential risk]
   - **Impact**: [What could happen if the risk materializes]
   - **Mitigation**: [How to address or minimize the risk]
-```
 
 ### Testing Strategy
 
-Describe the testing approach with this structure:
+[Describe the testing approach with this structure:]
 
-```markdown
 ## Testing Strategy
 
 ### Component Tests
@@ -398,6 +395,7 @@ packages/core/src/
 ```
 
 Each module should have comprehensive tests covering:
+
 - Unit tests for individual functions
 - Integration tests for module interactions
 - Edge case handling
@@ -410,13 +408,11 @@ Integration tests should verify that components work correctly together:
 - Compiler → Destination plugins
 - End-to-end source rules to compiled rules
 - Error handling across component boundaries
-```
 
 ### API Documentation Examples
 
-Include examples of how the API should be documented:
+[Include examples of how the API should be documented:]
 
-```markdown
 ## API Documentation
 
 All public APIs should be documented using this format:
@@ -434,11 +430,19 @@ All public APIs should be documented using this format:
  * @returns [Description of return value]
  */
 ```
-```
+
+## Follow-up Actions
+
+- [Action 1]
+  - [Additional context and details]
+- [Action 2]
+  - [Additional context and details]
+
+````
 
 ### Review Document
 
-This file should be placed at `docs/project/testing/v0-implementation-review.md`
+This file should be placed at `docs/project/testing/v0-implementation-review.md`. Be sure to add any specific language or instructions that would improve this document and ensure it is easy for an agent to follow.
 
 ```markdown
 # Mixdown v0 Implementation Review
@@ -464,15 +468,6 @@ This file should be placed at `docs/project/testing/v0-implementation-review.md`
 - [ ] Check bundle size and dependencies
 - [ ] Confirm publishing configuration
 - [ ] Test installation in a new project
-```
-
-## Follow-up Actions
-
-- [Action 1]
-  - [Additional context and details]
-- [Action 2]
-  - [Additional context and details]
-
 ```
 
 **You now have your mandate.**
