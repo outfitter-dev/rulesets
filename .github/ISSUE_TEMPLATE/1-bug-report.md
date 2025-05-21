@@ -1,5 +1,5 @@
 ---
-name: ":bug: Bug Report"
+name: "🐞 Bug Report"
 about: "Report a bug or issue with Mixdown"
 title: "[Bug]: "
 labels: ["triage"]
