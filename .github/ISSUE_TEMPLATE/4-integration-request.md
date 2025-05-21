@@ -1,8 +1,9 @@
 ---
-name: ":electric_plug: Integration Request"
+name: "🧩 Integration Request"
 about: "Request a new destination or plugin for Mixdown"
 title: "[Integration]: "
-labels: ["integration", "enhancement"]
+labels: ["triage"]
+type: "integration"
 ---
 
 ## Tool/Platform to Integrate

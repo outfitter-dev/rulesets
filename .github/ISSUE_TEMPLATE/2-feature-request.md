@@ -1,8 +1,9 @@
 ---
-name: ":sparkles: Feature Request"
+name: "✨ Feature Request"
 about: "Suggest an idea for Mixdown"
 title: "[Feature]: "
-labels: ["feature", "triage"]
+labels: ["triage"]
+type: "feature"
 ---
 
 ## Current Problem

@@ -10,19 +10,20 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 
 ## Critical Instructions
 
-✅ Always follow the language spec (`docs/project/LANGUAGE.md`)
+✅ Always follow the language spec @docs/project/LANGUAGE.md
 ✅ Always ensure the `.gitignore` file is updated to exclude potentially sensitive information  
-✅ Unless otherwise directed by the user, always work within the `dev` branch, or a feature branch off of `dev`  
-✅ Commit regularly, group commits logically, and use conventional commit messages. When committing, check to see if any files need to be staged.  
-✅ When writing code, follow the SOLID principles, DRY principles, KISS principle, and include descriptive inline comments for future developers  
-✅ Never commit directly to main. Default to committing to feature branches. Feature branches should point back to dev branch and fix branches should point to the relevant feature branch or dev.
+✅ Always work from a feature branch off of `main` or a `fix/` branch off of a target feature branch
+✅ Commit regularly, group commits logically, and use conventional commit messages. When committing, always check to see if there are unstaged changes.
+✅ When writing code, follow the SOLID principles, DRY principles, KISS principle, and include descriptive inline comments for future developers
+❌ Never automatically create a PR for a feature branch without explicit user direction
+✅ When creating PRs follow the instructions in `.claude/commands/create-pr.md`
 
 ## Key Concepts
 
 ### Source rules
 
 - Source files defining rules, written in 100% previewable Markdown.
-- Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
+- Written in Mixdown notation and use `{{...}}` notation markers to direct the compiler.
 - Compiled into destination-specific rules files:
   - `./mixdown/src/my-rule.md` → `.cursor/rules/my-rule.mdc`
 
@@ -44,7 +45,7 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 ### Notation Marker
 
 - Syntax: `{{...}}`
-- Fundamental building block of Mixdown Notation
+- Fundamental building block of Mixdown notation
 - Used to direct the compiler for various purposes (stems, imports, variables)
 - All Mixdown directives use marker notation, but serve different functions
 - Similar to `<xml-tags>`, but fully Markdown-previewable.
