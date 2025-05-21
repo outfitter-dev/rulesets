@@ -262,7 +262,22 @@ When drafting the plan, use the following key terminology from the Language spec
 
 ---
 
-## 7. `PLAN.md` Template
+## 7. Implementation Components Reference
+
+The following components will need to be implemented for Mixdown v0. This is a reference, not a prescriptive checklist:
+
+- **Repository Setup**: monorepo structure with pnpm, TypeScript configuration, Turborepo pipeline, CI/CD setup
+- **Core Package Implementation**:
+  - **Parser Module**: interface design, markdown parsing, frontmatter support, notation marker processing
+  - **Compiler Module**: interface design, stem processing, variable substitution, destination output handling
+  - **Linter Module**: interface design, validation rules, error reporting
+  - **Core API**: public interfaces, module integration, configuration options
+- **Destination Plugins**:
+  - **Cursor Plugin**: plugin interface implementation, Cursor-specific transformations
+  - **Windsurf Plugin**: plugin interface implementation, Windsurf-specific transformations
+- **Documentation and Release**: README, API docs, release process configuration
+
+## 8. `PLAN.md` Template
 
 When creating the `PLAN.md` document, use this structure:
 
@@ -272,47 +287,6 @@ When creating the `PLAN.md` document, use this structure:
 ## Overview
 
 [Brief description of Mixdown and its purpose]
-
-## Implementation Checklist
-
-- [ ] Repository Setup
-  - [ ] Initialize monorepo structure with pnpm workspaces
-  - [ ] Configure TypeScript, ESLint, and Prettier
-  - [ ] Set up Turborepo pipeline
-  - [ ] Implement CI/CD with GitHub Actions
-
-- [ ] Core Package Implementation
-  - [ ] Parser Module
-    - [ ] Create parser interface
-    - [ ] Implement Markdown parsing
-    - [ ] Add frontmatter support
-    - [ ] Process Mixdown notation markers
-  - [ ] Compiler Module
-    - [ ] Create compiler interface
-    - [ ] Implement stem processing
-    - [ ] Add variable substitution
-    - [ ] Handle destination-specific output
-  - [ ] Linter Module
-    - [ ] Create linter interface
-    - [ ] Implement validation rules
-    - [ ] Add error reporting
-  - [ ] Core API
-    - [ ] Define public interfaces
-    - [ ] Implement integration between modules
-    - [ ] Add configuration options
-
-- [ ] Destination Plugins
-  - [ ] Cursor Plugin
-    - [ ] Implement plugin interface
-    - [ ] Add Cursor-specific transformations
-  - [ ] Windsurf Plugin
-    - [ ] Implement plugin interface
-    - [ ] Add Windsurf-specific transformations
-
-- [ ] Documentation and Release
-  - [ ] Create README documentation
-  - [ ] Write API documentation
-  - [ ] Configure release process
 
 ## Engineering Conventions
 
