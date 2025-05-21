@@ -1,14 +1,22 @@
 # Mixdown v0 Implementation Review
 
+> [!NOTE]
+> This document uses special markers like `mixd-v0`, `mixd-v0.1`, etc. to indicate version-specific implementation details. These markers help with:
+> 1. Making version-specific code easily greppable (e.g., `grep "mixd-v0" -r .` to find all v0-specific code)
+> 2. Identifying components that will be updated in future versions
+> 3. Planning the roadmap for incremental development
+>
+> When implementing code based on this review, include these markers in comments (e.g., `// mixd-v0: minimal implementation`).
+
 ## Purpose
 
 This document outlines the checklist for reviewing the Mixdown v0 implementation. Its goal is to ensure all components are correctly implemented, the system functions end-to-end, code quality meets standards, and the v0 release is ready.
 
-## End-to-End Test Cases
+## End-to-End Test Cases (`mixd-v0`)
 
 The following end-to-end scenarios must be manually tested and verified:
 
-- [ ] **Test 1: Basic Source Rules Parsing and Compilation**
+- [ ] **Test 1: Basic Source Rules Parsing and Compilation** (`mixd-v0`)
   - **Action**: Create a minimal `test.mix.md` file with valid frontmatter and a simple Markdown body.
   - **Command**: Execute the main Mixdown v0 script/function pointing to `test.mix.md`.
   - **Expected Result**:
@@ -16,31 +24,31 @@ The following end-to-end scenarios must be manually tested and verified:
     - Output files (`.mixdown/dist/cursor/test.md` and `.mixdown/dist/windsurf/test.md`) are created.
     - The content of the output files exactly matches the raw Markdown body of `test.mix.md`.
     - Stubbed plugin `write` methods log expected messages.
-- [ ] **Test 2: Source Rules File with No Frontmatter**
+- [ ] **Test 2: Source Rules File with No Frontmatter** (`mixd-v0`)
   - **Action**: Create `no-fm.mix.md` with only a Markdown body (no `---` frontmatter block).
   - **Command**: Execute the main Mixdown v0 script/function.
   - **Expected Result**:
     - Parser should handle this gracefully (e.g., `frontmatter` field is empty or undefined).
     - Linter may report a warning/error if frontmatter is considered mandatory by its v0 schema.
     - Compiler should still pass through the raw body to output files.
-- [ ] **Test 3: Source Rules File with Invalid Frontmatter**
+- [ ] **Test 3: Source Rules File with Invalid Frontmatter** (`mixd-v0`)
   - **Action**: Create `invalid-fm.mix.md` with syntactically incorrect YAML frontmatter or frontmatter that violates the Linter's v0 schema.
   - **Command**: Execute the main Mixdown v0 script/function.
   - **Expected Result**:
     - Parser might return errors or an empty frontmatter object.
     - Linter should report errors detailing the schema violations or syntax issues.
     - Compilation might be skipped or proceed with warnings, depending on error severity. No output files should be generated if critical linting errors occur.
-- [ ] **Test 4: Invocation of Destination Plugins**
+- [ ] **Test 4: Invocation of Destination Plugins** (`mixd-v0`)
   - **Action**: Use a valid `my-rules.mix.md` (as defined in `PLAN-mixdown-v0.md`).
   - **Command**: Execute the main Mixdown v0 script/function.
   - **Expected Result**:
     - Logs or other indicators (e.g., mock file writes) confirm that both `CursorPlugin.write()` and `WindsurfPlugin.write()` were called with the correct `CompiledDoc.output.content` and `destPath`.
-- [ ] **Test 5: Output Directory Creation**
+- [ ] **Test 5: Output Directory Creation** (`mixd-v0`)
   - **Action**: Ensure the `.mixdown/dist/` directory (and subdirectories like `cursor`, `windsurf`) does not exist before running.
   - **Command**: Execute the main Mixdown v0 script/function with a valid source file.
   - **Expected Result**: The `.mixdown/dist/` directory and necessary subdirectories are created automatically.
 
-## Code Quality Review
+## Code Quality Review (`mixd-v0`)
 
 - [ ] **Verify Engineering Conventions**:
   - All files start with a `TLDR:` comment line describing purpose.
@@ -61,7 +69,7 @@ The following end-to-end scenarios must be manually tested and verified:
   - `DestinationPlugin` interface matches the agreed-upon contract.
   - Core modules (Parser, Linter, Compiler) have clear and logical public APIs for their v0 functionality.
 
-## Release Readiness
+## Release Readiness (`mixd-v0`)
 
 - [ ] **Verify All Tests Pass**:
   - **Action**: Run `pnpm turbo test` in the root.

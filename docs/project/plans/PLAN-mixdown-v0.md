@@ -1,10 +1,18 @@
 # Mixdown v0 Implementation Plan
 
+> [!NOTE]
+> This document uses special markers like `mixd-v0`, `mixd-v0.1`, etc. to indicate version-specific implementation details. These markers help with:
+> 1. Making version-specific code easily greppable (e.g., `grep "mixd-v0" -r .` to find all v0-specific code)
+> 2. Identifying components that will be updated in future versions
+> 3. Planning the roadmap for incremental development
+>
+> When implementing code based on this plan, include these markers in comments (e.g., `// mixd-v0: minimal implementation`) to maintain traceability from plan to code.
+
 ## Overview
 
 Mixdown is a Markdown-previewable rules compiler that allows authoring a single source rules file (source rules) in Markdown and compiling it into compiled rules for various destinations (e.g., AI assistants, IDEs). Mixdown v0 aims to establish a production-ready monorepo, ship the initial `@mixdown/core` package (including a basic parser, a pass-through compiler, and a frontmatter linter), and prove the end-to-end flow by processing a `my-rules.mix.md` file, writing compiled rules to `.mixdown/dist/`, and invoking stubbed destination plugins for Cursor and Windsurf.
 
-While v0 will not process Mixdown notation markers (`{{...}}`) within the content body, the architecture will be laid to easily incorporate this functionality in subsequent v0.x releases (e.g., v0.1 for `{{stem}}` parsing, v0.2 for variables, etc.).
+While v0 will not process Mixdown notation markers (`{{...}}`) within the content body (`mixd-v0`), the architecture will be laid to easily incorporate this functionality in subsequent v0.x releases (e.g., `mixd-v0.1` for `{{stem}}` parsing, `mixd-v0.2` for variables, etc.).
 
 ## Implementation Checklist
 
@@ -62,10 +70,10 @@ While v0 will not process Mixdown notation markers (`{{...}}`) within the conten
 - [ ] **Task 2: Implement v0 Parser Module**
   - Create `packages/core/src/parser/index.ts`.
   - Implement `parse(content: string): Promise<ParsedDoc>` function.
-    - For v0, `ParsedDoc` will be a simplified version of `CompiledDoc.source` and `CompiledDoc.ast` (primarily frontmatter and raw body).
+    - `mixd-v0`: `ParsedDoc` will be a simplified version of `CompiledDoc.source` and `CompiledDoc.ast` (primarily frontmatter and raw body).
     - It should parse YAML frontmatter from a Markdown string.
     - It should separate the raw Markdown body.
-    - `ParsedDoc.ast` will be minimal for v0 (e.g., `stems: [], imports: [], variables: [], markers: []`).
+    - `mixd-v0`: `ParsedDoc.ast` will be minimal (e.g., `stems: [], imports: [], variables: [], markers: []`).
   - Add unit tests for frontmatter parsing and body extraction (including edge cases like missing frontmatter).
   - **File Structure**:
 
@@ -81,7 +89,7 @@ While v0 will not process Mixdown notation markers (`{{...}}`) within the conten
 - [ ] **Task 3: Implement v0 Linter Module**
   - Create `packages/core/src/linter/index.ts`.
   - Implement `lint(parsedDoc: ParsedDoc, config?: LinterConfig): Promise<LintResult[]>`.
-    - For v0, it validates the parsed frontmatter against a basic schema (e.g., presence of a `mixdown` key or specific expected fields if any defined for v0).
+    - `mixd-v0`: It validates the parsed frontmatter against a basic schema (e.g., presence of a `mixdown` key or specific expected fields).
     - `LintResult` should define structure for errors (e.g., `message`, `line`, `column`, `severity`).
   - Add unit tests for frontmatter validation.
   - **File Structure**:
@@ -98,9 +106,9 @@ While v0 will not process Mixdown notation markers (`{{...}}`) within the conten
 - [ ] **Task 4: Implement v0 Compiler Module**
   - Create `packages/core/src/compiler/index.ts`.
   - Implement `compile(parsedDoc: ParsedDoc, destinationId: string, projectConfig?: any): Promise<CompiledDoc>`.
-    - For v0, this function will be a pass-through for the body content.
+    - `mixd-v0`: This function will be a pass-through for the body content.
     - `CompiledDoc.source` will be populated from `ParsedDoc`.
-    - `CompiledDoc.ast` will be populated from `ParsedDoc.ast` (which is minimal in v0).
+    - `mixd-v0`: `CompiledDoc.ast` will be populated from `ParsedDoc.ast` (which is minimal).
     - `CompiledDoc.output.content` will be the raw Markdown body from `ParsedDoc`.
     - `CompiledDoc.output.metadata` can be empty or include basic source frontmatter.
     - `CompiledDoc.context` will include `destinationId` and any relevant `projectConfig`.
@@ -121,7 +129,7 @@ While v0 will not process Mixdown notation markers (`{{...}}`) within the conten
   - Implement the `DestinationPlugin` interface for each.
     - `name`: "cursor" or "windsurf".
     - `configSchema()`: Return a basic JSON schema (can be an empty object schema for v0).
-    - `write()`: For v0, this function can simply log the `compiled.output.content` and `destPath` to the console using the provided logger, or write it to a mock file path. It should not perform any complex transformations.
+    - `write()`: `mixd-v0`: This function can simply log the `compiled.output.content` and `destPath` to the console using the provided logger, or write it to a mock file path. It should not perform any complex transformations.
   - Create `packages/core/src/destinations/index.ts` to export the plugin instances.
   - Add basic unit tests to ensure plugins conform to the interface and `write` can be called.
   - **File Structure**:
@@ -172,7 +180,7 @@ While v0 will not process Mixdown notation markers (`{{...}}`) within the conten
   # This is the main content
 
   This is a paragraph of the rule. In v0, this content will be passed through as-is.
-  `{{stems}}`, `{{$variables}}`, and `{{>imports}}` will be ignored by the v0 parser and compiler.
+  `{{stems}}`, `{{$variables}}`, and `{{>imports}}` will be ignored by the v0 parser and compiler. <!-- mixd-v0 -->
   ```
 
   - **Acceptance Criteria**: Sample file is created and available for testing.
@@ -188,7 +196,7 @@ While v0 will not process Mixdown notation markers (`{{...}}`) within the conten
 
 - [ ] **Task 1: Draft Initial `README.md` for `@mixdown/core`**
   - Include basic usage, purpose, and how to contribute.
-  - Explain the v0 limitations (no marker processing) and the roadmap for v0.1.
+  - Explain the `mixd-v0` limitations (no marker processing) and the roadmap for `mixd-v0.1`.
   - **Acceptance Criteria**: `README.md` for `@mixdown/core` is created.
   - **Dependencies**: None.
 - [ ] **Task 2: Draft Root `README.md`**
@@ -647,7 +655,7 @@ export class ConsoleLogger implements Logger {
 
 /**
  * Represents the structure of a parsed Mixdown stem.
- * For v0, this will be minimal as stems are not processed from the body.
+ * `mixd-v0`: This will be minimal as stems are not processed from the body.
  */
 export interface Stem {
   name: string;
@@ -658,7 +666,7 @@ export interface Stem {
 
 /**
  * Represents the structure of a parsed Mixdown import.
- * For v0, this will be minimal.
+ * `mixd-v0`: This will be minimal.
  */
 export interface Import {
   path: string;
@@ -668,7 +676,7 @@ export interface Import {
 
 /**
  * Represents the structure of a parsed Mixdown variable.
- * For v0, this will be minimal.
+ * `mixd-v0`: This will be minimal.
  */
 export interface Variable {
   name: string;
@@ -677,7 +685,7 @@ export interface Variable {
 
 /**
  * Represents the structure of a generic Mixdown marker.
- * For v0, this will be minimal.
+ * `mixd-v0`: This will be minimal.
  */
 export interface Marker {
   type: 'stem' | 'import' | 'variable' | 'unknown';
@@ -719,7 +727,7 @@ export interface CompiledDoc {
 
   /**
    * Parsed representation of the source document.
-   * For v0, `stems`, `imports`, `variables`, and `markers` will be empty
+   * `mixd-v0`: `stems`, `imports`, `variables`, and `markers` will be empty
    * or reflect only what might be in frontmatter if we decide to parse that deep.
    * The primary focus for v0 body content is that it's not processed for markers.
    */
@@ -798,13 +806,13 @@ export interface DestinationPlugin {
 
 - **Risk**: Over-complicating v0 by trying to anticipate too much of v0.1+.
   - **Impact**: Slower delivery of v0, potential for unnecessary abstractions.
-  - **Mitigation**: Strictly adhere to the v0 scope (pass-through compiler for body). Design interfaces thoughtfully but implement only what's needed for v0. Clearly document what's deferred.
+  - **Mitigation**: Strictly adhere to the v0 scope (pass-through compiler for body). Design interfaces thoughtfully but implement only what's needed for `mixd-v0`. Clearly document what's deferred.
 - **Risk**: Turborepo and pnpm workspace setup proves more complex than anticipated for new team members or AI agents.
   - **Impact**: Slower onboarding, build/CI issues.
   - **Mitigation**: Provide clear, step-by-step setup instructions in the root README. Ensure all scripts are well-defined and work consistently. Keep the setup as standard as possible.
 - **Risk**: Defining a `CompiledDoc` AST structure that is too rigid or too loose for future marker processing.
   - **Impact**: Requires significant refactoring in v0.1 when marker processing is introduced.
-  - **Mitigation**: For v0, the AST fields related to body content (`stems`, `imports`, `variables`, `markers`) will be empty or minimal. The focus is on the `source` and `output.content` (raw body). Review the AST design with v0.1 in mind before finalizing v0.
+  - **Mitigation**: `mixd-v0`: The AST fields related to body content (`stems`, `imports`, `variables`, `markers`) will be empty or minimal. The focus is on the `source` and `output.content` (raw body). Review the AST design with `mixd-v0.1` in mind before finalizing v0.
 - **Risk**: CI/CD pipeline for Changesets and pnpm publishing is flaky or hard to debug.
   - **Impact**: Delays releases, frustrating developer experience.
   - **Mitigation**: Test the release process thoroughly with alpha/beta versions. Use existing robust GitHub Actions for Changesets. Ensure proper NPM_TOKEN and GITHUB_TOKEN setup.
@@ -813,7 +821,7 @@ export interface DestinationPlugin {
 
 ### Component Tests
 
-Structure tests to mirror the implementation:
+Structure tests to mirror the implementation (`mixd-v0`):
 
 ```text
 packages/core/src/
@@ -837,7 +845,7 @@ Each module should have comprehensive tests covering:
 
 Integration tests in `packages/core/tests/integration/` should verify that components work correctly together:
 
-- **v0 Focus**:
+- **`mixd-v0` Focus**:
   - Reading `my-rules.mix.md`.
   - Parser (frontmatter, raw body) → Linter (frontmatter validation).
   - Parser → Compiler (raw body pass-through) → Destination plugins (`write` method called with correct raw body).
@@ -852,7 +860,7 @@ All public APIs (especially in `@mixdown/core/src/index.ts` and interfaces) shou
 // TLDR: Example of an API function. This function performs an example action.
 
 /**
- * Orchestrates the Mixdown v0 build process for a single file.
+ * Orchestrates the Mixdown v0 build process for a single file. `mixd-v0`
  * Reads, parses, lints, compiles, and writes to destinations.
  *
  * @example
