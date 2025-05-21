@@ -194,7 +194,7 @@ version: 2.0 # version number for this file
 
 ## Naming Conventions
 
-- Source rules files: `kebab-case.mix.md` (preferred) or `kebab-case.md` (e.g., `coding-standards.mix.md`)
+- Source rules files: `kebab-case.mix.md` (preferred) (e.g., `coding-standards.mix.md`)
 - Directories: `kebab-case` (e.g., `_mixins`)
 - Config files: `kebab-case.config.json` (e.g., `mixdown.config.json`)
 - Stem names: `kebab-case` (e.g., `{{user-instructions}}`)

@@ -18,7 +18,7 @@ The problem is, they all have different formats, behavior, and capabilities, whi
 
 Mixdown is "Terraform for AI rules": declare your ideal rules once, compile for dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative rules—no copy‑paste, no drift, just high‑quality, version-controlled context.
 
-With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single source rules file (`.mix.md` or `.md`). This source rules file is the "gold master" for your instructions, from which individual compiled rules are created for each destination and sent to the right places.
+With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single source rules file (`.mix.md`). This source rules file is the "gold master" for your instructions, from which individual compiled rules are created for each destination and sent to the right places.
 
 The app consists of:
 
@@ -34,7 +34,7 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 ## Core Concepts
 
 **source rules**
-: source rules files, written in 100% previewable Markdown with `.mix.md` or `.md` extensions. Written in Mixdown notation and use `{{...}}` notation markers to direct the compiler.
+: source rules files, written in 100% previewable Markdown with `.mix.md` (preferred) extension. Written in Mixdown notation and use `{{...}}` notation markers to direct the compiler.
 
 **compiled rules**
 : Destination-specific compiled files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their destination directories, these are referred to as "tool-ready rules".
