@@ -4,7 +4,7 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 
 ## What is Mixdown?
 
-If you're reading this, you're probably already familiar with at least one of the AI coding tools that Mixdown is [designed to work with](#supported-target-tools). Each tool has its own unique way of being provided context, guidance, and operational instructions for your projects e.g. Cursor's rules (`.cursor/rules`), OpenAI Codex instructions (`codex.mix.md`), Claude Code's instructions (`CLAUDE.md`), etc.
+If you're reading this, you're probably already familiar with at least one of the AI coding tools that Mixdown is [designed to work with](#supported-target-tools). Each tool has its own unique way of being provided context, guidance, and operational instructions for your projects e.g. Cursor's rules (`.cursor/rules`), OpenAI Codex instructions (`codex.md`), Claude Code's instructions (`CLAUDE.md`), etc.
 
 The problem is, they all have different formats, behavior, and capabilities, which can become a huge pain to manage. This can be frustrating, and might even lead you to just sticking to one tool. But that's no fun, and you'll be missing out on all the awesome capabilities and differences each tool has to offer! That's where Mixdown comes in…
 
