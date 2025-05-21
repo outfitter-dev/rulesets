@@ -15,6 +15,7 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 ✅ Unless otherwise directed by the user, always work within the `dev` branch, or a feature branch off of `dev`  
 ✅ Commit regularly, group commits logically, and use conventional commit messages. When committing, check to see if any files need to be staged.  
 ✅ When writing code, follow the SOLID principles, DRY principles, KISS principle, and include descriptive inline comments for future developers  
+✅ Never commit directly to main. Default to committing to feature branches. Feature branches should point back to dev branch and fix branches should point to the relevant feature branch or dev.
 
 ## Key Concepts
 
