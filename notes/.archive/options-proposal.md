@@ -413,7 +413,7 @@ The current approach for filtering tracks when importing from other mix files us
 {{> my-rules tracks="included-track,!excluded-track"}}
 
 <!-- This would include only the 'included-track'
-     from my-rules.md, but exclude 'excluded-track' -->
+     from my-rules.mix.md, but exclude 'excluded-track' -->
 ```
 
 ### Proposed Approach
