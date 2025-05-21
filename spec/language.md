@@ -76,7 +76,7 @@ This document provides terminology guidance for consistent language in Mixdown d
 
 | Entity Type | Naming Convention | Example |
 |-------------|-------------------|---------|
-| Mix files | `kebab-case.md` | `coding-standards.md` |
+| Mix files | `kebab-case.mix.md` | `coding-standards.mix.md` |
 | Directory | `kebab-case` | `_samples` |
 | Config files | `kebab-case.config.json` | `mixdown.config.json` |
 | Track markers | `kebab-case` | `{{user-instructions}}` |
