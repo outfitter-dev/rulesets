@@ -72,7 +72,7 @@ Follow the detailed checklist in `/notes/terminology-update-plan.md` and verify 
 
 ## Verification Workflow
 
-1. Start with the canonical language specification (spec/LANGUAGE.md)
+1. Start with the canonical language specification (docs/project/LANGUAGE.md)
 2. Proceed to README.md as the most visible entry point
 3. Continue with other spec files
 4. Verify documentation in the docs/ directory

@@ -14,10 +14,10 @@ explicitly accepted) before the terminology update is considered **fully** finis
 | **“Mix files / mix file”** | 2 | CHANGELOG.md:3  •  spec/ARCHITECTURE.md:281 |
 | Stand-alone word **“mix”** (context-dependent) | 24 | notes/stem-heading.md (several), spec/OVERVIEW.md (examples like `my-mix.md`), spec/ARCHITECTURE.md, etc. |
 | **“Track”** | 11 | notes/stem-heading.md:311 (`# TRACK NAME` example), docs/plugins/codex-cli/rules-use.md (progress tracking), many in spec/ARCHITECTURE.md ("track filtering") |
-| **Snippet / _snippets** | 6 | spec/ARCHITECTURE.md:178 (JSON comment), spec/LANGUAGE.md (historic note), CHANGELOG.md |
+| **Snippet / _snippets** | 6 | spec/ARCHITECTURE.md:178 (JSON comment), docs/project/LANGUAGE.md (historic note), CHANGELOG.md |
 | **“target platform”** | 1 | spec/ARCHITECTURE.md:385 |
 | **“target-specific”** | 13 | spec/ARCHITECTURE.md (multiple) |
-| Old directories `.mixdown/mixes/`, `.mixdown/output/` | 6 | spec/LANGUAGE.md, CHANGELOG.md |
+| Old directories `.mixdown/mixes/`, `.mixdown/output/` | 6 | docs/project/LANGUAGE.md, CHANGELOG.md |
 | Deprecated import syntax `rules#[…]` | 5 | spec/OVERVIEW.md:736–799 |
 | Deprecated property `code-block` | 1 (plus rule-name example) | spec/OVERVIEW.md:375–376 |
 | Phrase **“tool-specific”** | 19 | README.md, docs/rules-overview.md, ai-rules-guide.md, etc. |
@@ -278,14 +278,14 @@ Once these items are cleared, we can confidently mark the terminology migration 
    - Ensure consistent use of "Source Rules", "Destination", "Stem", etc.
    - Update directory references to use `.mixdown/src/` and `.mixdown/dist/`
 
-3. **spec/LANGUAGE.md**
+3. **docs/project/LANGUAGE.md**
    - Comprehensive update of all terminology
    - Update directory structure examples
    - Update compilation flow descriptions
 
 ### Secondary Documentation Sources
 
-1. **docs/index.md**
+1. **docs/project/index.md**
    - Update all instances of "mix" to "Source Rules"
    - Update "target" to "destination"
    - Update directory references
@@ -326,7 +326,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 
 ### Phased Implementation Strategy
 
-1. Start with updating spec/LANGUAGE.md completely as the canonical terminology reference
+1. Start with updating docs/project/LANGUAGE.md completely as the canonical terminology reference
 2. Update README.md as the most visible entry point
 3. Update other spec files
 4. Update documentation in docs/

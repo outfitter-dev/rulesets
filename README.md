@@ -134,7 +134,7 @@ project/
 | **Destination Variable** | `{{$destination}}` / `{{$destination.id}}` | Injects current destination name/ID. |
 | **Instruction Placeholder** | `[fill this in]` | Marker for LLM to complete. |
 
-The full Mixdown notation specification can be found in `spec/OVERVIEW.md`.
+The full Mixdown notation specification can be found in `docs/project/OVERVIEW.md`.
 
 ## Versioning and Changelog
 
@@ -168,5 +168,5 @@ Please see our general contributing guidelines for more details.
 
 ## References
 
-- `spec/OVERVIEW.md` – Full Mixdown notation specification.
+- `docs/project/OVERVIEW.md` – Full Mixdown notation specification.
 - `docs/architecture/DECISIONS.md` – Design rationale & deep-dive.

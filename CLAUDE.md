@@ -10,7 +10,7 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 
 ## Critical Instructions
 
-✅ Always follow the language spec (`mixdown/spec/language.md`)  
+✅ Always follow the language spec (`docs/project/LANGUAGE.md`)
 ✅ Always ensure the `.gitignore` file is updated to exclude potentially sensitive information  
 ✅ Unless otherwise directed by the user, always work within the `dev` branch, or a feature branch off of `dev`  
 ✅ Commit regularly, group commits logically, and use conventional commit messages. When committing, check to see if any files need to be staged.  
