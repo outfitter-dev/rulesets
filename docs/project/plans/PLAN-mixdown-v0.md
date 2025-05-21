@@ -402,7 +402,7 @@ packages:
 #### `packages/core/package.json` (Initial)
 
 ```jsonc
-// TLDR: Package definition for @mixdown/core. Contains the parser, compiler, linter, and plugin interfaces.
+// TLDR: Package definition for @mixdown/core. Contains the parser, compiler, linter, and plugin interfaces (mixd-v0)
 {
   "name": "@mixdown/core",
   "version": "0.0.0", // Will be updated by Changesets
@@ -445,7 +445,7 @@ packages:
 #### `packages/core/tsconfig.json`
 
 ```jsonc
-// TLDR: TypeScript configuration for the @mixdown/core package. Extends the base tsconfig.json for specific package settings.
+// TLDR: TypeScript configuration for the @mixdown/core package. Extends the base tsconfig.json for specific package settings (mixd-v0)
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
@@ -463,7 +463,7 @@ packages:
 #### `packages/core/tsup.config.ts`
 
 ```typescript
-// TLDR: Build configuration for the @mixdown/core package using tsup. Defines entry points, output formats (ESM, CJS), and d.ts generation.
+// TLDR: Build configuration for the @mixdown/core package using tsup. Defines entry points, output formats (ESM, CJS), and d.ts generation (mixd-v0)
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
@@ -472,7 +472,8 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  splitting: false,: keep it simple. Can enable later if needed.
+  splitting: false, // TLDR: keep it simple. Can enable later if needed (mixd-v0)
+  // TODO (mixd-v0.1): Enable code splitting for better performance
   shims: true, // If using features that need shimming for CJS/ESM interop
 });
 ```
@@ -480,7 +481,7 @@ export default defineConfig({
 #### `packages/core/vitest.config.ts`
 
 ```typescript
-// TLDR: Test configuration for the @mixdown/core package using Vitest. Enables global test utilities and coverage reporting.
+// TLDR: Test configuration for the @mixdown/core package using Vitest. Enables global test utilities and coverage reporting (mixd-v0)
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -500,7 +501,7 @@ export default defineConfig({
 #### `.github/workflows/ci.yml`
 
 ```yaml
-# TLDR: GitHub Actions workflow for Continuous Integration. Runs on push/PR, installs, lints, tests, builds, and handles releases.
+# TLDR: GitHub Actions workflow for Continuous Integration. Runs on push/PR, installs, lints, tests, builds, and handles releases (mixd-v0)
 name: CI
 
 on:
@@ -616,33 +617,33 @@ jobs:
 #### `packages/core/src/interfaces/logger.ts`
 
 ```typescript
-// TLDR: Defines the Logger interface for Mixdown. Provides a simple contract for logging messages at different levels.
+// TLDR: Defines the Logger interface for Mixdown. Provides a simple contract for logging messages at different levels (mixd-v0)
 export interface Logger {
-  // <!-- TLDR: Logs a debug message. -->
+  // <!-- TLDR: Logs a debug message (mixd-v0) -->
   debug(message: string, ...args: any[]): void;
-  // <!-- TLDR: Logs an informational message. -->
+  // <!-- TLDR: Logs an informational message (mixd-v0) -->
   info(message: string, ...args: any[]): void;
-  // <!-- TLDR: Logs a warning message. -->
+  // <!-- TLDR: Logs a warning message (mixd-v0) -->
   warn(message: string, ...args: any[]): void;
-  // <!-- TLDR: Logs an error message. -->
+  // <!-- TLDR: Logs an error message (mixd-v0) -->
   error(message: string | Error, ...args: any[]): void;
 }
 
 // Basic console logger implementation for v0
 export class ConsoleLogger implements Logger {
-  // <!-- TLDR: Logs a debug message to the console. -->
+  // <!-- TLDR: Logs a debug message to the console (mixd-v0) -->
   public debug(message: string, ...args: any[]): void {
     console.debug(`[DEBUG] ${message}`, ...args);
   }
-  // <!-- TLDR: Logs an informational message to the console. -->
+  // <!-- TLDR: Logs an informational message to the console (mixd-v0) -->
   public info(message: string, ...args: any[]): void {
     console.info(`[INFO] ${message}`, ...args);
   }
-  // <!-- TLDR: Logs a warning message to the console. -->
+  // <!-- TLDR: Logs a warning message to the console (mixd-v0) -->
   public warn(message: string, ...args: any[]): void {
     console.warn(`[WARN] ${message}`, ...args);
   }
-  // <!-- TLDR: Logs an error message to the console. -->
+  // <!-- TLDR: Logs an error message to the console (mixd-v0) -->
   public error(message: string | Error, ...args: any[]): void {
     if (message instanceof Error) {
       console.error(`[ERROR] ${message.message}`, message.stack, ...args);
@@ -656,7 +657,7 @@ export class ConsoleLogger implements Logger {
 #### `packages/core/src/interfaces/compiled-doc.ts`
 
 ```typescript
-// TLDR: Defines the CompiledDoc interface for Mixdown. Represents the result of compiling a source rules file for a specific destination.
+// TLDR: Defines the CompiledDoc interface for Mixdown. Represents the result of compiling a source rules file for a specific destination (mixd-v0)
 
 /**
  * Represents the structure of a parsed Mixdown stem.
@@ -762,7 +763,7 @@ export interface CompiledDoc {
 #### `packages/core/src/interfaces/destination-plugin.ts`
 
 ```typescript
-// TLDR: Defines the DestinationPlugin interface for Mixdown. Contract for plugins that write compiled rules to specific destinations.
+// TLDR: Defines the DestinationPlugin interface for Mixdown. Contract for plugins that write compiled rules to specific destinations (mixd-v0)
 import type { JSONSchema7 } from 'json-schema'; // Using JSONSchema7 type for configSchema
 import type { CompiledDoc } from './compiled-doc';
 import type { Logger } from './logger';
@@ -773,14 +774,14 @@ export interface DestinationPlugin {
   /**
    * Canonical ID for the destination plugin.
    * Should be unique, kebab-case. e.g., "cursor", "windsurf".
-   * <!-- TLDR: Returns the canonical name of the plugin. -->
+   * <!-- TLDR: Returns the canonical name of the plugin (mixd-v0) -->
    */
   get name(): string;
 
   /**
    * Returns a JSON schema describing the configuration options specific to this plugin.
    * This schema is used for validating plugin configuration.
-   * <!-- TLDR: Provides a JSON schema for the plugin's configuration. -->
+   * <!-- TLDR: Provides a JSON schema for the plugin's configuration (mixd-v0) -->
    */
   configSchema(): JSONSchema7;
 
@@ -788,7 +789,7 @@ export interface DestinationPlugin {
    * Writes the compiled document to the destination.
    * This method is responsible for handling file I/O and any final transformations
    * specific to the destination's format or requirements.
-   * <!-- TLDR: Writes the compiled document to the target destination. -->
+   * <!-- TLDR: Writes the compiled document to the target destination (mixd-v0) -->
    *
    * @param ctx - The context object for the write operation.
    * @param ctx.compiled - The compiled document to write.
@@ -862,7 +863,7 @@ Integration tests in `packages/core/tests/integration/` should verify that compo
 All public APIs (especially in `@mixdown/core/src/index.ts` and interfaces) should be documented using TSDoc.
 
 ```typescript
-// TLDR: Example of an API function. This function performs an example action.
+// TLDR: Example of an API function. This function performs an example action (mixd-v0)
 
 /**
  * Orchestrates the Mixdown v0 build process for a single file.
@@ -896,7 +897,7 @@ export async function runMixdownV0(
   logger: Logger,
   projectConfig?: any,
 ): Promise<void> {
-  // <!-- TLDR: Main orchestration logic for reading, parsing, linting, compiling, and writing a Mixdown file. -->
+  // <!-- TLDR: Main orchestration logic for reading, parsing, linting, compiling, and writing a Mixdown file (mixd-v0) -->
   // Implementation details...
 }
 ```
