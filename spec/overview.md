@@ -81,14 +81,14 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
   - Source instruction files, written in 100% previewable Markdown.
   - Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
   - Compiled into tool-specific rules files:
-    - `./mixdown/mixes/my-rule.md` → `.cursor/rules/my-rule.mdc`
+    - `./mixdown/mixes/my-rule.mix.md` → `.cursor/rules/my-rule.mdc`
 - **Target**
   - A supported tool, such as `cursor`, `windsurf`, or `claude-code`.
   - Defines tool-specific criteria for compiling mixes to rules files.
   - Provided through plugins.
 - **Output**
   - Target-specific (tool) output files, rendered from the source mix.
-  - Examples for a mix called `project-conventions.md`:
+  - Examples for a mix called `project-conventions.mix.md`:
     - Cursor → `.cursor/rules/project-conventions.mdc`
     - Claude Code → `./CLAUDE.md#project-conventions`
     - OpenAI Codex → `./conventions.md`.
@@ -570,7 +570,7 @@ Renders as:
 
 ```yaml
 ---
-# .mixdown/mixes/my-rule.md
+# .mixdown/mixes/my-rule.mix.md
 mixdown:
   version: 0.1.0 # optional, version number for the Mixdown format used
 description: "Rules for this project" # optional, may be useful for tools that use descriptions, such as Cursor, Windsurf, etc.
@@ -618,7 +618,7 @@ Frontmatter is used to provide metadata about the mix file and control how it's 
 Standard Markdown links work as expected external links, and links to other mix files:
 
 - Regular links: `[Text](url)`
-- Links to other mix files: `[Text](other-mix.md)`
+- Links to other mix files: `[Text](other-mix.mix.md)`
 
 Mixdown also provides a `{{link}}` notation marker to allow for more expressive link notation.
 
@@ -662,10 +662,10 @@ Variables are dynamic values using the `{{$...}}` notation. They are replaced in
 Imports allow you to reuse content across multiple mixes by embedding mixes, tracks within a mix, or snippets into rendered outputs. They are denoted by the `{{> ...}}` notation.
 
 ```markdown
-<!-- Embeds `/_snippets/legal.md` -->
+<!-- Embeds `/_snippets/legal.mix.md` -->
 {{> @legal}}
 
-<!-- Embed a specific track from the `conventions.md` mix file -->
+<!-- Embed a specific track from the `conventions.mix.md` mix file -->
 {{> conventions#track-name}}
 
 <!-- Embed a track from within the existing file -->
@@ -677,10 +677,10 @@ Imports allow you to reuse content across multiple mixes by embedding mixes, tra
 
 Example:
 
-Let's say that we have a mix file called `conventions.md` that contains a track called `style-guide`. We can import it into another mix file called `my-rules.md` and include only the `style-guide` track:
+Let's say that we have a mix file called `conventions.mix.md` that contains a track called `style-guide`. We can import it into another mix file called `my-rules.mix.md` and include only the `style-guide` track:
 
 ```markdown
-<!-- my-rules.md -->
+<!-- my-rules.mix.md -->
 Important: Be sure to follow the style guide:
 
 {{> conventions#style-guide}}
@@ -692,7 +692,7 @@ The above will render as:
 Important: Be sure to follow the style guide:
 
 <style_guide>
-  ( contents of #conventions.md#style-guide )
+  ( contents of #conventions.mix.md#style-guide )
 </style_guide>
 ```
 
@@ -719,13 +719,13 @@ Examples:
 ```markdown
 {{> my-rules(!less-important-considerations)}}
 
-<!-- 👆 This would include all tracks from `my-rules.md`
+<!-- 👆 This would include all tracks from `my-rules.mix.md`
      except for `less-important-considerations`. -->
 
 {{> my-rules(+important-considerations)}}
 
 <!-- 👆 This would include only the `important-considerations`
-     track from `my-rules.md`. -->
+     track from `my-rules.mix.md`. -->
 ```
 
 #### Target-Specific Track Filtering
@@ -757,14 +757,14 @@ Snippets are modular, reusable content components, stored in the `/_snippets` di
 Example:
 
 ```markdown
-<!-- Snippet: `/_snippets/remember.md` -->
+<!-- Snippet: `/_snippets/remember.mix.md` -->
 1. Always follow the code conventions.
 2. Never commit directly to `main`
 3. Use conventional commit messages.
 
 ---
 
-<!-- Mix: `my-rules.md` -->
+<!-- Mix: `my-rules.mix.md` -->
 # My Rules
 
 ...rest of mix content...
@@ -910,7 +910,7 @@ project/
 ├── .mixdown/
 │   ├── outputs/
 │   │   └── builds/            # compiled outputs
-│   ├── mixes/                 # Mix files (*.md)
+│   ├── mixes/                 # Mix files (*.mix.md)
 │   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json    # compiler config
 ```

@@ -18,7 +18,7 @@ The problem is, they all have different formats, behavior, and capabilities, whi
 
 Mixdown is "Terraform for AI prompts": declare your ideal prompt rules once, target dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative instructions—no copy‑paste, no drift, just high‑quality, version-controlled context.
 
-With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single "mix" file (`.md`). This mix is the "gold master" for your instructions, from which individual target-specific outputs are created in their respective format and sent to the right places.
+With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single "mix" file (`.mix.md`). This mix is the "gold master" for your instructions, from which individual target-specific outputs are created in their respective format and sent to the right places.
 
 The app consists of:
 
@@ -114,7 +114,7 @@ project/
 ├── .mixdown/
 │   ├── outputs/
 │   │   └── builds/         # compiled outputs
-│   ├── mixes/       # Mix files (*.md)
+│   ├── mixes/       # Mix files (*.mix.md)
 │   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json # compiler config
 ```
