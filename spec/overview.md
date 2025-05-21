@@ -791,7 +791,7 @@ Example:
 
 Triple-brace `{{{...}}}` to skip processing of the content and render it in the raw Mixdown Notation.
 
-- This is useful for writing documentation or rules that need to show Mixdown-flavored Markdown (mix.md) literally
+- This is useful for writing documentation or rules that need to show Mixdown-flavored Markdown (mix.mix.md) literally
 - Wrapping a section in triple curly braces preserves all Mixdown Notation and content exactly as written
 - Example:
 
