@@ -5,18 +5,18 @@ title: "[Feature]: "
 labels: ["feature", "triage"]
 ---
 
-## What's going on?
+## Current Problem
 
-[A clear and concise description of what problem or impediment you're facing.]
+[Brief description of the problem or limitation you're facing.]
 
-## What do you want to see happen?
+## Proposed Solution
 
-[A clear and concise description of what changes you'd like to see.]
+[Description of the feature or change you'd like to see.]
 
-## What alternatives have you considered?
+## Alternatives Considered
 
-[A clear and concise description of any alternative solutions or features you've considered.]
+[Other solutions or features you've considered.]
 
-## Any other notes to share?
+## Additional Context
 
-[Add any other context or screenshots about the feature request here.]
+[Any other information, mockups, or examples that help explain your request.]

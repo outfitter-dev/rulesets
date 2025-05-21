@@ -5,29 +5,29 @@ title: "[Bug]: "
 labels: ["bug", "triage"]
 ---
 
-## What's happening?
+## Bug Description
 
 [A clear and concise description of what the bug is.]
 
-### How can this be reproduced?
+## Steps to Reproduce
 
 1. …
 2. …
 3. …
 
-### What did you expect to happen?
+## Expected Behavior
 
-[A clear and concise description of what you expected to happen.]
+[What you expected to happen.]
 
-### Do you have any screenshots or other context?
+## Screenshots and Context
 
-> If applicable, add screenshots to help explain your problem.
+[Screenshots, code samples, or other helpful context.]
 
-## Where did this happen?
+## Environment
 
-- **Device:** [e.g. Laptop, Desktop, Mobile]
-- **Interface:** [e.g. Cursor, CLI, API, MCP]
+- **Device:** [Laptop, Desktop, etc.]
+- **Interface:** [Cursor, CLI, API, etc.]
 
-## Any other notes to share?
+## Additional Notes
 
-- [Add any other context about the problem here.]
+[Any other information that might help us resolve this issue.]

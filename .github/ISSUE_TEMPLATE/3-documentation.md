@@ -5,31 +5,25 @@ title: "[Docs]: "
 labels: ["documentation", "triage"]
 ---
 
-## What documentation needs attention?
+## Documentation Area
 
 [Describe which part of the documentation needs improvement or is missing.]
 
-### Current state
-
-[Describe what the current documentation says or where information should be but isn't.]
-
-### Suggested improvement
+## Suggested Improvement
 
 [Describe how the documentation could be improved, clarified, or expanded.]
 
-## Is this affecting your use of Mixdown?
+## Impact on Usage
 
-[Explain how this documentation issue affects your use of Mixdown - e.g., slows down learning, causes incorrect usage, etc.]
+[How this documentation issue affects your use of Mixdown.]
 
-## Additional context
+## Additional Context
 
-[Any other helpful information, links to related documentation, screenshots, etc.]
+[Any other helpful information, links to related documentation, etc.]
 
-## Your expertise level with Mixdown
+## Your Experience Level
 
 - [ ] Beginner (just getting started)
 - [ ] Intermediate (using basic features successfully)
-- [ ] Advanced (using complex features, creating custom configurations)
+- [ ] Advanced (using complex features, custom configurations)
 - [ ] Expert (contributing code or extensions)
-
-This helps us adjust the documentation to the right level of detail.
