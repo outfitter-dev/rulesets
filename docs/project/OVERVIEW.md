@@ -13,7 +13,7 @@
 - [Key Features](#key-features)
   - [Mixdown notation](#mixdown-notation)
   - [Compiler \& Integration](#compiler--integration)
-- [Destination Providers](#destination-providers)
+- [Destination Provider](#destination-provider)
 - [Getting Started](#getting-started)
   - [Installation](#installation)
   - [Quick Start](#quick-start)
@@ -22,8 +22,6 @@
   - [Delimiter Roles](#delimiter-roles)
   - [Stems](#stems)
     - [Stem Notation Markers](#stem-notation-markers)
-    - [Stem Marker Names](#stem-marker-names)
-    - [Stem Marker Parsing](#stem-marker-parsing)
     - [Destination-scoped Property Overrides](#destination-scoped-property-overrides)
     - [Destination-scoped Multiple Properties](#destination-scoped-multiple-properties)
     - [Property Processing Order](#property-processing-order)
@@ -46,7 +44,7 @@
     - [Import Attributes](#import-attributes)
     - [Destination-Specific Stem Filtering](#destination-specific-stem-filtering)
     - [Stem References and Import Scope](#stem-references-and-import-scope)
-  - [Imports vs. Inclusions](#imports-vs-inclusions)
+  - [Imports vs. Variables (Substitution)](#imports-vs-variables-substitution)
   - [Mixins](#mixins)
   - [Rendering Raw Mixdown notation](#rendering-raw-mixdown-notation)
   - [Instruction Placeholders](#instruction-placeholders)
@@ -142,7 +140,7 @@ Result: *Write rules once, compile destination-specific rules, zero drift.*
 - **Plugin Architecture:** Add new destinations via `MixdownPluginProvider` without touching core.
 - **CLI & API:** `mixdown build`, `mixdown validate`, and `POST /compile` endpoint.
 
-## Destination Providers
+## Destination Provider
 
 | ID | Tool | Type |
 |----|------|------|
