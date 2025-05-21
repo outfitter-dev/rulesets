@@ -2,7 +2,8 @@
 name: ":bug: Bug Report"
 about: "Report a bug or issue with Mixdown"
 title: "[Bug]: "
-labels: ["bug", "triage"]
+labels: ["triage"]
+type: "bug"
 ---
 
 ## Bug Description
