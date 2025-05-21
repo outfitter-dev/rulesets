@@ -26,7 +26,7 @@ When the user asks to create a pull request, follow these steps in sequence:
   - Identify the purpose and motivation behind changes
   - Assess impact on the overall project
   - Ensure no sensitive information is included
-- Look for any open issues that may be related or resolved by the changes in the PR. Include their issue numbers in the PR body if applicable.
+- Look for any open issues that may be related or resolved by the changes in the PR. When referencing these issues in the PR body, use keywords like `Fixes #<issue>` to enable automatic issue closure.
 
 ### 3. Analyze PR Requirements
 
