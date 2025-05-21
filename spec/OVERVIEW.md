@@ -215,14 +215,9 @@ Stems are the core building block of Mixdown and are a direct stand in for XML t
 #### Stem Notation Markers
 
 - **1:1 Markdown-to-XML Translation**: Write stems as `{{stem-name}}` and they will be converted to `<stem_name>` in the output. Mixdown can compile into pure Markdown, XML, or a combination of the two.
-- **Open/Close** `{{stem-name ... }}` [ stem content ] `{{/stem-name}}`
-
-#### Stem Marker Names
-
-- `kebab-case` is recommended for stem names (to avoid accidental Markdown emphasis rendering)
-- Regardless of the naming convention, XML tags in outputs will be formatted as `<snake_case>` (which is configurable)
-
-#### Stem Marker Parsing
+- **Open/Close**: Stems use opening `{{stem-name ... }}` and closing `{{/stem-name}}` markers to delimit their content.
+- **Naming**: `kebab-case` is recommended for stem names (e.g., `my-stem-name`) to avoid accidental Markdown emphasis rendering. Regardless of the naming convention used in the source `.md` file, the corresponding XML tags in outputs will be formatted as `<snake_case>` (e.g., `<my_stem_name>`). This output format is configurable.
+- **Parsing Example**:
 
 ```markdown
 <!-- Mixdown input -->
@@ -236,23 +231,23 @@ Content B
 
 ---
 
-Output for all configured tools (except `claude-code` in this example):
-<!-- XML output -->
-<stem-one>
-Content A
-</stem-one>
-<stem-two>
-Content B
-</stem-two>
-```
+  Output for all configured tools (except `claude-code` in this example):
+  <!-- XML output -->
+  <stem_one>
+  Content A
+  </stem_one>
+  <stem_two>
+  Content B
+  </stem_two>
+  ```
 
-While Claude Code output will be:
+  While Claude Code output will be:
 
-```markdown
-<stem-one>
-Content A
-</stem-one>
-```
+  ```markdown
+  <stem_one>
+  Content A
+  </stem_one>
+  ```
 
 #### Destination-scoped Property Overrides
 
@@ -415,7 +410,7 @@ This is the content of the instructions section.
 {{/instructions}}
 
 <!-- Note: Using the name-("value") syntax specifically sets the 'name' attribute 
-  (e.g., name="important-rules") in the rendered XML output. -->
+  (e.g., name="important-rules") in the rendered XML output. The value provided in name-("...") is used as-is and is not transformed to snake_case (unlike stem names themselves). -->
 
 ---
 
@@ -431,7 +426,8 @@ Output:
 | Property | Type | Purpose |
 |--------|------|---------|
 | `+/!destination` | flag | Include/exclude for specific destinations (e.g., `+cursor !windsurf`). |
-| `name-("value")` | value | Sets a name with a specified value for the stem. |
+| `name-("value")` | value | Sets a name with a specified value for the stem (e.g., `name-("my-section")` becomes `name="my-section"`). |
+| `id-("value")` | value | Sets a unique XML `id` attribute for the stem (e.g., `id-("unique-identifier")` becomes `id="unique-identifier"`), useful for linking or specific referencing. |
 | `unwrap`, `inline`, etc. | flag | Controls how content is processed (see [Output Format](#output-format) below). |
 | `code-`, `h-`, `num-` | flag | Family-specific properties for code blocks, headings, and numbering. |
 | `[property1 property2]` | group | Groups multiple properties together for readability. |
@@ -570,7 +566,7 @@ Property grouping allows for improved readability with multi-line properties:
 
 ##### Property Bracketing Rules
 
-Property groups (brackets) cannot be nested. All properties within a group must be space-delimited and cannot themselves contain another properties group.
+Property groups (brackets) cannot be nested. All properties within a group must be space-delimited and cannot themselves contain another property group.
 
 For destination-scoped properties with multiple properties, use square brackets after the colon:
 
@@ -595,7 +591,7 @@ The following table provides a quick reference to common invocation patterns for
 |---------------------------------------------|-------------------------------------------------|-----------------------------------------------------------------------------|
 | Basic Grouping                              | `{{stem [opt1 opt2 opt3]}}`                    | Visually groups space-delimited properties.                                    |
 | Multi-line Grouping                         | `{{stem [\n opt1 \n opt2 \n]}}`                     | Improves readability for many properties.                                      |
-| Destination-Scoped Single Property (no group)      | `{{stem destination:opt1}}`                         | Applies `opt1` only for `destination`. Block included for all valid destinations.     |
+| Destination-Scoped Single Property (no group)      | `{{stem destination:opt1}}`                         | Applies `opt1` only when compiling for `destination`. The stem itself is included for all destinations by default, unless other inclusion/exclusion properties (e.g., `+destination`, `!anotherDest`) are present that alter its general visibility. |
 | Destination-Scoped Multiple Properties (via group)  | `{{stem destination:[opt1 opt2]}}`                  | Applies `opt1` and `opt2` only for `destination`. Block included for all.        |
 | Inclusion for Destination + Scoped Single Opt  | `{{stem +destination:opt1}}`                        | Includes block only for `destination`, applying `opt1`.                          |
 | Inclusion for Destination + Scoped Multi Opts  | `{{stem +destination:[opt1 opt2]}}`                 | Includes block only for `destination`, applying `opt1` and `opt2`.               |
@@ -669,23 +665,27 @@ version: 2.0 # optional, version number for this file
 created: 2025-05-13 # optional, date of creation, automatically included by default
 updated: 2025-05-14 # optional, date of last update, automatically included by default
 labels: ["core", "security"] # optional, categorization tags for the mix, available for future use
+allow-bare-xml-tags: false # optional, defaults to false. Set to true to allow bare XML tags in this file.
 ---
 ```
 
 Frontmatter is used to provide metadata about the source rules file and control how it's compiled. Basic frontmatter includes:
 
-- `mixdown.version`: Metadata about the Mixdown format used
-- `name`: Unique identifier for the source rules (optional, defaults to filename)
-- `description`: Optional description of the mix, rendered for tools that use them (e.g. Cursor, Windsurf, etc.)
-- `globs`: Optional globs to be rewritten based on destination-specific needs
-- `destination`: Control how this source rules is processed for destinations
-  - `include`/`exclude`: Control which destinations receive this mix
-  - `path`: Specify a custom path for destination artifacts
-  - Properties include any destination providers registered in `.mixdown.config.json`
-- `version`: Version information
-- `labels`: Categorization tags
-- `[cursor|windsurf|claude-code|...]`: Destination-specific key/value pairs
-  - Can include `destination.path` to override the global path for specific destinations
+- `mixdown.version`: Metadata about the Mixdown format used.
+- `name`: Unique identifier for the source rules (optional, defaults to filename).
+- `description`: Optional description of the mix, rendered for tools that use them (e.g. Cursor, Windsurf, etc.).
+- `globs`: Optional globs to be rewritten based on destination-specific needs.
+- `destination`: Control how this source rules is processed for destinations:
+  - `include`/`exclude`: Control which destinations receive this mix.
+  - `path`: Specify a custom path for destination artifacts.
+  - Properties include any destination providers registered in `.mixdown.config.json`.
+- `version`: Version information for this file.
+- `labels`: Categorization tags for this file.
+- `allow-bare-xml-tags: (boolean)` - Optional. When set to `true` in this file's frontmatter, it allows the use of bare XML tags (e.g., `<my_tag>...</my_tag>`) directly within this specific Mixdown file instead of the standard `{{my-tag}}...{{/my-tag}}` notation. This setting overrides any global `allow-bare-xml-tags` setting in `.mixdown.config.json` for this file. Defaults to `false` if not specified. See the 'Using bare XML tags' section for more details.
+- `[cursor|windsurf|claude-code|...]`: Destination-specific key/value pairs can be provided.
+  - These can include `destination.path` to override the global path for specific destinations.
+
+For more details on the structure and capabilities of the `mixdown.config.json` file, including global settings (like `allow-bare-xml-tags`), aliases, and destination provider configurations, please refer to the project's architecture or configuration documentation.
 
 ### Links
 
@@ -721,6 +721,9 @@ Here's an aliased link to a file: [Alternative Title](@path/to/file.txt)
 ### Variables
 
 Variables are dynamic values using the `{{$...}}` notation. They are replaced inline during compilation through variable substitution.
+The syntax for variables depends on the context:
+- `{{$key}}` is used when the variable is standalone in the content. For example: `Welcome, {{$userName}}!`
+- `$key` is used when the variable is within another Mixdown `{{...}}` marker. For example: `{{stem class-($userTheme)}}`
 
 | Type | Notation | Notes |
 |------|--------|-------|
@@ -832,12 +835,12 @@ Stem references using the `#` symbol provide a way to selectively include or exc
 
 Import scope provides a powerful way to control exactly which stems are included from source rules during compilation. This selective filtering allows for greater flexibility when reusing content across multiple files while maintaining destination-specific customizations.
 
-### Imports vs. Inclusions
+### Imports vs. Variables (Substitution)
 
-While they may seem similar, imports and inclusions have different use cases and will be interpreted differently by the compiler:
+It's important to distinguish between imports (`{{> ...}}`) and variable substitution (`{{$...}}`), as they serve different purposes:
 
-- **Imports** `{{> ...}}` **will** render the surrounding tag in the compiled artifact.
-- **Inclusions** `{{$...}}` are replaced outright and **will not** render the surrounding tag in the compiled artifact.
+- **Imports** (`{{> ...}}`) are used to embed content structures. When an import like `{{> mySnippet }}` is processed, it typically renders the content of `mySnippet` *including its own structure*, which might result in output like `<mySnippet>...</mySnippet>` (unless properties like `unwrap` are used).
+- **Variable Substitution** (`{{$...}}`) replaces a placeholder with its string value. It does not render any surrounding tags itself. For example, if `{{$userName}}` has the value "John", then `Hello, {{$userName}}!` would render as `Hello, John!`. The variable is directly replaced by its value.
 
 ### Mixins
 
@@ -917,8 +920,6 @@ Without the `unwrap` property, it would render as:
 {{/examples}}
 ```
 
-If you wish to 
-
 ### Instruction Placeholders
 
 When writing prompts or instructions, you can use placeholders as self-contained prompts to direct an AI to fill in. Mixdown recommends using single-bracket `[placeholder text]`, but single-brace `{placeholder text}` notation is supported. Just be careful, as one extra brace will cause the compiler to treat it as a Mixdown notation marker.
@@ -969,7 +970,7 @@ Testing is required for all new features.
 
 Output in Cursor (but not Windsurf):
 
-<instructions name="core_rules">
+<instructions name="core-rules">
 All code must follow consistent formatting.
 
 Testing is required for all new features.
@@ -1030,7 +1031,6 @@ This XML conversion provides a standardized structure that destination tools can
 
 Features planned for v0.x releases:
 
-- Self-closing section tags
 - Destination groups for easier filtering of multiple destinations
 - Template support with placeholder filling
 - Mode support for tools like Roo Code
@@ -1097,12 +1097,12 @@ The table below organizes properties by their categories with comprehensive info
 | `num-tag-first` | Flag | `num-tag-first` | ✅ | ✅ | ❌ | Number first tag only |
 | `num-tag-last` | Flag | `num-tag-last` | ✅ | ✅ | ❌ | Number last tag only |
 | **Raw Notation Properties** |||||||
-| `process-content` | Flag | `process-content` | ✅ | ✅ | ❌ | Compile content within markers, use within `{{{...}}}` |
-| **Import Scope** |||||||
-| `#stem` | Single stem | `#stem-name` | ❌ | ✅ | ❌ | Include specific stem from import |
-| `#!stem` | Single exclusion | `#!stem-name` | ❌ | ✅ | ❌ | Exclude specific stem from import |
-| `#(stem1 !stem2)` | Multiple stems | `#(section-a section-b)` | ❌ | ✅ | ❌ | Include/exclude multiple specific stems |
-| `#(destination:[stem])` | Scoped stem | `#(cursor:[section-a])` | ❌ | ✅ | ❌ | Destination-specific stem inclusion |
+| `process-content` | Flag | `process-content` | ✅ | ✅ | ❌ | Used within `{{{...}}}` (raw notation) stems. When `process-content` is applied to such a stem, the content *inside* the raw block is compiled by Mixdown as if it were regular Mixdown content, while the outer `{{{stemName}}}` and `{{{/stemName}}}` are still rendered as raw. This is useful for selectively processing parts of a raw block, for example, to demonstrate a Mixdown feature that itself involves further compilation. |
+| **Import Scope** ||||||(Note: These properties are exclusively used within the import syntax, e.g., `{{> fileName#stem }}`) |
+| `#stem` | Single stem | `#stem-name` | ❌ | ✅ | ❌ | Include specific stem from import. |
+| `#!stem` | Single exclusion | `#!stem-name` | ❌ | ✅ | ❌ | Exclude specific stem from import. |
+| `#(stem1 !stem2)` | Multiple stems | `#(section-a section-b)` | ❌ | ✅ | ❌ | Include/exclude multiple specific stems. |
+| `#(destination:[stem])` | Scoped stem | `#(cursor:[section-a])` | ❌ | ✅ | ❌ | Destination-specific stem inclusion. |
 | **Frontmatter Configuration** |||||||
 | `mixdown.version` | YAML | `mixdown.version: 0.1.0` | ❌ | ❌ | ✅ | Mixdown format version for the file |
 | `description` | YAML | `description: "Project rules"` | ❌ | ❌ | ✅ | Short description of the source rules |

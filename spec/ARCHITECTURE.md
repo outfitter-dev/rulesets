@@ -2,6 +2,8 @@
 
 > A CommonMark-compliant rules compiler for AI assistants
 
+(Note: Some file paths in this document are placeholders and will be updated as the codebase evolves.)
+
 ## Overview
 
 Mixdown is a compiler that transforms *source rules* files into destination-specific rules files for various AI tools & coding agents. It follows the "write once, compile for many destinations" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
@@ -170,6 +172,7 @@ v          v          v          v          v
 Cursor   Windsurf  Claude     Roo      GitHub
 (types)  (trigger) (imports) (folders) (scopes)
 ```
+<!-- TODO: If GitHub is a planned destination, consider adding it to the destination tables in README.md and spec/OVERVIEW.md for consistency. -->
 
 - Creates an abstraction layer for activation mechanisms
 - Maps common patterns to tool-specific implementations
@@ -231,10 +234,7 @@ Cursor   Windsurf  Claude     Roo      GitHub
 
 ## Template System
 
-- Implements a template inheritance system
-- Templates can extend and override other templates
-- Supports reusable components with customization
-- Familiar pattern from template engines
+The architecture supports a system for content reusability (Mixins). Internally, this system is designed to be flexible, potentially allowing for future enhancements like template inheritance where mixins could extend and override others. Currently, user-facing features for content reuse are primarily documented as Imports and Mixins in `spec/OVERVIEW.md`.
 
 ## Standard Project Structure
 
@@ -264,6 +264,7 @@ A stub for `mixdown.config.json`:
         "mixins": ".mixdown/src/_mixins"
       },
       "dist": ".mixdown/dist",
+      "allow-bare-xml-tags": false,
       "destinations": {
         "include": ["cursor", "claude-code", "windsurf"],
         "exclude": []
@@ -296,6 +297,7 @@ A stub for `mixdown.config.json`:
   }
 }
 ```
+Note: Paths in `sources` (like `sourceRules` and `mixins`) and `dist` are typically relative to the project root directory (i.e., the directory containing the `.mixdown` folder itself).
 
 ## Extension Points
 

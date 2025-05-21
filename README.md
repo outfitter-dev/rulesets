@@ -70,9 +70,9 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 | `cline` | [Cline](https://cline.dev/) | VS Code Ext | 🟡 In Progress |
 | `aider` | [Aider](https://aider.chat/) | CLI | 🔵 Planned |
 | `openai-codex` | [OpenAI Codex](https://github.com/openai/codex) | CLI | 🔵 Planned |
-| `windsurf` | [Windsurf](https://windsurf.dev/) | IDE | 🔵 Planned |
+| `windsurf` | [Windsurf](https://windsurf.dev/) | IDE | 🟡 In Progress |
 
-*Want a new destination? Implement `toolProvider` and publish `@mixdown/plugin-<your-tool>`. See `docs/developer/plugin-development.md`.*
+*Want a new destination? Implement `toolProvider` and publish `@mixdown/plugin-<your-tool>`. See existing plugin examples and general development guidelines.*
 
 ## Key Features
 
@@ -128,13 +128,13 @@ project/
 | **Import** | `{{> legal}}` | Embed content from another source rules file. |
 | **Import Stem** | `{{> conventions#(stem-name)}}` | Embed a specific stem. |
 | **Internal Link** | `[Read more](rules.md)` | Standard Markdown links. |
-| **Absolute Link** | `{{link [\"Link Title\"] /path/to/file.ts}}` | Links to project files. |
+| **Project File Link** | `@path/to/file.txt` or `@path/to/file.txt("Custom Title")` | Links to project files, optionally with an alias. |
 | **Alias Variable** | `{{$project}}` | Resolved via `aliases` in config. |
-| **Data Variable** | `{{$.frontmatter.key}}` | Injects YAML frontmatter data. |
+| **Data Variable** | `{{$.key}}` | Injects YAML frontmatter data. |
 | **Destination Variable** | `{{$destination}}` / `{{$destination.id}}` | Injects current destination name/ID. |
 | **Instruction Placeholder** | `[fill this in]` | Marker for LLM to complete. |
 
-Full spec lives in `docs/spec/mixdown-notation.md`.
+The full Mixdown notation specification can be found in `spec/OVERVIEW.md`.
 
 ## Versioning and Changelog
 
@@ -155,7 +155,7 @@ Follow the prompts to:
 
 ### For Contributors
 
-For more detailed information on using Changesets in this project, see [docs/contributing/CHANGESETS.md](/docs/contributing/CHANGESETS.md).
+Please refer to our general contributing guidelines for information on how to contribute to the project, including our commit conventions and testing requirements.
 
 ## Contributing & Community
 
@@ -164,10 +164,9 @@ For more detailed information on using Changesets in this project, see [docs/con
 3. Add unit & contract tests for new features.
 4. Submit PR—CI must pass snapshot tests.
 
-See [`docs/contributing/DEVELOPMENT.md`](docs/contributing/DEVELOPMENT.md) for full guidelines.
+Please see our general contributing guidelines for more details.
 
 ## References
 
-- `docs/spec/mixdown-notation.md` – Full notation specification.
-- `docs/developer/plugin-development.md` – Build a new plugin provider.
-- `docs/architecture/design-decisions.md` – Design rationale & deep-dive.
+- `spec/OVERVIEW.md` – Full Mixdown notation specification.
+- `docs/architecture/DECISIONS.md` – Design rationale & deep-dive.
