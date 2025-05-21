@@ -4,7 +4,7 @@ Mixdown is a **CommonMark-compliant prompt compiler** that lets you author a sin
 
 ## What is Mixdown?
 
-If you're reading this, you're probably already familiar with at least one of the AI coding tools that Mixdown is [designed to work with](#supported-target-tools). Each tool has its own unique way of being provided context, guidance, and operational instructions for your projects e.g. Cursor's rules (`.cursor/rules`), OpenAI Codex instructions (`codex.md`), Claude Code's instructions (`CLAUDE.md`), etc.
+If you're reading this, you're probably already familiar with at least one of the AI coding tools that Mixdown is [designed to work with](#supported-target-tools). Each tool has its own unique way of being provided context, guidance, and operational instructions for your projects e.g. Cursor's rules (`.cursor/rules`), OpenAI Codex instructions (`codex.mix.md`), Claude Code's instructions (`CLAUDE.md`), etc.
 
 The problem is, they all have different formats, behavior, and capabilities, which can become a huge pain to manage. This can be frustrating, and might even lead you to just sticking to one tool. But that's no fun, and you'll be missing out on all the awesome capabilities and differences each tool has to offer! That's where Mixdown comes in…
 
@@ -18,7 +18,7 @@ The problem is, they all have different formats, behavior, and capabilities, whi
 
 Mixdown is "Terraform for AI prompts": declare your ideal prompt rules once, target dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative instructions—no copy‑paste, no drift, just high‑quality, version-controlled context.
 
-With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single "mix" file (`.md`). This mix is the "gold master" for your instructions, from which individual target-specific outputs are created in their respective format and sent to the right places.
+With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single "mix" file (`.mix.md`). This mix is the "gold master" for your instructions, from which individual target-specific outputs are created in their respective format and sent to the right places.
 
 The app consists of:
 
@@ -72,7 +72,7 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 | `openai-codex` | [OpenAI Codex](https://github.com/openai/codex) | CLI | 🔵 Planned |
 | `windsurf` | [Windsurf](https://windsurf.dev/) | IDE | 🔵 Planned |
 
-*Want a new target? Implement `toolProvider` and publish `@mixdown/plugin-<your-tool>`. See `docs/developer/plugin-development.md`.*
+*Want a new target? Implement `toolProvider` and publish `@mixdown/plugin-<your-tool>`. See `docs/developer/plugin-development.mix.md`.*
 
 ## Key Features
 
@@ -114,10 +114,27 @@ project/
 ├── .mixdown/
 │   ├── outputs/
 │   │   └── builds/         # compiled outputs
-│   ├── mixes/       # Mix files (*.md)
+│   ├── mixes/       # Mix files (*.mix.md)
 │   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json # compiler config
 ```
+
+## Finding Mixdown Source Files
+
+AI agents and tools can easily locate Mixdown source files using standard command-line tools like `grep` or `find`:
+
+```bash
+# Find all Mixdown source files in the current project
+grep -r --include="*.mix.md" "" .
+
+# Find Mixdown source files and search for specific content
+grep -r --include="*.mix.md" "your search term" .
+
+# Use find to locate all Mixdown source files
+find . -name "*.mix.md"
+```
+
+The distinct `.mix.md` extension makes Mixdown source files easily identifiable even when they are not placed in the standard `.mixdown/src` directory.
 
 ## Notation Cheatsheet
 
@@ -127,14 +144,14 @@ project/
 | **Front-matter** | `---\nname: foo\n---` | YAML at file top. |
 | **Import** | `{{> legal}}` | Embed content from another mix. |
 | **Import Track** | `{{> conventions#track-name}}` | Embed a specific track. |
-| **Internal Link** | `[Read more](rules.md)` | Standard Markdown links. |
+| **Internal Link** | `[Read more](rules.mix.md)` | Standard Markdown links. |
 | **Absolute Link** | `{{link [\"Link Title\"] /path/to/file.ts}}` | Links to project files. |
 | **Alias Variable** | `{{$project}}` | Resolved via `aliases` in config. |
 | **Data Variable** | `{{$.frontmatter.key}}` | Injects YAML frontmatter data. |
 | **Target Variable** | `{{$target}}` / `{{$target.id}}` | Injects current target name/ID. |
 | **Instruction Placeholder** | `[fill this in]` | Marker for LLM to complete. |
 
-Full spec lives in `docs/spec/mixdown-notation.md`.
+Full spec lives in `docs/spec/mixdown-notation.mix.md`.
 
 ## Versioning and Changelog
 
@@ -155,7 +172,7 @@ Follow the prompts to:
 
 ### For Contributors
 
-For more detailed information on using Changesets in this project, see [docs/contributing/CHANGESETS.md](/docs/contributing/CHANGESETS.md).
+For more detailed information on using Changesets in this project, see [docs/contributing/CHANGESETS.mix.md](/docs/contributing/CHANGESETS.mix.md).
 
 ## Contributing & Community
 
@@ -164,10 +181,10 @@ For more detailed information on using Changesets in this project, see [docs/con
 3. Add unit & contract tests for new features.
 4. Submit PR—CI must pass snapshot tests.
 
-See [`docs/contributing/DEVELOPMENT.md`](docs/contributing/DEVELOPMENT.md) for full guidelines.
+See [`docs/contributing/DEVELOPMENT.mix.md`](docs/contributing/DEVELOPMENT.mix.md) for full guidelines.
 
 ## References
 
-- `docs/spec/mixdown-notation.md` – Full notation specification.
-- `docs/developer/plugin-development.md` – Build a new plugin provider.
-- `docs/architecture/design-decisions.md` – Design rationale & deep-dive.
+- `docs/spec/mixdown-notation.mix.md` – Full notation specification.
+- `docs/developer/plugin-development.mix.md` – Build a new plugin provider.
+- `docs/architecture/design-decisions.mix.md` – Design rationale & deep-dive.
