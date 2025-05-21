@@ -25,6 +25,7 @@
     - [Track Marker Parsing](#track-marker-parsing)
     - [Target-scoped Option Overrides](#target-scoped-option-overrides)
     - [Target-scoped Multiple Options](#target-scoped-multiple-options)
+    - [Option Processing Order](#option-processing-order)
     - [Self-Closing Tags](#self-closing-tags)
     - [Multi-line Markers for Readability](#multi-line-markers-for-readability)
     - [Track Options](#track-options)
@@ -32,6 +33,7 @@
     - [Option Grouping](#option-grouping)
       - [Multi-line Option Grouping](#multi-line-option-grouping)
       - [Option Bracketing Rules](#option-bracketing-rules)
+    - [Option Grouping \& Scoping: Common Patterns](#option-grouping--scoping-common-patterns)
     - [Using bare XML tags](#using-bare-xml-tags)
   - [Mixdown Frontmatter](#mixdown-frontmatter)
   - [Links](#links)
@@ -51,7 +53,11 @@
 - [Directory Structure](#directory-structure)
 - [Future Releases](#future-releases)
 - [Appendix](#appendix)
-  - [Comprehensive Option Reference Table](#comprehensive-option-reference-table)
+  - [Comprehensive Option Reference](#comprehensive-option-reference)
+    - [Option Naming Conventions](#option-naming-conventions)
+    - [Option Categories and Usage](#option-categories-and-usage)
+    - [Common Option Patterns and Languages](#common-option-patterns-and-languages)
+    - [Option Extension Rules](#option-extension-rules)
 
 ## Purpose & Vision
 
@@ -79,7 +85,7 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
 
 - **Mix**
   - Source instruction files, written in 100% previewable Markdown.
-  - Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
+  - Written in Mixdown notation and use `{{...}}` notation markers to direct the compiler.
   - Compiled into tool-specific rules files:
     - `./mixdown/mixes/my-rule.mix.md` → `.cursor/rules/my-rule.mdc`
 - **Target**
@@ -93,9 +99,9 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
     - Claude Code → `./CLAUDE.md#project-conventions`
     - OpenAI Codex → `./conventions.md`.
   - When placed in tool directories, referred to as "tool-ready outputs".
-- **Notation Marker**
+- **notation Marker**
   - Syntax: `{{...}}`
-  - Fundamental building block of Mixdown Notation
+  - Fundamental building block of Mixdown notation
   - Used to direct the compiler for various purposes (tracks, imports, variables)
   - All Mixdown directives use marker notation, but serve different functions
   - Similar to `<xml-tags>`, but fully Markdown-previewable.
@@ -389,7 +395,7 @@ Content without surrounding XML tags
 | `inline-with-tags` | Content rendered inline with XML tags preserved (all on a single line) |
 | `tag-omit` | Remove XML tags from output but maintain block formatting |
 | `code-*` | Render content as a code block in specified language (see Code Block Options below) |
-| `raw-all` | Render everything as raw Mixdown Notation |
+| `raw-all` | Render everything as raw Mixdown notation |
 | `raw-content` | Process tags normally, keep content as raw notation |
 | `raw-tags` | Process content normally, keep tags as raw notation |
 
@@ -788,14 +794,14 @@ Example:
 
 ### Rendering Raw Mixdown Notation
 
-Triple-brace `{{{...}}}` to skip processing of the content and render it in the raw Mixdown Notation.
+Triple-brace `{{{...}}}` to skip processing of the content and render it in the raw Mixdown notation.
 
-- This is useful for writing documentation or rules that need to show Mixdown-flavored Markdown (mix.mix.md) literally
-- Wrapping a section in triple curly braces preserves all Mixdown Notation and content exactly as written
+- This is useful for writing documentation or rules that need to show Mixdown notation literally
+- Wrapping a section in triple curly braces preserves all Mixdown notation and content exactly as written
 - Example:
 
 ```markdown
-> Triple braces will preserve the Mixdown Notation on render.
+> Triple braces will preserve the Mixdown notation on render.
 > Adding `tag-omit` will remove those track tags from the output.
 > Adding `+cursor` will only include the section for the `cursor` target.
 
