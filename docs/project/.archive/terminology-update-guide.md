@@ -40,7 +40,7 @@ project/
 │   │   ├── runs/           # Directory for all compilations and their artifacts
 │   │   │   └── run-<timestamp>/  # Directory containing specific compiled rules
 │   │   └── logs/           # Log files for all compilations
-│   ├── src/                # Source Rules files (*.md)
+│   ├── src/                # Source Rules files (*.mix.md, *.md)
 │   │   └── _mixins/        # reusable components
 │   └── mixdown.config.json # Mixdown config file
 ```
