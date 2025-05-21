@@ -1098,7 +1098,8 @@ The table below organizes properties by their categories with comprehensive info
 | `num-tag-last` | Flag | `num-tag-last` | ✅ | ✅ | ❌ | Number last tag only |
 | **Raw Notation Properties** |||||||
 | `process-content` | Flag | `process-content` | ✅ | ✅ | ❌ | Used within `{{{...}}}` (raw notation) stems. When `process-content` is applied to such a stem, the content *inside* the raw block is compiled by Mixdown as if it were regular Mixdown content, while the outer `{{{stemName}}}` and `{{{/stemName}}}` are still rendered as raw. This is useful for selectively processing parts of a raw block, for example, to demonstrate a Mixdown feature that itself involves further compilation. |
-| **Import Scope** ||||||(Note: These properties are exclusively used within the import syntax, e.g., `{{> fileName#stem }}`) |
+**Note:** These properties are exclusively used within the import syntax, e.g., `{{> fileName#stem }}`.
+| **Import Scope** |||||||
 | `#stem` | Single stem | `#stem-name` | ❌ | ✅ | ❌ | Include specific stem from import. |
 | `#!stem` | Single exclusion | `#!stem-name` | ❌ | ✅ | ❌ | Exclude specific stem from import. |
 | `#(stem1 !stem2)` | Multiple stems | `#(section-a section-b)` | ❌ | ✅ | ❌ | Include/exclude multiple specific stems. |
