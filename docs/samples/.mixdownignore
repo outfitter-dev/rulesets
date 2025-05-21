@@ -1,12 +1,14 @@
 # Example .mixdownignore
 # This file uses standard .gitignore syntax
-# All paths are relative to the .mixdown/ directory
+# By default, paths are relative to .mixdown/src/
+# Paths that start with a / are relative to the project root
 
-# Ignore draft files in src directory
-src/drafts/
+# Relative paths (to .mixdown/src/)
+drafts/
+**/*.tmp.md
+test-fixtures/
 
-# Ignore temporary files
-src/**/*.tmp.md
-
-# Ignore test fixtures
-src/test-fixtures/
+# Absolute paths (to project root)
+/node_modules/
+/dist/
+/.cache/

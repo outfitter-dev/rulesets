@@ -252,9 +252,12 @@ project/
 ```
 
 The compiler reads `.mixdown/.mixdownignore` before scanning source files. Its
-patterns follow `.gitignore` globs to exclude files from compilation. All paths
-are relative to the `.mixdown/` directory, primarily for ignoring files in the 
-`src/` directory that you don't want compiled.
+patterns follow `.gitignore` globs to exclude files from compilation with two path types:
+
+1. **Default paths** (without leading slash): Relative to `.mixdown/src/`
+2. **Absolute paths** (with leading slash): Relative to project root
+
+This dual approach allows ignoring files both within the source directory and throughout the project.
 
 ## Configuration Format
 
