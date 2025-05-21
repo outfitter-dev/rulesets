@@ -2,13 +2,53 @@
 
 This document outlines all terminology changes from the terminology consolidation effort and provides explicit instructions for updating documents across the repository.
 
+## Outstanding Terminology Cleanup Items (post-scan)
+
+The automated search performed after the first verification pass surfaced a handful of
+left-over usages of the *old* terminology or syntax that still need manual attention.
+Nothing below blocks the main rename effort, but each item should be resolved (or
+explicitly accepted) before the terminology update is considered **fully** finished.
+
+| Legacy Term / Pattern | Approx. Count | Representative Files & Lines |
+|-----------------------|--------------|--------------------------------|
+| **“Mix files / mix file”** | 2 | CHANGELOG.md:3  •  spec/ARCHITECTURE.md:281 |
+| Stand-alone word **“mix”** (context-dependent) | 24 | notes/stem-heading.md (several), spec/OVERVIEW.md (examples like `my-mix.md`), spec/ARCHITECTURE.md, etc. |
+| **“Track”** | 11 | notes/stem-heading.md:311 (`# TRACK NAME` example), docs/plugins/codex-cli/rules-use.md (progress tracking), many in spec/ARCHITECTURE.md ("track filtering") |
+| **Snippet / _snippets** | 6 | spec/ARCHITECTURE.md:178 (JSON comment), docs/project/LANGUAGE.md (historic note), CHANGELOG.md |
+| **“target platform”** | 1 | spec/ARCHITECTURE.md:385 |
+| **“target-specific”** | 13 | spec/ARCHITECTURE.md (multiple) |
+| Old directories `.mixdown/mixes/`, `.mixdown/output/` | 6 | docs/project/LANGUAGE.md, CHANGELOG.md |
+| Deprecated import syntax `rules#[…]` | 5 | spec/OVERVIEW.md:736–799 |
+| Deprecated property `code-block` | 1 (plus rule-name example) | spec/OVERVIEW.md:375–376 |
+| Phrase **“tool-specific”** | 19 | README.md, docs/rules-overview.md, ai-rules-guide.md, etc. |
+| **Capitalization of “Source Rules / Compiled Rules”** | many | Multiple docs (README, spec, CLAUDE.md, etc.) – should be lower-case except at sentence start |
+
+### Action Items
+
+1. **Inspect each occurrence** in the table above and decide whether it should be changed
+   (most will) or kept (e.g., “progress tracking” is unrelated to stems and can stay).
+2. **Update examples** that still demonstrate old syntax (`rules#[…]`, `code-block`) to the
+   new `rules#(…)` and `code-*` / `code-lang` styles.
+3. **Re-run a global search** after corrections to confirm zero false positives remain for
+   the critical patterns listed above.
+
+4. **Normalize Capitalization**  
+   Convert “Source Rules” → “source rules” and “Compiled Rules” → “compiled rules” everywhere,
+   except when the term appears at the beginning of a sentence or in a heading where
+   Title Case is desired.  Ensure bullet labels (e.g., `**source rules**`) also use the
+   new capitalization.
+
+Once these items are cleared, we can confidently mark the terminology migration as **100 % complete**.
+
+---
+
 ## Summary of Key Terminology Changes
 
 | Category | Old Term(s) | New Term(s) | Status |
 |----------|-------------|-------------|--------|
-| **Source Content** | Mix files, Rule Definition | Source Rules | ✅ Decided |
+| **Source Content** | Mix files, Rule Definition | source rules | ✅ Decided |
 | **Target Terminology** | Target, Target tool | Destination | ✅ Decided |
-| **Output Terminology** | Output, Target-specific rules files | Compiled Rules | ✅ Decided |
+| **Output Terminology** | Output, Target-specific rules files | compiled rules | ✅ Decided |
 | **Directory Structure** | `.mixdown/mixes/` | `.mixdown/src/` | ✅ Decided |
 | **Directory Structure** | `.mixdown/mixes/_snippets/` | `.mixdown/src/_mixins/` | ✅ Decided |
 | **Directory Structure** | `.mixdown/output/` | `.mixdown/dist/` | ✅ Decided |
@@ -37,19 +77,19 @@ This document outlines all terminology changes from the terminology consolidatio
 
 ### 1. Source Content
 
-#### Mix to Source Rules Transition
+#### Mix to source rules Transition
 
 - **Old Terms**: "Mix files", "Source mix files", "Mix", "Source Markdown file", "Mixdown files", "Rule Definition"
-- **New Term**: "Source Rules"
-- **Reasoning**: "Source Rules" clearly communicates the source nature and creates a logical pair with "Compiled Rules."
-- **Example**: "Source Rules are written in 100% previewable Markdown" (was "Mix files are written...")
+- **New Term**: "source rules"
+- **Reasoning**: "source rules" clearly communicates the source nature and creates a logical pair with "compiled rules."
+- **Example**: "source rules are written in 100% previewable Markdown" (was "Mix files are written...")
 
-#### Source Rules Implementation Guidelines
+#### source rules Implementation Guidelines
 
-- Replace any instance of "mix file" or "mix files" with "Source Rules"
-- In some contexts, "Source Rule" (singular) may be appropriate
-- Use "Source Rules file" when referring to the actual file
-- Update all references to "Rule Definition" to "Source Rules"
+- Replace any instance of "mix file" or "mix files" with "source rules"
+- In some contexts, "source rule" (singular) may be appropriate
+- Use "source rules file" when referring to the actual file
+- Update all references to "Rule Definition" to "source rules"
 
 ### 2. Target Terminology
 
@@ -69,20 +109,20 @@ This document outlines all terminology changes from the terminology consolidatio
 
 ### 3. Output Terminology
 
-#### Output to Compiled Rules Refactoring
+#### Output to compiled rules Refactoring
 
 - **Old Terms**: "Tool-specific rules files", "Target-specific rules files", "Per-tool rules files", "Compiled rules files", "Target rules", "Output"
 - **New Terms**:
   - "Compilation Artifacts" - intermediary files generated during compilation
-  - "Compiled Rules" - final rules files that result from compilation
-- **Reasoning**: Creates a clear process flow: Source Rules → Compilation → Compilation Artifacts → Compiled Rules
+  - "compiled rules" - final rules files that result from compilation
+- **Reasoning**: Creates a clear process flow: source rules → Compilation → Compilation Artifacts → compiled rules
 - **Example**: "Source rules are transformed into compiled rules for each destination" (was "...into target-specific rules files")
 
-#### Compiled Rules Implementation Guidelines
+#### compiled rules Implementation Guidelines
 
-- Replace "Output" with "Compiled Rules" when referring to final output files
+- Replace "Output" with "compiled rules" when referring to final output files
 - Use "Compilation Artifacts" for intermediate files
-- Update references to "Tool-ready rules" to use "Compiled Rules" terminology
+- Update references to "Tool-ready rules" to use "compiled rules" terminology
 
 ### 4. Process Terminology
 
@@ -138,11 +178,11 @@ This document outlines all terminology changes from the terminology consolidatio
 
 - **Old Format**: `property(value)` (e.g., `code(js)`, `name("value")`)
 - **New Formats**:
-  - `property-*` (e.g., `code-js`) - for simple values directly following the hyphen
+  - `property-*` (e.g., `code-javascript`) - for simple values directly following the hyphen
   - `name-("value")` - for quoted string values
 - **Reasoning**: Using a hyphen as a delimiter improves readability and follows common conventions in programming. Parentheses with quotes are only used for string values.
 - **Examples**:
-  - `{{instructions code-js}}` (was `{{instructions code(js)}}`)
+  - `{{instructions code-javascript}}` (was `{{instructions code(js)}}`)
   - `{{stem name-("My Stem")}}` (was `{{stem name("My Stem")}}`)
 
 #### Property Format Guidelines
@@ -211,10 +251,10 @@ This document outlines all terminology changes from the terminology consolidatio
 
 #### Unified Code Property System
 
-- **Old Terms**: "code-*", "code-js", "code-py", "code-block"
+- **Old Terms**: "code-*", "code-js", "code-python", "code-block"
 - **New Terms**: "code-lang", "code" (for auto-language)
 - **Reasoning**: Simplifies and standardizes the terminology for code properties.
-- **Example**: "Use code-lang when specifying language for code formatting" (was "Use code-js, code-py...")
+- **Example**: "Use code-lang when specifying language for code formatting" (was "Use code-js, code-python...")
 
 #### Code Property Implementation Guidelines
 
@@ -238,14 +278,14 @@ This document outlines all terminology changes from the terminology consolidatio
    - Ensure consistent use of "Source Rules", "Destination", "Stem", etc.
    - Update directory references to use `.mixdown/src/` and `.mixdown/dist/`
 
-3. **spec/LANGUAGE.md**
+3. **docs/project/LANGUAGE.md**
    - Comprehensive update of all terminology
    - Update directory structure examples
    - Update compilation flow descriptions
 
 ### Secondary Documentation Sources
 
-1. **docs/index.md**
+1. **docs/project/index.md**
    - Update all instances of "mix" to "Source Rules"
    - Update "target" to "destination"
    - Update directory references
@@ -253,7 +293,7 @@ This document outlines all terminology changes from the terminology consolidatio
 2. **docs/rules-overview.md**
    - Update all terminology consistently
 
-3. **docs/targets/*/rules-use.md**
+3. **docs/plugins/*/rules-use.md**
    - Update "target" to "destination" in all target-specific documentation
    - Update "mix" to "Source Rules" throughout
    - Update "track" to "stem" in all examples
@@ -286,7 +326,7 @@ This document outlines all terminology changes from the terminology consolidatio
 
 ### Phased Implementation Strategy
 
-1. Start with updating spec/LANGUAGE.md completely as the canonical terminology reference
+1. Start with updating docs/project/LANGUAGE.md completely as the canonical terminology reference
 2. Update README.md as the most visible entry point
 3. Update other spec files
 4. Update documentation in docs/

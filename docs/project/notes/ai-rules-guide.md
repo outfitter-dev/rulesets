@@ -262,9 +262,9 @@ flowchart TD
 This is a CommonMark-compliant rules compiler that converts Markdown to tool-specific rules files.
 
 # Key Terminology
-- **Mix**: Source files in Markdown format
-- **Target**: Output destination (tool-specific)
-- **Track**: Delimited content blocks with attributes
+- **Source rules**: Source files in Markdown format, written in Mixdown Notation.
+- **Destination**: A supported tool (e.g., Cursor, Claude Code) for which Compiled Rules are generated.
+- **Stem**: Delimited content blocks (e.g., `{{instructions}}...{{/instructions}}`) with optional properties.
 
 # Coding Standards
 - Follow SOLID principles and conventional commits
@@ -698,7 +698,7 @@ Instead of maintaining separate rule files for each AI tool, consider using Mixd
 
 ```mermaid
 flowchart LR
-    A[Source Mix File] --> B[Mixdown Compiler]
+    A[Source Rules File] --> B[Mixdown Compiler]
     B --> C[CLAUDE.md]
     B --> D[.cursor/rules/*.mdc]
     B --> E[.windsurf/rules/]
@@ -755,4 +755,4 @@ graph TB
 7. Consider tools like Mixdown to manage rules across multiple AI assistants
 8. Update rules as your project evolves to keep AI assistance relevant
 9. Most recent tools include UI integrations for easier rule management
-10. Version-tracking your rules files is important for team consistency
+10. Versioning your rules files is important for team consistency

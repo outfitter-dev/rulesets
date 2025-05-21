@@ -6,68 +6,82 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Mixdown is a **CommonMark-compliant rules compiler** that lets you author a single *mix* file in Markdown and compile it into tool-specific rules files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, target many, your agents, no matter the tool, on the (literal) same page.
+Mixdown is a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as Terraform for AI rules: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
 
 ## Critical Instructions
 
-1. ✅ Always follow the language spec (mixdown/spec/language.md)
-2. ✅ Always ensure the `.gitignore` file is updated to exclude potentially sensitive information
-3. ✅ Unless otherwise directed by the user, always work within the `dev` branch, or a feature branch off of `dev`
-4. ✅ Commit regularly, group commits logically, and use conventional commit messages. When committing, check to see if any files need to be staged.
-5. ✅ When writing code, follow the SOLID principles, DRY principles, KISS principle, and include descriptive inline comments for future developers
+✅ Always follow the language spec (`docs/project/LANGUAGE.md`)
+✅ Always ensure the `.gitignore` file is updated to exclude potentially sensitive information  
+✅ Unless otherwise directed by the user, always work within the `dev` branch, or a feature branch off of `dev`  
+✅ Commit regularly, group commits logically, and use conventional commit messages. When committing, check to see if any files need to be staged.  
+✅ When writing code, follow the SOLID principles, DRY principles, KISS principle, and include descriptive inline comments for future developers  
+✅ Never commit directly to main. Default to committing to feature branches. Feature branches should point back to dev branch and fix branches should point to the relevant feature branch or dev.
 
 ## Key Concepts
 
-- **Mix**
-  - Source rules files, written in 100% previewable Markdown.
-  - Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
-  - Compiled into tool-specific rules files:
-    - `./mixdown/mixes/my-rule.md` → `.cursor/rules/my-rule.mdc`
-- **Target**
-  - A supported tool, such as `cursor`, `windsurf`, or `claude-code`.
-  - Defines tool-specific criteria for compiling mixes to rules files.
-  - Provided through plugins.
-- **Output**
-  - Target-specific (tool) rules files, rendered from the source mix.
-  - Examples for a mix called `project-conventions.md`:
-    - Cursor → `.cursor/rules/project-conventions.mdc`
-    - Claude Code → `./CLAUDE.md#project-conventions`
-    - OpenAI Codex → `./conventions.md`.
-  - When placed in tool directories, referred to as "tool-ready rules".
-- **Notation Marker**
-  - Syntax: `{{...}}`
-  - Fundamental building block of Mixdown Notation
-  - Used to direct the compiler for various purposes (tracks, imports, variables)
-  - All Mixdown directives use marker notation, but serve different functions
-  - Similar to `<xml-tags>`, but fully Markdown-previewable.
-- **Track**
-  - Syntax: `{{track-name}}...{{/track-name}}`
-  - A specific application of notation markers that creates delimited content blocks
-  - Translates directly to XML tags in output: `<track_name>...</track_name>`
-  - Has opening and closing notation markers that surround content
-  - Can contain attributes that control rendering behavior
-  - Example: `{{instructions}}This is instruction content{{/instructions}}`
-- **Import**
-  - Syntax: `{{> my-rule }}`
-  - Embed content from another mix, track, snippet, or template.
-- **Variable**
-  - Syntax: `{{$key}}` or `$key` if used within a `{{...}}` marker.
-  - Dynamic values replaced inline at build time.
-  - Examples: `{{$target}}`, `{{$.frontmatter.key}}`, `{{$alias}}`
+### Source rules
+
+- Source files defining rules, written in 100% previewable Markdown.
+- Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
+- Compiled into destination-specific rules files:
+  - `./mixdown/src/my-rule.md` → `.cursor/rules/my-rule.mdc`
+
+### Destination
+
+- A supported tool, such as cursor, windsurf, or claude-code.
+- Defines tool-specific criteria for compiling source rules to compiled rules files.
+- Provided through plugins.
+
+### Compiled rules
+
+- Destination-specific (tool) rules files, rendered from the source rules.
+- Examples for a source rules file called `project-conventions.md`:
+  - Cursor → `.cursor/rules/project-conventions.mdc`
+  - Claude Code → `./CLAUDE.md#project-conventions`
+  - OpenAI Codex → `./conventions.md`.
+- When placed in tool directories, referred to as "tool-ready rules".
+
+### Notation Marker
+
+- Syntax: `{{...}}`
+- Fundamental building block of Mixdown Notation
+- Used to direct the compiler for various purposes (stems, imports, variables)
+- All Mixdown directives use marker notation, but serve different functions
+- Similar to `<xml-tags>`, but fully Markdown-previewable.
+
+### Stem
+
+- Syntax: `{{stem-name}}...{{/stem-name}}`
+- A specific application of notation markers that creates delimited content blocks
+- Translates directly to XML tags in compiled output: `<stem_name>...</stem_name>`
+- Has opening and closing notation markers that surround content
+- Can contain properties that control rendering behavior
+- Example: `{{instructions}}This is instruction content{{/instructions}}`
+
+### Import
+
+- Syntax: `{{> my-rule }}`
+- Embed content from another source rules file, stem, mixin, or template.
+
+### Variable
+
+- Syntax: `{{$key}}` or `$key` if used within a `{{...}}` marker.
+- Dynamic values replaced inline at compile time.
+- Examples: `{{$destination}}`, `{{$.frontmatter.key}}`, `{{$alias}}`
 
 ## Project Structure
 
 ```text
 project/
 ├── .mixdown/
-│   ├── output/
-│   │   └── builds/         # compiled output
-│   ├── mixes/              # Mix files (*.md)
-│   │   └── _snippets/      # reusable content modules
+│   ├── dist/
+│   │   └── latest/         # compiled rules
+│   ├── src/                # source rules files (*.md)
+│   │   └── _mixins/        # reusable content modules
 │   └── mixdown.config.json # Mixdown config file
 ```
 
-## Design Goals
+## Goals
 
 | Goal | Description |
 |------|-------------|
@@ -76,7 +90,7 @@ project/
 | 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc. |
 | 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new notation. |
 
-## Target Providers
+## Destination Providers
 
 | ID | Tool | Type |
 |----|------|------|
@@ -101,21 +115,21 @@ project/
 ### Imports
 
 ```markdown
-{{> @legal}}  <!-- Embeds `/_snippets/legal.md` -->
-{{> conventions#track-name}}  <!-- Embed a specific track -->
-{{> my-rules tracks="important-considerations,!less-important-considerations"}}  <!-- Filter tracks -->
+{{> @legal}}  <!-- Embeds `/_mixins/legal.md` -->
+{{> conventions#stem-name}}  <!-- Embed a specific stem -->
+{{> my-rules stems="important-considerations,!less-important-considerations"}}  <!-- Filter stems -->
 ```
 
 ### Variables
 
 ```markdown
 Alias: {{$alias}}
-Mix file version: {{$file.version}}
-Current target: {{$target}}
-Target ID: {{$target.id}}
+Source rules file version: {{$file.version}}
+Current destination: {{$destination}}
+Destination ID: {{$destination.id}}
 ```
 
-### Target Scoped Attributes
+### Destination Scoped Properties
 
 ```markdown
 {{instructions cursor?name="cursor_instructions"}}
@@ -155,20 +169,20 @@ Content without surrounding XML tags
 
 ```yaml
 ---
-# .mixdown/mixes/my-rule.md
+# .mixdown/src/my-rule.md
 mixdown:
   version: 0.1.0 # version number for the Mixdown format used
 description: "Rules for this project" # useful for tools that use descriptions
-globs: ["**/*.{txt,md,mdc}"] # globs re-written based on target-specific needs
-# Target filter examples:
-target:
+globs: ["**/*.{txt,md,mdc}"] # globs re-written based on destination-specific needs
+# Destination filter examples:
+destination:
   include: ["cursor", "windsurf"]
   exclude: ["claude-code"]
   path: "./custom/output/path"
-# Target-specific frontmatter:
+# Destination-specific frontmatter:
 cursor:
   alwaysApply: false
-  target:
+  destination:
     path: "./custom/.cursor/rules"
 # Additional metadata:
 name: my-rule # defaults to filename
@@ -178,10 +192,10 @@ version: 2.0 # version number for this file
 
 ## Naming Conventions
 
-- Mix files: `kebab-case.md` (e.g., `coding-standards.md`)
-- Directories: `kebab-case` (e.g., `_samples`)
+- Source rules files: `kebab-case.md` (e.g., `coding-standards.md`)
+- Directories: `kebab-case` (e.g., `_mixins`)
 - Config files: `kebab-case.config.json` (e.g., `mixdown.config.json`)
-- Track names: `kebab-case` (e.g., `{{user-instructions}}`)
+- Stem names: `kebab-case` (e.g., `{{user-instructions}}`)
 - XML output tags: `snake_case` (e.g., `<user_instructions>`)
 
 ## Contributing Guidelines

@@ -12,7 +12,7 @@ The user would like to prime your context with the information listed below. Ple
   This is a draft overview of the project. It's still a work in progress, but should be considered canon for our work to be done.
 </description>
 <maintaining>
-  Make sure that the lanugage used in the overview 
+  Make sure that the language used in the overview
 </overview_spec>
 
 <language_spec>

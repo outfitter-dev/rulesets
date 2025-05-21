@@ -1,11 +1,11 @@
 # Mixdown Compiler Implementation Patterns
 
 TLDR: Essential patterns and structures needed for the mixdown compiler implementation
-TLDR: Guidelines for transforming mix files into target-specific rules files
+TLDR: Guidelines for transforming Source Rules files into destination-specific rules files
 
-This document outlines key implementation patterns that the Mixdown compiler needs to handle based on analysis of various target systems. These patterns represent the diverse ways AI assistants manage rules across different tools.
+This document outlines key implementation patterns that the Mixdown compiler needs to handle based on analysis of various destination systems. These patterns represent the diverse ways AI assistants manage rules across different tools.
 
-The Mixdown compiler needs to convert a single source format (mixdown files) into tool-specific rules files for different AI assistant platforms. Each target has unique requirements for file location, format, activation mechanisms, and content organization that must be handled appropriately.
+The Mixdown compiler needs to convert a single source format (Source Rules files) into tool-specific rules files for different AI assistant platforms. Each destination has unique requirements for file location, format, activation mechanisms, and content organization that must be handled appropriately.
 
 ## File Location and Loading Patterns
 
@@ -184,7 +184,7 @@ description: "Database Schema"
 Tables and relationships...
 ```
 
-## Target-Specific Requirements
+## Destination-Specific Requirements
 
 ### GitHub Copilot
 - Repository-level instructions at `.github/copilot-instructions.md`
@@ -252,38 +252,38 @@ Tables and relationships...
 ### Path Resolution
 The compiler must handle:
 - Relative paths for imports
-- Path mapping for different target output locations
+- Path mapping for different destination output locations
 - Hierarchical directory structures
 
 ### Content Transformation
 The compiler must support:
-- Converting Mixdown notation to target-specific formats
-- Generating appropriate YAML front-matter for targets that require it
-- Preserving plain markdown content for most targets
+- Converting Mixdown notation to destination-specific formats
+- Generating appropriate YAML front-matter for destinations that require it
+- Preserving plain markdown content for most destinations
 
-### Target Configuration
-Each target needs configuration for:
+### Destination Configuration
+Each destination needs configuration for:
 - Output location and file naming conventions
 - Format requirements (plain .md vs .mdc with front-matter)
 - Character or token limitations
 - Activation mechanism support
 
-### Track Handling
-Tracks must be appropriately processed for:
+### Stem Handling
+Stems must be appropriately processed for:
 - Tools that use XML-like formats (wrapping with appropriate tags)
 - Tools that use heading-based organization (converting to headings)
 - Tools that require specific activation modes (adding appropriate attributes)
 
 ### Variable Substitution
 Variables need to handle:
-- Target-specific values (`{{$target}}`, `{{$target.id}}`)
+- Destination-specific values (`{{$destination}}`, `{{$destination.id}}`)
 - Path-related values
 - Front-matter values
 
 ### Import Processing
 The compiler must process imports:
 - Resolving paths correctly
-- Filtering tracks as specified
+- Filtering stems as specified
 - Handling nested imports
 - Managing circular references
 

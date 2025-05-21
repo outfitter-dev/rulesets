@@ -1,3 +1,55 @@
+6. Stem numbering should:
+
+Be configurable at multiple levels (global, Source Rules file, stem)
+Support different formats for headings and tags
+Handle hierarchical relationships automatically
+}
+
+### Source Rule Configuration (frontmatter)
+
+```yaml
+---
+mixdown:
+  heading:
+    level:
+      min: 2             # Minimum heading level to start at (default: 2)
+      max: 5             # Maximum heading level (default: 5, capped at 6)
+    case: "title"        # Propertyal: stem name case transformation
+    line_breaks:
+      before: true       # Insert blank line before heading (default: true)
+      after: true        # Insert blank line after heading (default: true)
+  stem:
+    numbering:
+      heading: "before"     # before, after, or none
+      tag: "after"          # before, after, or none
+      children: 3           # max depth for hierarchical numbering
+      separator: "."        # separator between numbers (e.g., 1.[2.3])
+---
+content_copy
+download
+Use code with caution.
+5. Numbering Configuration
+Control numbering globally or per-Source-Rules-file:
+
+mixdown:
+  stem:
+    numbering:
+      heading: "before"      # before, after, or none
+      tag: "after"           # before, after, or none
+      children: 3            # max depth for hierarchical numbering
+      separator: "."         # separator between numbers (e.g., 1.[2.3])
+content_copy
+download
+Use code with caution.
+Yaml
+### 2. Numbering Placement Properties
+
+Control where numbering appears in output:
+## Implementation Considerations
+
+1. The processor would need to determine the nesting depth for each stem when rendering.
+2. Configuration merging (global → destination → Source Rules file → stem) would need clear precedence rules.
+3. Heading transformation would need to happen at render time to account for various transformations.
 # Heading-Based Output Format Proposal
 
 ## Overview
@@ -6,25 +58,25 @@ Adding a heading-based output format would allow users to represent nested struc
 
 ## Core Concept
 
-I propose adding a new `heading` output format with optional level specification (defaulting to the track's nesting level), along with frontmatter/config settings to control minimum/maximum heading levels and text case transformation.
+I propose adding a new `heading` output format with optional level specification (defaulting to the stem's nesting level), along with frontmatter/config settings to control minimum/maximum heading levels and text case transformation.
 
-## Proposed Format Options
+## Proposed Format Properties
 
-Add the following output value within a track:
+Add the following output value within a stem:
 
 | Value | Description |
 |-------|-------------|
-| `heading` | Render track as a Markdown heading instead of XML tags |
+| `heading` | Render stem as a Markdown heading instead of XML tags |
 | `heading="3"` | Specify exact heading level |
 | `heading="inc"` | Increment heading level by 1 from parent/default level |
 | `heading="dec"` | Decrement heading level by 1 from parent/default level (never below h1) |
-| `heading="same"` | Keep the same heading level as parent/previous track |
-| `heading="replace"` | Replace the first heading in the content with a track name heading |
+| `heading="same"` | Keep the same heading level as parent/previous stem |
+| `heading="replace"` | Replace the first heading in the content with a stem name heading |
 | `h-1` to `h-6` | Shorthand for exact heading levels (h-1, h-2, h-3, h-4, h-5, h-6) |
 | `h-inc` | Shorthand for incrementing heading level |
 | `h-dec` | Shorthand for decrementing heading level |
 | `h-same` | Shorthand for keeping the same heading level |
-| `numbering` | Enable sequential numbering of tracks based on position and hierarchy |
+| `numbering` | Enable sequential numbering of stems based on position and hierarchy |
 | `numbering="heading:before tag:after"` | Control where numbering appears in output formats |
 | `"Example $n"` | Use `$n` variable in quoted strings for automatic sequential numbering |
 
@@ -33,17 +85,17 @@ Add the following output value within a track:
 ### 1. Basic Heading Format
 
 ```markdown
-{{track-name heading}}
-This content will be preceded by a heading based on the track name
-{{/track-name}}
+{{stem-name heading}}
+This content will be preceded by a heading based on the stem name
+{{/stem-name}}
 ```
 
 This would output:
 
 ```markdown
-## Track Name
+## Stem Name
 
-This content will be preceded by a heading based on the track name
+This content will be preceded by a heading based on the stem name
 ```
 
 ### 2. Explicit Heading Level
@@ -51,39 +103,39 @@ This content will be preceded by a heading based on the track name
 Users can specify an exact heading level:
 
 ```markdown
-{{track-name heading="3"}}
+{{stem-name heading="3"}}
 This content will use an h3 heading regardless of nesting
-{{/track-name}}
+{{/stem-name}}
 
 <!-- Or using the shorthand notation -->
-{{track-name h-3}}
+{{stem-name h-3}}
 This content will also use an h3 heading
-{{/track-name}}
+{{/stem-name}}
 ```
 
 This would output:
 
 ```markdown
-### Track Name
+### Stem Name
 
 This content will use an h3 heading regardless of nesting
 
-### Track Name
+### Stem Name
 
 This content will also use an h3 heading
 ```
 
-### 3. Nested Track Heading Calculation
+### 3. Nested Stem Heading Calculation
 
-When tracks are nested, the heading level would automatically increment based on the nesting depth (unless explicitly overridden):
+When stems are nested, the heading level would automatically increment based on the nesting depth (unless explicitly overridden):
 
 ```markdown
-{{outer-track heading}}
+{{outer-stem heading}}
 Outer content
 
-{{inner-track heading}}
+{{inner-stem heading}}
 Inner content
-{{/inner-track}}
+{{/inner-stem}}
 
 {{another-inner heading}}
 
@@ -95,17 +147,17 @@ Nesting more content
 
 {{/another-inner}}
 
-{{/outer-track}}
+{{/outer-stem}}
 ```
 
-With the `heading` option applied to all tracks, this would output:
+With the `heading` property applied to all stems, this would output:
 
 ```markdown
-## Outer Track
+## Outer Stem
 
 Outer content
 
-### Inner Track
+### Inner Stem
 
 Inner content
 
@@ -129,7 +181,7 @@ mixdown:
     level:
       min: 2      # Minimum heading level to start at (default: 2)
       max: 5      # Maximum heading level (default: 5, capped at 6)
-    case: "title" # Optional: track name case transformation
+    case: "title" # Optional: stem name case transformation
     line_breaks:
       before: true # Insert blank line before heading (default: true)
       after: true   # Insert blank line after heading (default: true)
@@ -158,15 +210,15 @@ This shorthand automatically applies heading formatting and makes the opinionate
 
 ### 6. Nested XML to Headings Conversion
 
-When embedded tracks use different output formats, maintain proper structure:
+When embedded stems use different output formats, maintain proper structure:
 
 ```markdown
-{{outer-track heading}}
+{{outer-stem heading}}
 Outer content
 
-{{inner-track}}
+{{inner-stem}}
 Inner content with XML tags
-{{/inner-track}}
+{{/inner-stem}}
 
 {{another-inner h-4}}
 Another inner section with explicit heading level
@@ -176,19 +228,19 @@ Another inner section with explicit heading level
 Third inner section with shorthand heading notation
 {{/third-inner}}
 
-{{/outer-track}}
+{{/outer-stem}}
 ```
 
 Would output:
 
 ```markdown
-## Outer Track
+## Outer Stem
 
 Outer content
 
-<inner_track>
+<inner_stem>
 Inner content with XML tags
-</inner_track>
+</inner_stem>
 
 #### Another Inner
 
@@ -199,7 +251,7 @@ Another inner section with explicit heading level
 Third inner section with shorthand heading notation
 ```
 
-## Configuration Options
+## Configuration Properties
 
 ### Global Configuration (mixdown.config.json)
 
@@ -217,7 +269,7 @@ Third inner section with shorthand heading notation
         "after": true
       }
     },
-    "track": {
+    "stem": {
       "numbering": {
         "heading": "before",
         "tag": "after",
@@ -238,11 +290,11 @@ mixdown:
     level:
       min: 2             # Minimum heading level to start at (default: 2)
       max: 5             # Maximum heading level (default: 5, capped at 6)
-    case: "title"        # Optional: track name case transformation
+    case: "title"        # Propertyal: stem name case transformation
     line_breaks:
       before: true       # Insert blank line before heading (default: true)
       after: true        # Insert blank line after heading (default: true)
-  track:
+  stem:
     numbering:
       heading: "before"     # before, after, or none
       tag: "after"          # before, after, or none
@@ -251,14 +303,14 @@ mixdown:
 ---
 ```
 
-### Heading Text Case Options
+### Heading Text Case Properties
 
-- `title`: Title Case (`track-name` → `# Track Name`)
-- `sentence`: Sentence case (`track-name` → `# Track name`)
-- `lower`: lowercase (`track-name` → `# track name`)
-- `upper`: UPPERCASE (`track-name` → `# TRACK NAME`)
-- `kebab`: Original form (`track-name` → `# track-name`)
-- `space`: Spaces for hyphens (`track-name` → `# track name`)
+- `title`: Title Case (`stem-name` → `# Stem Name`)
+- `sentence`: Sentence case (`stem-name` → `# Stem name`)
+- `lower`: lowercase (`stem-name` → `# stem name`)
+- `upper`: UPPERCASE (`stem-name` → `# TRACK NAME`)
+- `kebab`: Original form (`stem-name` → `# stem-name`)
+- `space`: Spaces for hyphens (`stem-name` → `# stem name`)
 
 ## Edge Cases and Handling
 
@@ -266,24 +318,24 @@ mixdown:
    - Heading levels respect `level.min` (default: 2) and `level.max` (default: 5).
    - If nesting would exceed `level.max`, the level is capped.
    - If nesting would exceed h6 (the maximum Markdown heading level), it's capped at h6.
-2. **Heading Content**: If a track has a `name` option, that would be used for the heading text instead of the track name.
-3. **Empty Tracks**: If a track has no content, it would still generate a heading, but implementations might choose to handle this differently.
+2. **Heading Content**: If a stem has a `name` property, that would be used for the heading text instead of the stem name.
+3. **Empty Stems**: If a stem has no content, it would still generate a heading, but implementations might choose to handle this differently.
 4. **Content With Existing Headings**: When using `heading="replace"`, special handling is needed:
 
    ```markdown
-   {{track-name heading="replace"}}
+   {{stem-name heading="replace"}}
    # Existing Heading
 
-   This content has an existing heading that will be replaced with the track name
-   {{/track-name}}
+   This content has an existing heading that will be replaced with the stem name
+   {{/stem-name}}
    ```
 
    Would output:
 
    ```markdown
-   # Track Name
+   # Stem Name
 
-   This content has an existing heading that will be replaced with the track name
+   This content has an existing heading that will be replaced with the stem name
    ```
 
    If there are no headings to replace, a new heading would be added at the beginning.
@@ -291,33 +343,33 @@ mixdown:
 5. **Simple Heading Structure**: Keep headings simple and focused on content structure:
 
    ```markdown
-   {{track-name output="heading"}}
+   {{stem-name output="heading"}}
    Content
-   {{/track-name}}
+   {{/stem-name}}
    ```
 
    Would output:
 
    ```markdown
-   ## Track Name
+   ## Stem Name
    
    Content
    ```
 
 6. **Quoted String Heading Derivation**: When using the simplified `{{"Heading"}}` syntax:
    - XML tag string is derived from heading (e.g., `{{"Getting Started"}}` → `<getting_started>`)
-   - Nesting is automatically tracked for proper heading levels
+   - Nesting is automatically stemmed for proper heading levels
    - No XML tags appear in the output
-   - Configuration options like `level` and `case` still apply
+   - Configuration properties like `level` and `case` still apply
    - `#` characters are not supported within quoted titles
 
 ## Sequential Numbering
 
-Sequential numbering allows tracks to be automatically numbered based on their position and relationship to other tracks. This feature is especially useful for creating structured documents with hierarchical sections.
+Sequential numbering allows stems to be automatically numbered based on their position and relationship to other stems. This feature is especially useful for creating structured documents with hierarchical sections.
 
 ### 1. Basic Numbering
 
-To enable numbering on a track, use the `numbering` option:
+To enable numbering on a stem, use the `numbering` property:
 
 ```markdown
 {{chapter numbering}}
@@ -329,7 +381,7 @@ Next chapter content (becomes "2. Chapter" with heading output)
 {{/chapter}}
 ```
 
-### 2. Numbering Placement Options
+### 2. Numbering Placement Properties
 
 Control where numbering appears in output:
 
@@ -339,7 +391,7 @@ Section content
 {{/section}}
 ```
 
-| Option | Description |
+| Property | Description |
 |--------|-------------|
 | `heading:before` | Place number before heading text ("1. Section") |
 | `heading:after` | Place number after heading text ("Section 1") |
@@ -350,7 +402,7 @@ Section content
 
 ### 3. Hierarchical Numbering
 
-Numbering can reflect the hierarchical structure of nested tracks:
+Numbering can reflect the hierarchical structure of nested stems:
 
 ```markdown
 {{chapter numbering}}
@@ -368,7 +420,7 @@ Subsection content (becomes "1.1.1 Subsection")
 
 ### 4. Quoted String Syntax with Numbering
 
-The simplified quoted string syntax also supports numbering. The `$n` variable is replaced inline with a number value based on the track's position in the parent track.
+The simplified quoted string syntax also supports numbering. The `$n` variable is replaced inline with a number value based on the stem's position in the parent stem.
 
 ```markdown
 {{"Example $n"}}
@@ -416,30 +468,30 @@ Control numbering globally or per-mix:
 
 ```yaml
 mixdown:
-  track:
+  stem:
     numbering:
       heading: "before"      # before, after, or none
       tag: "after"           # before, after, or none
-      children: 3            # max depth for hierarchical numbering 
+      children: 3            # max depth for hierarchical numbering
       separator: "."         # separator between numbers (e.g., 1.[2.3])
 ```
 
 ## Implementation Considerations
 
-1. The processor would need to track nesting depth for each track when rendering.
-2. Configuration merging (global → target → mix → track) would need clear precedence rules.
+1. The processor would need to stem nesting depth for each stem when rendering.
+2. Configuration merging (global → destination → mix → stem) would need clear precedence rules.
 3. Heading transformation would need to happen at render time to account for various transformations.
 4. Line break handling should respect both configuration and markdown linting standards:
    - By default, follow markdownlint rule MD022 (blanks-around-headings)
    - Allow overriding through `line_breaks` settings
-   - Provide inline control with track options: `heading line_breaks.after=false`
+   - Provide inline control with stem properties: `heading line_breaks.after=false`
 5. Quoted string heading syntax should:
-   - Create a derived track name (e.g., `{{"Getting Started"}}` → `getting-started`)
+   - Create a derived stem name (e.g., `{{"Getting Started"}}` → `getting-started`)
    - Automatically apply heading formatting without XML tags
    - Respect heading nesting based on parent-child relationships
    - Provide the simplest way to create documentation
-6. Track numbering should:
-   - Be configurable at multiple levels (global, mix, track)
+6. Stem numbering should:
+   - Be configurable at multiple levels (global, mix, stem)
    - Support different formats for headings and tags
    - Handle hierarchical relationships automatically
    - Respect max depth settings to prevent overly complex number strings

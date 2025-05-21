@@ -6,25 +6,25 @@ This document provides terminology guidance for consistent language in Mixdown d
 
 | Term | Definition | Usage Examples |
 |------|------------|----------------|
-| **Source Rules** | Source files defining rules for AI assistants, written in Mixdown Notation | "Write your code standards in a source rules file." |
-| **Compiled Rules** | Rules files generated from source rules for each destination | "Compile your source rules into compiled rules for each destination." |
+| **Source rules** | Source files defining rules for AI assistants, written in Mixdown Notation | "Write your code standards in a source rules file." |
+| **Compiled rules** | Rules files generated from source rules for each destination | "Compile your source rules into compiled rules for each destination." |
 | **Destination** | A supported tool (e.g., Cursor, Claude Code) | "Each destination has specific formatting requirements." |
 | **Marker** | Element using `{{...}}` notation | "Use markers to direct the compiler." |
 | **Stem** | Delimited blocks marked with `{{stem}}...{{/stem}}` | "Define a stem for agent instructions." |
 | **Stem Content** | The content between opening and closing stem markers | "The stem content contains the actual instructions for the AI assistant." |
 | **Stem Name** | The kebab-case or snake_case identifier after the opening `{{` | "Use a descriptive stem name like {{user-instructions}}." |
 | **Import** | A reference to another source rules file or stem | "Import common guidelines into multiple files." |
-| **Import Scope** | Selective filtering of stems during import | "Use import scope with `{{> my-rules[my-stem] }}` to import specific stems." |
+| **Import Scope** | Selective filtering of stems during import | "Use import scope with `{{> my-rules#(my-stem) }}` to import specific stems." |
 | **Variable** | Dynamic values replaced during compilation | "Use variables to include dynamic data." |
 | **System Variable** | Built-in variables provided by the compiler | "The `$destination` system variable contains the current destination ID." |
 | **Variable Substitution** | The process of replacing variables with their values | "Variable substitution happens automatically during compilation." |
 | **Mixin** | Reusable components stored in `.mixdown/src/_mixins` | "Import commonly used components as mixins." |
 | **Property** | A configuration applied to stems or imports | "Apply the tag-omit property to remove XML tags in compiled rules." |
 | **Scope** | A destination-specific context for properties | "Use destination:property to apply properties in a specific scope." |
-| **Scoped Value** | A property value that applies only to specific destinations | "The destination:code-(js) is a destination-scoped value." |
-| **Property Family** | The prefix part before the hyphen in properties (e.g., `code-` in `code-js`) | "The code- family includes language-specific formatting properties." |
-| **Property Value** | Value enclosed in parentheses after a property family | "The code-(js) defines JavaScript-specific formatting." |
-| **Property Group** | A collection of related properties that serve a common purpose, regardless of prefix | "The formatting property group includes properties like code-js, indent-4, and wrap-80." |
+| **Scoped Value** | A property value that applies only to specific destinations | "The destination:code-javascript is a destination-scoped value." |
+| **Property Family** | The prefix part before the hyphen in properties (e.g., `code-` in `code-javascript`) | "The code- family includes language-specific formatting properties." |
+| **Property Value** | Value enclosed in parentheses after a property family | "The code-javascript defines JavaScript-specific formatting." |
+| **Property Group** | A collection of related properties that serve a common purpose, regardless of prefix | "The formatting property group includes properties like code-javascript, indent-4, and wrap-80." |
 | **Modifier** | Special symbol that changes inclusion/exclusion | "Use the + modifier to include content for a destination." |
 
 ## Linguistic Conventions
@@ -54,8 +54,8 @@ This document provides terminology guidance for consistent language in Mixdown d
 
 #### Compilation Logical Flow
 
-- ✅ "Source Rules → Compilation → Compilation Artifacts → Compiled Rules" (for describing the complete process)
-- ✅ "Source Rules → Compilation → Compiled Rules" (simplified version)
+- ✅ "Source rules → compilation → compilation artifacts → compiled rules" (for describing the complete process)
+- ✅ "Source rules → compilation → compiled rules" (simplified version)
 
 #### Content Display
 
@@ -74,7 +74,7 @@ This document provides terminology guidance for consistent language in Mixdown d
 - ✅ "Property group" (for collections of related properties serving a common purpose)
 - ✅ "Property pattern" (for consistent naming conventions like `prefix-*`)
 - ✅ "Destination-scoped properties" (for properties applied to specific destinations)
-- ✅ "Property value" (for values in parentheses like `code-(js)`)
+- ✅ "Property value" (for values in parentheses like `name-("destination-rules")`)
 - ❌ "Property settings" (use "property values" instead)
 - ❌ "Destination-specific properties" (use "destination-scoped properties" instead)
 - ❌ "Attribute" (use "property" for Mixdown directives, "XML attribute" for compiled rules)
@@ -115,22 +115,10 @@ The `.mixdown/dist/` directory stores compiled rules, compilation artifacts, and
 ### Destination Directories
 
 "Destination Directory" refers to a specific rules directory for a particular destination. For example:
+
 - `.cursor/rules` is a destination directory for Cursor
 - `.claude/commands` is a destination directory for Claude Code slash commands
 - `CLAUDE.md` has no specific destination directory as it's placed at the project root
-
-## Musical Theme Alignment
-
-Mixdown uses audio production terminology to reinforce its brand identity:
-
-| Term | Audio Meaning | Mixdown Meaning |
-|------|--------------|-----------------|
-| **Source Rules** | Original audio recordings | Source files defining instructions for AI assistants |
-| **Mixdown** | Process of combining audio tracks | Process of compiling source rules |
-| **Compilation** | Creating a finished recording | Process of transforming source rules into compiled rules |
-| **Compiled Rules** | Final audio master | Final rules ready for destinations |
-| **Stem** | Individual isolated audio track | Individual content block in a source rules file |
-| **Mixin** | Reusable audio element/sample | Modular, reusable component for multiple source rules files |
 
 ## Delimiter Usage
 
@@ -138,8 +126,8 @@ Mixdown uses specific delimiters consistently throughout the syntax:
 
 | Delimiter | Role | Example | Purpose |
 |-----------|------|---------|---------|
-| `:` | Scope indicator | `destination:code-js` | Indicates that properties are scoped to a specific destination |
-| `()` | Property value container | `code-(js)` | Contains value for a property family |
+| `:` | Scope indicator | `destination:code-javascript` | Indicates that properties are scoped to a specific destination |
+| `()` | Property value container | `name-("destination-rules")` | Contains value for a property family |
 | `[]` | Property grouping | `destination:[property-1 property-2]` | Groups multiple properties for readability |
 | `+` | Inclusion modifier | `+destination` | Indicates inclusion of a destination |
 | `!` | Exclusion modifier | `!destination`, `!stem-two` | Indicates exclusion of a destination or stem on imports |
@@ -185,23 +173,23 @@ When referring to compilation versions:
 ## Changelog
 
 - **2025-05-20:**
-  - Renamed "Mix" to "Source Rules"
-  - Renamed "Track" to "Stem"
-  - Renamed "Snippet" to "Mixin"
-  - Renamed "Target" to "Destination"
-  - Renamed "Output" to "Compiled Rules"
-  - Renamed "Option" to "Property"
-  - Standardized on "Compile/Compilation" for transformation process
+  - Renamed "mix" to "source rules"
+  - Renamed "track" to "stem"
+  - Renamed "snippet" to "mixin"
+  - Renamed "target" to "destination"
+  - Renamed "output" to "compiled rules"
+  - Renamed "option" to "property"
+  - Standardized on "compile/compilation" for transformation process
   - Updated directory naming: `.mixdown/mixes/` → `.mixdown/src/`
   - Updated directory naming: `.mixdown/mixes/_snippets/` → `.mixdown/src/_mixins/`
   - Updated directory naming: `.mixdown/output/` → `.mixdown/dist/` to align with software development conventions
   - Renamed references to "output" to "compiled rules"
   - Refined property terminology with "Property Family", "Property Value", and "Property Group" concepts
-  - Updated property syntax to use hyphenated format `property-(value)`
+  - Updated property syntax to use hyphenated format `property-("value")`
   - Added detailed explanations for Stem Content, Stem Name, Import Scope, System Variables and Variable Substitution
   - Added Compilation Directory Structure and Destination Directories sections
   - Added logical compilation flow description
-  - Updated terminology from "Rule Definition" to "Source Rules" for better alignment with development conventions
+  - Updated terminology from "Rule Definition" to "source rules" for better alignment with development conventions
 
 ---
 
