@@ -1,3 +1,6 @@
+### Added
+- Added `.mix.md` file extension for source rules files to improve discoverability, search capabilities, and IDE support
+
 ### Changed
 - Updated terminology throughout the documentation:
   - "Mix files" → "Source rules"
