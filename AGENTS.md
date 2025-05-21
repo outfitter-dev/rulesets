@@ -157,5 +157,7 @@ AI agents must consult these documents regularly:
 - `@docs/project/LANGUAGE.md`: Terminology spec for consistent communication
 - `@docs/project/plans/PLAN-mixdown-v0.md`: Current implementation plan and scope
 - `CLAUDE.md`: Project-specific guidance and concepts
+- `@docs/agentic/`: Agentic development coordination and agent-specific guides
+- `@docs/agentic/jules/`: Google Jules integration guides and prompts
 
 This structured approach ensures AI agents can efficiently navigate, understand, and contribute to the Mixdown codebase while maintaining consistency and quality.
