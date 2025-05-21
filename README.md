@@ -120,6 +120,15 @@ project/
 │   └── `.mixdownignore`      # ignore patterns
 ```
 
+### `.mixdownignore`
+
+Mixdown can skip source files during compilation by using a
+`.mixdown/.mixdownignore` file. This file uses standard
+`.gitignore` syntax and is relative to the `.mixdown/` directory, primarily
+for ignoring files in the `src/` directory that you don't want compiled.
+Check out [`docs/samples/.mixdownignore`](docs/samples/.mixdownignore) for a
+working example.
+
 ## Notation Cheatsheet
 
 | Token / Feature | Example | Notes |

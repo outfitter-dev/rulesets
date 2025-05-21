@@ -1,0 +1,12 @@
+# Example .mixdownignore
+# This file uses standard .gitignore syntax
+# All paths are relative to the .mixdown/ directory
+
+# Ignore draft files in src directory
+src/drafts/
+
+# Ignore temporary files
+src/**/*.tmp.md
+
+# Ignore test fixtures
+src/test-fixtures/

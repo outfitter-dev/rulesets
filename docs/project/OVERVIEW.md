@@ -1026,13 +1026,16 @@ project/
 ```
 
 Use `.mixdown/.mixdownignore` to exclude files or directories from compilation.
-Patterns follow `.gitignore` glob syntax. Example:
+Patterns follow `.gitignore` glob syntax and are relative to the `.mixdown/` directory,
+primarily for ignoring files in the `src/` directory that you don't want compiled. Example:
 
 ```text
-# Ignore temporary notes
-notes/
-# Skip scratch files
-*.tmp.md
+# Ignore draft files in src directory
+src/drafts/
+# Skip temporary files
+src/**/*.tmp.md
+# Ignore test fixtures
+src/test-fixtures/
 ```
 
 ## XML Generation
