@@ -34,7 +34,7 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 ## Core Concepts
 
 **Mix**
-: Source instruction files, written in 100% previewable Markdown. Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
+: Source instruction files, written in 100% previewable Markdown. Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler. Mix files use the `.mix.md` extension to make them easily identifiable and distinguish them from regular Markdown files.
 
 **Output**
 : Target-specific output files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their target tool directories, these are referred to as "tool-ready outputs".

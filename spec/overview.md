@@ -80,6 +80,7 @@ Result: *Write prompts once, render tool-specific rules, zero drift.*
 - **Mix**
   - Source instruction files, written in 100% previewable Markdown.
   - Written in Mixdown Notation and use `{{...}}` notation markers to direct the compiler.
+  - Use the `.mix.md` extension to clearly identify them as Mixdown source files.
   - Compiled into tool-specific rules files:
     - `./mixdown/mixes/my-rule.mix.md` → `.cursor/rules/my-rule.mdc`
 - **Target**
@@ -914,6 +915,29 @@ project/
 │   │   └── _snippets/         # reusable content modules
 │   └── mixdown.config.json    # compiler config
 ```
+
+### Finding Mixdown Source Files
+
+Mixdown source files use the `.mix.md` extension to clearly identify them as files that should be compiled by Mixdown, rather than regular Markdown files. This makes it easy for humans and AI agents to distinguish Mixdown source files from other Markdown files in a project.
+
+For AI agents, tools like `grep` can be used to easily identify all Mixdown source files in a repository:
+
+```bash
+# Find all Mixdown source files in the current directory and subdirectories
+grep -r --include="*.mix.md" "" .
+
+# Find Mixdown source files containing specific content
+grep -r --include="*.mix.md" "{{instructions}}" .
+
+# Count the number of Mixdown source files in a project
+find . -name "*.mix.md" | wc -l
+```
+
+The `.mix.md` extension provides several benefits:
+1. Clearly identifies files meant to be compiled by Mixdown
+2. Distinguishes source files from regular documentation
+3. Makes it easy to find all Mixdown sources, even if they're not in the standard `.mixdown/mixes` directory
+4. Enables tools, linters, and plugins to target Mixdown-specific files
 
 ## Future Releases
 
