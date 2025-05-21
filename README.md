@@ -116,7 +116,8 @@ project/
 │   │   └── `latest/`         # compiled rules files
 │   ├── `src/`         # source rules files (*.md)
 │   │   └── `_mixins/`         # reusable content modules
-│   └── `mixdown.config.json` # compiler config
+│   ├── `mixdown.config.json` # compiler config
+│   └── `.mixdownignore`      # ignore patterns
 ```
 
 ## Notation Cheatsheet

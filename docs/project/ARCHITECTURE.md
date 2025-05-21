@@ -247,8 +247,12 @@ project/
 │   │   └── latest/         # compiled rules
 │   ├── src/                # source rules files (*.md)
 │   │   └── _mixins/        # reusable content modules
-│   └── mixdown.config.json # compiler config
+│   ├── mixdown.config.json # compiler config
+│   └── .mixdownignore      # ignore patterns
 ```
+
+The compiler reads `.mixdown/.mixdownignore` before scanning source files. Its
+patterns follow `.gitignore` globs to exclude files from compilation.
 
 ## Configuration Format
 
@@ -298,6 +302,7 @@ A stub for `mixdown.config.json`:
 }
 ```
 Note: Paths in `sources` (like `sourceRules` and `mixins`) and `dist` are typically relative to the project root directory (i.e., the directory containing the `.mixdown` folder itself).
+Ignore rules are read from `.mixdown/.mixdownignore` using `.gitignore` glob syntax.
 
 ## Extension Points
 
