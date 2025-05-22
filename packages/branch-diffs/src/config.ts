@@ -41,6 +41,61 @@ export interface BranchDiffsConfig {
       patterns: Record<string, string[]>;
     };
   };
+  format: {
+    /** Default format for reports */
+    default: 'summary' | 'detailed';
+    /** Default grouping method */
+    defaultGroup: 'branch' | 'file' | 'directory' | 'type' | 'size';
+    /** JSON format configuration */
+    json: {
+      /** Default style for JSON output */
+      default: 'compact' | 'full';
+      /** Style overrides per format */
+      summary?: 'compact' | 'full';
+      detailed?: 'compact' | 'full';
+    };
+    /** Markdown format configuration */
+    markdown: {
+      /** Default style for Markdown output */
+      default: 'compact' | 'full';
+      /** Style overrides per format */
+      summary?: 'compact' | 'full';
+      detailed?: 'compact' | 'full';
+    };
+    /** Size thresholds for grouping by size */
+    sizeThresholds: {
+      /** Lines changed threshold for small changes */
+      small: number;
+      /** Lines changed threshold for medium changes */
+      medium: number;
+      /** Lines changed threshold for large changes */
+      large: number;
+    };
+    /** Maximum limits for output */
+    limits: {
+      /** Maximum files to show per branch */
+      maxFiles?: number;
+      /** Maximum branches to compare */
+      maxBranches?: number;
+      /** Maximum lines in patch sections */
+      maxLines?: number;
+      /** Maximum patch size in bytes */
+      maxPatchSize?: number;
+    };
+    /** Named templates */
+    templates: Record<string, {
+      format: 'summary' | 'detailed';
+      group: 'branch' | 'file' | 'directory' | 'type' | 'size';
+      json?: 'compact' | 'full';
+      markdown?: 'compact' | 'full';
+      limits?: {
+        maxFiles?: number;
+        maxBranches?: number;
+        maxLines?: number;
+        maxPatchSize?: number;
+      };
+    }>;
+  };
 }
 
 export const DEFAULT_CONFIG: BranchDiffsConfig = {
@@ -67,6 +122,49 @@ export const DEFAULT_CONFIG: BranchDiffsConfig = {
         'agents': ['codex/*', 'jules/*', 'copilot/*', 'cursor/*', 'windsurf/*', '!*/old-*', '!*/deprecated'],
         'features': ['feature/*', 'feat/*', '!feature/deprecated'],
         'hotfixes': ['hotfix/*', 'fix/*', '*-urgent', 'emergency/*']
+      }
+    }
+  },
+  format: {
+    default: 'detailed',
+    defaultGroup: 'branch',
+    json: {
+      default: 'full',
+      summary: 'compact',
+      detailed: 'full'
+    },
+    markdown: {
+      default: 'compact',
+      summary: 'compact',
+      detailed: 'full'
+    },
+    sizeThresholds: {
+      small: 10,
+      medium: 100,
+      large: 500
+    },
+    limits: {
+      maxFiles: 50,
+      maxBranches: 20,
+      maxLines: 1000,
+      maxPatchSize: 50000
+    },
+    templates: {
+      'agent-review': {
+        format: 'detailed',
+        group: 'file',
+        json: 'full',
+        markdown: 'full'
+      },
+      'ci-summary': {
+        format: 'summary',
+        group: 'branch',
+        json: 'compact',
+        markdown: 'compact',
+        limits: {
+          maxFiles: 20,
+          maxBranches: 10
+        }
       }
     }
   }
@@ -130,7 +228,20 @@ export function loadConfig(configPath: string = 'branch-diffs.config.json'): Bra
       return {
         output: { ...DEFAULT_CONFIG.output, ...userConfig.output },
         diff: { ...DEFAULT_CONFIG.diff, ...userConfig.diff },
-        git: { ...DEFAULT_CONFIG.git, ...userConfig.git }
+        git: { 
+          ...DEFAULT_CONFIG.git, 
+          ...userConfig.git,
+          branch: { ...DEFAULT_CONFIG.git.branch, ...userConfig.git?.branch }
+        },
+        format: {
+          ...DEFAULT_CONFIG.format,
+          ...userConfig.format,
+          json: { ...DEFAULT_CONFIG.format.json, ...userConfig.format?.json },
+          markdown: { ...DEFAULT_CONFIG.format.markdown, ...userConfig.format?.markdown },
+          sizeThresholds: { ...DEFAULT_CONFIG.format.sizeThresholds, ...userConfig.format?.sizeThresholds },
+          limits: { ...DEFAULT_CONFIG.format.limits, ...userConfig.format?.limits },
+          templates: { ...DEFAULT_CONFIG.format.templates, ...userConfig.format?.templates }
+        }
       };
     } catch (error) {
       console.warn(`Warning: Could not parse config file ${configPath}, using defaults`);

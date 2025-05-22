@@ -70,17 +70,73 @@ program
   .option('-m, --match <patterns>', 'manual pattern matching (comma-separated, supports !, + syntax)')
   .option('-v, --version <version>', 'version-aware pattern matching (e.g., 0, v0.1, 1.2.x)')
   .option('-s, --scope <type>', 'branch scope: all, local, or remote')
-  .action((branches: string[], options: { target?: string; filter?: string; pattern?: string; match?: string; version?: string; scope?: string }) => {
+  .option('--format <type>', 'report format: summary or detailed')
+  .option('--group <type>', 'grouping method: branch, file, directory, type, or size')
+  .option('--json [style]', 'output JSON format with optional style (compact/full)')
+  .option('--markdown [style]', 'output Markdown format with optional style (compact/full)')
+  .option('--template <name>', 'use named template from config')
+  .option('--max-files <num>', 'maximum files to show per branch', parseInt)
+  .option('--max-branches <num>', 'maximum branches to compare', parseInt)
+  .option('--max-lines <num>', 'maximum lines in patch sections', parseInt)
+  .option('--max-patch-size <bytes>', 'maximum patch size in bytes', parseInt)
+  .action((branches: string[], options: { 
+    target?: string; 
+    filter?: string; 
+    pattern?: string; 
+    match?: string; 
+    version?: string; 
+    scope?: string;
+    format?: string;
+    group?: string;
+    json?: string | boolean;
+    markdown?: string | boolean;
+    template?: string;
+    maxFiles?: number;
+    maxBranches?: number;
+    maxLines?: number;
+    maxPatchSize?: number;
+  }) => {
     // Load configuration
     const config = loadConfig();
     
+    // Apply template first, then override with CLI options
+    let effectiveOptions = { ...options };
+    if (options.template) {
+      const template = config.format.templates[options.template];
+      if (!template) {
+        console.log(chalk.red(`❌ Template "${options.template}" not found in configuration`));
+        console.log(chalk.gray(`Available templates: ${Object.keys(config.format.templates).join(', ')}`));
+        process.exit(1);
+      }
+      
+      // Apply template defaults, but CLI options override
+      effectiveOptions = {
+        format: effectiveOptions.format || template.format,
+        group: effectiveOptions.group || template.group,
+        json: effectiveOptions.json !== undefined ? effectiveOptions.json : template.json,
+        markdown: effectiveOptions.markdown !== undefined ? effectiveOptions.markdown : template.markdown,
+        maxFiles: effectiveOptions.maxFiles || template.limits?.maxFiles,
+        maxBranches: effectiveOptions.maxBranches || template.limits?.maxBranches,
+        maxLines: effectiveOptions.maxLines || template.limits?.maxLines,
+        maxPatchSize: effectiveOptions.maxPatchSize || template.limits?.maxPatchSize,
+        ...effectiveOptions // CLI options take precedence
+      };
+    }
+
     // Use config defaults if not provided
-    const effectiveTarget = options.target || config.git.defaultTarget;
-    const effectiveScope = options.scope || config.git.defaultScope;
+    const effectiveTarget = effectiveOptions.target || config.git.defaultTarget;
+    const effectiveScope = effectiveOptions.scope || config.git.defaultScope;
+    const effectiveFormat = effectiveOptions.format || config.format.default;
+    const effectiveGroup = effectiveOptions.group || config.format.defaultGroup;
     
     console.log(chalk.blue('🔍 Branch Diffs CLI'));
     console.log(chalk.gray(`Target: ${effectiveTarget}`));
     console.log(chalk.gray(`Scope: ${effectiveScope}`));
+    console.log(chalk.gray(`Format: ${effectiveFormat}`));
+    console.log(chalk.gray(`Group: ${effectiveGroup}`));
+    if (options.template) {
+      console.log(chalk.gray(`Template: ${options.template}`));
+    }
 
     let branchesToCompare: string[] = branches;
 

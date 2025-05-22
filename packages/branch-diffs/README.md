@@ -17,6 +17,12 @@ Branch Diffs creates markdown reports that compare multiple branches against a t
   - **Manual patterns** - ad-hoc matching with include/exclude syntax (`codex/*,!*/old-*`)
   - **Version-aware matching** - semantic version patterns (`v0`, `0.1.x`, `1.2.3`)
   - **Scope control** - filter local, remote, or all branches
+- Flexible formatting system:
+  - **Format levels** - summary (overview) or detailed (full patches)
+  - **Grouping options** - by branch, file, directory, type, or size
+  - **Output styles** - compact or full metadata for JSON/Markdown
+  - **Named templates** - predefined combinations for common workflows
+  - **Configurable limits** - control file counts, patch sizes, and content length
 - Features include:
   - Compact file change summaries (`git diff --stat --compact-summary`)
   - Full patch diffs with configurable context
@@ -47,7 +53,8 @@ const branches = process.argv.slice(3);
 
 **Enhanced Features:**
 - **Flexible configuration** via `branch-diffs.config.json`
-- **Dual output formats** - JSON and Markdown
+- **Dual output formats** - JSON and Markdown with style controls
+- **Advanced formatting system** with templates, grouping, and limits
 - **Timestamped filenames** with customizable formats and delimiters
 - **Configurable exclusion patterns** and diff options
 - **Structured data types** for programmatic consumption
@@ -71,6 +78,8 @@ pnpm build
 ```
 
 ## Usage
+
+### Branch Discovery
 
 ```bash
 # Compare specific branches against default target (from config)
@@ -98,12 +107,32 @@ pnpm run --filter v0 --scope local
 
 # Filter only remote branches  
 pnpm run --filter agent --scope remote
+```
+
+### Output Formatting
+
+```bash
+# Use predefined templates
+pnpm run --template agent-review --version v0
+pnpm run --template ci-summary --pattern agents
+
+# Control format and grouping
+pnpm run --format summary --group file --version v0
+pnpm run --format detailed --group size --pattern agents
+
+# Specify output styles
+pnpm run --json compact --markdown full --version v0
+pnpm run --json full --group directory --pattern features
+
+# Set limits
+pnpm run --max-files 20 --max-branches 5 --version v0
+pnpm run --template agent-review --max-lines 500
 
 # Combine all options
-pnpm run --target dev --version v0 --scope remote
+pnpm run --target dev --version v0 --scope remote --format summary --group file --json compact
 
 # Or run directly after building
-node dist/cli.js --target main --match "copilot/*,!*/deprecated"
+node dist/cli.js --target main --match "copilot/*,!*/deprecated" --template ci-summary
 ```
 
 ## Future
