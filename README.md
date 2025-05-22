@@ -1,5 +1,7 @@
 # 💽 Mixdown: A Compiler for AI Rules Files
 
+> **🚀 v0 Release Now Available!** The initial implementation of Mixdown is ready for testing. See [Installation](#installation) to get started.
+
 Mixdown simplifies rules management for tools like Cursor, Claude Code, Codex, etc. With Mixdown, you author rules (called "source rules") in previewable Markdown and compile them into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
 
 ## What is Mixdown?
@@ -97,26 +99,89 @@ npm install --save-dev @mixdown
 npx @mixdown/cli init
 ```
 
-## Quick Start
+## Installation
 
 ```bash
-mixdown init      # scaffolds .mixdown/ directory structure
+# Using npm
+npm install @mixdown/core
 
-mixdown import    # imports existing rules files into the source rules format
+# Using pnpm (recommended)
+pnpm add @mixdown/core
 
-mixdown build     # writes compiled rules to .mixdown/dist/
+# Using yarn
+yarn add @mixdown/core
 ```
+
+## Quick Start
+
+### 1. Create a source rules file (`my-rules.mix.md`):
+
+```markdown
+---
+mixdown: v0
+title: My Coding Standards
+description: Rules for AI coding assistants
+destinations:
+  cursor:
+    outputPath: ".cursor/rules/standards.mdc"
+  windsurf:
+    outputPath: ".windsurf/rules/standards.md"
+---
+
+# Coding Standards
+
+Always use TypeScript with strict mode enabled.
+Prefer functional programming patterns.
+Write comprehensive tests for all features.
+```
+
+### 2. Use the API to process your rules:
+
+```typescript
+import { runMixdownV0, ConsoleLogger } from '@mixdown/core';
+
+async function main() {
+  const logger = new ConsoleLogger();
+  
+  try {
+    await runMixdownV0('./my-rules.mix.md', logger);
+    console.log('Rules compiled successfully!');
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+main();
+```
+
+### 3. Find your compiled rules at:
+- `.cursor/rules/standards.mdc` (for Cursor)
+- `.windsurf/rules/standards.md` (for Windsurf)
+
+## V0 Limitations
+
+The current v0 release provides foundational functionality:
+
+- ✅ Frontmatter parsing and validation
+- ✅ Basic file compilation and writing
+- ✅ Destination plugin architecture
+- ❌ Mixdown notation markers (`{{...}}`) are not processed (passed through as-is)
+- ❌ No stem/import/variable support yet
+
+These advanced features are planned for v0.x releases leading to v1.0.
 
 ## Directory Structure
 
 ```
 project/
-├── `.mixdown/`
-│   ├── `dist/`
-│   │   └── `latest/`         # compiled rules files
-│   ├── `src/`         # source rules files (*.mix.md, *.md)
-│   │   └── `_mixins/`         # reusable content modules
-│   └── `mixdown.config.json` # compiler config
+├── .mixdown/
+│   ├── dist/              # Compiled rules output
+│   │   ├── cursor/        # Cursor-specific rules
+│   │   └── windsurf/      # Windsurf-specific rules
+│   └── src/               # Source rules files (*.mix.md, *.md)
+│       └── _mixins/       # Reusable content modules (future)
+├── my-rules.mix.md        # Your source rules file
+└── package.json
 ```
 
 ## Notation Cheatsheet
