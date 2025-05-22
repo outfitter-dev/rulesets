@@ -17,7 +17,6 @@ export async function parse(content: string): Promise<ParsedDoc> {
   let frontmatterStart = -1;
   let frontmatterEnd = -1;
   let frontmatter: Record<string, any> = {};
-  let body = content;
   const errors: Array<{ message: string; line?: number; column?: number }> = [];
 
   // Check for frontmatter
@@ -45,7 +44,7 @@ export async function parse(content: string): Promise<ParsedDoc> {
       }
 
       // Extract body (everything after frontmatter)
-      body = lines.slice(frontmatterEnd + 1).join('\n');
+      // Body extraction happens in the compiler for v0
     } else {
       // Unclosed frontmatter
       errors.push({

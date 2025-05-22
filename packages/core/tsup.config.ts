@@ -2,12 +2,13 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
-  entry: ['src/index.ts'], // Adjust if your main CLI entry is elsewhere e.g. src/cli.ts
+  entry: ['src/index.ts'],
   format: ['esm', 'cjs'],
-  dts: true,
+  dts: false, // Temporarily disable, will use tsc directly
   sourcemap: true,
   clean: true,
   splitting: false, // TLDR: keep it simple. Can enable later if needed (mixd-v0)
   // TODO (mixd-v0.1): Enable code splitting for better performance
-  shims: true, // If using features that need shimming for CJS/ESM interop
+  shims: true,
+  external: ['json-schema'],
 });

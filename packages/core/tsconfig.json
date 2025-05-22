@@ -1,4 +1,3 @@
-// TLDR: TypeScript configuration for the @mixdown/core package. Extends the base tsconfig.json for specific package settings (mixd-v0)
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
