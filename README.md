@@ -90,11 +90,11 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 ## Installation
 
 ```bash
-npm install -g @mixdown/cli        # global CLI
+pnpm install -g @mixdown/cli        # global CLI
 # project-local
-npm install --save-dev @mixdown
+pnpm install --save-dev @mixdown
 # or with the CLI
-npx @mixdown/cli init
+pnpx @mixdown/cli init
 ```
 
 ## Quick Start
@@ -117,6 +117,9 @@ project/
 │   ├── `src/`         # source rules files (*.mix.md, *.md)
 │   │   └── `_mixins/`         # reusable content modules
 │   └── `mixdown.config.json` # compiler config
+├── `packages/`               # monorepo packages
+│   ├── `core/`               # @mixdown/core - parser, compiler, linter
+│   └── `branch-diffs/`       # branch comparison CLI tool
 ```
 
 ## Notation Cheatsheet

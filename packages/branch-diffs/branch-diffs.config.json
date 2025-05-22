@@ -1,0 +1,28 @@
+{
+  "output": {
+    "directory": "./reports",
+    "baseFilename": "branch-diffs-report",
+    "includeTimestamp": true,
+    "timestampFormat": "YYYYMMDDhhmm",
+    "delimiter": "-",
+    "formats": ["json", "md"]
+  },
+  "diff": {
+    "excludePatterns": [":!dist/**", ":!*.snap", ":!node_modules/**", ":!coverage/**"],
+    "contextLines": 3,
+    "includeBinary": false
+  },
+  "git": {
+    "defaultTarget": "main",
+    "defaultScope": "all",
+    "branch": {
+      "include": [],
+      "exclude": ["temp/*", "backup/*"],
+      "patterns": {
+        "agents": ["codex/*", "jules/*", "copilot/*", "cursor/*", "windsurf/*", "!*/old-*", "!*/deprecated"],
+        "features": ["feature/*", "feat/*", "!feature/deprecated"],
+        "fixes": ["hotfix/*", "fix/*", "*-urgent", "emergency/*"]
+      }
+    }
+  }
+}
