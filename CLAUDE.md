@@ -210,3 +210,7 @@ When contributing to this project:
 2. Be consistent with the musical theme alignment in feature naming
 3. Ensure all documentation uses clear, specific terminology over vague descriptions
 4. Write mixes using Markdown ATX-style headers and proper code blocks with language identifiers
+
+## Package Management
+
+- As a monorepo we use pnpm for everything
