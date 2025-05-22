@@ -1,0 +1,13 @@
+// TLDR: TypeScript configuration for the @mixdown/core package. Extends the base tsconfig.json for specific package settings (mixd-v0)
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "noEmit": false,
+    "declarationMap": true,
+    "composite": true
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist", "src/**/*.spec.ts", "src/**/__tests__"]
+}
