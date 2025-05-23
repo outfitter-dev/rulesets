@@ -116,8 +116,29 @@ project/
 │   │   └── `latest/`         # compiled rules files
 │   ├── `src/`         # source rules files (*.mix.md, *.md)
 │   │   └── `_mixins/`         # reusable content modules
-│   └── `mixdown.config.json` # compiler config
+│   ├── `mixdown.config.json` # compiler config
+│   └── `.mixdownignore`      # ignore patterns
 ```
+
+### `.mixdownignore`
+
+Mixdown can skip source files during compilation by using a
+`.mixdown/.mixdownignore` file. This file uses standard `.gitignore` syntax with two path types:
+
+1. **Default paths** (without leading slash): Relative to `.mixdown/src/`
+   ```
+   drafts/            # Ignores .mixdown/src/drafts/
+   **/*.tmp.md        # Ignores any .tmp.md file in .mixdown/src/
+   ```
+
+2. **Absolute paths** (with leading slash): Relative to project root
+   ```
+   /node_modules/     # Ignores project's node_modules/ directory
+   /dist/             # Ignores project's dist/ directory
+   ```
+
+Check out [`docs/samples/.mixdownignore`](docs/samples/.mixdownignore) for a
+working example.
 
 ## Notation Cheatsheet
 

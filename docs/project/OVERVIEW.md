@@ -174,6 +174,16 @@ mixdown import    # imports existing rules files into the mixdown format
 mixdown build     # writes compiled rules to .mixdown/dist/
 ```
 
+Add patterns to `.mixdown/.mixdownignore` to prevent specific files from being
+compiled. These patterns use `.gitignore`-style globs.
+
+```text
+# Ignore drafts
+drafts/**
+# Skip temporary files
+*.tmp.md
+```
+
 ## Notation Reference
 
 ### Design Goals
@@ -1011,7 +1021,27 @@ project/
 │   │   └── latest/         # compiled rules
 │   ├── src/                # source rules files (*.md)
 │   │   └── _mixins/        # reusable content modules
-│   └── mixdown.config.json # Mixdown config file
+│   ├── mixdown.config.json # Mixdown config file
+│   └── .mixdownignore      # ignore patterns
+```
+
+Use `.mixdown/.mixdownignore` to exclude files or directories from compilation.
+Patterns follow `.gitignore` glob syntax with two path types:
+
+1. **Default paths** (without leading slash): Relative to `.mixdown/src/`
+2. **Absolute paths** (with leading slash): Relative to project root
+
+Example:
+
+```text
+# Relative paths (to .mixdown/src/)
+drafts/             # Ignores .mixdown/src/drafts/
+**/*.tmp.md         # Ignores any .tmp.md file in .mixdown/src/
+test-fixtures/      # Ignores .mixdown/src/test-fixtures/
+
+# Absolute paths (to project root)
+/node_modules/      # Ignores project's node_modules/ directory
+/dist/              # Ignores project's dist/ directory
 ```
 
 ## XML Generation
