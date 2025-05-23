@@ -1,0 +1,9 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "lint": {"outputs": []},
+    "typecheck": {"outputs": []},
+    "build": {"dependsOn": ["^build"], "outputs": ["dist/**", "tsconfig.tsbuildinfo"]},
+    "test": {"dependsOn": ["^build"], "outputs": ["coverage/**"]}
+  }
+}
