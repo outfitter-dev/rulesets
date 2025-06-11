@@ -67,7 +67,7 @@ const parsedDoc = await parse(markdownContent);
 import { lint } from '@rulesets/core';
 
 const lintResults = await lint(parsedDoc, {
-  requireMixdownVersion: true,
+  requireRulesetsVersion: true,
   allowedDestinations: ['cursor', 'windsurf']
 });
 // Returns: Array of LintResult objects
@@ -121,7 +121,7 @@ These are my coding standards...
 
 This is the initial v0 release with intentional limitations:
 
-- **No Marker Processing**: Mixdown notation markers (`{{...}}`) are passed through as-is
+- **No Marker Processing**: Rulesets notation markers (`{{...}}`) are passed through as-is
 - **No Stem Support**: Content blocks are not parsed or processed
 - **No Variable Substitution**: Variables (`{{$var}}`) are not replaced
 - **No Import Support**: Import statements (`{{> file}}`) are not processed
@@ -133,11 +133,11 @@ These features are planned for future v0.x releases.
 - **v0.1**: Stem parsing and basic marker processing
 - **v0.2**: Variable substitution and system variables
 - **v0.3**: Import support and file inclusion
-- **v1.0**: Full Mixdown notation support
+- **v1.0**: Full Rulesets notation support
 
 ## Contributing
 
-See the main [Mixdown README](../../README.md) for contribution guidelines.
+See the main [Rulesets README](../../README.md) for contribution guidelines.
 
 ## License
 

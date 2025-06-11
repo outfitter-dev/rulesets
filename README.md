@@ -31,12 +31,12 @@ Result: *author once, distribute everywhere, zero drift.*
 
 ## What's with the name?
 
-We borrowed "Rulesets" from the music product world because it nails the vibe so well. Think of a mixdown as the moment a song stops being a pile of takes and starts being the version everyone hears. That's what this toolbox does for prompt engineering: it fuses disparate rules into one golden master, then automatically generates the perfect format for Cursor, Windsurf, Claude Code, and beyond.
+We chose "Rulesets" because it captures the essence of what this tool does: organizing and compiling rule collections for AI assistants. The project was originally inspired by the music production concept of "mixdown" - the process where multiple audio tracks are combined into a final master recording. Similarly, Rulesets takes your various rule definitions and compiles them into the perfect format for each destination tool like Cursor, Windsurf, Claude Code, and beyond.
 
 ## Core Concepts
 
 **source rules**
-: source rules files, written in 100% previewable Markdown with `.mix.md` (preferred) extension. Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
+: source rules files, written in 100% previewable Markdown with `.rules.md` extension. Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
 
 **compiled rules**
 : Destination-specific compiled files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their destination directories, these are referred to as "tool-ready rules".

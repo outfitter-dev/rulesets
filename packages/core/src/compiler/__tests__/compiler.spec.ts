@@ -1,4 +1,3 @@
-// TLDR: Unit tests for the Rulesets compiler module (mixd-v0)
 import { describe, it, expect } from 'vitest';
 import { compile } from '../index';
 import type { ParsedDoc } from '../../interfaces';
