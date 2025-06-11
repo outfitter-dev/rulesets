@@ -39,7 +39,15 @@ function getFieldName(path: string): string {
 // :M: tldr: Validate frontmatter against basic schema requirements
 // :M: v0.1.0: Validates presence and types of frontmatter fields
 // :M: todo(v0.2.0): Add validation for stem properties
-// :M: todo(v0.3.0): Add validation for variables and imports
+/**
+ * Lints the frontmatter of a parsed Rulesets document for schema correctness and best practices.
+ *
+ * Performs structural validation of required and recommended frontmatter fields, including rulesets version, destinations, title, and description. Reports errors, warnings, and informational messages with line and column information when available.
+ *
+ * @param parsedDoc - The parsed Rulesets document to lint.
+ * @param config - Optional configuration for version enforcement and allowed destinations.
+ * @returns An array of lint results describing any issues found.
+ */
 export async function lint(
   parsedDoc: ParsedDoc,
   config: LinterConfig = {},

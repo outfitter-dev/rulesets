@@ -14,7 +14,19 @@ import type { ParsedDoc, CompiledDoc } from '../interfaces';
 // :M: tldr: Compiles parsed document to destination format
 // :M: v0.1.0: Pass-through implementation without transformation
 // :M: todo(v0.2.0): Process stem markers and convert to XML
-// :M: todo(v0.3.0): Process variables and perform substitution
+/**
+ * Compiles a parsed Rulesets document into a compiled document for a specified destination.
+ *
+ * Extracts and removes frontmatter from the source content, merges destination-specific metadata and configuration from frontmatter if present, and passes through AST components without modification.
+ *
+ * @param parsedDoc - The parsed Rulesets document to compile.
+ * @param destinationId - Identifier for the compilation target destination.
+ * @param projectConfig - Optional project-level configuration to merge with destination-specific config.
+ * @returns The compiled document containing processed content, metadata, and context.
+ *
+ * @remark
+ * If the source content is empty after trimming, a warning is logged. Destination-specific metadata and configuration are merged only if the frontmatter's `destinations` field is a non-array object.
+ */
 export function compile(
   parsedDoc: ParsedDoc,
   destinationId: string,
