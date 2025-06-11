@@ -11,6 +11,6 @@
   - "Snippet" → "Mixin"
   - `property(value)` → `property-*` and `name-("value")`
 - Updated directory structure:
-  - `.mixdown/mixes/` → `.mixdown/src/`
-  - `.mixdown/mixes/_snippets/` → `.mixdown/src/_mixins/`
-  - `.mixdown/output/` → `.mixdown/dist/`
+  - `.rulesets/mixes/` → `.rulesets/src/`
+  - `.rulesets/mixes/_snippets/` → `.rulesets/src/_mixins/`
+  - `.rulesets/output/` → `.rulesets/dist/`

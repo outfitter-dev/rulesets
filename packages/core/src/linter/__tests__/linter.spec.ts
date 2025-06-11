@@ -1,4 +1,4 @@
-// TLDR: Unit tests for the Mixdown linter module (mixd-v0)
+// TLDR: Unit tests for the Rulesets linter module (mixd-v0)
 import { describe, it, expect } from 'vitest';
 import { lint } from '../index';
 import type { ParsedDoc } from '../../interfaces';
@@ -8,9 +8,9 @@ describe('linter', () => {
     it('should pass a valid document with complete frontmatter', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nmixdown: v0\ntitle: Test\ndescription: Test description\n---\n\n# Content',
+          content: '---\nrulesets: v0\ntitle: Test\ndescription: Test description\n---\n\n# Content',
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
             title: 'Test',
             description: 'Test description',
           },
@@ -46,7 +46,7 @@ describe('linter', () => {
       expect(results[0].message).toContain('No frontmatter found');
     });
 
-    it('should error when mixdown version is missing', async () => {
+    it('should error when rulesets version is missing', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
           content: '---\ntitle: Test\n---\n\n# Content',
@@ -63,17 +63,17 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const mixdownError = results.find(r => r.message.includes('Missing required "mixdown" field'));
-      expect(mixdownError).toBeDefined();
-      expect(mixdownError!.severity).toBe('error');
+      const rulesetsError = results.find(r => r.message.includes('Missing required "rulesets" field'));
+      expect(rulesetsError).toBeDefined();
+      expect(rulesetsError!.severity).toBe('error');
     });
 
-    it('should error when mixdown field is not a string', async () => {
+    it('should error when rulesets field is not a string', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nmixdown: 123\n---\n\n# Content',
+          content: '---\nrulesets: 123\n---\n\n# Content',
           frontmatter: {
-            mixdown: 123,
+            rulesets: 123,
           },
         },
         ast: {
@@ -85,7 +85,7 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const typeError = results.find(r => r.message.includes('Invalid "mixdown" field type'));
+      const typeError = results.find(r => r.message.includes('Invalid "rulesets" field type'));
       expect(typeError).toBeDefined();
       expect(typeError!.severity).toBe('error');
     });
@@ -93,9 +93,9 @@ describe('linter', () => {
     it('should validate destinations structure', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nmixdown: v0\ndestinations: ["cursor", "windsurf"]\n---\n\n# Content',
+          content: '---\nrulesets: v0\ndestinations: ["cursor", "windsurf"]\n---\n\n# Content',
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
             destinations: ['cursor', 'windsurf'],
           },
         },
@@ -116,9 +116,9 @@ describe('linter', () => {
     it('should warn about unknown destinations when configured', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nmixdown: v0\ndestinations:\n  unknown-dest:\n    path: "/test"\n---\n\n# Content',
+          content: '---\nrulesets: v0\ndestinations:\n  unknown-dest:\n    path: "/test"\n---\n\n# Content',
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
             destinations: {
               'unknown-dest': { path: '/test' },
             },
@@ -144,9 +144,9 @@ describe('linter', () => {
     it('should provide info suggestions for missing title and description', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nmixdown: v0\n---\n\n# Content',
+          content: '---\nrulesets: v0\n---\n\n# Content',
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
           },
         },
         ast: {

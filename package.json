@@ -1,5 +1,5 @@
 {
-  "name": "mixdown",
+  "name": "rulesets",
   "version": "0.1.0",
   "description": "Rules compiler for AI tools",
   "private": true,
@@ -12,7 +12,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo build --filter=@mixdown/core && changeset publish"
+    "release": "turbo build --filter=@rulesets/core && changeset publish"
   },
   "author": "Maybe Good Systems",
   "license": "MIT",

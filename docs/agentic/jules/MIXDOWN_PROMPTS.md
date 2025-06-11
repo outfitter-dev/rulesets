@@ -1,4 +1,4 @@
-# Effective Prompts for Jules Working on Mixdown
+# Effective Prompts for Jules Working on Rulesets
 
 ## Core Implementation Tasks
 
@@ -10,8 +10,8 @@ Requirements:
 - Extract YAML frontmatter and raw Markdown body
 - Return ParsedDoc interface (defined in interfaces/compiled-doc.ts)
 - Use js-yaml for frontmatter parsing
-- Add TLDR comment: "Simple frontmatter parser (mixd-v0)"
-- Add TODO comment: "TODO (mixd-v0.1): Add stem parsing support"
+- Add TLDR comment: "Simple frontmatter parser (rset-v0)"
+- Add TODO comment: "TODO (rset-v0.1): Add stem parsing support"
 - Include comprehensive unit tests following existing patterns
 - Ensure pnpm turbo test passes
 ```
@@ -23,8 +23,8 @@ Implement pass-through compiler in packages/core/src/compiler/index.ts
 Requirements:
 - Transform ParsedDoc to CompiledDoc without processing markers
 - Raw body content goes to output.content unchanged
-- Mark as: "Pass-through compiler implementation (mixd-v0)"
-- Add TODO: "TODO (mixd-v0.1): Process Mixdown notation markers"
+- Mark as: "Pass-through compiler implementation (rset-v0)"
+- Add TODO: "TODO (rset-v0.1): Process Rulesets notation markers"
 - Follow interface definitions in interfaces/compiled-doc.ts
 - Add unit tests verifying pass-through behavior
 ```
@@ -37,8 +37,8 @@ Requirements:
 - Validate ParsedDoc frontmatter against basic schema
 - Check for required 'mixdown' key in frontmatter
 - Return LintResult array with any validation errors
-- Comment as: "Basic frontmatter schema validation (mixd-v0)"
-- Add TODO: "TODO (mixd-v0.1): Add content body linting"
+- Comment as: "Basic frontmatter schema validation (rset-v0)"
+- Add TODO: "TODO (rset-v0.1): Add content body linting"
 - Include tests for valid/invalid frontmatter scenarios
 ```
 
@@ -50,7 +50,7 @@ Requirements:
 - Implement DestinationPlugin interface for cursor and windsurf
 - cursor-plugin.ts and windsurf-plugin.ts files
 - write() method should log compiled content and destPath
-- Comment as: "Stub plugin implementation (mixd-v0)"
+- Comment as: "Stub plugin implementation (rset-v0)"
 - Export plugins from index.ts
 - Add basic unit tests ensuring interface compliance
 ```
@@ -104,7 +104,7 @@ Requirements:
 - Add try/catch blocks for file operations
 - Create custom error types for different failure modes
 - Include error context and debugging information
-- Mark error handling code with (mixd-sec) where appropriate
+- Mark error handling code with (rset-sec) where appropriate
 - Add tests for error scenarios
 ```
 
@@ -112,13 +112,13 @@ Requirements:
 
 ```
 Context for all tasks:
-- This is Mixdown v0 implementation in TypeScript monorepo
+- This is Rulesets v0 implementation in TypeScript monorepo
 - Use pnpm/Turborepo for package management and building
 - Follow grepable marker system from docs/project/GREPABLE.md
 - Use terminology from docs/project/LANGUAGE.md consistently
 - Reference implementation plan in docs/project/plans/PLAN-mixdown-v0.md
-- All code must include TLDR comments with (mixd-v0) markers
-- Add TODO (mixd-v0.1) markers for future enhancements
+- All code must include TLDR comments with (rset-v0) markers
+- Add TODO (rset-v0.1) markers for future enhancements
 - Follow SOLID principles and include descriptive comments
 - Run pnpm turbo test && pnpm turbo lint before completion
 ```

@@ -1,6 +1,6 @@
 ---
 name: "✨ Feature Request"
-about: "Suggest an idea for Mixdown"
+about: "Suggest an idea for Rulesets"
 title: "[Feature]: "
 labels: ["triage"]
 type: "feature"

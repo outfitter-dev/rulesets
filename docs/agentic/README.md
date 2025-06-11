@@ -1,8 +1,8 @@
-# Agentic-Driven Development for Mixdown
+# Agentic-Driven Development for Rulesets
 
 ## Overview
 
-Mixdown is being developed using an **agentic-driven development approach** where AI agents are primary contributors to the codebase. This document tracks our multi-agent strategy, tooling, and best practices for coordinating AI-driven development.
+Rulesets is being developed using an **agentic-driven development approach** where AI agents are primary contributors to the codebase. This document tracks our multi-agent strategy, tooling, and best practices for coordinating AI-driven development.
 
 ## Supported AI Agents
 
@@ -40,35 +40,35 @@ Mixdown is being developed using an **agentic-driven development approach** wher
 
 ## Grepable Marker System
 
-All agents use the **`mixd-*` marker system** for coordinated development:
+All agents use the **`rset-*` marker system** for coordinated development:
 
 ```typescript
-// TLDR: Function purpose and implementation scope (mixd-v0)
-// TODO (mixd-v0.1): Future enhancement description
+// TLDR: Function purpose and implementation scope (rset-v0)
+// TODO (rset-v0.1): Future enhancement description
 ```
 
 ### Core Markers
-- **`mixd-v{version}`** - Version-specific implementations
-- **`mixd-sec`** - Security-sensitive code
-- **`mixd-perf`** - Performance-critical paths
-- **`mixd-unsafe`** - Potentially dangerous operations
-- **`mixd-api`** - API changes or deprecations
-- **`mixd-config`** - Configuration-dependent behavior
-- **`mixd-external`** - External service dependencies
-- **`mixd-debug`** - Debugging/troubleshooting points
-- **`mixd-test`** - Testing-related annotations
-- **`mixd-temp`** - Temporary code needing cleanup
+- **`rset-v{version}`** - Version-specific implementations
+- **`rset-sec`** - Security-sensitive code
+- **`rset-perf`** - Performance-critical paths
+- **`rset-unsafe`** - Potentially dangerous operations
+- **`rset-api`** - API changes or deprecations
+- **`rset-config`** - Configuration-dependent behavior
+- **`rset-external`** - External service dependencies
+- **`rset-debug`** - Debugging/troubleshooting points
+- **`rset-test`** - Testing-related annotations
+- **`rset-temp`** - Temporary code needing cleanup
 
 ### Navigation Commands
 ```bash
 # Find all v0-specific code
-grep -r "mixd-v0" . --include="*.ts"
+grep -r "rset-v0" . --include="*.ts"
 
 # Find security-sensitive areas
-grep -r "mixd-sec" . --include="*.ts"
+grep -r "rset-sec" . --include="*.ts"
 
 # Find TODOs for next version
-grep -r "TODO (mixd-v0.1)" . --include="*.ts"
+grep -r "TODO (rset-v0.1)" . --include="*.ts"
 ```
 
 ## Development Workflow
@@ -103,7 +103,7 @@ grep -r "TODO (mixd-v0.1)" . --include="*.ts"
 
 1. **Planning Phase**
    - Claude Code creates implementation plans
-   - Documents are updated with `mixd-v*` markers
+   - Documents are updated with `rset-v*` markers
    - Scope and requirements are clearly defined
 
 2. **Implementation Phase**
@@ -137,8 +137,8 @@ pnpm turbo typecheck # Type safety validation
 
 ### Marker-Based Handoffs
 ```typescript
-// TLDR: Claude Code created this interface (mixd-v0)
-// TODO (mixd-v0.1): Jules to implement parser logic
+// TLDR: Claude Code created this interface (rset-v0)
+// TODO (rset-v0.1): Jules to implement parser logic
 interface ParsedDoc {
   // Interface definition
 }
@@ -177,7 +177,7 @@ interface ParsedDoc {
 
 ## Current Implementation Status
 
-### Mixdown v0 (Active)
+### Rulesets v0 (Active)
 - **Scope**: Basic parser, pass-through compiler, stub plugins
 - **Primary Agent**: Google Jules for implementation
 - **Supporting Agent**: GitHub Copilot for code assistance
@@ -186,7 +186,7 @@ interface ParsedDoc {
 ### Future Versions
 - **v0.1**: Stem parsing and processing
 - **v0.2**: Variable substitution and imports
-- **v1.0**: Complete Mixdown notation support
+- **v1.0**: Complete Rulesets notation support
 
 ## Troubleshooting
 

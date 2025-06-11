@@ -258,7 +258,7 @@ Cursor provides a dedicated UI for managing rules:
 | Primary docs | Cursor documentation website |
 | Front-matter specification | Updated in v0.50 (May 2025) |
 
-## Mixdown Integration
+## Rulesets Integration
 
 > [!NOTE]
-> 🚧 Pending Mixdown integration
+> 🚧 Pending Rulesets integration

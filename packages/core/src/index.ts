@@ -1,4 +1,5 @@
-// TLDR: Main entry point and CLI orchestration for Mixdown v0 (mixd-v0)
+// :M: tldr: Main entry point and CLI orchestration for Rulesets
+// :M: v0.1.0: Basic orchestration for single file processing with minimal features
 import { promises as fs } from 'fs';
 import { parse } from './parser';
 import { lint } from './linter';
@@ -15,39 +16,40 @@ export { compile } from './compiler';
 export { destinations, CursorPlugin, WindsurfPlugin } from './destinations';
 
 /**
- * Orchestrates the Mixdown v0 build process for a single file.
+ * Orchestrates the Rulesets v0 build process for a single file.
  * Reads, parses, lints, compiles, and writes to destinations.
  *
  * @example
  * ```typescript
- * import { runMixdownV0 } from '@mixdown/core';
- * import { ConsoleLogger } from '@mixdown/core';
+ * import { runRulesetsV0 } from '@rulesets/core';
+ * import { ConsoleLogger } from '@rulesets/core';
  *
  * async function main() {
  *   const logger = new ConsoleLogger();
  *   try {
- *     await runMixdownV0('./my-rules.mix.md', logger);
- *     logger.info('Mixdown v0 process completed.');
+ *     await runRulesetsV0('./my-rules.mix.md', logger);
+ *     logger.info('Rulesets v0 process completed.');
  *   } catch (error) {
- *     logger.error('Mixdown v0 process failed:', error);
+ *     logger.error('Rulesets v0 process failed:', error);
  *   }
  * }
  *
  * main();
  * ```
  *
- * @param sourceFilePath - The path to the source Mixdown file (e.g., my-rules.mix.md).
+ * @param sourceFilePath - The path to the source Rulesets file (e.g., my-rules.mix.md).
  * @param logger - An instance of the Logger interface.
- * @param projectConfig - Optional: The root Mixdown project configuration.
+ * @param projectConfig - Optional: The root Rulesets project configuration.
  * @returns A promise that resolves when the process is complete, or rejects on error.
  */
-// TLDR: Main orchestration logic for reading, parsing, linting, compiling, and writing a Mixdown file (mixd-v0)
-export async function runMixdownV0(
+// :M: tldr: Main orchestration logic for reading, parsing, linting, compiling, and writing a Rulesets file
+// :M: v0.1.0: Single file processing without advanced features like imports or variables
+export async function runRulesetsV0(
   sourceFilePath: string,
   logger: Logger = new ConsoleLogger(),
   projectConfig: Record<string, any> = {},
 ): Promise<void> {
-  logger.info(`Starting Mixdown v0 processing for: ${sourceFilePath}`);
+  logger.info(`Starting Rulesets v0 processing for: ${sourceFilePath}`);
 
   // Step 1: Read the source file
   let content: string;
@@ -123,7 +125,7 @@ export async function runMixdownV0(
 
     // Determine output path
     const destConfig = frontmatter.destinations?.[destinationId] || {};
-    const defaultPath = `.mixdown/dist/${destinationId}/my-rules.md`;
+    const defaultPath = `.rulesets/dist/${destinationId}/my-rules.md`;
     const destPath = destConfig.outputPath || destConfig.path || defaultPath;
 
     // Write using the plugin
@@ -140,17 +142,18 @@ export async function runMixdownV0(
     }
   }
 
-  logger.info('Mixdown v0 processing completed successfully!');
+  logger.info('Rulesets v0 processing completed successfully!');
 }
 
 // CLI entry point for testing
-// TLDR: Simple CLI wrapper for testing the orchestration logic (mixd-v0)
-// TODO (mixd-v0.1): Replace with proper CLI using commander or yargs
+// :M: tldr: Simple CLI wrapper for testing the orchestration logic
+// :M: v0.1.0: Basic CLI entry point for development testing
+// :M: todo(v0.2.0): Replace with proper CLI using commander or yargs
 if (require.main === module) {
   const logger = new ConsoleLogger();
   const sourceFile = process.argv[2] || './my-rules.mix.md';
   
-  runMixdownV0(sourceFile, logger)
+  runRulesetsV0(sourceFile, logger)
     .then(() => {
       logger.info('Done!');
       process.exit(0);
