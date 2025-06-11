@@ -1,26 +1,26 @@
 # 📏 Rulesets: A Compiler for AI Rules Files
 
-> **🚀 v0 Release Now Available!** The initial implementation of Mixdown is ready for testing. See [Installation](#installation) to get started.
+> **🚀 v0 Release Now Available!** The initial implementation of Rulesets is ready for testing. See [Installation](#installation) to get started.
 
-Mixdown simplifies rules management for tools like Cursor, Claude Code, Codex, etc. With Mixdown, you author rules (called "source rules") in previewable Markdown and compile them into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
+Rulesets simplifies rules management for tools like Cursor, Claude Code, Codex, etc. With Rulesets, you author rules (called "source rules") in previewable Markdown and compile them into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
 
-## What is Mixdown?
+## What is Rulesets?
 
-If you're reading this, you're probably already familiar with at least one of the AI coding tools that Mixdown is [designed to work with](#supported-destinations). Each tool has its own unique way of being provided context, guidance, and operational instructions for your projects e.g. Cursor's rules (`.cursor/rules`), OpenAI Codex instructions (`codex.md`), Claude Code's instructions (`CLAUDE.md`), etc.
+If you're reading this, you're probably already familiar with at least one of the AI coding tools that Rulesets is [designed to work with](#supported-destinations). Each tool has its own unique way of being provided context, guidance, and operational instructions for your projects e.g. Cursor's rules (`.cursor/rules`), OpenAI Codex instructions (`codex.md`), Claude Code's instructions (`CLAUDE.md`), etc.
 
-The problem is, they all have different formats, behavior, and capabilities, which can become a huge pain to manage. This can be frustrating, and might even lead you to just sticking to one tool. But that's no fun, and you'll be missing out on all the awesome capabilities and differences each tool has to offer! That's where Mixdown comes in…
+The problem is, they all have different formats, behavior, and capabilities, which can become a huge pain to manage. This can be frustrating, and might even lead you to just sticking to one tool. But that's no fun, and you'll be missing out on all the awesome capabilities and differences each tool has to offer! That's where Rulesets comes in…
 
-### The Problem Mixdown Solves
+### The Problem Rulesets Solves
 
 - Agentic rules files are **fragmented** across IDEs and agentic tools, following different formats, and in disparate locations, leading to duplication and drift.
 - Manual copy-paste workflows break **source-of-truth** guarantees and slow (or halt) experimentation with new agentic tools (that might even be better suited for the task).
 - Lack of a **cohesive format for rules** hinders creation, testing, versioning, and overall management.
 
-### Our Solution: What Mixdown Does
+### Our Solution: What Rulesets Does
 
-Mixdown is "Terraform for AI rules": declare your ideal rules once, compile for dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative rules—no copy‑paste, no drift, just high‑quality, version-controlled context.
+Rulesets is "Terraform for AI rules": declare your ideal rules once, compile for dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative rules—no copy‑paste, no drift, just high‑quality, version-controlled context.
 
-With Mixdown, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single source rules file (`.mix.md`). This source rules file is the "gold master" for your instructions, from which individual compiled rules are created for each destination and sent to the right places.
+With Rulesets, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single source rules file (`.mix.md`). This source rules file is the "gold master" for your instructions, from which individual compiled rules are created for each destination and sent to the right places.
 
 The app consists of:
 
@@ -31,12 +31,12 @@ Result: *author once, distribute everywhere, zero drift.*
 
 ## What's with the name?
 
-We borrowed "Mixdown" from the music product world because it nails the vibe so well. Think of a mixdown as the moment a song stops being a pile of takes and starts being the version everyone hears. That's what this toolbox does for prompt engineering: it fuses disparate rules into one golden master, then automatically generates the perfect format for Cursor, Windsurf, Claude Code, and beyond.
+We borrowed "Rulesets" from the music product world because it nails the vibe so well. Think of a mixdown as the moment a song stops being a pile of takes and starts being the version everyone hears. That's what this toolbox does for prompt engineering: it fuses disparate rules into one golden master, then automatically generates the perfect format for Cursor, Windsurf, Claude Code, and beyond.
 
 ## Core Concepts
 
 **source rules**
-: source rules files, written in 100% previewable Markdown with `.mix.md` (preferred) extension. Written in Mixdown notation and use `{{...}}` notation markers to direct the compiler.
+: source rules files, written in 100% previewable Markdown with `.mix.md` (preferred) extension. Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
 
 **compiled rules**
 : Destination-specific compiled files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their destination directories, these are referred to as "tool-ready rules".
@@ -87,29 +87,29 @@ We borrowed "Mixdown" from the music product world because it nails the vibe so 
 ### Compiler & Integration
 
 - **Plugin Architecture** – Add new destinations via `MixdownPluginProvider` without touching core.
-- **CLI & API** – `mixdown build`, `mixdown validate`, and `POST /compile` endpoint.
+- **CLI & API** – `rulesets build`, `rulesets validate`, and `POST /compile` endpoint.
 
 ## Installation
 
 ```bash
-npm install -g @mixdown/cli        # global CLI
+npm install -g @rulesets/cli        # global CLI
 # project-local
-npm install --save-dev @mixdown
+npm install --save-dev @rulesets
 # or with the CLI
-npx @mixdown/cli init
+npx @rulesets/cli init
 ```
 
 ## Installation
 
 ```bash
 # Using npm
-npm install @mixdown/core
+npm install @rulesets/core
 
 # Using pnpm (recommended)
-pnpm add @mixdown/core
+pnpm add @rulesets/core
 
 # Using yarn
-yarn add @mixdown/core
+yarn add @rulesets/core
 ```
 
 ## Quick Start
@@ -118,7 +118,7 @@ yarn add @mixdown/core
 
 ```markdown
 ---
-mixdown: v0
+rulesets: { version: "0.1.0" }
 title: My Coding Standards
 description: Rules for AI coding assistants
 destinations:
@@ -138,13 +138,13 @@ Write comprehensive tests for all features.
 ### 2. Use the API to process your rules:
 
 ```typescript
-import { runMixdownV0, ConsoleLogger } from '@mixdown/core';
+import { runRulesetsV0, ConsoleLogger } from '@rulesets/core';
 
 async function main() {
   const logger = new ConsoleLogger();
   
   try {
-    await runMixdownV0('./my-rules.mix.md', logger);
+    await runRulesetsV0('./my-rules.mix.md', logger);
     console.log('Rules compiled successfully!');
   } catch (error) {
     console.error('Error:', error);

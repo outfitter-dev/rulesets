@@ -1,10 +1,10 @@
-# @mixdown/core
+# @rulesets/core
 
 ## 0.1.0
 
 ### Minor Changes
 
-- Initial v0 release of Mixdown - a CommonMark-compliant rules compiler for AI coding assistants.
+- Initial v0 release of Rulesets - a CommonMark-compliant rules compiler for AI coding assistants.
 
   ### Features
 
@@ -24,10 +24,10 @@
 
   ### Limitations
 
-  This v0 release intentionally does not process Mixdown notation markers (`{{...}}`). These features are planned for v0.x releases:
+  This v0 release intentionally does not process Rulesets notation markers (`{{...}}`). These features are planned for v0.x releases:
 
   - Stem parsing and handling (v0.1)
   - Variable substitution (v0.2)
   - Import resolution (v0.3)
 
-  See the [documentation](https://github.com/maybe-good/mixdown) for usage instructions and examples.
+  See the [documentation](https://github.com/maybe-good/rulesets) for usage instructions and examples.

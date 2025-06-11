@@ -12,5 +12,10 @@ export default defineConfig({
   // :M: v0.1.0: Single bundle output without code splitting
   // :M: todo(v0.2.0): Enable code splitting for better performance
   shims: true,
-  external: ['json-schema'],
+  external: ['js-yaml'], // Only direct dependencies that consumers must install
+  outExtension({ format }) {
+    return {
+      js: format === 'esm' ? '.mjs' : '.cjs',
+    };
+  },
 });

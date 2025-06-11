@@ -47,7 +47,7 @@ export { destinations, CursorPlugin, WindsurfPlugin } from './destinations';
 export async function runRulesetsV0(
   sourceFilePath: string,
   logger: Logger = new ConsoleLogger(),
-  projectConfig: Record<string, any> = {},
+  projectConfig: Record<string, unknown> = {},
 ): Promise<void> {
   logger.info(`Starting Rulesets v0.1.0 processing for: ${sourceFilePath}`);
 
@@ -63,43 +63,55 @@ export async function runRulesetsV0(
 
   // Step 2: Parse the content
   logger.info('Parsing source file...');
-  const parsedDoc = await parse(content);
-  parsedDoc.source.path = sourceFilePath;
-  
-  if (parsedDoc.errors && parsedDoc.errors.length > 0) {
-    logger.warn(`Parser found ${parsedDoc.errors.length} error(s)`);
+  let parsedDoc;
+  try {
+    parsedDoc = await parse(content);
+    parsedDoc.source.path = sourceFilePath;
+    
+    if (parsedDoc.errors && parsedDoc.errors.length > 0) {
+      logger.warn(`Parser found ${parsedDoc.errors.length} error(s)`);
+    }
+  } catch (error) {
+    logger.error('Failed to parse source file', error);
+    throw error;
   }
 
   // Step 3: Lint the parsed document
   logger.info('Linting document...');
-  const lintResults = await lint(parsedDoc, {
-    requireRulesetsVersion: true,
-    allowedDestinations: Array.from(destinations.keys()),
-  });
+  let lintResults;
+  try {
+    lintResults = await lint(parsedDoc, {
+      requireRulesetsVersion: true,
+      allowedDestinations: Array.from(destinations.keys()),
+    });
 
-  // Log lint results
-  let hasErrors = false;
-  for (const result of lintResults) {
-    const location = result.line ? ` (line ${result.line})` : '';
-    const message = `${result.message}${location}`;
-    
-    switch (result.severity) {
-      case 'error':
-        logger.error(message);
-        hasErrors = true;
-        break;
-      case 'warning':
-        logger.warn(message);
-        break;
-      case 'info':
-        logger.info(message);
-        break;
+    // Log lint results
+    let hasErrors = false;
+    for (const result of lintResults) {
+      const location = result.line ? ` (line ${result.line})` : '';
+      const message = `${result.message}${location}`;
+      
+      switch (result.severity) {
+        case 'error':
+          logger.error(message);
+          hasErrors = true;
+          break;
+        case 'warning':
+          logger.warn(message);
+          break;
+        case 'info':
+          logger.info(message);
+          break;
+      }
     }
-  }
 
-  // Stop if there are lint errors
-  if (hasErrors) {
-    throw new Error('Linting failed with errors. Please fix the issues and try again.');
+    // Stop if there are lint errors
+    if (hasErrors) {
+      throw new Error('Linting failed with errors. Please fix the issues and try again.');
+    }
+  } catch (error) {
+    logger.error('Failed during linting', error);
+    throw error;
   }
 
   // Step 4: Determine which destinations to compile for
@@ -121,7 +133,13 @@ export async function runRulesetsV0(
     logger.info(`Processing destination: ${destinationId}`);
 
     // Compile for this destination
-    const compiledDoc = await compile(parsedDoc, destinationId, projectConfig);
+    let compiledDoc;
+    try {
+      compiledDoc = await compile(parsedDoc, destinationId, projectConfig);
+    } catch (error) {
+      logger.error(`Failed to compile for destination: ${destinationId}`, error);
+      continue; // Continue with other destinations
+    }
 
     // Determine output path
     const destConfig = frontmatter.destinations?.[destinationId] || {};

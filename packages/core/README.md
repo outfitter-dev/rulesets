@@ -1,20 +1,20 @@
-# @mixdown/core
+# @rulesets/core
 
-Core library for Mixdown - a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files.
+Core library for Rulesets - a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files.
 
 ## Installation
 
 ```bash
-npm install @mixdown/core
+npm install @rulesets/core
 # or
-pnpm add @mixdown/core
+pnpm add @rulesets/core
 # or
-yarn add @mixdown/core
+yarn add @rulesets/core
 ```
 
 ## Overview
 
-Mixdown v0 provides the foundational architecture for processing Markdown-based rules files. This initial version focuses on:
+Rulesets v0 provides the foundational architecture for processing Markdown-based rules files. This initial version focuses on:
 
 - **Parser**: Extracts frontmatter and body content from Markdown files
 - **Linter**: Validates frontmatter structure and content
@@ -24,14 +24,14 @@ Mixdown v0 provides the foundational architecture for processing Markdown-based 
 ## Quick Start
 
 ```typescript
-import { runMixdownV0, ConsoleLogger } from '@mixdown/core';
+import { runRulesetsV0, ConsoleLogger } from '@rulesets/core';
 
 async function main() {
   const logger = new ConsoleLogger();
   
   try {
-    await runMixdownV0('./my-rules.mix.md', logger);
-    logger.info('Mixdown processing completed!');
+    await runRulesetsV0('./my-rules.mix.md', logger);
+    logger.info('Rulesets processing completed!');
   } catch (error) {
     logger.error('Processing failed:', error);
   }
@@ -44,9 +44,9 @@ main();
 
 ### Core Functions
 
-#### `runMixdownV0(sourceFilePath, logger?, projectConfig?)`
+#### `runRulesetsV0(sourceFilePath, logger?, projectConfig?)`
 
-Main orchestration function that processes a Mixdown source file.
+Main orchestration function that processes a Rulesets source file.
 
 - `sourceFilePath`: Path to the `.mix.md` or `.md` file
 - `logger`: Optional logger instance (defaults to ConsoleLogger)

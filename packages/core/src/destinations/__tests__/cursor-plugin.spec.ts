@@ -45,6 +45,13 @@ describe('CursorPlugin', () => {
       expect(schema.properties!.outputPath).toBeDefined();
       expect(schema.properties!.priority).toBeDefined();
     });
+
+    it('should enforce priority enum values', () => {
+      const schema = plugin.configSchema();
+      const priorityProp = schema.properties!.priority as { type: string; enum: string[] };
+      expect(priorityProp.type).toBe('string');
+      expect(priorityProp.enum).toEqual(['low', 'medium', 'high']);
+    });
   });
 
   describe('write', () => {

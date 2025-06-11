@@ -18,9 +18,14 @@ import type { ParsedDoc, CompiledDoc } from '../interfaces';
 export async function compile(
   parsedDoc: ParsedDoc,
   destinationId: string,
-  projectConfig: Record<string, any> = {},
+  projectConfig: Record<string, unknown> = {},
 ): Promise<CompiledDoc> {
   const { source, ast } = parsedDoc;
+  
+  // Handle empty files consistently
+  if (!source.content.trim()) {
+    console.warn('Compiling empty source file');
+  }
   
   // Extract the body content (everything after frontmatter)
   let bodyContent = source.content;

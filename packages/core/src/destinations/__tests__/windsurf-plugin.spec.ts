@@ -45,7 +45,7 @@ describe('WindsurfPlugin', () => {
       expect(schema.properties!.outputPath).toBeDefined();
       expect(schema.properties!.format).toBeDefined();
       
-      const formatProp = schema.properties!.format as any;
+      const formatProp = schema.properties!.format as { enum: string[]; default: string };
       expect(formatProp.enum).toContain('markdown');
       expect(formatProp.enum).toContain('xml');
       expect(formatProp.default).toBe('markdown');

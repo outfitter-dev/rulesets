@@ -50,7 +50,7 @@ export interface ParsedDoc {
   source: {
     path?: string; // Original source file path, if applicable
     content: string; // Raw source content
-    frontmatter?: Record<string, any>; // Parsed frontmatter data
+    frontmatter?: Record<string, unknown>; // Parsed frontmatter data
   };
   ast: { // Abstract Syntax Tree - minimal for v0
     stems: Stem[];
@@ -70,7 +70,7 @@ export interface CompiledDoc {
   source: {
     path?: string;          // Original source file path, if applicable
     content: string;       // Raw source content
-    frontmatter?: Record<string, any>;     // Parsed frontmatter data
+    frontmatter?: Record<string, unknown>;     // Parsed frontmatter data
   };
 
   /**
@@ -89,12 +89,12 @@ export interface CompiledDoc {
   /** Destination-specific output */
   output: {
     content: string;       // Transformed content for the destination (raw body for v0)
-    metadata?: Record<string, any>; // Any metadata needed by the destination (e.g., derived from frontmatter)
+    metadata?: Record<string, unknown>; // Any metadata needed by the destination (e.g., derived from frontmatter)
   };
 
   /** Additional context for the compilation */
   context: {
     destinationId: string; // Current destination being compiled for
-    config: Record<string, any>; // Resolved configuration for this compilation (e.g., project config, destination-specific config)
+    config: Record<string, unknown>; // Resolved configuration for this compilation (e.g., project config, destination-specific config)
   };
 }

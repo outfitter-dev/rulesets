@@ -41,7 +41,7 @@ export interface DestinationPlugin {
   write(ctx: {
     compiled: CompiledDoc;
     destPath: string;
-    config: Record<string, any>; // Validated via schema from configSchema()
+    config: Record<string, unknown>; // Validated via schema from configSchema()
     logger: Logger;
   }): Promise<void>;
 }

@@ -18,7 +18,7 @@ export async function parse(content: string): Promise<ParsedDoc> {
   const lines = content.split('\n');
   let frontmatterStart = -1;
   let frontmatterEnd = -1;
-  let frontmatter: Record<string, any> = {};
+  let frontmatter: Record<string, unknown> = {};
   const errors: Array<{ message: string; line?: number; column?: number }> = [];
 
   // Check for frontmatter
@@ -36,10 +36,31 @@ export async function parse(content: string): Promise<ParsedDoc> {
       // Extract and parse frontmatter
       const frontmatterContent = lines.slice(frontmatterStart + 1, frontmatterEnd).join('\n');
       try {
-        frontmatter = yaml.load(frontmatterContent) as Record<string, any> || {};
+        frontmatter = yaml.load(frontmatterContent) as Record<string, unknown> || {};
       } catch (error) {
+        let friendlyMessage = 'Invalid YAML syntax in frontmatter. ';
+        
+        if (error instanceof Error) {
+          const message = error.message.toLowerCase();
+          
+          // Add user-friendly context based on common YAML errors
+          if (message.includes('unexpected end')) {
+            friendlyMessage += 'Make sure all strings are properly quoted and closed.';
+          } else if (message.includes('bad indentation')) {
+            friendlyMessage += 'Check that your indentation is consistent (use spaces, not tabs).';
+          } else if (message.includes('duplicate key')) {
+            friendlyMessage += 'You have duplicate keys in your frontmatter.';
+          } else if (message.includes('unexpected token') || message.includes('unexpected character')) {
+            friendlyMessage += 'Check for special characters that need to be quoted or escaped.';
+          } else {
+            friendlyMessage += `Details: ${error.message}`;
+          }
+        } else {
+          friendlyMessage += 'Please check your frontmatter formatting.';
+        }
+        
         errors.push({
-          message: `Failed to parse frontmatter YAML: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          message: friendlyMessage,
           line: frontmatterStart + 1,
           column: 1,
         });

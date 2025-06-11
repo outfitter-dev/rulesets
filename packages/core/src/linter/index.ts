@@ -14,6 +14,20 @@ export interface LintResult {
   severity: 'error' | 'warning' | 'info';
 }
 
+// Human-readable field names for error messages
+const FIELD_NAMES: Record<string, string> = {
+  '/rulesets': 'Rulesets version declaration',
+  '/rulesets/version': 'Rulesets version number',
+  '/destinations': 'Destination configurations',
+  '/title': 'Document title',
+  '/description': 'Document description',
+  '/version': 'Document version',
+};
+
+function getFieldName(path: string): string {
+  return FIELD_NAMES[path] || path;
+}
+
 /**
  * Lints a parsed Rulesets document by validating its frontmatter.
  * For v0.1.0, this performs basic schema validation on the frontmatter.
@@ -60,14 +74,14 @@ export async function lint(
   if (config.requireRulesetsVersion !== false) {
     if (!frontmatter.rulesets) {
       results.push({
-        message: 'Missing required "rulesets" field in frontmatter. Specify the Rulesets version (e.g., rulesets: { version: "0.1.0" }).',
+        message: `Missing required ${getFieldName('/rulesets')}. Specify the Rulesets version (e.g., rulesets: { version: "0.1.0" }).`,
         line: 1,
         column: 1,
         severity: 'error',
       });
     } else if (typeof frontmatter.rulesets !== 'object' || !frontmatter.rulesets.version) {
       results.push({
-        message: `Invalid "rulesets" field. Expected object with version property, got ${typeof frontmatter.rulesets}.`,
+        message: `Invalid ${getFieldName('/rulesets')}. Expected object with version property, got ${typeof frontmatter.rulesets}.`,
         line: 1,
         column: 1,
         severity: 'error',
@@ -79,7 +93,7 @@ export async function lint(
   if (frontmatter.destinations) {
     if (typeof frontmatter.destinations !== 'object' || Array.isArray(frontmatter.destinations)) {
       results.push({
-        message: 'Invalid "destinations" field. Expected an object mapping destination IDs to configuration.',
+        message: `Invalid ${getFieldName('/destinations')}. Expected an object mapping destination IDs to configuration.`,
         line: 1,
         column: 1,
         severity: 'error',
@@ -104,7 +118,7 @@ export async function lint(
   // Check for recommended fields
   if (!frontmatter.title) {
     results.push({
-      message: 'Consider adding a "title" field to the frontmatter for better documentation.',
+      message: `Consider adding a ${getFieldName('/title')} to the frontmatter for better documentation.`,
       line: 1,
       column: 1,
       severity: 'info',
@@ -113,7 +127,7 @@ export async function lint(
 
   if (!frontmatter.description) {
     results.push({
-      message: 'Consider adding a "description" field to the frontmatter for better documentation.',
+      message: `Consider adding a ${getFieldName('/description')} to the frontmatter for better documentation.`,
       line: 1,
       column: 1,
       severity: 'info',

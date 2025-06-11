@@ -37,7 +37,7 @@ export class CursorPlugin implements DestinationPlugin {
   async write(ctx: {
     compiled: CompiledDoc;
     destPath: string;
-    config: Record<string, any>;
+    config: Record<string, unknown>;
     logger: Logger;
   }): Promise<void> {
     const { compiled, destPath, config, logger } = ctx;
