@@ -1,4 +1,4 @@
-# 💽 Mixdown – v0 Overview
+# 📏 Rulesets – v0.1.0 Overview
 
 > *Write rules once, compile destination-specific rules, zero drift.*
 
@@ -11,7 +11,7 @@
   - [Our Solution](#our-solution)
 - [Core Concepts](#core-concepts)
 - [Key Features](#key-features)
-  - [Mixdown notation](#mixdown-notation)
+  - [Rulesets notation](#rulesets-notation)
   - [Compiler \& Integration](#compiler--integration)
 - [Destination Provider](#destination-provider)
 - [Getting Started](#getting-started)
@@ -35,9 +35,9 @@
       - [Property Bracketing Rules](#property-bracketing-rules)
     - [Property Grouping \& Scoping: Common Patterns](#property-grouping--scoping-common-patterns)
     - [Using bare XML tags](#using-bare-xml-tags)
-  - [Mixdown Frontmatter](#mixdown-frontmatter)
+  - [Rulesets Frontmatter](#rulesets-frontmatter)
   - [Links](#links)
-    - [External \& Mixdown File Internal Links](#external--mixdown-file-internal-links)
+    - [External \& Rulesets File Internal Links](#external--rulesets-file-internal-links)
     - [Linking to Project Files](#linking-to-project-files)
   - [Variables](#variables)
   - [Imports](#imports)
@@ -46,7 +46,7 @@
     - [Stem References and Import Scope](#stem-references-and-import-scope)
   - [Imports vs. Variables (Substitution)](#imports-vs-variables-substitution)
   - [Mixins](#mixins)
-  - [Rendering Raw Mixdown notation](#rendering-raw-mixdown-notation)
+  - [Rendering Raw Rulesets notation](#rendering-raw-rulesets-notation)
   - [Instruction Placeholders](#instruction-placeholders)
     - [Placeholder Formatting](#placeholder-formatting)
   - [Whitespace Handling](#whitespace-handling)
@@ -65,7 +65,7 @@
 
 ### Overview
 
-Mixdown is a **Markdown-previewable rules compiler** that lets you author a single rules file (source rules) in Markdown and compile it into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
+Rulesets is a **Markdown-previewable rules compiler** that lets you author a single rules file (source rules) in Markdown and compile it into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
 
 ### The Problem
 
@@ -75,7 +75,7 @@ Mixdown is a **Markdown-previewable rules compiler** that lets you author a sing
 
 ### Our Solution
 
-Mixdown introduces a single source-of-truth rules notation written in pure Markdown (with a dash of specialized notation), which is processed into destination-specific files by a compiler that:
+Rulesets introduces a single source-of-truth rules notation written in pure Markdown (with a dash of specialized notation), which is processed into destination-specific files by a compiler that:
 
 1. Parses source rules files into an AST (abstract syntax tree) to ensure a consistent format.
 2. Uses **destination-specific compilers** (as plugins) to transform the AST into compiled rules.
@@ -89,9 +89,9 @@ Result: *Write rules once, compile destination-specific rules, zero drift.*
 
 - **Source rules**
   - Rules files that serve as the compilation source, written in 100 % previewable Markdown.
-  - Written in Mixdown notation and use `{{...}}` notation markers to direct the compiler.
+  - Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
   - Compiled into destination-specific rules files:
-    - `./mixdown/src/my-rule.md` → `.cursor/rules/my-rule.mdc`
+    - `./rulesets/src/my-rule.md` → `.cursor/rules/my-rule.mdc`
 - **Destination**
   - A supported tool, such as `cursor`, `windsurf`, or `claude-code`.
   - Defines destination-specific criteria for compiling source rules to compiled rules.
@@ -106,9 +106,9 @@ Result: *Write rules once, compile destination-specific rules, zero drift.*
   - When placed in destination directories, referred to as "tool-ready rules".
 - **Notation Marker**
   - Syntax: `{{...}}`
-  - Fundamental building block of Mixdown notation
+  - Fundamental building block of Rulesets notation
   - Used to direct the compiler for various purposes (stems, imports, variables)
-  - All Mixdown directives use marker notation, but serve different functions
+  - All Rulesets directives use marker notation, but serve different functions
   - Similar to `<xml-tags>`, but fully Markdown-previewable.
 - **Stem**
   - Syntax: `{{stem-name}}...{{/stem-name}}`
@@ -129,7 +129,7 @@ Result: *Write rules once, compile destination-specific rules, zero drift.*
 
 ## Key Features
 
-### Mixdown notation
+### Rulesets notation
 
 - **100% Preview-able Markdown:** Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
 - **Granular Stems:** Filter stems within a single source rules for per-destination inclusion/exclusion.
@@ -137,8 +137,8 @@ Result: *Write rules once, compile destination-specific rules, zero drift.*
 
 ### Compiler & Integration
 
-- **Plugin Architecture:** Add new destinations via `MixdownPluginProvider` without touching core.
-- **CLI & API:** `mixdown build`, `mixdown validate`, and `POST /compile` endpoint.
+- **Plugin Architecture:** Add new destinations via `RulesetsPluginProvider` without touching core.
+- **CLI & API:** `rulesets build`, `rulesets validate`, and `POST /compile` endpoint.
 
 ## Destination Provider
 
@@ -157,21 +157,21 @@ Result: *Write rules once, compile destination-specific rules, zero drift.*
 ### Installation
 
 ```bash
-npm install -g @mixdown/cli        # global CLI
+npm install -g @rulesets/cli        # global CLI
 # project-local
-npm install --save-dev @mixdown
+npm install --save-dev @rulesets
 # or with the CLI
-npx @mixdown/cli init
+npx @rulesets/cli init
 ```
 
 ### Quick Start
 
 ```bash
-mixdown init      # scaffolds .mixdown/ directory structure
+rulesets init      # scaffolds .rulesets/ directory structure
 
-mixdown import    # imports existing rules files into the mixdown format
+rulesets import    # imports existing rules files into the rulesets format
 
-mixdown build     # writes compiled rules to .mixdown/dist/
+rulesets build     # writes compiled rules to .rulesets/dist/
 ```
 
 ## Notation Reference
@@ -187,7 +187,7 @@ mixdown build     # writes compiled rules to .mixdown/dist/
 
 ### Delimiter Roles
 
-Mixdown's syntax follows strict delimiter rules to maintain consistency and clarity. Each character serves a specific purpose:
+Rulesets' syntax follows strict delimiter rules to maintain consistency and clarity. Each character serves a specific purpose:
 
 | Delimiter | Role | Example | Purpose |
 |-----------|------|---------|---------|
@@ -202,7 +202,7 @@ These delimiters always maintain their role throughout the syntax, making the la
 
 ### Stems
 
-Stems are the core building block of Mixdown and are a direct stand in for XML tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other stems or source rules.
+Stems are the core building block of Rulesets and are a direct stand in for XML tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other stems or source rules.
 
 ```markdown
 {{instructions +cursor !claude-code}}
@@ -212,13 +212,13 @@ Stems are the core building block of Mixdown and are a direct stand in for XML t
 
 #### Stem Notation Markers
 
-- **1:1 Markdown-to-XML Translation**: Write stems as `{{stem-name}}` and they will be converted to `<stem_name>` in the output. Mixdown can compile into pure Markdown, XML, or a combination of the two.
+- **1:1 Markdown-to-XML Translation**: Write stems as `{{stem-name}}` and they will be converted to `<stem_name>` in the output. Rulesets can compile into pure Markdown, XML, or a combination of the two.
 - **Open/Close**: Stems use opening `{{stem-name ... }}` and closing `{{/stem-name}}` markers to delimit their content.
 - **Naming**: `kebab-case` is recommended for stem names (e.g., `my-stem-name`) to avoid accidental Markdown emphasis rendering. Regardless of the naming convention used in the source `.md` file, the corresponding XML tags in outputs will be formatted as `<snake_case>` (e.g., `<my_stem_name>`). This output format is configurable.
 - **Parsing Example**:
 
 ```markdown
-<!-- Mixdown input -->
+<!-- Rulesets input -->
 {{stem-one}}
 Content A
 {{/stem-one}}
@@ -386,7 +386,7 @@ Self-closing tags render as empty XML tags in the output:
 
 - **Group inclusion with member exclusion and scoped properties for the group:**
   `{{instructions +ide:[code-javascript] !cursor}}`
-  *(Includes this stem for all destinations in the `ide` group, applying the `code-javascript` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `mixdown.config.json`.)*
+  *(Includes this stem for all destinations in the `ide` group, applying the `code-javascript` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `rulesets.config.json`.)*
 
 > [!IMPORTANT]
 > Differentiating Scoped Properties from Scoped Inclusion:
@@ -399,7 +399,7 @@ Self-closing tags render as empty XML tags in the output:
 Properties can be split across lines for readability. The parser preserves this formatting when writing XML tags:
 
 ```markdown
-<!-- Multi-line section marker in Mixdown format -->
+<!-- Multi-line section marker in Rulesets format -->
 
 {{instructions
   name-("important-rules")
@@ -621,7 +621,7 @@ This extension-to-language mapping follows the same conventions used by most Mar
 > [!WARNING]
 > Bare XML tags are not valid Markdown, so Markdown previewers may be likely to render them differently or not at all.
 
-When `allow-bare-xml-tags` is set to `true` in frontmatter or `.mixdown.config.json`, you can use bare XML tags for stem names. The tags will be compiled as-is, but note:
+When `allow-bare-xml-tags` is set to `true` in frontmatter or `.rulesets.config.json`, you can use bare XML tags for stem names. The tags will be compiled as-is, but note:
 
 ```markdown
 <!-- XML tags with `allow-bare-xml-tags` set to `true` -->
@@ -636,13 +636,13 @@ Renders as:
 </stem_name>
 ```
 
-### Mixdown Frontmatter
+### Rulesets Frontmatter
 
 ```yaml
 ---
-# .mixdown/src/my-rule.md
-mixdown:
-  version: 0.1.0 # optional, version number for the Mixdown format used
+# .rulesets/src/my-rule.md
+rulesets:
+  version: 0.1.0 # optional, version number for the Rulesets format used
 description: "Rules for this project" # optional, may be useful for tools that use descriptions, such as Cursor, Windsurf, etc.
 globs: ["**/*.{txt,md,mdc}"] # optional, globs re-written based on destination-specific needs
 # Destination filter examples using standard keys:
@@ -669,25 +669,25 @@ allow-bare-xml-tags: false # optional, defaults to false. Set to true to allow b
 
 Frontmatter is used to provide metadata about the source rules file and control how it's compiled. Basic frontmatter includes:
 
-- `mixdown.version`: Metadata about the Mixdown format used.
+- `rulesets.version`: Metadata about the Rulesets format used.
 - `name`: Unique identifier for the source rules (optional, defaults to filename).
 - `description`: Optional description of the mix, rendered for tools that use them (e.g. Cursor, Windsurf, etc.).
 - `globs`: Optional globs to be rewritten based on destination-specific needs.
 - `destination`: Control how this source rules is processed for destinations:
   - `include`/`exclude`: Control which destinations receive this mix.
   - `path`: Specify a custom path for destination artifacts.
-  - Properties include any destination providers registered in `.mixdown.config.json`.
+  - Properties include any destination providers registered in `.rulesets.config.json`.
 - `version`: Version information for this file.
 - `labels`: Categorization tags for this file.
-- `allow-bare-xml-tags: (boolean)` - Optional. When set to `true` in this file's frontmatter, it allows the use of bare XML tags (e.g., `<my_tag>...</my_tag>`) directly within this specific Mixdown file instead of the standard `{{my-tag}}...{{/my-tag}}` notation. This setting overrides any global `allow-bare-xml-tags` setting in `.mixdown.config.json` for this file. Defaults to `false` if not specified. See the 'Using bare XML tags' section for more details.
+- `allow-bare-xml-tags: (boolean)` - Optional. When set to `true` in this file's frontmatter, it allows the use of bare XML tags (e.g., `<my_tag>...</my_tag>`) directly within this specific Rulesets file instead of the standard `{{my-tag}}...{{/my-tag}}` notation. This setting overrides any global `allow-bare-xml-tags` setting in `.rulesets.config.json` for this file. Defaults to `false` if not specified. See the 'Using bare XML tags' section for more details.
 - `[cursor|windsurf|claude-code|...]`: Destination-specific key/value pairs can be provided.
   - These can include `destination.path` to override the global path for specific destinations.
 
-For more details on the structure and capabilities of the `mixdown.config.json` file, including global settings (like `allow-bare-xml-tags`), aliases, and destination provider configurations, please refer to the project's architecture or configuration documentation.
+For more details on the structure and capabilities of the `rulesets.config.json` file, including global settings (like `allow-bare-xml-tags`), aliases, and destination provider configurations, please refer to the project's architecture or configuration documentation.
 
 ### Links
 
-#### External & Mixdown File Internal Links
+#### External & Rulesets File Internal Links
 
 Standard Markdown links work as expected external links, and links to other source rules:
 
@@ -695,7 +695,7 @@ Standard Markdown links work as expected external links, and links to other sour
 - Links to other source rules files: `[Text](other-mix.md)`
 
 > [!NOTE]
-> Standard Markdown links will work in previews as expected within the `.mixdown/src` directory, but `{{link ...}}` will not, as it requires compilation by Mixdown to resolve paths relative to the final compiled rules directory and apply any destination-specific link transformations.
+> Standard Markdown links will work in previews as expected within the `.rulesets/src` directory, but `{{link ...}}` will not, as it requires compilation by Rulesets to resolve paths relative to the final compiled rules directory and apply any destination-specific link transformations.
 
 #### Linking to Project Files
 
@@ -721,11 +721,11 @@ Here's an aliased link to a file: [Alternative Title](@path/to/file.txt)
 Variables are dynamic values using the `{{$...}}` notation. They are replaced inline during compilation through variable substitution.
 The syntax for variables depends on the context:
 - `{{$key}}` is used when the variable is standalone in the content. For example: `Welcome, {{$userName}}!`
-- `$key` is used when the variable is within another Mixdown `{{...}}` marker. For example: `{{stem class-($userTheme)}}`
+- `$key` is used when the variable is within another Rulesets `{{...}}` marker. For example: `{{stem class-($userTheme)}}`
 
 | Type | Notation | Notes |
 |------|--------|-------|
-| **Alias** | `{{$alias}}` | Alias lookup in `.mixdown.config.json` under `aliases` key. |
+| **Alias** | `{{$alias}}` | Alias lookup in `.rulesets.config.json` under `aliases` key. |
 | **Frontmatter value** | `{{$.key}}` | Access values from the current file's frontmatter. |
 | **Destination variable** | `{{$dest}}` or `{{$dest.id}}` | Built-in variables provided by the compiler. Display name from the provider manifest (e.g. `Cursor`, `Claude Code`). The current destination ID in kebab-case can be accessed by adding `.id` to the end (`cursor`, `claude-code`, etc.) |
 
@@ -842,7 +842,7 @@ It's important to distinguish between imports (`{{> ...}}`) and variable substit
 
 ### Mixins
 
-Mixins are modular, reusable components, stored in the `.mixdown/src/_mixins/` directory. Like programming mixins that can be incorporated into different classes or components, Mixdown mixins provide isolated content blocks that can be imported into multiple source rules files.
+Mixins are modular, reusable components, stored in the `.rulesets/src/_mixins/` directory. Like programming mixins that can be incorporated into different classes or components, Rulesets mixins provide isolated content blocks that can be imported into multiple source rules files.
 
 - A mixin typically contains one or more stems that perform a specific function
 - Mixins are imported using the `{{> @mixin-name}}` notation
@@ -880,17 +880,17 @@ Example:
 </remember>
 ```
 
-### Rendering Raw Mixdown notation
+### Rendering Raw Rulesets notation
 
-Mixdown notation can be compiled as raw notation using the `{{{...}}}` syntax. This allows you to skip processing of the content and render it with the Mixdown notation preserved.
+Rulesets notation can be compiled as raw notation using the `{{{...}}}` syntax. This allows you to skip processing of the content and render it with the Rulesets notation preserved.
 
 - Describes the purpose of preserving raw notation rather than just the syntax
-- Particularly useful for writing documentation or rules that need to show Mixdown notation literally
-- Wrapping a section in triple curly braces preserves all Mixdown notation and nested content exactly as written
+- Particularly useful for writing documentation or rules that need to show Rulesets notation literally
+- Wrapping a section in triple curly braces preserves all Rulesets notation and nested content exactly as written
 - Example:
 
 ```markdown
-> Triple braces will preserve the Mixdown notation on render.
+> Triple braces will preserve the Rulesets notation on render.
 > Adding `unwrap` will remove those stem tags from the compiled artifact.
 > Adding `+cursor` will only include the section for the `cursor` destination.
 
@@ -920,7 +920,7 @@ Without the `unwrap` property, it would render as:
 
 ### Instruction Placeholders
 
-When writing prompts or instructions, you can use placeholders as self-contained prompts to direct an AI to fill in. Mixdown recommends using single-bracket `[placeholder text]`, but single-brace `{placeholder text}` notation is supported. Just be careful, as one extra brace will cause the compiler to treat it as a Mixdown notation marker.
+When writing prompts or instructions, you can use placeholders as self-contained prompts to direct an AI to fill in. Rulesets recommends using single-bracket `[placeholder text]`, but single-brace `{placeholder text}` notation is supported. Just be careful, as one extra brace will cause the compiler to treat it as a Rulesets notation marker.
 
 - ✅ Do this:
   - `[requirements]` / `[ requirements ]`
@@ -947,7 +947,7 @@ While the AI may not always follow the instructions in the placeholder precisely
 
 ### Whitespace Handling
 
-Mixdown has specific rules for whitespace to ensure consistent parsing and output:
+Rulesets has specific rules for whitespace to ensure consistent parsing and output:
 
 - Space after opening `{{` and before closing `}}` is optional
   - Example: `{{instructions}}` is equivalent to `{{ instructions }}`
@@ -994,34 +994,34 @@ Version: {{ $.version }}
 
 ```markdown
 {{{example unwrap}}}
-To include a section in Mixdown use: {{section-name}}
+To include a section in Rulesets use: {{section-name}}
 {{{/example}}}
 
 Will compile to:
 
-To include a section in Mixdown use: {{section-name}}
+To include a section in Rulesets use: {{section-name}}
 ```
 
 ## Directory Structure
 
 ```text
 project/
-├── .mixdown/
+├── .rulesets/
 │   ├── dist/
 │   │   └── latest/         # compiled rules
 │   ├── src/                # source rules files (*.md)
 │   │   └── _mixins/        # reusable content modules
-│   └── mixdown.config.json # Mixdown config file
+│   └── rulesets.config.json # Rulesets config file
 ```
 
 ## XML Generation
 
-Mixdown converts notation markers to XML tags during the compilation process. When stems are converted to XML:
+Rulesets converts notation markers to XML tags during the compilation process. When stems are converted to XML:
 
 - Stem markers are converted to XML tags with corresponding names (`{{stem-name}}` → `<stem_name>`)
 - Properties become XML attributes in the output tags
 - Content between markers becomes the XML tag content
-- Mixdown can compile rules into pure Markdown, XML, or a combination of the two
+- Rulesets can compile rules into pure Markdown, XML, or a combination of the two
 
 This XML conversion provides a standardized structure that destination tools can interpret while maintaining full Markdown compatibility for source rules.
 
@@ -1039,11 +1039,11 @@ Features planned for v0.x releases:
 
 ### Comprehensive Property Reference
 
-This section provides a complete reference for all properties supported in Mixdown v0.x, organized by their purpose and usage patterns.
+This section provides a complete reference for all properties supported in Rulesets v0.x, organized by their purpose and usage patterns.
 
 #### Property Naming Conventions
 
-Mixdown uses consistent naming patterns to make properties discoverable and intuitive:
+Rulesets uses consistent naming patterns to make properties discoverable and intuitive:
 
 | Pattern | Description | Examples |
 |---------|-------------|----------|
@@ -1095,15 +1095,17 @@ The table below organizes properties by their categories with comprehensive info
 | `num-tag-first` | Flag | `num-tag-first` | ✅ | ✅ | ❌ | Number first tag only |
 | `num-tag-last` | Flag | `num-tag-last` | ✅ | ✅ | ❌ | Number last tag only |
 | **Raw Notation Properties** |||||||
-| `process-content` | Flag | `process-content` | ✅ | ✅ | ❌ | Used within `{{{...}}}` (raw notation) stems. When `process-content` is applied to such a stem, the content *inside* the raw block is compiled by Mixdown as if it were regular Mixdown content, while the outer `{{{stemName}}}` and `{{{/stemName}}}` are still rendered as raw. This is useful for selectively processing parts of a raw block, for example, to demonstrate a Mixdown feature that itself involves further compilation. |
+| `process-content` | Flag | `process-content` | ✅ | ✅ | ❌ | Used within `{{{...}}}` (raw notation) stems. When `process-content` is applied to such a stem, the content *inside* the raw block is compiled by Rulesets as if it were regular Rulesets content, while the outer `{{{stemName}}}` and `{{{/stemName}}}` are still rendered as raw. This is useful for selectively processing parts of a raw block, for example, to demonstrate a Rulesets feature that itself involves further compilation. |
+
 **Note:** These properties are exclusively used within the import syntax, e.g., `{{> fileName#stem }}`.
+
 | **Import Scope** |||||||
 | `#stem` | Single stem | `#stem-name` | ❌ | ✅ | ❌ | Include specific stem from import. |
 | `#!stem` | Single exclusion | `#!stem-name` | ❌ | ✅ | ❌ | Exclude specific stem from import. |
 | `#(stem1 !stem2)` | Multiple stems | `#(section-a section-b)` | ❌ | ✅ | ❌ | Include/exclude multiple specific stems. |
 | `#(destination:[stem])` | Scoped stem | `#(cursor:[section-a])` | ❌ | ✅ | ❌ | Destination-specific stem inclusion. |
 | **Frontmatter Configuration** |||||||
-| `mixdown.version` | YAML | `mixdown.version: 0.1.0` | ❌ | ❌ | ✅ | Mixdown format version for the file |
+| `rulesets.version` | YAML | `rulesets.version: 0.1.0` | ❌ | ❌ | ✅ | Rulesets format version for the file |
 | `description` | YAML | `description: "Project rules"` | ❌ | ❌ | ✅ | Short description of the source rules |
 | `name` | YAML | `name: my-rules` | ❌ | ❌ | ✅ | Unique identifier for the source rules (defaults to filename) |
 | `version` | YAML | `version: 2.0` | ❌ | ❌ | ✅ | Version number for this source rules file |
@@ -1169,4 +1171,4 @@ Most common programming languages are supported using the `code-language` patter
 
 6. **Frontmatter to Destination**: Destination-specific frontmatter (e.g., `cursor: { ... }`) overrides global values for that destination.
 
-*© 2025 Mixdown contributors – MIT License.*
+*© 2025 Rulesets contributors – MIT License.*
