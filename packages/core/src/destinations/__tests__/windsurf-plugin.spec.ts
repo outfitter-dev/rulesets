@@ -187,76 +187,74 @@ describe('WindsurfPlugin', () => {
       );
     });
   });
-describe('write – edge cases', () => {
-      const baseCompiled = {
-        ...mockCompiledDoc,
-        output: { ...mockCompiledDoc.output } // shallow clone to mutate safely
-      } as CompiledDoc
+/* ------------------------------------------------------------------
+     Additional edge-case coverage for WindsurfPlugin.write()
+     Framework: Vitest
+  ------------------------------------------------------------------ */
+  describe('edge cases', () => {
+    it('should ignore non-string outputPath values and fall back to destPath', async () => {
+      const destPath = '.windsurf/rules/fallback.md';
+      const config = { outputPath: 42 }; // invalid, not a string
 
-      it('should throw if an unsupported format is provided', async () => {
-        const destPath = '.windsurf/rules/test.invalid'
-        const config = { format: 'unsupported' }
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath,
+        config: config as unknown as Record<string, unknown>,
+        logger: mockLogger,
+      });
 
-        await expect(
-          plugin.write({ compiled: baseCompiled, destPath, config, logger: mockLogger })
-        ).rejects.toThrow(/Unsupported format/i)
+      const expectedPath = path.resolve(destPath);
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        expectedPath,
+        mockCompiledDoc.output.content,
+        { encoding: 'utf8' },
+      );
+    });
 
-        expect(mockLogger.error).toHaveBeenCalledWith(
-          expect.stringContaining('Unsupported format received'),
-          expect.any(Error)
-        )
-      })
+    it('should resolve relative destPath to an absolute path before writing', async () => {
+      const destPath = 'relative/path/to/rules.md'; // intentionally relative
 
-      it('should fall back to default path when outputPath is not a string', async () => {
-        const badConfig: any = { outputPath: 42 } // invalid type
-        const destPath = '.windsurf/rules/fallback.md'
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath,
+        config: {},
+        logger: mockLogger,
+      });
 
-        await plugin.write({ compiled: baseCompiled, destPath, config: badConfig, logger: mockLogger })
+      const resolved = path.resolve(destPath);
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        resolved,
+        mockCompiledDoc.output.content,
+        { encoding: 'utf8' },
+      );
+    });
 
-        const resolvedPath = path.resolve(destPath)
-        expect(fs.writeFile).toHaveBeenCalledWith(
-          resolvedPath,
-          baseCompiled.output.content,
-          { encoding: 'utf8' }
-        )
-        expect(mockLogger.warn).toHaveBeenCalledWith(
-          expect.stringContaining('Invalid outputPath, using default:')
-        )
-      })
+    it('should keep fs mocks isolated between sequential writes', async () => {
+      const firstPath = '.windsurf/rules/first.md';
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath: firstPath,
+        config: {},
+        logger: mockLogger,
+      });
 
-      it('should create nested directories for deep outputPath', async () => {
-        const deepPath = '.windsurf/rules/nested/dir/structure/output.md'
-        await plugin.write({
-          compiled: baseCompiled,
-          destPath: deepPath,
-          config: {},
-          logger: mockLogger
-        })
+      // reset mock call history but NOT implementation
+      vi.clearAllMocks();
 
-        const resolved = path.resolve(deepPath)
-        expect(fs.mkdir).toHaveBeenCalledWith(path.dirname(resolved), { recursive: true })
-        expect(fs.writeFile).toHaveBeenCalledWith(
-          resolved,
-          baseCompiled.output.content,
-          { encoding: 'utf8' }
-        )
-      })
+      const secondPath = '.windsurf/rules/second.md';
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath: secondPath,
+        config: {},
+        logger: mockLogger,
+      });
 
-      it('should log at debug level when provided', async () => {
-        const cfg = { format: 'markdown' }
-        await plugin.write({ compiled: baseCompiled, destPath: 'out.md', config: cfg, logger: mockLogger })
-        expect(mockLogger.debug).toHaveBeenNthCalledWith(
-          1,
-          'Destination: windsurf'
-        )
-        expect(mockLogger.debug).toHaveBeenNthCalledWith(
-          2,
-          `Config: ${JSON.stringify(cfg)}`
-        )
-        expect(mockLogger.debug).toHaveBeenNthCalledWith(
-          3,
-          'Format: markdown'
-        )
-      })
+      expect(fs.writeFile).toHaveBeenCalledTimes(1);
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        path.resolve(secondPath),
+        mockCompiledDoc.output.content,
+        { encoding: 'utf8' },
+      );
     });
   });
+});

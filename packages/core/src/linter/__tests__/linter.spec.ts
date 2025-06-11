@@ -195,4 +195,65 @@ describe('linter', () => {
       expect(parseError!.line).toBe(2);
     });
   });
-});
+describe('additional edge-case scenarios', () => {
+    it('should allow missing rulesets when requireRulesetsVersion=false', async () => {
+      const parsedDoc: ParsedDoc = {
+        source: { content: '---\\ntitle: Test\\n---\\n\\n# Content', frontmatter: { title: 'Test' } },
+        ast: { stems: [], imports: [], variables: [], markers: [] },
+      };
+      const results = await lint(parsedDoc, { requireRulesetsVersion: false });
+      expect(results.find(r => r.message.includes('Rulesets'))).toBeUndefined();
+    });
+
+    it('should NOT warn when all destinations are allowed', async () => {
+      const parsedDoc: ParsedDoc = {
+        source: {
+          content: '---\\nrulesets: { version: \\"0.1.0\\" }\\ndestinations:\\n  cursor: { path: \\"/\\" }\\n  windsurf: { path: \\"/another\\" }\\n---\\n',
+          frontmatter: {
+            rulesets: { version: '0.1.0' },
+            destinations: { cursor: { path: '/' }, windsurf: { path: '/another' } },
+          },
+        },
+        ast: { stems: [], imports: [], variables: [], markers: [] },
+      };
+      const results = await lint(parsedDoc, { allowedDestinations: ['cursor', 'windsurf'] });
+      expect(results.some(r => r.message.includes('Unknown destination'))).toBe(false);
+    });
+
+    it('should error when rulesets.version is empty string', async () => {
+      const parsedDoc: ParsedDoc = {
+        source: { content: '---\\nrulesets: { version: \\"\\" }\\n---', frontmatter: { rulesets: { version: '' } } },
+        ast: { stems: [], imports: [], variables: [], markers: [] },
+      };
+      const results = await lint(parsedDoc);
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const err = results.find(r => r.message.includes('Invalid') && r.message.includes('Rulesets'));
+      expect(err).toBeDefined();
+      expect(err!.severity).toBe('error');
+    });
+
+    it('should not provide title/description suggestions when present', async () => {
+      const parsedDoc: ParsedDoc = {
+        source: {
+          content: '---\\nrulesets: { version: \\"0.1.0\\" }\\ntitle: My Doc\\ndescription: Cool\\n---',
+          frontmatter: { rulesets: { version: '0.1.0' }, title: 'My Doc', description: 'Cool' },
+        },
+        ast: { stems: [], imports: [], variables: [], markers: [] },
+      };
+      const results = await lint(parsedDoc);
+      expect(results.some(r => r.message.includes('Document title'))).toBe(false);
+      expect(results.some(r => r.message.includes('Document description'))).toBe(false);
+    });
+
+    it('should handle very large documents without overflowing stack', async () => {
+      const bigBody = '# Heading\\n' + 'Paragraph\\n'.repeat(20_000);
+      const parsedDoc: ParsedDoc = {
+        source: {
+          content: '---\\nrulesets: { version: \\"0.1.0\\" }\\ntitle: Big\\ndescription: Big doc\\n---\\n' + bigBody,
+          frontmatter: { rulesets: { version: '0.1.0' }, title: 'Big', description: 'Big doc' },
+        },
+        ast: { stems: [], imports: [], variables: [], markers: [] },
+      };
+      await expect(lint(parsedDoc)).resolves.not.toThrow();
+    });
+  });

@@ -232,4 +232,75 @@ destinations:
       });
     });
   });
+describe('additional edge cases', () => {
+  const baseAst = { stems: [], imports: [], variables: [], markers: [] };
+
+  function makeDoc(content: string, frontmatter?: any): ParsedDoc {
+    return {
+      source: frontmatter
+        ? { content, frontmatter }
+        : { content },
+      ast: baseAst,
+    } as ParsedDoc;
+  }
+
+  it('should throw when destination id is missing', () => {
+    const doc = makeDoc('# No destination front-matter');
+    expect(() => compile(doc, 'not-there')).toThrow();
+  });
+
+  it('should fill undefined metadata fields when front-matter keys are absent', () => {
+    const doc = makeDoc(`# Content without title/description`, { mixdown: 'v0' });
+    const { output } = compile(doc, 'windsurf');
+    expect(output.metadata).toEqual(
+      expect.objectContaining({
+        title: undefined,
+        description: undefined,
+        version: undefined,
+      }),
+    );
+  });
+
+  it('should let destination config override project config on key conflict', () => {
+    const doc = makeDoc(
+      `---
+mixdown: v0
+destinations:
+  cursor:
+    path: "/dest"
+    priority: low
+---
+# body`,
+      {
+        mixdown: 'v0',
+        destinations: { cursor: { path: '/dest', priority: 'low' } },
+      },
+    );
+
+    const result = compile(doc, 'cursor', { priority: 'high', debug: false });
+    expect(result.context.config).toEqual(
+      expect.objectContaining({ priority: 'low', debug: false }),
+    );
+  });
+
+  it('should still return output for unsupported mixdown version', () => {
+    const doc = makeDoc(`---
+mixdown: v99
+---
+{{marker}}
+`, { mixdown: 'v99' });
+    const result = compile(doc, 'cursor');
+    expect(result.output.content).toContain('{{marker}}');
+  });
+
+  it('should handle totally empty content gracefully', () => {
+    const doc = makeDoc('');
+    const res = compile(doc, 'cursor');
+    expect(res.output.content).toBe('');
+    expect(res.output.metadata).toEqual({
+      title: undefined,
+      description: undefined,
+      version: undefined,
+    });
+  });
 });
