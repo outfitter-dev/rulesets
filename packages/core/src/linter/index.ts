@@ -79,7 +79,7 @@ export async function lint(
         column: 1,
         severity: 'error',
       });
-    } else if (typeof frontmatter.rulesets !== 'object' || !frontmatter.rulesets.version) {
+    } else if (typeof frontmatter.rulesets !== 'object' || frontmatter.rulesets === null || !('version' in frontmatter.rulesets) || !frontmatter.rulesets.version) {
       results.push({
         message: `Invalid ${getFieldName('/rulesets')}. Expected object with version property, got ${typeof frontmatter.rulesets}.`,
         line: 1,
