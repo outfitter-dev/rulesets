@@ -15,7 +15,7 @@ import type { ParsedDoc, CompiledDoc } from '../interfaces';
 // :M: v0.1.0: Pass-through implementation without transformation
 // :M: todo(v0.2.0): Process stem markers and convert to XML
 /**
- * Compiles a parsed Rulesets document into a compiled document for a specified destination.
+ * Compiles a parsed Rulesets document into a compiled document tailored for a specific destination.
  *
  * Extracts and merges frontmatter metadata and destination-specific configuration, and isolates the main body content. The AST and markers are passed through without transformation.
  *
