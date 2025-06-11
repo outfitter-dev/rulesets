@@ -77,12 +77,12 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 
 ```text
 project/
-├── .mixdown/
+├── .rulesets/
 │   ├── dist/
 │   │   └── latest/         # compiled rules
 │   ├── src/                # source rules files (*.mix.md, *.md)
 │   │   └── _mixins/        # reusable content modules
-│   └── mixdown.config.json # Mixdown config file
+│   └── rulesets.config.json # Mixdown config file
 ```
 
 ## Goals
@@ -173,7 +173,7 @@ Content without surrounding XML tags
 
 ```yaml
 ---
-# .mixdown/src/my-rule.md
+# .rulesets/src/my-rule.md
 mixdown:
   version: 0.1.0 # version number for the Mixdown format used
 description: "Rules for this project" # useful for tools that use descriptions
@@ -198,7 +198,7 @@ version: 2.0 # version number for this file
 
 - Source rules files: `kebab-case.mix.md` (preferred) (e.g., `coding-standards.mix.md`)
 - Directories: `kebab-case` (e.g., `_mixins`)
-- Config files: `kebab-case.config.json` (e.g., `mixdown.config.json`)
+- Config files: `kebab-case.config.json` (e.g., `rulesets.config.json`)
 - Stem names: `kebab-case` (e.g., `{{user-instructions}}`)
 - XML output tags: `snake_case` (e.g., `<user_instructions>`)
 

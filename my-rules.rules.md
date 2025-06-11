@@ -1,7 +1,7 @@
 ---
-mixdown: v0
-title: My First Mixdown Rule
-description: A simple rule for testing v0.
+rulesets: { version: "0.1.0" }
+title: My First Rulesets Rule
+description: A simple rule for testing Rulesets v0.1.0.
 destinations:
   cursor:
     outputPath: ".cursor/rules/my-first-rule.mdc"

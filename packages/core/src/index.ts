@@ -142,9 +142,9 @@ export async function runRulesetsV0(
     }
 
     // Determine output path
-    const destConfig = frontmatter.destinations?.[destinationId] || {};
+    const destConfig = (frontmatter.destinations && typeof frontmatter.destinations === 'object' && !Array.isArray(frontmatter.destinations)) ? (frontmatter.destinations as Record<string, any>)[destinationId] || {} : {};
     const defaultPath = `.rulesets/dist/${destinationId}/my-rules.md`;
-    const destPath = destConfig.outputPath || destConfig.path || defaultPath;
+    const destPath = (typeof destConfig.outputPath === 'string' ? destConfig.outputPath : undefined) || (typeof destConfig.path === 'string' ? destConfig.path : undefined) || defaultPath;
 
     // Write using the plugin
     try {

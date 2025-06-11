@@ -45,7 +45,7 @@ export class CursorPlugin implements DestinationPlugin {
     logger.info(`Writing Cursor rules to: ${destPath}`);
 
     // Determine the output path
-    const outputPath = config.outputPath || destPath;
+    const outputPath = (typeof config.outputPath === 'string' ? config.outputPath : undefined) || destPath;
     const resolvedPath = path.isAbsolute(outputPath)
       ? outputPath
       : path.resolve(outputPath);

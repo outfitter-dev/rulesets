@@ -92,7 +92,7 @@ describe('WindsurfPlugin', () => {
       expect(fs.writeFile).toHaveBeenCalledWith(
         resolvedPath,
         mockCompiledDoc.output.content,
-        'utf-8',
+        { encoding: 'utf8' },
       );
       expect(mockLogger.info).toHaveBeenCalledWith(`Writing Windsurf rules to: ${resolvedPath}`);
       expect(mockLogger.info).toHaveBeenCalledWith(`Successfully wrote Windsurf rules to: ${resolvedPath}`);
@@ -113,7 +113,7 @@ describe('WindsurfPlugin', () => {
       expect(fs.writeFile).toHaveBeenCalledWith(
         resolvedPath,
         mockCompiledDoc.output.content,
-        'utf-8',
+        { encoding: 'utf8' },
       );
     });
 
