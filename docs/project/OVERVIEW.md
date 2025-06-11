@@ -386,7 +386,7 @@ Self-closing tags render as empty XML tags in the output:
 
 - **Group inclusion with member exclusion and scoped properties for the group:**
   `{{instructions +ide:[code-javascript] !cursor}}`
-  *(Includes this stem for all destinations in the `ide` group, applying the `code-javascript` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `mixdown.config.json`.)*
+  *(Includes this stem for all destinations in the `ide` group, applying the `code-javascript` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `rulesets.config.json`.)*
 
 > [!IMPORTANT]
 > Differentiating Scoped Properties from Scoped Inclusion:
