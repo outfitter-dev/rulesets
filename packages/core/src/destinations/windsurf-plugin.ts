@@ -44,7 +44,7 @@ export class WindsurfPlugin implements DestinationPlugin {
     const { compiled, destPath, config, logger } = ctx;
 
     // Determine the output path
-    const outputPath = config.outputPath || destPath;
+    const outputPath = (typeof config.outputPath === 'string' ? config.outputPath : undefined) || destPath;
     const resolvedPath = path.resolve(outputPath);
     
     logger.info(`Writing Windsurf rules to: ${resolvedPath}`);
@@ -60,7 +60,7 @@ export class WindsurfPlugin implements DestinationPlugin {
 
     // For v0, write the raw content
     try {
-      await fs.writeFile(resolvedPath, compiled.output.content, 'utf-8');
+      await fs.writeFile(resolvedPath, compiled.output.content, { encoding: 'utf8' });
       logger.info(`Successfully wrote Windsurf rules to: ${resolvedPath}`);
       
       // Log additional context for debugging

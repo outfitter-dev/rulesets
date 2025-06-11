@@ -1,8 +1,8 @@
-// TLDR: End-to-end integration tests for Mixdown v0 (mixd-v0)
+// TLDR: End-to-end integration tests for Rulesets v0 (mixd-v0)
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { runMixdownV0, ConsoleLogger } from '../../src';
+import { runRulesetsV0, ConsoleLogger } from '../../src';
 
 // Mock fs to avoid actual file I/O in tests
 vi.mock('fs', () => ({
@@ -29,9 +29,9 @@ describe('E2E Integration Tests', () => {
     vi.restoreAllMocks();
   });
 
-  describe('runMixdownV0', () => {
+  describe('runRulesetsV0', () => {
     const sampleContent = `---
-mixdown: v0
+rulesets: { version: "0.1.0" }
 title: Integration Test Rules
 description: Testing the full pipeline
 destinations:
@@ -52,7 +52,7 @@ This is a test document with {{stems}} and {{$variables}} that should pass throu
       vi.mocked(fs.readFile).mockResolvedValueOnce(sampleContent);
 
       // Run the pipeline
-      await runMixdownV0('./test.mix.md', mockLogger);
+      await runRulesetsV0('./test.mix.md', mockLogger);
 
       // Verify file was read
       expect(fs.readFile).toHaveBeenCalledWith('./test.mix.md', 'utf-8');
@@ -69,26 +69,27 @@ This is a test document with {{stems}} and {{$variables}} that should pass throu
 
       // Verify files were written with correct content
       const expectedContent = '# Test Rules\n\nThis is a test document with {{stems}} and {{$variables}} that should pass through.';
+      expect(fs.writeFile).toHaveBeenCalledTimes(2);
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.resolve('.cursor/rules/test.mdc'),
         expectedContent,
-        'utf-8',
+        { encoding: 'utf8' },
       );
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.resolve('.windsurf/rules/test.md'),
         expectedContent,
-        'utf-8',
+        { encoding: 'utf8' },
       );
 
       // Verify logging
-      expect(mockLogger.info).toHaveBeenCalledWith('Mixdown v0 processing completed successfully!');
+      expect(mockLogger.info).toHaveBeenCalledWith('Rulesets v0.1.0 processing completed successfully!');
     });
 
     it('should handle missing frontmatter gracefully', async () => {
       const contentWithoutFrontmatter = '# Just Content\n\nNo frontmatter here.';
       vi.mocked(fs.readFile).mockResolvedValueOnce(contentWithoutFrontmatter);
 
-      await runMixdownV0('./test.mix.md', mockLogger);
+      await runRulesetsV0('./test.mix.md', mockLogger);
 
       // Should still process for all destinations
       expect(fs.writeFile).toHaveBeenCalledTimes(2); // cursor and windsurf
@@ -99,13 +100,13 @@ This is a test document with {{stems}} and {{$variables}} that should pass throu
 
     it('should fail on lint errors', async () => {
       const invalidContent = `---
-title: Missing mixdown version
+title: Missing rulesets version
 ---
 
 # Content`;
       vi.mocked(fs.readFile).mockResolvedValueOnce(invalidContent);
 
-      await expect(runMixdownV0('./test.mix.md', mockLogger)).rejects.toThrow(
+      await expect(runRulesetsV0('./test.mix.md', mockLogger)).rejects.toThrow(
         'Linting failed with errors',
       );
 
@@ -119,7 +120,7 @@ title: Missing mixdown version
       const error = new Error('File not found');
       vi.mocked(fs.readFile).mockRejectedValueOnce(error);
 
-      await expect(runMixdownV0('./nonexistent.mix.md', mockLogger)).rejects.toThrow(
+      await expect(runRulesetsV0('./nonexistent.mix.md', mockLogger)).rejects.toThrow(
         'File not found',
       );
 
@@ -131,7 +132,7 @@ title: Missing mixdown version
 
     it('should process only specified destinations', async () => {
       const contentWithOneDestination = `---
-mixdown: v0
+rulesets: { version: "0.1.0" }
 title: Single Destination
 destinations:
   cursor:
@@ -141,14 +142,14 @@ destinations:
 # Single Destination Content`;
       vi.mocked(fs.readFile).mockResolvedValueOnce(contentWithOneDestination);
 
-      await runMixdownV0('./test.mix.md', mockLogger);
+      await runRulesetsV0('./test.mix.md', mockLogger);
 
       // Should only write to cursor, not windsurf
       expect(fs.writeFile).toHaveBeenCalledTimes(1);
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.resolve('.cursor/rules/single.mdc'),
         expect.any(String),
-        'utf-8',
+        { encoding: 'utf8' },
       );
     });
 
@@ -157,7 +158,7 @@ destinations:
       const writeError = new Error('Permission denied');
       vi.mocked(fs.writeFile).mockRejectedValueOnce(writeError);
 
-      await expect(runMixdownV0('./test.mix.md', mockLogger)).rejects.toThrow(
+      await expect(runRulesetsV0('./test.mix.md', mockLogger)).rejects.toThrow(
         'Permission denied',
       );
 
@@ -167,9 +168,9 @@ destinations:
       );
     });
 
-    it('should preserve Mixdown markers in output', async () => {
+    it('should preserve Rulesets markers in output', async () => {
       const contentWithMarkers = `---
-mixdown: v0
+rulesets: { version: "0.1.0" }
 title: Markers Test
 ---
 
@@ -182,7 +183,7 @@ These are instructions that should be preserved.
 Variable: {{$myVar}}`;
       vi.mocked(fs.readFile).mockResolvedValueOnce(contentWithMarkers);
 
-      await runMixdownV0('./test.mix.md', mockLogger);
+      await runRulesetsV0('./test.mix.md', mockLogger);
 
       const expectedOutput = `{{instructions}}
 These are instructions that should be preserved.
@@ -195,30 +196,31 @@ Variable: {{$myVar}}`;
       expect(fs.writeFile).toHaveBeenCalledWith(
         expect.any(String),
         expectedOutput,
-        'utf-8',
+        { encoding: 'utf8' },
       );
     });
 
     it('should use default paths when not specified', async () => {
       const minimalContent = `---
-mixdown: v0
+rulesets: { version: "0.1.0" }
 ---
 
 # Content`;
       vi.mocked(fs.readFile).mockResolvedValueOnce(minimalContent);
 
-      await runMixdownV0('./test.mix.md', mockLogger);
+      await runRulesetsV0('./test.mix.md', mockLogger);
 
       // Should use default paths
+      expect(fs.writeFile).toHaveBeenCalledTimes(2);
       expect(fs.writeFile).toHaveBeenCalledWith(
-        path.resolve('.mixdown/dist/cursor/my-rules.md'),
+        path.resolve('.rulesets/dist/cursor/my-rules.md'),
         expect.any(String),
-        'utf-8',
+        { encoding: 'utf8' },
       );
       expect(fs.writeFile).toHaveBeenCalledWith(
-        path.resolve('.mixdown/dist/windsurf/my-rules.md'),
+        path.resolve('.rulesets/dist/windsurf/my-rules.md'),
         expect.any(String),
-        'utf-8',
+        { encoding: 'utf8' },
       );
     });
   });

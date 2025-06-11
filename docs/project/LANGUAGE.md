@@ -95,7 +95,7 @@ This document provides terminology guidance for consistent language in Mixdown d
 |-------------|-------------------|---------|
 | Source Rules files | `kebab-case.mix.md` | `coding-standards.mix.md` |
 | Directory | `kebab-case` | `_mixins` |
-| Config files | `kebab-case.config.json` | `mixdown.config.json` |
+| Config files | `kebab-case.config.json` | `rulesets.config.json` |
 | Stem markers | `kebab-case` | `{{user-instructions}}` |
 | XML Tags in compiled rules | `snake_case` | `<user_instructions>` |
 

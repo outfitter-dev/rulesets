@@ -1,4 +1,4 @@
-// TLDR: Unit tests for the Rulesets linter module (mixd-v0)
+// TLDR: Unit tests for the Rulesets linter module (Rulesets v0)
 import { describe, it, expect } from 'vitest';
 import { lint } from '../index';
 import type { ParsedDoc } from '../../interfaces';
@@ -8,9 +8,9 @@ describe('linter', () => {
     it('should pass a valid document with complete frontmatter', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nmixdown: v0\ntitle: Test\ndescription: Test description\n---\n\n# Content',
+          content: '---\nrulesets: { version: "0.1.0" }\ntitle: Test\ndescription: Test description\n---\n\n# Content',
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: { version: '0.1.0' },
             title: 'Test',
             description: 'Test description',
           },
@@ -46,7 +46,7 @@ describe('linter', () => {
       expect(results[0].message).toContain('No frontmatter found');
     });
 
-    it('should error when mixdown version is missing', async () => {
+    it('should error when rulesets version is missing', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
           content: '---\ntitle: Test\n---\n\n# Content',
@@ -63,17 +63,17 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const mixdownError = results.find(r => r.message.includes('Missing required "mixdown" field'));
-      expect(mixdownError).toBeDefined();
-      expect(mixdownError!.severity).toBe('error');
+      const rulesetsError = results.find(r => r.message.includes('Missing required'));
+      expect(rulesetsError).toBeDefined();
+      expect(rulesetsError!.severity).toBe('error');
     });
 
-    it('should error when mixdown field is not a string', async () => {
+    it('should error when rulesets field is invalid', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nmixdown: 123\n---\n\n# Content',
+          content: '---\nrulesets: 123\n---\n\n# Content',
           frontmatter: {
-            mixdown: 123,
+            rulesets: 123,
           },
         },
         ast: {
@@ -85,7 +85,7 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const typeError = results.find(r => r.message.includes('Invalid "mixdown" field type'));
+      const typeError = results.find(r => r.message.includes('Invalid'));
       expect(typeError).toBeDefined();
       expect(typeError!.severity).toBe('error');
     });
@@ -93,9 +93,9 @@ describe('linter', () => {
     it('should validate destinations structure', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nmixdown: v0\ndestinations: ["cursor", "windsurf"]\n---\n\n# Content',
+          content: '---\nrulesets: { version: "0.1.0" }\ndestinations: ["cursor", "windsurf"]\n---\n\n# Content',
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: { version: '0.1.0' },
             destinations: ['cursor', 'windsurf'],
           },
         },
@@ -108,7 +108,7 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const destError = results.find(r => r.message.includes('Invalid "destinations" field'));
+      const destError = results.find(r => r.message.includes('Invalid Destination configurations'));
       expect(destError).toBeDefined();
       expect(destError!.severity).toBe('error');
     });
@@ -116,9 +116,9 @@ describe('linter', () => {
     it('should warn about unknown destinations when configured', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nmixdown: v0\ndestinations:\n  unknown-dest:\n    path: "/test"\n---\n\n# Content',
+          content: '---\nrulesets: { version: "0.1.0" }\ndestinations:\n  unknown-dest:\n    path: "/test"\n---\n\n# Content',
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: { version: '0.1.0' },
             destinations: {
               'unknown-dest': { path: '/test' },
             },
@@ -144,9 +144,9 @@ describe('linter', () => {
     it('should provide info suggestions for missing title and description', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nmixdown: v0\n---\n\n# Content',
+          content: '---\nrulesets: { version: "0.1.0" }\n---\n\n# Content',
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: { version: '0.1.0' },
           },
         },
         ast: {
@@ -158,8 +158,8 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const titleInfo = results.find(r => r.message.includes('Consider adding a "title"'));
-      const descInfo = results.find(r => r.message.includes('Consider adding a "description"'));
+      const titleInfo = results.find(r => r.message.includes('Consider adding a Document title'));
+      const descInfo = results.find(r => r.message.includes('Consider adding a Document description'));
       
       expect(titleInfo).toBeDefined();
       expect(titleInfo!.severity).toBe('info');
@@ -195,4 +195,65 @@ describe('linter', () => {
       expect(parseError!.line).toBe(2);
     });
   });
-});
+describe('additional edge-case scenarios', () => {
+    it('should allow missing rulesets when requireRulesetsVersion=false', async () => {
+      const parsedDoc: ParsedDoc = {
+        source: { content: '---\\ntitle: Test\\n---\\n\\n# Content', frontmatter: { title: 'Test' } },
+        ast: { stems: [], imports: [], variables: [], markers: [] },
+      };
+      const results = await lint(parsedDoc, { requireRulesetsVersion: false });
+      expect(results.find(r => r.message.includes('Rulesets'))).toBeUndefined();
+    });
+
+    it('should NOT warn when all destinations are allowed', async () => {
+      const parsedDoc: ParsedDoc = {
+        source: {
+          content: '---\\nrulesets: { version: \\"0.1.0\\" }\\ndestinations:\\n  cursor: { path: \\"/\\" }\\n  windsurf: { path: \\"/another\\" }\\n---\\n',
+          frontmatter: {
+            rulesets: { version: '0.1.0' },
+            destinations: { cursor: { path: '/' }, windsurf: { path: '/another' } },
+          },
+        },
+        ast: { stems: [], imports: [], variables: [], markers: [] },
+      };
+      const results = await lint(parsedDoc, { allowedDestinations: ['cursor', 'windsurf'] });
+      expect(results.some(r => r.message.includes('Unknown destination'))).toBe(false);
+    });
+
+    it('should error when rulesets.version is empty string', async () => {
+      const parsedDoc: ParsedDoc = {
+        source: { content: '---\\nrulesets: { version: \\"\\" }\\n---', frontmatter: { rulesets: { version: '' } } },
+        ast: { stems: [], imports: [], variables: [], markers: [] },
+      };
+      const results = await lint(parsedDoc);
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+      const err = results.find(r => r.message.includes('Invalid') && r.message.includes('Rulesets'));
+      expect(err).toBeDefined();
+      expect(err!.severity).toBe('error');
+    });
+
+    it('should not provide title/description suggestions when present', async () => {
+      const parsedDoc: ParsedDoc = {
+        source: {
+          content: '---\\nrulesets: { version: \\"0.1.0\\" }\\ntitle: My Doc\\ndescription: Cool\\n---',
+          frontmatter: { rulesets: { version: '0.1.0' }, title: 'My Doc', description: 'Cool' },
+        },
+        ast: { stems: [], imports: [], variables: [], markers: [] },
+      };
+      const results = await lint(parsedDoc);
+      expect(results.some(r => r.message.includes('Document title'))).toBe(false);
+      expect(results.some(r => r.message.includes('Document description'))).toBe(false);
+    });
+
+    it('should handle very large documents without overflowing stack', async () => {
+      const bigBody = '# Heading\\n' + 'Paragraph\\n'.repeat(20_000);
+      const parsedDoc: ParsedDoc = {
+        source: {
+          content: '---\\nrulesets: { version: \\"0.1.0\\" }\\ntitle: Big\\ndescription: Big doc\\n---\\n' + bigBody,
+          frontmatter: { rulesets: { version: '0.1.0' }, title: 'Big', description: 'Big doc' },
+        },
+        ast: { stems: [], imports: [], variables: [], markers: [] },
+      };
+      await expect(lint(parsedDoc)).resolves.not.toThrow();
+    });
+  });

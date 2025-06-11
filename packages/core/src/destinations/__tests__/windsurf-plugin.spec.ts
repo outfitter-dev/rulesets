@@ -92,7 +92,7 @@ describe('WindsurfPlugin', () => {
       expect(fs.writeFile).toHaveBeenCalledWith(
         resolvedPath,
         mockCompiledDoc.output.content,
-        'utf-8',
+        { encoding: 'utf8' },
       );
       expect(mockLogger.info).toHaveBeenCalledWith(`Writing Windsurf rules to: ${resolvedPath}`);
       expect(mockLogger.info).toHaveBeenCalledWith(`Successfully wrote Windsurf rules to: ${resolvedPath}`);
@@ -113,7 +113,7 @@ describe('WindsurfPlugin', () => {
       expect(fs.writeFile).toHaveBeenCalledWith(
         resolvedPath,
         mockCompiledDoc.output.content,
-        'utf-8',
+        { encoding: 'utf8' },
       );
     });
 
@@ -184,6 +184,76 @@ describe('WindsurfPlugin', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining('Failed to write file'),
         error,
+      );
+    });
+  });
+/* ------------------------------------------------------------------
+     Additional edge-case coverage for WindsurfPlugin.write()
+     Framework: Vitest
+  ------------------------------------------------------------------ */
+  describe('edge cases', () => {
+    it('should ignore non-string outputPath values and fall back to destPath', async () => {
+      const destPath = '.windsurf/rules/fallback.md';
+      const config = { outputPath: 42 }; // invalid, not a string
+
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath,
+        config: config as unknown as Record<string, unknown>,
+        logger: mockLogger,
+      });
+
+      const expectedPath = path.resolve(destPath);
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        expectedPath,
+        mockCompiledDoc.output.content,
+        { encoding: 'utf8' },
+      );
+    });
+
+    it('should resolve relative destPath to an absolute path before writing', async () => {
+      const destPath = 'relative/path/to/rules.md'; // intentionally relative
+
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath,
+        config: {},
+        logger: mockLogger,
+      });
+
+      const resolved = path.resolve(destPath);
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        resolved,
+        mockCompiledDoc.output.content,
+        { encoding: 'utf8' },
+      );
+    });
+
+    it('should keep fs mocks isolated between sequential writes', async () => {
+      const firstPath = '.windsurf/rules/first.md';
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath: firstPath,
+        config: {},
+        logger: mockLogger,
+      });
+
+      // reset mock call history but NOT implementation
+      vi.clearAllMocks();
+
+      const secondPath = '.windsurf/rules/second.md';
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath: secondPath,
+        config: {},
+        logger: mockLogger,
+      });
+
+      expect(fs.writeFile).toHaveBeenCalledTimes(1);
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        path.resolve(secondPath),
+        mockCompiledDoc.output.content,
+        { encoding: 'utf8' },
       );
     });
   });

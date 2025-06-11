@@ -72,7 +72,7 @@ invalid: yaml: content
 
       expect(result.errors).toBeDefined();
       expect(result.errors).toHaveLength(1);
-      expect(result.errors![0].message).toContain('Failed to parse frontmatter YAML');
+      expect(result.errors![0].message).toContain('Invalid YAML syntax');
       expect(result.errors![0].line).toBe(1);
     });
 

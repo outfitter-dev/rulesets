@@ -14,7 +14,16 @@ import type { ParsedDoc, CompiledDoc } from '../interfaces';
 // :M: tldr: Compiles parsed document to destination format
 // :M: v0.1.0: Pass-through implementation without transformation
 // :M: todo(v0.2.0): Process stem markers and convert to XML
-// :M: todo(v0.3.0): Process variables and perform substitution
+/**
+ * Compiles a parsed Rulesets document into a compiled document for a specified destination.
+ *
+ * Extracts and merges frontmatter metadata and destination-specific configuration, and isolates the main body content. The AST and markers are passed through without transformation.
+ *
+ * @param parsedDoc - The parsed Rulesets document containing source content and AST.
+ * @param destinationId - Identifier for the compilation target destination.
+ * @param projectConfig - Optional project-level configuration to merge with destination-specific config.
+ * @returns The compiled document with merged metadata, configuration, and extracted body content.
+ */
 export function compile(
   parsedDoc: ParsedDoc,
   destinationId: string,
@@ -70,7 +79,7 @@ export function compile(
         description: source.frontmatter?.description,
         version: source.frontmatter?.version,
         // Include destination-specific metadata if available
-        ...(source.frontmatter?.destinations?.[destinationId] || {}),
+        ...(source.frontmatter?.destinations && typeof source.frontmatter.destinations === 'object' && !Array.isArray(source.frontmatter.destinations) ? (source.frontmatter.destinations as Record<string, any>)[destinationId] || {} : {}),
       },
     },
     context: {
@@ -78,7 +87,7 @@ export function compile(
       config: {
         ...projectConfig,
         // Merge destination-specific config from frontmatter
-        ...(source.frontmatter?.destinations?.[destinationId] || {}),
+        ...(source.frontmatter?.destinations && typeof source.frontmatter.destinations === 'object' && !Array.isArray(source.frontmatter.destinations) ? (source.frontmatter.destinations as Record<string, any>)[destinationId] || {} : {}),
       },
     },
   };

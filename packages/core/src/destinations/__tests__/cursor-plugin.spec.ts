@@ -178,3 +178,90 @@ describe('CursorPlugin', () => {
     });
   });
 });
+// Additional write edge case tests
+    it('should default to medium priority when none provided', async () => {
+      const destPath = '.cursor/rules/test.mdc';
+      const config = {};
+
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath,
+        config,
+        logger: mockLogger,
+      });
+
+      expect(mockLogger.debug).toHaveBeenCalledWith('Priority: medium');
+    });
+
+    it('should fallback to medium priority when invalid priority provided', async () => {
+      const destPath = '.cursor/rules/test.mdc';
+      const config = { priority: 'ultra' as any };
+
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath,
+        config,
+        logger: mockLogger,
+      });
+
+      expect(mockLogger.debug).toHaveBeenCalledWith('Priority: medium');
+    });
+
+    it('should overwrite existing file on successive writes', async () => {
+      const destPath = '.cursor/rules/test.mdc';
+      const config = { priority: 'low' };
+
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath,
+        config,
+        logger: mockLogger,
+      });
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath,
+        config,
+        logger: mockLogger,
+      });
+
+      const resolvedPath = path.resolve(destPath);
+      expect(fs.writeFile).toHaveBeenCalledTimes(2);
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        resolvedPath,
+        mockCompiledDoc.output.content,
+        { encoding: 'utf8' },
+      );
+    });
+
+    it('should normalize relative destPath segments', async () => {
+      const destPath = './foo/../.cursor/rules/test.mdc';
+      const config = {};
+
+      await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath,
+        config,
+        logger: mockLogger,
+      });
+
+      const normalizedPath = path.resolve(destPath);
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        normalizedPath,
+        mockCompiledDoc.output.content,
+        { encoding: 'utf8' },
+      );
+    });
+
+    it('should return undefined', async () => {
+      const destPath = '.cursor/rules/test.mdc';
+      const config = {};
+
+      const result = await plugin.write({
+        compiled: mockCompiledDoc,
+        destPath,
+        config,
+        logger: mockLogger,
+      });
+
+      expect(result).toBeUndefined();
+    });
