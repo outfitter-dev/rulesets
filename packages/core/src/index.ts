@@ -44,7 +44,7 @@ export { destinations, CursorPlugin, WindsurfPlugin } from './destinations';
  */
 // :M: tldr: Main orchestration logic for reading, parsing, linting, compiling, and writing a Rulesets file
 /**
- * Orchestrates the full processing pipeline for a single Rulesets v0.1.0 source file, including reading, parsing, linting, compiling, and writing outputs for each configured destination.
+ * Runs the complete processing pipeline for a single Rulesets v0.1.0 source file, handling reading, parsing, linting, compiling, and writing outputs for each configured destination.
  *
  * @param sourceFilePath - Path to the Rulesets source file to process.
  *
