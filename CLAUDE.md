@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+## Project Instructions
+
+About You: @.ai/prompts/MAX.md
+
 ## File Purpose
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -16,7 +20,7 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 ✅ Always work from a feature branch off of `main` or a `fix/` branch off of a target feature branch
 ✅ Commit regularly, group commits logically, and use conventional commit messages. When committing, always check to see if there are unstaged changes.
 ✅ When writing code, follow the SOLID principles, DRY principles, KISS principle, and include descriptive inline comments for future developers
-✅ Use `mixd-*` markers in code comments (e.g., `// TLDR: Simple implementation (mixd-v0)`) for version tracking and rapid grep-based discovery
+✅ Use Cairns markers in code comments (e.g., `// :M: tldr: Simple implementation`) for version tracking and rapid grep-based discovery
 ❌ Never automatically create a PR for a feature branch without explicit user direction
 ✅ When creating PRs follow the instructions in `.claude/commands/create-pr.md`
 
@@ -26,9 +30,9 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 
 - Source files defining rules, written in 100% previewable Markdown.
 - Use `.mix.md` extension (preferred) or `.md` extension.
-- Written in Mixdown notation and use `{{...}}` notation markers to direct the compiler.
+- Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
 - Compiled into destination-specific rules files:
-  - `./mixdown/src/my-rule.mix.md` → `.cursor/rules/my-rule.mdc`
+  - `./rulesets/src/my-rule.mix.md` → `.cursor/rules/my-rule.mdc`
 
 ### Destination
 
@@ -48,9 +52,9 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 ### Notation Marker
 
 - Syntax: `{{...}}`
-- Fundamental building block of Mixdown notation
+- Fundamental building block of Rulesets notation
 - Used to direct the compiler for various purposes (stems, imports, variables)
-- All Mixdown directives use marker notation, but serve different functions
+- All Rulesets directives use marker notation, but serve different functions
 - Similar to `<xml-tags>`, but fully Markdown-previewable.
 
 ### Stem
@@ -77,12 +81,12 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 
 ```text
 project/
-├── .mixdown/
+├── .rulesets/
 │   ├── dist/
 │   │   └── latest/         # compiled rules
 │   ├── src/                # source rules files (*.mix.md, *.md)
 │   │   └── _mixins/        # reusable content modules
-│   └── mixdown.config.json # Mixdown config file
+│   └── ruleset.config.json # Rulesets config file
 ```
 
 ## Goals
@@ -106,7 +110,7 @@ project/
 | `codex-cli` | OpenAI Codex CLI | CLI |
 | `codex-agent` | OpenAI Codex Agent | Web agent |
 
-## Mixdown Notation
+## Rulesets Notation
 
 ### Example
 
@@ -154,7 +158,7 @@ Content without surrounding XML tags
 ### Raw Notation
 
 ```markdown
-{{{examples}}}  <!-- Triple braces preserve Mixdown notation -->
+{{{examples}}}  <!-- Triple braces preserve Rulesets notation -->
 {{example}}
 - Instructions
 - Rules
@@ -173,9 +177,9 @@ Content without surrounding XML tags
 
 ```yaml
 ---
-# .mixdown/src/my-rule.md
-mixdown:
-  version: 0.1.0 # version number for the Mixdown format used
+# .rulesets/src/my-rule.md
+rulesets:
+  version: 0.1.0 # version number for the Rulesets format used
 description: "Rules for this project" # useful for tools that use descriptions
 globs: ["**/*.{txt,md,mdc}"] # globs re-written based on destination-specific needs
 # Destination filter examples:
@@ -198,7 +202,7 @@ version: 2.0 # version number for this file
 
 - Source rules files: `kebab-case.mix.md` (preferred) (e.g., `coding-standards.mix.md`)
 - Directories: `kebab-case` (e.g., `_mixins`)
-- Config files: `kebab-case.config.json` (e.g., `mixdown.config.json`)
+- Config files: `kebab-case.config.json` (e.g., `ruleset.config.json`)
 - Stem names: `kebab-case` (e.g., `{{user-instructions}}`)
 - XML output tags: `snake_case` (e.g., `<user_instructions>`)
 

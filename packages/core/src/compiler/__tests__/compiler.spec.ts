@@ -1,4 +1,4 @@
-// TLDR: Unit tests for the Mixdown compiler module (mixd-v0)
+// TLDR: Unit tests for the Rulesets compiler module (mixd-v0)
 import { describe, it, expect } from 'vitest';
 import { compile } from '../index';
 import type { ParsedDoc } from '../../interfaces';
@@ -9,7 +9,7 @@ describe('compiler', () => {
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+rulesets: v0
 title: Test Rules
 description: Test description
 destinations:
@@ -22,7 +22,7 @@ destinations:
 
 This is the body with {{stems}} and {{$variables}}.`,
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
             title: 'Test Rules',
             description: 'Test description',
             destinations: {
@@ -96,7 +96,7 @@ This is the body with {{stems}} and {{$variables}}.`,
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+rulesets: v0
 destinations:
   cursor:
     outputPath: ".cursor/rules/test.mdc"
@@ -105,7 +105,7 @@ destinations:
 
 # Content`,
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
             destinations: {
               cursor: {
                 outputPath: '.cursor/rules/test.mdc',
@@ -141,10 +141,10 @@ destinations:
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+rulesets: v0
 ---`,
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
           },
         },
         ast: {
@@ -164,7 +164,7 @@ mixdown: v0
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+rulesets: v0
 ---
 
 {{instructions}}
@@ -175,7 +175,7 @@ Do not modify these markers in v0.
 
 The value is {{$myVariable}}.`,
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
           },
         },
         ast: {
@@ -198,7 +198,7 @@ The value is {{$myVariable}}.`,
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+rulesets: v0
 destinations:
   cursor:
     path: "/test"
@@ -207,7 +207,7 @@ destinations:
 
 # Content`,
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
             destinations: {
               cursor: { path: '/test' },
               windsurf: {},

@@ -1,8 +1,9 @@
-// TLDR: Defines the CompiledDoc interface for Mixdown. Represents the result of compiling a source rules file for a specific destination (mixd-v0)
+// :M: tldr: Defines the CompiledDoc interface for Rulesets
+// :M: v0.1.0: Basic structure without stem/import/variable processing
 
 /**
- * Represents the structure of a parsed Mixdown stem.
- * For v0, this will be minimal as stems are not processed from the body.
+ * Represents the structure of a parsed Rulesets stem.
+ * For v0.1.0, this will be minimal as stems are not processed from the body.
  */
 export interface Stem {
   name: string;
@@ -12,8 +13,8 @@ export interface Stem {
 }
 
 /**
- * Represents the structure of a parsed Mixdown import.
- * For v0, this will be minimal.
+ * Represents the structure of a parsed Rulesets import.
+ * For v0.1.0, this will be minimal.
  */
 export interface Import {
   path: string;
@@ -22,8 +23,8 @@ export interface Import {
 }
 
 /**
- * Represents the structure of a parsed Mixdown variable.
- * For v0, this will be minimal.
+ * Represents the structure of a parsed Rulesets variable.
+ * For v0.1.0, this will be minimal.
  */
 export interface Variable {
   name: string;

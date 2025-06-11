@@ -126,7 +126,7 @@ graph LR
 This is a CommonMark-compliant rules compiler that converts Markdown to tool-specific rules files.
 
 # Key Terminology
-- **Source Rules**: Source files in Markdown format, written in Mixdown Notation.
+- **Source Rules**: Source files in Markdown format, written in Rulesets Notation.
 - **Destination**: A supported tool (e.g., Cursor, Claude Code) for which Compiled Rules are generated.
 - **Stem**: Delimited content blocks (e.g., `{{instructions}}...{{/instructions}}`) with optional properties.
 
@@ -184,7 +184,7 @@ flowchart TD
 
 ## Managing Rules Across Tools
 
-Instead of maintaining separate rule files for each AI tool, consider using Mixdown to write rules once and compile to tool-specific outputs.
+Instead of maintaining separate rule files for each AI tool, consider using Rulesets to write rules once and compile to tool-specific outputs.
 
 ```mermaid
 flowchart LR

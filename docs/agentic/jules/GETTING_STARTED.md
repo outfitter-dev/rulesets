@@ -1,10 +1,10 @@
-# Jules Agent - Mixdown Development Context
+# Jules Agent - Rulesets Development Context
 
-## Your Role in Mixdown
+## Your Role in Rulesets
 
-**You are implementing Mixdown v0** - a CommonMark-compliant rules compiler. Focus on the core functionality in `/packages/core/`.
+**You are implementing Rulesets v0** - a CommonMark-compliant rules compiler. Focus on the core functionality in `/packages/core/`.
 
-## Implementation Scope (mixd-v0)
+## Implementation Scope (rset-v0)
 
 - **Parser:** Handle frontmatter and raw body only (no marker processing yet)
 - **Compiler:** Pass-through implementation (no `{{...}}` notation processing)
@@ -14,8 +14,8 @@
 ## Required Code Patterns
 
 ```typescript
-// TLDR: Simple parser implementation that extracts frontmatter (mixd-v0)
-// TODO (mixd-v0.1): Add support for stem parsing
+// TLDR: Simple parser implementation that extracts frontmatter (rset-v0)
+// TODO (rset-v0.1): Add support for stem parsing
 export function parse(content: string): ParsedDoc {
   // Implementation...
 }
@@ -43,7 +43,7 @@ Every function must have corresponding tests. Follow existing patterns in `__tes
 ## Marker Usage in Code
 
 Use markers to indicate implementation level and future plans:
-- Current work: `(mixd-v0)`
-- Future enhancements: `TODO (mixd-v0.1):`
-- Security concerns: `(mixd-sec)`
-- Performance notes: `(mixd-perf)`
+- Current work: `(rset-v0)`
+- Future enhancements: `TODO (rset-v0.1):`
+- Security concerns: `(rset-sec)`
+- Performance notes: `(rset-perf)`

@@ -1,135 +1,156 @@
-# Grepable Version Markers Strategy
+# Grepable Cairns Markers Strategy
 
 ## For AI Agents: Use Grep for Fast Code Discovery
 
-**AI agents working on this codebase should extensively use the `grep` command to navigate and understand code.** The `mixd-*` marker system is specifically designed to make grep searches highly effective. Instead of reading entire files or browsing directories, use targeted grep commands.
+**AI agents working on this codebase should extensively use the `grep` command to navigate and understand code.** The Cairns marker system (`:M:`) is specifically designed to make grep searches highly effective. Instead of reading entire files or browsing directories, use targeted grep commands.
 
-### All `mixd-` Markers
+### Cairns Marker System
 
-All markers follow the pattern `mixd-{suffix}` for consistent greping:
+All markers follow the pattern `:M: {type}: {description}` for consistent greping:
 
-- **`mixd-v{version}`** - Version-specific implementations (e.g., `mixd-v0`, `mixd-v0.1`)
-- **`mixd-sec`** - Security-sensitive code requiring extra review
-- **`mixd-perf`** - Performance-critical code paths or known bottlenecks
-- **`mixd-unsafe`** - Potentially dangerous operations requiring caution
-- **`mixd-api`** - Breaking API changes or deprecated functionality
-- **`mixd-config`** - Environment or configuration-dependent behavior
-- **`mixd-external`** - External service dependencies or integrations
-- **`mixd-debug`** - Important debugging or troubleshooting points
-- **`mixd-test`** - Testing-related annotations (manual tests, flaky tests, etc.)
-- **`mixd-temp`** - Temporary code, hacks, or workarounds that need cleanup
+- **`:M: tldr:`** - Brief description of what the code does
+- **`:M: v{version}:`** - Version-specific implementation details (e.g., `v0.1.0`, `v0.2.0`)
+- **`:M: todo(v{version}):`** - Future work planned for specific versions
+- **`:M: sec:`** - Security-sensitive code requiring extra review
+- **`:M: perf:`** - Performance-critical code paths or known bottlenecks
+- **`:M: unsafe:`** - Potentially dangerous operations requiring caution
+- **`:M: api:`** - Breaking API changes or deprecated functionality
+- **`:M: config:`** - Environment or configuration-dependent behavior
+- **`:M: external:`** - External service dependencies or integrations
+- **`:M: debug:`** - Important debugging or troubleshooting points
+- **`:M: test:`** - Testing-related annotations (manual tests, flaky tests, etc.)
+- **`:M: temp:`** - Temporary code, hacks, or workarounds that need cleanup
 
 ### Quick Search Examples
 
 ```bash
+# Find all TLDRs
+grep -r ":M: tldr:" .
+
 # Find all security-sensitive code
-grep -r "mixd-sec" .
+grep -r ":M: sec:" .
 
 # Find performance bottlenecks
-grep -r "mixd-perf" .
+grep -r ":M: perf:" .
 
-# Find all version-specific code
-grep -r "mixd-v" .
+# Find all version 0.1.0 code
+grep -r ":M: v0.1.0:" .
+
+# Find all TODOs for version 0.2.0
+grep -r ":M: todo(v0.2.0):" .
 
 # Find external dependencies
-grep -r "mixd-external" .
+grep -r ":M: external:" .
 ```
 
 This approach is faster and more precise than traditional file browsing, especially for large codebases.
 
-## Versioning Strategy
+## Cairns Format
 
-The remainder of this document focuses specifically on the `mixd-v*` versioning markers used throughout the Mixdown codebase. These markers enable rapid navigation and identification of version-specific code through simple grep commands.
+Cairns are navigation markers placed in code comments that provide context and version information. They use a consistent format that works across different comment styles.
 
-## What are `mixd-*` Markers?
-
-Version markers are specially formatted comments that indicate code with limited implementation that will be expanded in future versions. They follow this pattern:
-
-```
-mixd-v{major}.{minor}
-```
-
-Examples:
-- `mixd-v0` - Initial v0 implementation
-- `mixd-v0.1` - Planned for v0.1 release
-- `mixd-v0.2` - Planned for v0.2 release
-- `mixd-v1` - Major v1 release
-
-## Implementation Format
-
-### File-level Comments
-
-Each file should start with a TLDR comment that includes the version marker:
+### Basic Format
 
 ```typescript
-// TLDR: Simple parser implementation that doesn't process markers (mixd-v0)
+// :M: tldr: Brief description of what this code does
+// :M: v0.1.0: What this specific version implements
 ```
 
-### Function-level Comments
-
-Each function should include a TLDR comment with version context:
+### With JSDoc
 
 ```typescript
-// TLDR: Pass-through compiler that ignores notation markers (mixd-v0)
+/**
+ * :M: tldr: Core functionality description
+ * :M: v0.1.0: Initial implementation with basic features
+ * 
+ * Detailed documentation follows...
+ */
+```
+
+### TODO Format
+
+```typescript
+// :M: tldr: Current implementation
+// :M: v0.1.0: Basic functionality
+// :M: todo(v0.2.0): Add advanced feature X
+// :M: todo(v0.3.0): Optimize for performance
+```
+
+### HTML/Markdown Comments
+
+```html
+<!-- :M: tldr: Configuration section -->
+<!-- :M: v0.1.0: Basic configuration options -->
+```
+
+## Implementation Examples
+
+### File-level Cairns
+
+Each file should start with a TLDR cairn:
+
+```typescript
+// :M: tldr: Parser implementation for Rulesets notation
+// :M: v0.1.0: Basic frontmatter extraction without marker processing
+```
+
+### Function-level Cairns
+
+```typescript
+// :M: tldr: Compiles parsed document to destination format
+// :M: v0.1.0: Pass-through implementation without transformation
+// :M: todo(v0.2.0): Add stem processing and XML conversion
 function compile(content: string): CompiledDoc {
   // Implementation...
 }
 ```
 
-### TODO Comments for Future Versions
-
-Use TODO comments to indicate planned enhancements:
+### Security-sensitive Code
 
 ```typescript
-// TLDR: Basic frontmatter parser (mixd-v0)
-// TODO (mixd-v0.1): Add support for stem parsing
-// TODO (mixd-v0.2): Add variable substitution
-function parseContent(content: string) {
-  // Current implementation
+// :M: tldr: User authentication handler
+// :M: sec: Validates JWT tokens and manages sessions
+// :M: v0.1.0: Basic JWT validation with standard claims
+async function authenticate(token: string) {
+  // Implementation...
 }
 ```
 
-### Inline Comments for Temporary Code
-
-Mark temporary or simplified implementations:
+### Performance-critical Code
 
 ```typescript
-export default defineConfig({
-  splitting: false, // TLDR: keep it simple for now (mixd-v0)
-  // TODO (mixd-v0.1): Enable code splitting for better performance
-});
+// :M: tldr: Batch processes multiple files concurrently
+// :M: perf: Processes up to 100 files in parallel, memory usage scales with file count
+// :M: v0.1.0: Simple parallel processing without optimization
+async function batchProcess(files: string[]) {
+  // Implementation...
+}
 ```
 
 ## Grep Commands for Navigation
 
-### Find All v0-Specific Code
+### Find All v0.1.0 Code
 
 ```bash
-grep -r "mixd-v0" . --include="*.ts" --include="*.js" --include="*.tsx"
+grep -r ":M: v0.1.0:" . --include="*.ts" --include="*.js" --include="*.tsx"
 ```
 
-### Find Code Scheduled for v0.1
+### Find Code Scheduled for v0.2.0
 
 ```bash
-grep -r "mixd-v0\.1" . --include="*.ts" --include="*.js" --include="*.tsx"
+grep -r ":M: todo(v0.2.0):" . --include="*.ts" --include="*.js" --include="*.tsx"
 ```
 
-### Find All Version Markers
+### Find All Cairns
 
 ```bash
-grep -r "mixd-v" . --include="*.ts" --include="*.js" --include="*.tsx"
-```
-
-### Find TODO Items by Version
-
-```bash
-grep -r "TODO (mixd-v0\.1)" . --include="*.ts" --include="*.js" --include="*.tsx"
+grep -r ":M:" . --include="*.ts" --include="*.js" --include="*.tsx"
 ```
 
 ### Count Version-Specific Implementations
 
 ```bash
-grep -c "mixd-v0" **/*.ts | grep -v ":0"
+grep -c ":M: v0.1.0:" **/*.ts | grep -v ":0"
 ```
 
 ## Benefits for AI Agents
@@ -147,7 +168,7 @@ When working on a codebase, AI agents can quickly understand implementation scop
 When debugging issues, agents can:
 
 1. **Find Related Code**: Grep for the same version marker to find related implementations
-2. **Identify Limitations**: Quickly see if a bug is due to v0 limitations
+2. **Identify Limitations**: Quickly see if a bug is due to version limitations
 3. **Plan Fixes**: Understanding if a fix should wait for the next version
 
 ### Systematic Upgrades
@@ -160,60 +181,29 @@ When upgrading versions, agents can:
 
 ## Usage Guidelines for AI Agents
 
-### When to Add Markers
+### When to Add Cairns
 
-- **Simplified Implementations**: When code is intentionally basic for the current version
-- **Temporary Solutions**: When using a workaround that will be improved later
-- **Feature Placeholders**: When implementing minimal functionality that will be expanded
-- **Performance Compromises**: When choosing simplicity over optimization
+- **Every File**: Start with a TLDR cairn
+- **Key Functions**: Add cairns to important functions
+- **Version-specific Code**: Mark code that will change in future versions
+- **Security/Performance**: Mark sensitive or critical code paths
+- **TODOs**: Use todo format for planned improvements
 
-### When NOT to Add Markers
+### When NOT to Add Cairns
 
-- **Complete Implementations**: Fully-featured code that won't change significantly
-- **External Dependencies**: Third-party code or standard library usage
-- **Configuration Files**: Unless the configuration itself is version-specific
-- **Test Files**: Unless testing version-specific behavior
+- **Trivial Functions**: Don't mark every getter/setter
+- **Stable Code**: Skip code that won't change across versions
+- **External Libraries**: Don't mark third-party code
+- **Generated Code**: Skip auto-generated files
 
-### Updating Markers
+### Updating Cairns
 
 When implementing new versions:
 
-1. **Search for Target Version**: `grep -r "mixd-v0.1" .`
-2. **Implement Features**: Update code according to TODO comments
-3. **Update Markers**: Change version markers to reflect new implementation level
+1. **Search for TODOs**: `grep -r ":M: todo(v0.2.0):" .`
+2. **Implement Features**: Update code according to TODO cairns
+3. **Update Cairns**: Change version markers to reflect new implementation
 4. **Add New TODOs**: Document future enhancements for next version
-
-## Example Workflow
-
-### Starting Work on v0.1
-
-```bash
-# Find all work planned for v0.1
-grep -r "mixd-v0\.1" . --include="*.ts"
-
-# Find all TODOs for v0.1
-grep -r "TODO (mixd-v0\.1)" . --include="*.ts"
-```
-
-### Tracking Progress
-
-```bash
-# See remaining v0 implementations that might need upgrading
-grep -r "TLDR.*mixd-v0)" . --include="*.ts"
-
-# Check for any forgotten TODOs
-grep -r "TODO (mixd-v0)" . --include="*.ts"
-```
-
-### Quality Assurance
-
-```bash
-# Verify no temporary code made it to production
-grep -r "mixd-v0" . --include="*.ts" | grep -v test
-
-# Check for orphaned TODOs from previous versions
-grep -r "TODO (mixd-v" . --include="*.ts"
-```
 
 ## Integration with Development Workflow
 
@@ -223,13 +213,15 @@ Reviewers can quickly identify:
 - Implementation scope and limitations
 - Future enhancement plans
 - Version-specific concerns
+- Security and performance considerations
 
 ### Documentation
 
-Version markers help maintain consistency between:
+Cairns help maintain consistency between:
 - Code implementation
 - API documentation
 - Planning documents
+- Release notes
 
 ### Release Planning
 
@@ -237,48 +229,16 @@ Project managers can:
 - Track implementation progress
 - Plan feature releases
 - Estimate development effort
+- Identify dependencies between versions
 
 ## Best Practices
 
-1. **Be Specific**: Use precise version numbers (mixd-v0.1, not mixd-v0.x)
-2. **Update Regularly**: Keep markers current as code evolves
-3. **Document Reasoning**: Explain why something is version-limited
-4. **Link TODOs**: Connect TODO comments to specific implementation plans
-5. **Clean Up**: Remove markers when implementations become permanent
-
-## Common Patterns
-
-### Basic Implementation Pattern
-
-```typescript
-// TLDR: Simple implementation for initial release (mixd-v0)
-// TODO (mixd-v0.1): Add advanced features
-function basicFeature() {
-  // Minimal implementation
-}
-```
-
-### Performance Optimization Pattern
-
-```typescript
-// TLDR: Unoptimized implementation for correctness (mixd-v0)
-// TODO (mixd-v0.2): Optimize for performance
-function slowButCorrect() {
-  // Straightforward but inefficient implementation
-}
-```
-
-### Feature Expansion Pattern
-
-```typescript
-// TLDR: Supports basic use cases only (mixd-v0)
-// TODO (mixd-v0.1): Add support for advanced syntax
-// TODO (mixd-v1): Full feature parity with specification
-function partialImplementation() {
-  // Handles common cases
-}
-```
+1. **Be Concise**: Keep TLDR descriptions brief and clear
+2. **Version Accurately**: Use semantic versioning (0.1.0, not v0)
+3. **Update Regularly**: Keep cairns current as code evolves
+4. **Document Reasoning**: Explain why something is version-limited
+5. **Clean Up**: Remove obsolete TODOs after implementation
 
 ---
 
-This marker strategy creates a searchable, navigable codebase that enables both human and AI developers to quickly understand implementation scope, track progress, and plan future development efficiently.
+This cairns strategy creates a searchable, navigable codebase that enables both human and AI developers to quickly understand implementation scope, track progress, and plan future development efficiently.

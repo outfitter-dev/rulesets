@@ -1,9 +1,9 @@
-# Jules Agent FAQ for Mixdown
+# Jules Agent FAQ for Rulesets
 
 ## Implementation Questions
 
 ### Q: What is the current implementation scope?
-**A:** You are implementing **Mixdown v0** with these limitations:
+**A:** You are implementing **Rulesets v0** with these limitations:
 - Parser: Extract frontmatter and raw body only (no `{{...}}` processing)
 - Compiler: Pass-through implementation (no marker processing)
 - Linter: Basic frontmatter schema validation only
@@ -12,16 +12,16 @@
 ### Q: Which markers should I use in code comments?
 **A:** Always use these patterns:
 ```typescript
-// TLDR: Function description and scope (mixd-v0)
-// TODO (mixd-v0.1): Future enhancement description
+// TLDR: Function description and scope (rset-v0)
+// TODO (rset-v0.1): Future enhancement description
 ```
 
 Available markers:
-- `mixd-v0` - Current implementation level
-- `mixd-v0.1` - Planned for next version
-- `mixd-sec` - Security-sensitive code
-- `mixd-perf` - Performance bottlenecks
-- `mixd-temp` - Temporary code needing cleanup
+- `rset-v0` - Current implementation level
+- `rset-v0.1` - Planned for next version
+- `rset-sec` - Security-sensitive code
+- `rset-perf` - Performance bottlenecks
+- `rset-temp` - Temporary code needing cleanup
 
 ### Q: What testing is required?
 **A:** Every function must have:
@@ -64,13 +64,13 @@ Available markers:
 **A:** 
 - Add try/catch blocks for file operations
 - Create descriptive error messages with context
-- Mark security-sensitive error handling with `(mixd-sec)`
+- Mark security-sensitive error handling with `(rset-sec)`
 - Test error scenarios in unit tests
 
 ## Project Terminology
 
 ### Q: What are "source rules"?
-**A:** Markdown files with Mixdown notation (`.mix.md` extension) that get compiled into destination-specific rules files.
+**A:** Markdown files with Rulesets notation (`.mix.md` extension) that get compiled into destination-specific rules files.
 
 ### Q: What are "compiled rules"?
 **A:** The output files generated for specific destinations (e.g., `.cursor/rules.mdc`, `CLAUDE.md`).
@@ -86,14 +86,14 @@ Available markers:
 ### Q: How should I structure a new module?
 **A:** Follow this pattern:
 ```typescript
-// TLDR: Module purpose description (mixd-v0)
-// TODO (mixd-v0.1): Future enhancement plans
+// TLDR: Module purpose description (rset-v0)
+// TODO (rset-v0.1): Future enhancement plans
 
 export interface ModuleInterface {
   // Interface definition
 }
 
-// TLDR: Function purpose (mixd-v0)
+// TLDR: Function purpose (rset-v0)
 export function mainFunction(): ReturnType {
   // Implementation
 }
@@ -121,7 +121,7 @@ Always include descriptive commit messages that explain the "why" not just the "
 
 ### Q: How do I ensure my code is discoverable?
 **A:** Use the grepable marker system consistently:
-- Current work gets `(mixd-v0)` markers
-- Future plans get `TODO (mixd-v0.1):` comments
-- Security code gets `(mixd-sec)` markers
-- Performance code gets `(mixd-perf)` markers
+- Current work gets `(rset-v0)` markers
+- Future plans get `TODO (rset-v0.1):` comments
+- Security code gets `(rset-sec)` markers
+- Performance code gets `(rset-perf)` markers

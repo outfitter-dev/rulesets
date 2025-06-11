@@ -1,8 +1,9 @@
-// TLDR: Basic linter implementation that validates frontmatter against a schema (mixd-v0)
+// :M: tldr: Basic linter implementation that validates frontmatter against a schema
+// :M: v0.1.0: Simple frontmatter validation without processing notation
 import type { ParsedDoc } from '../interfaces';
 
 export interface LinterConfig {
-  requireMixdownVersion?: boolean;
+  requireRulesetsVersion?: boolean;
   allowedDestinations?: string[];
 }
 
@@ -14,16 +15,17 @@ export interface LintResult {
 }
 
 /**
- * Lints a parsed Mixdown document by validating its frontmatter.
- * For v0, this performs basic schema validation on the frontmatter.
+ * Lints a parsed Rulesets document by validating its frontmatter.
+ * For v0.1.0, this performs basic schema validation on the frontmatter.
  * 
  * @param parsedDoc - The parsed document to lint
  * @param config - Optional linter configuration
  * @returns A promise that resolves to an array of lint results
  */
-// TLDR: Validate frontmatter against basic schema requirements (mixd-v0)
-// TODO (mixd-v0.1): Add validation for stem properties
-// TODO (mixd-v0.2): Add validation for variables and imports
+// :M: tldr: Validate frontmatter against basic schema requirements
+// :M: v0.1.0: Check required fields and basic structure
+// :M: todo(v0.2.0): Add validation for stem properties
+// :M: todo(v0.3.0): Add validation for variables and imports
 export async function lint(
   parsedDoc: ParsedDoc,
   config: LinterConfig = {},
@@ -46,7 +48,7 @@ export async function lint(
   // If no frontmatter, warn
   if (!frontmatter) {
     results.push({
-      message: 'No frontmatter found. Consider adding frontmatter with mixdown version and metadata.',
+      message: 'No frontmatter found. Consider adding frontmatter with rulesets version and metadata.',
       line: 1,
       column: 1,
       severity: 'warning',
@@ -54,18 +56,18 @@ export async function lint(
     return results;
   }
 
-  // Check for mixdown version
-  if (config.requireMixdownVersion !== false) {
-    if (!frontmatter.mixdown) {
+  // Check for rulesets version
+  if (config.requireRulesetsVersion !== false) {
+    if (!frontmatter.rulesets) {
       results.push({
-        message: 'Missing required "mixdown" field in frontmatter. Specify the Mixdown version (e.g., mixdown: v0).',
+        message: 'Missing required "rulesets" field in frontmatter. Specify the Rulesets version (e.g., rulesets: v0.1.0).',
         line: 1,
         column: 1,
         severity: 'error',
       });
-    } else if (typeof frontmatter.mixdown !== 'string') {
+    } else if (typeof frontmatter.rulesets !== 'string') {
       results.push({
-        message: `Invalid "mixdown" field type. Expected string, got ${typeof frontmatter.mixdown}.`,
+        message: `Invalid "rulesets" field type. Expected string, got ${typeof frontmatter.rulesets}.`,
         line: 1,
         column: 1,
         severity: 'error',

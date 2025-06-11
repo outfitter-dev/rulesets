@@ -1,17 +1,19 @@
-// TLDR: Simple parser implementation that extracts frontmatter and body from markdown (mixd-v0)
+// :M: tldr: Simple parser implementation that extracts frontmatter and body from markdown
+// :M: v0.1.0: Basic frontmatter and body extraction without processing Rulesets notation
 import * as yaml from 'js-yaml';
 import type { ParsedDoc } from '../interfaces';
 
 /**
- * Parses a Mixdown source rules file to extract frontmatter and body content.
- * For v0, this is a simple implementation that doesn't process Mixdown markers.
+ * Parses a Rulesets source rules file to extract frontmatter and body content.
+ * For v0.1.0, this is a simple implementation that doesn't process Rulesets markers.
  * 
  * @param content - The raw markdown content to parse
  * @returns A promise that resolves to a ParsedDoc
  */
-// TLDR: Parse frontmatter and body from markdown content (mixd-v0)
-// TODO (mixd-v0.1): Add support for stem parsing
-// TODO (mixd-v0.2): Add variable substitution
+// :M: tldr: Parse frontmatter and body from markdown content
+// :M: v0.1.0: Extract YAML frontmatter and raw body without marker processing
+// :M: todo(v0.2.0): Add support for stem parsing
+// :M: todo(v0.3.0): Add variable substitution
 export async function parse(content: string): Promise<ParsedDoc> {
   const lines = content.split('\n');
   let frontmatterStart = -1;

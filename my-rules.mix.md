@@ -1,7 +1,7 @@
 ---
-mixdown: v0
-title: My First Mixdown Rule
-description: A simple rule for testing v0.
+rulesets: v0.1.0
+title: My First Rulesets Rule
+description: A simple rule for testing v0.1.0.
 destinations:
   cursor:
     outputPath: ".cursor/rules/my-first-rule.mdc"
@@ -11,5 +11,5 @@ destinations:
 
 # This is the main content
 
-This is a paragraph of the rule. In v0, this content will be passed through as-is.
-`{{stems}}`, `{{$variables}}`, and `{{>imports}}` will be ignored by the v0 parser and compiler.
+This is a paragraph of the rule. In v0.1.0, this content will be passed through as-is.
+`{{stems}}`, `{{$variables}}`, and `{{>imports}}` will be ignored by the v0.1.0 parser and compiler.
