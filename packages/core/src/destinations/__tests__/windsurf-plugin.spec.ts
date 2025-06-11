@@ -187,4 +187,76 @@ describe('WindsurfPlugin', () => {
       );
     });
   });
-});
+describe('write – edge cases', () => {
+      const baseCompiled = {
+        ...mockCompiledDoc,
+        output: { ...mockCompiledDoc.output } // shallow clone to mutate safely
+      } as CompiledDoc
+
+      it('should throw if an unsupported format is provided', async () => {
+        const destPath = '.windsurf/rules/test.invalid'
+        const config = { format: 'unsupported' }
+
+        await expect(
+          plugin.write({ compiled: baseCompiled, destPath, config, logger: mockLogger })
+        ).rejects.toThrow(/Unsupported format/i)
+
+        expect(mockLogger.error).toHaveBeenCalledWith(
+          expect.stringContaining('Unsupported format received'),
+          expect.any(Error)
+        )
+      })
+
+      it('should fall back to default path when outputPath is not a string', async () => {
+        const badConfig: any = { outputPath: 42 } // invalid type
+        const destPath = '.windsurf/rules/fallback.md'
+
+        await plugin.write({ compiled: baseCompiled, destPath, config: badConfig, logger: mockLogger })
+
+        const resolvedPath = path.resolve(destPath)
+        expect(fs.writeFile).toHaveBeenCalledWith(
+          resolvedPath,
+          baseCompiled.output.content,
+          { encoding: 'utf8' }
+        )
+        expect(mockLogger.warn).toHaveBeenCalledWith(
+          expect.stringContaining('Invalid outputPath, using default:')
+        )
+      })
+
+      it('should create nested directories for deep outputPath', async () => {
+        const deepPath = '.windsurf/rules/nested/dir/structure/output.md'
+        await plugin.write({
+          compiled: baseCompiled,
+          destPath: deepPath,
+          config: {},
+          logger: mockLogger
+        })
+
+        const resolved = path.resolve(deepPath)
+        expect(fs.mkdir).toHaveBeenCalledWith(path.dirname(resolved), { recursive: true })
+        expect(fs.writeFile).toHaveBeenCalledWith(
+          resolved,
+          baseCompiled.output.content,
+          { encoding: 'utf8' }
+        )
+      })
+
+      it('should log at debug level when provided', async () => {
+        const cfg = { format: 'markdown' }
+        await plugin.write({ compiled: baseCompiled, destPath: 'out.md', config: cfg, logger: mockLogger })
+        expect(mockLogger.debug).toHaveBeenNthCalledWith(
+          1,
+          'Destination: windsurf'
+        )
+        expect(mockLogger.debug).toHaveBeenNthCalledWith(
+          2,
+          `Config: ${JSON.stringify(cfg)}`
+        )
+        expect(mockLogger.debug).toHaveBeenNthCalledWith(
+          3,
+          'Format: markdown'
+        )
+      })
+    });
+  });
