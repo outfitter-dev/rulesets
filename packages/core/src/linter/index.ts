@@ -40,13 +40,13 @@ function getFieldName(path: string): string {
 // :M: v0.1.0: Validates presence and types of frontmatter fields
 // :M: todo(v0.2.0): Add validation for stem properties
 /**
- * Lints the frontmatter of a parsed Rulesets document and returns a list of linting results.
+ * Lints a parsed Rulesets document by validating its frontmatter against schema requirements.
  *
- * Performs schema validation on the frontmatter, including checks for required and recommended fields, rulesets version, and allowed destinations. Parsing errors from the document are also included in the results.
+ * Performs checks for required and recommended frontmatter fields, including Rulesets version, destinations, title, and description. Reports parsing errors, missing or invalid fields, and unknown destinations according to the provided configuration.
  *
  * @param parsedDoc - The parsed Rulesets document to lint.
- * @param config - Optional linter configuration to enforce rulesets version and restrict allowed destinations.
- * @returns An array of lint results describing errors, warnings, or informational messages found during linting.
+ * @param config - Optional linter configuration for version requirements and allowed destinations.
+ * @returns An array of lint results describing errors, warnings, and informational suggestions found in the document.
  */
 export async function lint(
   parsedDoc: ParsedDoc,

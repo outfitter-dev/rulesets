@@ -44,12 +44,18 @@ export { destinations, CursorPlugin, WindsurfPlugin } from './destinations';
  */
 // :M: tldr: Main orchestration logic for reading, parsing, linting, compiling, and writing a Rulesets file
 /**
- * Orchestrates the full processing pipeline for a single Rulesets v0.1.0 source file, including reading, parsing, linting, compiling, and writing outputs for each configured destination.
+ * Orchestrates the full processing pipeline for a Rulesets v0.1.0 source file, including reading, parsing, linting, compiling, and writing outputs for each configured destination.
  *
  * @param sourceFilePath - Path to the Rulesets source file to process.
+ * @param logger - Optional logger instance for reporting progress and errors.
+ * @param projectConfig - Optional project configuration object passed to the compiler.
+ *
+ * @returns A promise that resolves when processing completes successfully.
+ *
+ * @throws {Error} If reading, parsing, linting, compiling, or writing fails at any stage.
  *
  * @remark
- * Throws if reading, parsing, linting, or writing fails at any stage. Lint errors will halt processing before compilation and writing.
+ * The function processes all destinations specified in the source file's frontmatter, or all known destinations if none are specified. Compilation and writing errors for individual destinations are logged, but only writing errors will abort the entire process.
  */
 export async function runRulesetsV0(
   sourceFilePath: string,
