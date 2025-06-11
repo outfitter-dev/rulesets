@@ -110,7 +110,7 @@ title: Missing mixdown version
       );
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        expect.stringContaining('Missing required "mixdown" field'),
+        expect.stringContaining('Missing required Rulesets version declaration'),
       );
       expect(fs.writeFile).not.toHaveBeenCalled();
     });

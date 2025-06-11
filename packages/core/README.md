@@ -55,7 +55,7 @@ Main orchestration function that processes a Rulesets source file.
 ### Parser
 
 ```typescript
-import { parse } from '@mixdown/core';
+import { parse } from '@rulesets/core';
 
 const parsedDoc = await parse(markdownContent);
 // Returns: ParsedDoc with frontmatter and AST
@@ -64,7 +64,7 @@ const parsedDoc = await parse(markdownContent);
 ### Linter
 
 ```typescript
-import { lint } from '@mixdown/core';
+import { lint } from '@rulesets/core';
 
 const lintResults = await lint(parsedDoc, {
   requireMixdownVersion: true,
@@ -76,16 +76,16 @@ const lintResults = await lint(parsedDoc, {
 ### Compiler
 
 ```typescript
-import { compile } from '@mixdown/core';
+import { compile } from '@rulesets/core';
 
-const compiledDoc = await compile(parsedDoc, 'cursor', projectConfig);
+const compiledDoc = compile(parsedDoc, 'cursor', projectConfig);
 // Returns: CompiledDoc ready for destination plugin
 ```
 
 ### Destination Plugins
 
 ```typescript
-import { destinations } from '@mixdown/core';
+import { destinations } from '@rulesets/core';
 
 const cursorPlugin = destinations.get('cursor');
 await cursorPlugin.write({
@@ -102,7 +102,7 @@ Create a `.mix.md` file with frontmatter and content:
 
 ```markdown
 ---
-mixdown: v0
+rulesets: { version: "0.1.0" }
 title: My Coding Standards
 description: Rules for AI assistants
 destinations:

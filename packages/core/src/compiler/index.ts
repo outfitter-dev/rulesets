@@ -15,11 +15,11 @@ import type { ParsedDoc, CompiledDoc } from '../interfaces';
 // :M: v0.1.0: Pass-through implementation without transformation
 // :M: todo(v0.2.0): Process stem markers and convert to XML
 // :M: todo(v0.3.0): Process variables and perform substitution
-export async function compile(
+export function compile(
   parsedDoc: ParsedDoc,
   destinationId: string,
   projectConfig: Record<string, unknown> = {},
-): Promise<CompiledDoc> {
+): CompiledDoc {
   const { source, ast } = parsedDoc;
   
   // Handle empty files consistently

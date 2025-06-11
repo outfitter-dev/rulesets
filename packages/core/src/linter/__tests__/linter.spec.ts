@@ -1,4 +1,4 @@
-// TLDR: Unit tests for the Mixdown linter module (mixd-v0)
+// TLDR: Unit tests for the Rulesets linter module (mixd-v0)
 import { describe, it, expect } from 'vitest';
 import { lint } from '../index';
 import type { ParsedDoc } from '../../interfaces';

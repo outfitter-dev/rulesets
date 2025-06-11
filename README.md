@@ -89,17 +89,14 @@ We borrowed "Rulesets" from the music product world because it nails the vibe so
 - **Plugin Architecture** – Add new destinations via `MixdownPluginProvider` without touching core.
 - **CLI & API** – `rulesets build`, `rulesets validate`, and `POST /compile` endpoint.
 
-## Installation
+## CLI Installation
 
 ```bash
 npm install -g @rulesets/cli        # global CLI
-# project-local
-npm install --save-dev @rulesets
-# or with the CLI
-npx @rulesets/cli init
+npx @rulesets/cli init              # quick project bootstrap
 ```
 
-## Installation
+## Library Installation
 
 ```bash
 # Using npm
@@ -114,7 +111,7 @@ yarn add @rulesets/core
 
 ## Quick Start
 
-### 1. Create a source rules file (`my-rules.mix.md`):
+### 1. Create a source rules file (`my-rules.mix.md`)
 
 ```markdown
 ---
@@ -135,7 +132,7 @@ Prefer functional programming patterns.
 Write comprehensive tests for all features.
 ```
 
-### 2. Use the API to process your rules:
+### 2. Use the API to process your rules
 
 ```typescript
 import { runRulesetsV0, ConsoleLogger } from '@rulesets/core';
@@ -172,7 +169,7 @@ These advanced features are planned for v0.x releases leading to v1.0.
 
 ## Directory Structure
 
-```
+```text
 project/
 ├── .mixdown/
 │   ├── dist/              # Compiled rules output

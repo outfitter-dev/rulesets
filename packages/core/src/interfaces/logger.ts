@@ -20,7 +20,9 @@ export class ConsoleLogger implements Logger {
   // :M: tldr: Logs a debug message to the console
   // :M: v0.1.0: Console implementation of debug logging
   public debug(message: string, ...args: unknown[]): void {
-    console.debug(`[DEBUG] ${message}`, ...args);
+    if (process.env.RULESETS_LOG_LEVEL === 'debug') {
+      console.debug(`[DEBUG] ${message}`, ...args);
+    }
   }
   // :M: tldr: Logs an informational message to the console
   // :M: v0.1.0: Console implementation of info logging

@@ -22,11 +22,11 @@ export async function parse(content: string): Promise<ParsedDoc> {
   const errors: Array<{ message: string; line?: number; column?: number }> = [];
 
   // Check for frontmatter
-  if (lines[0] === '---') {
+  if (lines[0].trim() === '---') {
     frontmatterStart = 0;
     // Find the closing frontmatter delimiter
     for (let i = 1; i < lines.length; i++) {
-      if (lines[i] === '---') {
+      if (lines[i].trim() === '---') {
         frontmatterEnd = i;
         break;
       }

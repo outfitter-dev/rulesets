@@ -213,7 +213,7 @@ When contributing to this project:
 
 ## Package Management
 
-- As a monorepo we use pnpm for everything
+- As a monorepo, we use pnpm for everything
 
 ## Workflow Guidance
 

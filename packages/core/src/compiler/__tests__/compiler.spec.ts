@@ -1,11 +1,11 @@
-// TLDR: Unit tests for the Mixdown compiler module (mixd-v0)
+// TLDR: Unit tests for the Rulesets compiler module (mixd-v0)
 import { describe, it, expect } from 'vitest';
 import { compile } from '../index';
 import type { ParsedDoc } from '../../interfaces';
 
 describe('compiler', () => {
   describe('compile', () => {
-    it('should compile a document with frontmatter and body', async () => {
+    it('should compile a document with frontmatter and body', () => {
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
@@ -41,7 +41,7 @@ This is the body with {{stems}} and {{$variables}}.`,
         },
       };
 
-      const result = await compile(parsedDoc, 'cursor');
+      const result = compile(parsedDoc, 'cursor');
 
       // Source should be preserved
       expect(result.source).toEqual(parsedDoc.source);
@@ -68,7 +68,7 @@ This is the body with {{stems}} and {{$variables}}.`,
       });
     });
 
-    it('should handle document without frontmatter', async () => {
+    it('should handle document without frontmatter', () => {
       const parsedDoc: ParsedDoc = {
         source: {
           content: '# Just Content\n\nNo frontmatter here.',
@@ -81,7 +81,7 @@ This is the body with {{stems}} and {{$variables}}.`,
         },
       };
 
-      const result = await compile(parsedDoc, 'windsurf');
+      const result = compile(parsedDoc, 'windsurf');
 
       expect(result.output.content).toBe('# Just Content\n\nNo frontmatter here.');
       expect(result.output.metadata).toEqual({
@@ -92,7 +92,7 @@ This is the body with {{stems}} and {{$variables}}.`,
       expect(result.context.destinationId).toBe('windsurf');
     });
 
-    it('should merge project config with destination config', async () => {
+    it('should merge project config with destination config', () => {
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
@@ -127,7 +127,7 @@ destinations:
         debug: true,
       };
 
-      const result = await compile(parsedDoc, 'cursor', projectConfig);
+      const result = compile(parsedDoc, 'cursor', projectConfig);
 
       expect(result.context.config).toEqual({
         baseUrl: 'https://example.com',
@@ -137,7 +137,7 @@ destinations:
       });
     });
 
-    it('should handle empty body after frontmatter', async () => {
+    it('should handle empty body after frontmatter', () => {
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
@@ -155,12 +155,12 @@ mixdown: v0
         },
       };
 
-      const result = await compile(parsedDoc, 'cursor');
+      const result = compile(parsedDoc, 'cursor');
 
       expect(result.output.content).toBe('');
     });
 
-    it('should preserve markers in output for v0', async () => {
+    it('should preserve markers in output for v0', () => {
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
@@ -186,7 +186,7 @@ The value is {{$myVariable}}.`,
         },
       };
 
-      const result = await compile(parsedDoc, 'cursor');
+      const result = compile(parsedDoc, 'cursor');
 
       expect(result.output.content).toContain('{{instructions}}');
       expect(result.output.content).toContain('{{/instructions}}');
@@ -194,7 +194,7 @@ The value is {{$myVariable}}.`,
       expect(result.output.content).toContain('{{$myVariable}}');
     });
 
-    it('should handle destination without config', async () => {
+    it('should handle destination without config', () => {
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
@@ -222,7 +222,7 @@ destinations:
         },
       };
 
-      const result = await compile(parsedDoc, 'windsurf');
+      const result = compile(parsedDoc, 'windsurf');
 
       expect(result.context.config).toEqual({});
       expect(result.output.metadata).toEqual({

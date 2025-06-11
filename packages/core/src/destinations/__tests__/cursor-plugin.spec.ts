@@ -94,7 +94,7 @@ describe('CursorPlugin', () => {
       expect(fs.writeFile).toHaveBeenCalledWith(
         resolvedPath,
         mockCompiledDoc.output.content,
-        'utf-8',
+        'utf8',
       );
       expect(mockLogger.info).toHaveBeenCalledWith(`Writing Cursor rules to: ${destPath}`);
       expect(mockLogger.info).toHaveBeenCalledWith(`Successfully wrote Cursor rules to: ${resolvedPath}`);
@@ -115,7 +115,7 @@ describe('CursorPlugin', () => {
       expect(fs.writeFile).toHaveBeenCalledWith(
         resolvedPath,
         mockCompiledDoc.output.content,
-        'utf-8',
+        'utf8',
       );
     });
 

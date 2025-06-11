@@ -9,7 +9,7 @@ export const cursorPlugin = new CursorPlugin();
 export const windsurfPlugin = new WindsurfPlugin();
 
 // Export as a map for easy lookup
-export const destinations: Map<string, DestinationPlugin> = new Map([
+export const destinations: ReadonlyMap<string, DestinationPlugin> = new Map([
   ['cursor', cursorPlugin],
   ['windsurf', windsurfPlugin],
 ]);

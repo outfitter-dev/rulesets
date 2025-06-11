@@ -135,7 +135,7 @@ export async function runRulesetsV0(
     // Compile for this destination
     let compiledDoc;
     try {
-      compiledDoc = await compile(parsedDoc, destinationId, projectConfig);
+      compiledDoc = compile(parsedDoc, destinationId, projectConfig);
     } catch (error) {
       logger.error(`Failed to compile for destination: ${destinationId}`, error);
       continue; // Continue with other destinations

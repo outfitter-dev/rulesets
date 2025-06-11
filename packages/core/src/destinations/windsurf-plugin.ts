@@ -43,11 +43,11 @@ export class WindsurfPlugin implements DestinationPlugin {
   }): Promise<void> {
     const { compiled, destPath, config, logger } = ctx;
 
-    logger.info(`Writing Windsurf rules to: ${destPath}`);
-
     // Determine the output path
     const outputPath = config.outputPath || destPath;
     const resolvedPath = path.resolve(outputPath);
+    
+    logger.info(`Writing Windsurf rules to: ${resolvedPath}`);
 
     // Ensure directory exists
     const dir = path.dirname(resolvedPath);
