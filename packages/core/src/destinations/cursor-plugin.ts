@@ -1,15 +1,18 @@
-// TLDR: Stub implementation of Cursor destination plugin (mixd-v0)
+// :M: tldr: Cursor destination plugin implementation
+// :M: v0.1.0: Stub implementation that writes raw content to .cursor/rules/
 import { promises as fs } from 'fs';
 import path from 'path';
 import type { DestinationPlugin, CompiledDoc, Logger, JSONSchema7 } from '../interfaces';
 
 export class CursorPlugin implements DestinationPlugin {
-  // TLDR: Returns the canonical name for Cursor destination (mixd-v0)
+  // :M: tldr: Returns the canonical name for Cursor destination
+  // :M: v0.1.0: Static identifier for plugin registration
   get name(): string {
     return 'cursor';
   }
 
-  // TLDR: Provides configuration schema for Cursor plugin (mixd-v0)
+  // :M: tldr: Provides configuration schema for Cursor plugin
+  // :M: v0.1.0: Basic schema with outputPath and priority options
   configSchema(): JSONSchema7 {
     return {
       type: 'object',
@@ -28,8 +31,9 @@ export class CursorPlugin implements DestinationPlugin {
     };
   }
 
-  // TLDR: Writes compiled document to Cursor rules directory (mixd-v0)
-  // TODO (mixd-v0.1): Add Cursor-specific formatting and transformations
+  // :M: tldr: Writes compiled document to Cursor rules directory
+  // :M: v0.1.0: Basic file writing without Cursor-specific transformations
+  // :M: todo(v0.2.0): Add Cursor-specific formatting and transformations
   async write(ctx: {
     compiled: CompiledDoc;
     destPath: string;

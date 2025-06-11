@@ -1,18 +1,20 @@
-// TLDR: Pass-through compiler implementation that doesn't process markers (mixd-v0)
+// :M: tldr: Compiler implementation for Rulesets notation
+// :M: v0.1.0: Pass-through implementation without marker processing
 import type { ParsedDoc, CompiledDoc } from '../interfaces';
 
 /**
- * Compiles a parsed Mixdown document for a specific destination.
- * For v0, this is a pass-through implementation that doesn't process markers.
+ * Compiles a parsed Rulesets document for a specific destination.
+ * For v0.1.0, this is a pass-through implementation that doesn't process markers.
  * 
  * @param parsedDoc - The parsed document to compile
  * @param destinationId - The ID of the destination to compile for
  * @param projectConfig - Optional project configuration
  * @returns A promise that resolves to a CompiledDoc
  */
-// TLDR: Pass-through compiler that returns raw body content (mixd-v0)
-// TODO (mixd-v0.1): Process stem markers and convert to XML
-// TODO (mixd-v0.2): Process variables and perform substitution
+// :M: tldr: Compiles parsed document to destination format
+// :M: v0.1.0: Pass-through implementation without transformation
+// :M: todo(v0.2.0): Process stem markers and convert to XML
+// :M: todo(v0.3.0): Process variables and perform substitution
 export async function compile(
   parsedDoc: ParsedDoc,
   destinationId: string,

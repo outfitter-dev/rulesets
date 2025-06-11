@@ -1,8 +1,9 @@
-// TLDR: Defines the CompiledDoc interface for Mixdown. Represents the result of compiling a source rules file for a specific destination (mixd-v0)
+// :M: tldr: Defines the CompiledDoc interface for Rulesets
+// :M: v0.1.0: Minimal interface structure without marker processing
 
 /**
- * Represents the structure of a parsed Mixdown stem.
- * For v0, this will be minimal as stems are not processed from the body.
+ * Represents the structure of a parsed Rulesets stem.
+ * For v0.1.0, this will be minimal as stems are not processed from the body.
  */
 export interface Stem {
   name: string;
@@ -12,8 +13,8 @@ export interface Stem {
 }
 
 /**
- * Represents the structure of a parsed Mixdown import.
- * For v0, this will be minimal.
+ * Represents the structure of a parsed Rulesets import.
+ * For v0.1.0, this will be minimal.
  */
 export interface Import {
   path: string;
@@ -22,8 +23,8 @@ export interface Import {
 }
 
 /**
- * Represents the structure of a parsed Mixdown variable.
- * For v0, this will be minimal.
+ * Represents the structure of a parsed Rulesets variable.
+ * For v0.1.0, this will be minimal.
  */
 export interface Variable {
   name: string;
@@ -31,8 +32,8 @@ export interface Variable {
 }
 
 /**
- * Represents the structure of a generic Mixdown marker.
- * For v0, this will be minimal.
+ * Represents the structure of a generic Rulesets marker.
+ * For v0.1.0, this will be minimal.
  */
 export interface Marker {
   type: 'stem' | 'import' | 'variable' | 'unknown';
@@ -42,7 +43,7 @@ export interface Marker {
 
 
 /**
- * Represents a document that has been parsed by the Mixdown parser.
+ * Represents a document that has been parsed by the Rulesets parser.
  * This is an intermediate representation before full compilation.
  */
 export interface ParsedDoc {
@@ -74,9 +75,9 @@ export interface CompiledDoc {
 
   /**
    * Parsed representation of the source document.
-   * For v0, `stems`, `imports`, `variables`, and `markers` will be empty
+   * For v0.1.0, `stems`, `imports`, `variables`, and `markers` will be empty
    * or reflect only what might be in frontmatter if we decide to parse that deep.
-   * The primary focus for v0 body content is that it's not processed for markers.
+   * The primary focus for v0.1.0 body content is that it's not processed for markers.
    */
   ast: {
     stems: Stem[];         // Array of parsed stems (empty for v0 body)

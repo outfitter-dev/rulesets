@@ -1,4 +1,5 @@
-// TLDR: Build configuration for the @mixdown/core package using tsup. Defines entry points, output formats (ESM, CJS), and d.ts generation (mixd-v0)
+// :M: tldr: Build configuration for the @rulesets/core package using tsup
+// :M: v0.1.0: Basic build config with ESM/CJS output and source maps
 import { defineConfig } from 'tsup';
 
 export default defineConfig({
@@ -7,8 +8,9 @@ export default defineConfig({
   dts: false, // Temporarily disable, will use tsc directly
   sourcemap: true,
   clean: true,
-  splitting: false, // TLDR: keep it simple. Can enable later if needed (mixd-v0)
-  // TODO (mixd-v0.1): Enable code splitting for better performance
+  splitting: false, // :M: tldr: Disabled code splitting for simplicity
+  // :M: v0.1.0: Single bundle output without code splitting
+  // :M: todo(v0.2.0): Enable code splitting for better performance
   shims: true,
   external: ['json-schema'],
 });

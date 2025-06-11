@@ -1,4 +1,5 @@
-// TLDR: Export destination plugin instances for use in Mixdown (mixd-v0)
+// :M: tldr: Export destination plugin instances for use in Rulesets
+// :M: v0.1.0: Basic plugin registry with Cursor and Windsurf support
 import { CursorPlugin } from './cursor-plugin';
 import { WindsurfPlugin } from './windsurf-plugin';
 import type { DestinationPlugin } from '../interfaces';

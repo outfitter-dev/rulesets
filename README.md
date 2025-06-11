@@ -1,4 +1,4 @@
-# 💽 Mixdown: A Compiler for AI Rules Files
+# 📏 Rulesets: A Compiler for AI Rules Files
 
 > **🚀 v0 Release Now Available!** The initial implementation of Mixdown is ready for testing. See [Installation](#installation) to get started.
 

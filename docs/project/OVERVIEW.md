@@ -1,4 +1,4 @@
-# 💽 Mixdown – v0 Overview
+# 📏 Rulesets – v0.1.0 Overview
 
 > *Write rules once, compile destination-specific rules, zero drift.*
 
