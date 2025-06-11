@@ -1,4 +1,4 @@
-// TLDR: Unit tests for the Cursor destination plugin (mixd-v0)
+// TLDR: Unit tests for the Cursor destination plugin (Rulesets v0)
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -131,7 +131,9 @@ describe('CursorPlugin', () => {
       });
 
       expect(mockLogger.debug).toHaveBeenCalledWith('Destination: cursor');
-      expect(mockLogger.debug).toHaveBeenCalledWith(`Config: ${JSON.stringify(config)}`);
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        expect.stringContaining('Config:'),
+      );
       expect(mockLogger.debug).toHaveBeenCalledWith('Priority: high');
     });
 

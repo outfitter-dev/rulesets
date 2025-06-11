@@ -30,7 +30,7 @@ async function main() {
   const logger = new ConsoleLogger();
   
   try {
-    await runRulesetsV0('./my-rules.mix.md', logger);
+    await runRulesetsV0('./my-rules.rules.md', logger);
     logger.info('Rulesets processing completed!');
   } catch (error) {
     logger.error('Processing failed:', error);
@@ -48,7 +48,7 @@ main();
 
 Main orchestration function that processes a Rulesets source file.
 
-- `sourceFilePath`: Path to the `.mix.md` or `.md` file
+- `sourceFilePath`: Path to the `.rules.md` or `.md` file
 - `logger`: Optional logger instance (defaults to ConsoleLogger)
 - `projectConfig`: Optional project configuration object
 
@@ -98,7 +98,7 @@ await cursorPlugin.write({
 
 ## Source Rules Format
 
-Create a `.mix.md` file with frontmatter and content:
+Create a `.rules.md` file with frontmatter and content:
 
 ```markdown
 ---

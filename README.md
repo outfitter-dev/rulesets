@@ -86,7 +86,7 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 
 ### Compiler & Integration
 
-- **Plugin Architecture** – Add new destinations via `MixdownPluginProvider` without touching core.
+- **Plugin Architecture** – Add new destinations via `RulesetsPluginProvider` without touching core.
 - **CLI & API** – `rulesets build`, `rulesets validate`, and `POST /compile` endpoint.
 
 ## CLI Installation
@@ -111,7 +111,7 @@ yarn add @rulesets/core
 
 ## Quick Start
 
-### 1. Create a source rules file (`my-rules.mix.md`)
+### 1. Create a source rules file (`my-rules.rules.md`)
 
 ```markdown
 ---
@@ -141,7 +141,7 @@ async function main() {
   const logger = new ConsoleLogger();
   
   try {
-    await runRulesetsV0('./my-rules.mix.md', logger);
+    await runRulesetsV0('./my-rules.rules.md', logger);
     console.log('Rules compiled successfully!');
   } catch (error) {
     console.error('Error:', error);
@@ -171,13 +171,13 @@ These advanced features are planned for v0.x releases leading to v1.0.
 
 ```text
 project/
-├── .mixdown/
+├── .rulesets/
 │   ├── dist/              # Compiled rules output
 │   │   ├── cursor/        # Cursor-specific rules
 │   │   └── windsurf/      # Windsurf-specific rules
-│   └── src/               # Source rules files (*.mix.md, *.md)
+│   └── src/               # Source rules files (*.rules.md, *.md)
 │       └── _mixins/       # Reusable content modules (future)
-├── my-rules.mix.md        # Your source rules file
+├── my-rules.rules.md      # Your source rules file
 └── package.json
 ```
 

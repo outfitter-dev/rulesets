@@ -55,6 +55,7 @@ This is the body with {{stems}} and {{$variables}}.`,
       expect(result.output.metadata).toEqual({
         title: 'Test Rules',
         description: 'Test description',
+        version: undefined,
         outputPath: '.cursor/rules/test.mdc',
         priority: 'high',
       });
