@@ -57,8 +57,8 @@ describe('CursorPlugin', () => {
   describe('write', () => {
     const mockCompiledDoc: CompiledDoc = {
       source: {
-        content: '---\nrulesets: v0\n---\n\n# Test Content',
-        frontmatter: { rulesets: 'v0' },
+        content: '---\nruleset: v0\n---\n\n# Test Content',
+        frontmatter: { ruleset: 'v0' },
       },
       ast: {
         blocks: [],
