@@ -39,7 +39,7 @@ This approach is faster and more precise than traditional file browsing, especia
 
 ## Versioning Strategy
 
-The remainder of this document focuses specifically on the `mixd-v*` versioning markers used throughout the Mixdown codebase. These markers enable rapid navigation and identification of version-specific code through simple grep commands.
+The remainder of this document focuses specifically on the `mixd-v*` versioning markers used throughout the Rulesets codebase. These markers enable rapid navigation and identification of version-specific code through simple grep commands.
 
 ## What are `mixd-*` Markers?
 

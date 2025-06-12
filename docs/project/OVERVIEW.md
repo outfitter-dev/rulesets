@@ -45,7 +45,7 @@
     - [Destination-Specific Stem Filtering](#destination-specific-stem-filtering)
     - [Stem References and Import Scope](#stem-references-and-import-scope)
   - [Imports vs. Variables (Substitution)](#imports-vs-variables-substitution)
-  - [Mixins](#mixins)
+  - [Partials](#partials)
   - [Rendering Raw Rulesets notation](#rendering-raw-rulesets-notation)
   - [Instruction Placeholders](#instruction-placeholders)
     - [Placeholder Formatting](#placeholder-formatting)
@@ -110,17 +110,17 @@ Result: *Write rules once, compile destination-specific rules, zero drift.*
   - Used to direct the compiler for various purposes (stems, imports, variables)
   - All Rulesets directives use marker notation, but serve different functions
   - Similar to `<xml-tags>`, but fully Markdown-previewable.
-- **Stem**
-  - Syntax: `{{stem-name}}...{{/stem-name}}`
+- **Block**
+  - Syntax: `{{block-name}}...{{/block-name}}`
   - A specific application of notation markers that creates delimited content blocks
   - Converted to XML tags during compilation e.g. `{{instructions}}...{{/instructions}}` → `<instructions>...</instructions>`
-  - Has opening and closing notation markers that surround stem content
-  - Refers to the full construct with opening marker, stem content, and closing marker
+  - Has opening and closing notation markers that surround block content
+  - Refers to the full construct with opening marker, block content, and closing marker
   - Can contain properties that control rendering behavior
   - Example: `{{instructions}}This is instruction content{{/instructions}}`
 - **Import**
   - Syntax: `{{> my-rule }}`
-  - Embed content from another source rules file, stem, mixin, or template.
+  - Embed content from another source rules file, block, partial, or template.
 - **Variable**
   - Syntax: `{{$key}}` or `$key` if used within a `{{...}}` marker.
   - Dynamic values replaced inline during compilation via variable substitution.
@@ -132,7 +132,7 @@ Result: *Write rules once, compile destination-specific rules, zero drift.*
 ### Rulesets notation
 
 - **100% Preview-able Markdown:** Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
-- **Granular Stems:** Filter stems within a single source rules for per-destination inclusion/exclusion.
+- **Granular Blocks:** Filter blocks within a single source rules for per-destination inclusion/exclusion.
 - **Build-time Variables:** Aliases and frontmatter data injection.
 
 ### Compiler & Integration
@@ -597,7 +597,7 @@ The following table provides a quick reference to common invocation patterns for
 | Group Inclusion + Member Exclusion          | `{{stem +group:[opt1] !member}}`               | Includes for `group` with `opt1`, but excludes for `member`.                |
 | All Destinations Inclusion                      | `{{stem +all}}`                                | Explicitly includes content for all configured destinations.                     |
 
-The standalone `code` property (without a language suffix) automatically determines the appropriate language based on context. When used with mixins, it detects the language based on the mixin file's extension:
+The standalone `code` property (without a language suffix) automatically determines the appropriate language based on context. When used with partials, it detects the language based on the partial file's extension:
 
 ```markdown
 {{> @my-script.js code}}
@@ -736,10 +736,10 @@ The syntax for variables depends on the context:
 
 ### Imports
 
-Imports allow you to reuse content across multiple source rules files by embedding source rules, stems within a file, or mixins into compiled artifacts. They are denoted by the `{{> ...}}` notation.
+Imports allow you to reuse content across multiple source rules files by embedding source rules, blocks within a file, or partials into compiled artifacts. They are denoted by the `{{> ...}}` notation.
 
 ```markdown
-<!-- Embeds `/_mixins/legal.md` -->
+<!-- Embeds `/_partials/legal.md` -->
 {{> @legal }}
 
 <!-- Embed a specific stem from the `conventions.md` source rules file -->
@@ -840,11 +840,11 @@ It's important to distinguish between imports (`{{> ...}}`) and variable substit
 - **Imports** (`{{> ...}}`) are used to embed content structures. When an import like `{{> mySnippet }}` is processed, it typically renders the content of `mySnippet` *including its own structure*, which might result in output like `<mySnippet>...</mySnippet>` (unless properties like `unwrap` are used).
 - **Variable Substitution** (`{{$...}}`) replaces a placeholder with its string value. It does not render any surrounding tags itself. For example, if `{{$userName}}` has the value "John", then `Hello, {{$userName}}!` would render as `Hello, John!`. The variable is directly replaced by its value.
 
-### Mixins
+### Partials
 
-Mixins are modular, reusable components, stored in the `.rulesets/src/_mixins/` directory. Like programming mixins that can be incorporated into different classes or components, Rulesets mixins provide isolated content blocks that can be imported into multiple source rules files.
+Partials are modular, reusable components, stored in the `.rulesets/src/_partials/` directory. Like programming partials that can be incorporated into different classes or components, Rulesets partials provide isolated content blocks that can be imported into multiple source rules files.
 
-- A mixin typically contains one or more stems that perform a specific function
+- A partial typically contains one or more blocks that perform a specific function
 - Mixins are imported using the `{{> @mixin-name}}` notation
 - Mixins are converted to `<mixin_name>` tags in the compiled artifact, unless modified with `unwrap` or `inline` properties
 
