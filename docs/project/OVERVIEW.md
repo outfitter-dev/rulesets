@@ -20,15 +20,15 @@
 - [Notation Reference](#notation-reference)
   - [Design Goals](#design-goals)
   - [Delimiter Roles](#delimiter-roles)
-  - [Stems](#stems)
-    - [Stem Notation Markers](#stem-notation-markers)
+  - [Blocks](#blocks)
+    - [Block Notation Markers](#block-notation-markers)
     - [Destination-scoped Property Overrides](#destination-scoped-property-overrides)
     - [Destination-scoped Multiple Properties](#destination-scoped-multiple-properties)
     - [Property Processing Order](#property-processing-order)
     - [Destination Filtering Properties](#destination-filtering-properties)
     - [Self-Closing Tags](#self-closing-tags)
     - [Multi-line Markers for Readability](#multi-line-markers-for-readability)
-    - [Stem Properties](#stem-properties)
+    - [Block Properties](#block-properties)
     - [Output Format](#output-format)
     - [Property Grouping](#property-grouping)
       - [Multi-line Property Grouping](#multi-line-property-grouping)
@@ -42,8 +42,8 @@
   - [Variables](#variables)
   - [Imports](#imports)
     - [Import Attributes](#import-attributes)
-    - [Destination-Specific Stem Filtering](#destination-specific-stem-filtering)
-    - [Stem References and Import Scope](#stem-references-and-import-scope)
+    - [Destination-Specific Block Filtering](#destination-specific-block-filtering)
+    - [Block References and Import Scope](#block-references-and-import-scope)
   - [Imports vs. Variables (Substitution)](#imports-vs-variables-substitution)
   - [Partials](#partials)
   - [Rendering Raw Rulesets notation](#rendering-raw-rulesets-notation)
@@ -107,7 +107,7 @@ Result: *Write rules once, compile destination-specific rules, zero drift.*
 - **Notation Marker**
   - Syntax: `{{...}}`
   - Fundamental building block of Rulesets notation
-  - Used to direct the compiler for various purposes (stems, imports, variables)
+  - Used to direct the compiler for various purposes (blocks, imports, variables)
   - All Rulesets directives use marker notation, but serve different functions
   - Similar to `<xml-tags>`, but fully Markdown-previewable.
 - **Block**
@@ -194,15 +194,15 @@ Rulesets' syntax follows strict delimiter rules to maintain consistency and clar
 | `:` | Scope indicator | `destination:code-javascript` | Indicates that properties are scoped to a specific destination |
 | `()` | Value container | `name-("value")` | Contains values for a specific property |
 | `[]` | Property grouping | `destination:[property-1 property-2]` | Groups multiple properties within a scope |
-| `+` | Inclusion | `+destination`, `+stem-one` | Indicates inclusion of a destination or stem |
-| `!` | Exclusion | `!destination`, `!stem-two` | Indicates exclusion of a destination or stem |
-| `#` | Stem reference | `#stem-name`, `#(stem1 stem2)` | References stems in imports for selective filtering with import scope |
+| `+` | Inclusion | `+destination`, `+block-one` | Indicates inclusion of a destination or block |
+| `!` | Exclusion | `!destination`, `!block-two` | Indicates exclusion of a destination or block |
+| `#` | Block reference | `#block-name`, `#(block1 block2)` | References blocks in imports for selective filtering with import scope |
 
 These delimiters always maintain their role throughout the syntax, making the language more intuitive and easier to learn.
 
-### Stems
+### Blocks
 
-Stems are the core building block of Rulesets and are a direct stand in for XML tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other stems or source rules.
+Blocks are the core building block of Rulesets and are a direct stand in for XML tags. They are used to create reusable content blocks that provide clarity for agents, and can be included in other blocks or source rules.
 
 ```markdown
 {{instructions +cursor !claude-code}}
@@ -210,41 +210,41 @@ Stems are the core building block of Rulesets and are a direct stand in for XML 
 {{/instructions}}
 ```
 
-#### Stem Notation Markers
+#### Block Notation Markers
 
-- **1:1 Markdown-to-XML Translation**: Write stems as `{{stem-name}}` and they will be converted to `<stem_name>` in the output. Rulesets can compile into pure Markdown, XML, or a combination of the two.
-- **Open/Close**: Stems use opening `{{stem-name ... }}` and closing `{{/stem-name}}` markers to delimit their content.
-- **Naming**: `kebab-case` is recommended for stem names (e.g., `my-stem-name`) to avoid accidental Markdown emphasis rendering. Regardless of the naming convention used in the source `.md` file, the corresponding XML tags in outputs will be formatted as `<snake_case>` (e.g., `<my_stem_name>`). This output format is configurable.
+- **1:1 Markdown-to-XML Translation**: Write blocks as `{{block-name}}` and they will be converted to `<block_name>` in the output. Rulesets can compile into pure Markdown, XML, or a combination of the two.
+- **Open/Close**: Blocks use opening `{{block-name ... }}` and closing `{{/block-name}}` markers to delimit their content.
+- **Naming**: `kebab-case` is recommended for block names (e.g., `my-block-name`) to avoid accidental Markdown emphasis rendering. Regardless of the naming convention used in the source `.md` file, the corresponding XML tags in outputs will be formatted as `<snake_case>` (e.g., `<my_block_name>`). This output format is configurable.
 - **Parsing Example**:
 
 ```markdown
 <!-- Rulesets input -->
-{{stem-one}}
+{{block-one}}
 Content A
-{{/stem-one}}
+{{/block-one}}
 
-{{stem-two +all !claude-code}}
+{{block-two +all !claude-code}}
 Content B
-{{/stem-two}}
+{{/block-two}}
 
 ---
 
   Output for all configured tools (except `claude-code` in this example):
   <!-- XML output -->
-  <stem_one>
+  <block_one>
   Content A
-  </stem_one>
-  <stem_two>
+  </block_one>
+  <block_two>
   Content B
-  </stem_two>
+  </block_two>
   ```
 
   While Claude Code output will be:
 
   ```markdown
-  <stem_one>
+  <block_one>
   Content A
-  </stem_one>
+  </block_one>
   ```
 
 #### Destination-scoped Property Overrides

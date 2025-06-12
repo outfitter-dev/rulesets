@@ -1,6 +1,6 @@
 # Project Agents.md Guide for AI Assistants
 
-This Agents.md file provides comprehensive guidance for AI agents working with the Mixdown codebase.
+This Agents.md file provides comprehensive guidance for AI agents working with the Rulesets codebase.
 
 ## Project Structure for AI Agent Navigation
 
@@ -9,8 +9,8 @@ This Agents.md file provides comprehensive guidance for AI agents working with t
   - `/project/LANGUAGE.md`: Terminology and language spec for consistent communication
   - `/project/plans/`: Implementation plans that AI agents should follow
 - `/packages`: Monorepo packages where AI agents will implement code
-  - `/core`: Core Mixdown library that AI agents should enhance iteratively
-- `.mixdown/`: Mixdown-specific configurations and compiled rules
+  - `/core`: Core Rulesets library that AI agents should enhance iteratively
+- `.ruleset/`: Ruleset-specific configurations and compiled rules
 
 ## Coding Conventions for AI Agents
 

@@ -1,9 +1,9 @@
-# Jules Agent FAQ for Mixdown
+# Jules Agent FAQ for Rulesets
 
 ## Implementation Questions
 
 ### Q: What is the current implementation scope?
-**A:** You are implementing **Mixdown v0** with these limitations:
+**A:** You are implementing **Rulesets v0** with these limitations:
 - Parser: Extract frontmatter and raw body only (no `{{...}}` processing)
 - Compiler: Pass-through implementation (no marker processing)
 - Linter: Basic frontmatter schema validation only
