@@ -51,7 +51,7 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 : Dynamic value replaced inline at compile time (e.g., `{{$key}}` for aliases, `{{$.frontmatter.key}}` for frontmatter data, `{{$destination}}` for the current destination name).
 
 **Notation Marker**
-: Element using `{{...}}` notation, used throughout Mixdown to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
+: Element using `{{...}}` notation, used throughout Rulesets to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
 
 **Mixin**
 : Modular, reusable content component stored in `/_mixins`.
@@ -74,11 +74,11 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 | `openai-codex` | [OpenAI Codex](https://github.com/openai/codex) | CLI | 🔵 Planned |
 | `windsurf` | [Windsurf](https://windsurf.dev/) | IDE | 🟡 In Progress |
 
-*Want a new destination? Implement `toolProvider` and publish `@mixdown/plugin-<your-tool>`. See existing plugin examples and general development guidelines.*
+*Want a new destination? Implement `toolProvider` and publish `@rulesets/plugin-<your-tool>`. See existing plugin examples and general development guidelines.*
 
 ## Key Features
 
-### Mixdown Notation
+### Rulesets Notation
 
 - **100% Preview-able Markdown** – Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
 - **Granular Stems** – Filter stems within a single source rules file for per-destination inclusion/exclusion.
@@ -162,7 +162,7 @@ The current v0 release provides foundational functionality:
 - ✅ Frontmatter parsing and validation
 - ✅ Basic file compilation and writing
 - ✅ Destination plugin architecture
-- ❌ Mixdown notation markers (`{{...}}`) are not processed (passed through as-is)
+- ❌ Rulesets notation markers (`{{...}}`) are not processed (passed through as-is)
 - ❌ No stem/import/variable support yet
 
 These advanced features are planned for v0.x releases leading to v1.0.
@@ -196,7 +196,7 @@ project/
 | **Destination Variable** | `{{$destination}}` / `{{$destination.id}}` | Injects current destination name/ID. |
 | **Instruction Placeholder** | `[fill this in]` | Marker for LLM to complete. |
 
-The full Mixdown notation specification can be found in `docs/project/OVERVIEW.md`.
+The full Rulesets notation specification can be found in `docs/project/OVERVIEW.md`.
 
 ## Versioning and Changelog
 
@@ -230,5 +230,5 @@ Please see our general contributing guidelines for more details.
 
 ## References
 
-- `docs/project/OVERVIEW.md` – Full Mixdown notation specification.
+- `docs/project/OVERVIEW.md` – Full Rulesets notation specification.
 - `docs/architecture/DECISIONS.md` – Design rationale & deep-dive.

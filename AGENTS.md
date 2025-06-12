@@ -155,7 +155,7 @@ AI agents must consult these documents regularly:
 
 - `@docs/project/GREPABLE.md`: Master guide for marker system and grep navigation
 - `@docs/project/LANGUAGE.md`: Terminology spec for consistent communication
-- `@docs/project/plans/PLAN-mixdown-v0.md`: Current implementation plan and scope
+- `@docs/project/plans/PLAN-rulesets-v0.md`: Current implementation plan and scope
 - `CLAUDE.md`: Project-specific guidance and concepts
 - `@docs/agentic/`: Agentic development coordination and agent-specific guides
 - `@docs/agentic/jules/`: Google Jules integration guides and prompts

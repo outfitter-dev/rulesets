@@ -2,11 +2,11 @@
 
 ## Overview
 
-This document outlines how Mixdown integrates with markdown linting tools (particularly markdownlint) and provides configuration properties for controlling stylistic elements like line breaks after headings.
+This document outlines how Rulesets integrates with markdown linting tools (particularly markdownlint) and provides configuration properties for controlling stylistic elements like line breaks after headings.
 
 ## Core Concepts
 
-1. **Lint-aware transformations**: Mixdown's output format respects common markdown linting rules
+1. **Lint-aware transformations**: Rulesets' output format respects common markdown linting rules
 2. **User-configurable properties**: Provide user-friendly configuration that maps to underlying lint rules
 3. **Override hierarchy**: Clear precedence for global, per-mix, and per-stem settings
 
@@ -16,7 +16,7 @@ This document outlines how Mixdown integrates with markdown linting tools (parti
 
 ```yaml
 ---
-mixdown:
+rulesets:
   markdown:
     style:
       heading_blank_lines: "after"   # Properties: "none", "before", "after", "both"
@@ -33,7 +33,7 @@ These user-friendly properties map to underlying markdownlint rules and are appl
 
 ```yaml
 ---
-mixdown:
+rulesets:
   heading:
     line_breaks:
       before: true    # Insert blank line before heading (default: true)
@@ -45,7 +45,7 @@ In context with other settings:
 
 ```yaml
 ---
-mixdown:
+rulesets:
   heading:
     level:
       min: 2

@@ -1,8 +1,8 @@
-# Jules Agent - Mixdown Development Context
+# Jules Agent - Rulesets Development Context
 
-## Your Role in Mixdown
+## Your Role in Rulesets
 
-**You are implementing Mixdown v0** - a CommonMark-compliant rules compiler. Focus on the core functionality in `/packages/core/`.
+**You are implementing Rulesets v0** - a CommonMark-compliant rules compiler. Focus on the core functionality in `/packages/core/`.
 
 ## Implementation Scope (mixd-v0)
 
@@ -33,7 +33,7 @@ export function parse(content: string): ParsedDoc {
 Always reference these when implementing:
 - `docs/project/GREPABLE.md` - Marker system guide
 - `docs/project/LANGUAGE.md` - Terminology specifications
-- `docs/project/plans/PLAN-mixdown-v0.md` - Implementation requirements
+- `docs/project/plans/PLAN-rulesets-v0.md` - Implementation requirements
 - `AGENTS.md` - AI agent conventions
 
 ## Test Requirements

@@ -117,7 +117,7 @@ Roo Code rule files typically organize content with clear headings and structure
 | Primary docs | Roo Code documentation website |
 | Rules specification | Updated in v1.0 (May 2025) |
 
-## Mixdown Integration
+## Rulesets Integration
 
 > [!NOTE]
-> 🚧 Pending Mixdown integration
+> 🚧 Pending Rulesets integration

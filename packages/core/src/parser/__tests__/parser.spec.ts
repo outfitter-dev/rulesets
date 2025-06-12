@@ -1,4 +1,4 @@
-// TLDR: Unit tests for the Rulesets parser module (mixd-v0)
+// TLDR: Unit tests for the Rulesets parser module (rulesets-v0)
 import { describe, it, expect } from 'vitest';
 import { parse } from '../index';
 
@@ -6,7 +6,7 @@ describe('parser', () => {
   describe('parse', () => {
     it('should parse a document with frontmatter and body', async () => {
       const content = `---
-mixdown: v0
+rulesets: v0
 title: Test Rule
 destinations:
   cursor:
@@ -21,7 +21,7 @@ This is the body content.`;
 
       expect(result.source.content).toBe(content);
       expect(result.source.frontmatter).toEqual({
-        mixdown: 'v0',
+        rulesets: 'v0',
         title: 'Test Rule',
         destinations: {
           cursor: {

@@ -1,9 +1,9 @@
-# Jules Agent FAQ for Mixdown
+# Jules Agent FAQ for Rulesets
 
 ## Implementation Questions
 
 ### Q: What is the current implementation scope?
-**A:** You are implementing **Mixdown v0** with these limitations:
+**A:** You are implementing **Rulesets v0** with these limitations:
 - Parser: Extract frontmatter and raw body only (no `{{...}}` processing)
 - Compiler: Pass-through implementation (no marker processing)
 - Linter: Basic frontmatter schema validation only
@@ -57,7 +57,7 @@ Available markers:
 **A:** Critical references:
 - `docs/project/GREPABLE.md` - Marker system guide
 - `docs/project/LANGUAGE.md` - Terminology specifications
-- `docs/project/plans/PLAN-mixdown-v0.md` - Implementation requirements
+- `docs/project/plans/PLAN-rulesets-v0.md` - Implementation requirements
 - `AGENTS.md` - AI agent conventions
 
 ### Q: How should I handle errors?
@@ -70,7 +70,7 @@ Available markers:
 ## Project Terminology
 
 ### Q: What are "source rules"?
-**A:** Markdown files with Mixdown notation (`.mix.md` extension) that get compiled into destination-specific rules files.
+**A:** Markdown files with Rulesets notation (`.mix.md` extension) that get compiled into destination-specific rules files.
 
 ### Q: What are "compiled rules"?
 **A:** The output files generated for specific destinations (e.g., `.cursor/rules.mdc`, `CLAUDE.md`).

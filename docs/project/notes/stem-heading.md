@@ -9,7 +9,7 @@ Handle hierarchical relationships automatically
 
 ```yaml
 ---
-mixdown:
+rulesets:
   heading:
     level:
       min: 2             # Minimum heading level to start at (default: 2)
@@ -31,7 +31,7 @@ Use code with caution.
 5. Numbering Configuration
 Control numbering globally or per-Source-Rules-file:
 
-mixdown:
+rulesets:
   stem:
     numbering:
       heading: "before"      # before, after, or none
@@ -176,7 +176,7 @@ In frontmatter or config file:
 
 ```yaml
 ---
-mixdown:
+rulesets:
   heading:
     level:
       min: 2      # Minimum heading level to start at (default: 2)
@@ -285,7 +285,7 @@ Third inner section with shorthand heading notation
 
 ```yaml
 ---
-mixdown:
+rulesets:
   heading:
     level:
       min: 2             # Minimum heading level to start at (default: 2)
@@ -467,7 +467,7 @@ This renders as "Subsection 1.1.1"
 Control numbering globally or per-mix:
 
 ```yaml
-mixdown:
+rulesets:
   stem:
     numbering:
       heading: "before"      # before, after, or none

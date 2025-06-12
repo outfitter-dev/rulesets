@@ -262,7 +262,7 @@ flowchart TD
 This is a CommonMark-compliant rules compiler that converts Markdown to tool-specific rules files.
 
 # Key Terminology
-- **Source rules**: Source files in Markdown format, written in Mixdown Notation.
+- **Source rules**: Source files in Markdown format, written in Rulesets Notation.
 - **Destination**: A supported tool (e.g., Cursor, Claude Code) for which Compiled Rules are generated.
 - **Stem**: Delimited content blocks (e.g., `{{instructions}}...{{/instructions}}`) with optional properties.
 
@@ -694,11 +694,11 @@ GitHub Profile → Custom Instructions       # Personal rules (set via GitHub UI
 
 ## Managing Rules Across Tools
 
-Instead of maintaining separate rule files for each AI tool, consider using Mixdown to write rules once and compile to tool-specific outputs.
+Instead of maintaining separate rule files for each AI tool, consider using Rulesets to write rules once and compile to tool-specific outputs.
 
 ```mermaid
 flowchart LR
-    A[Source Rules File] --> B[Mixdown Compiler]
+    A[Source Rules File] --> B[Rulesets Compiler]
     B --> C[CLAUDE.md]
     B --> D[.cursor/rules/*.mdc]
     B --> E[.windsurf/rules/]
@@ -752,7 +752,7 @@ graph TB
 4. Token and character limits vary by tool but all emphasize conciseness
 5. Three main activation patterns exist: always-on, pattern-based, and model-decision
 6. Several tools provide file referencing mechanisms to modularize rule content
-7. Consider tools like Mixdown to manage rules across multiple AI assistants
+7. Consider tools like Rulesets to manage rules across multiple AI assistants
 8. Update rules as your project evolves to keep AI assistance relevant
 9. Most recent tools include UI integrations for easier rule management
 10. Versioning your rules files is important for team consistency

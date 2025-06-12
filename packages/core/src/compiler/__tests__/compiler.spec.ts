@@ -8,7 +8,7 @@ describe('compiler', () => {
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+rulesets: v0
 title: Test Rules
 description: Test description
 destinations:
@@ -21,7 +21,7 @@ destinations:
 
 This is the body with {{stems}} and {{$variables}}.`,
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
             title: 'Test Rules',
             description: 'Test description',
             destinations: {
@@ -96,7 +96,7 @@ This is the body with {{stems}} and {{$variables}}.`,
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+rulesets: v0
 destinations:
   cursor:
     outputPath: ".cursor/rules/test.mdc"
@@ -105,7 +105,7 @@ destinations:
 
 # Content`,
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
             destinations: {
               cursor: {
                 outputPath: '.cursor/rules/test.mdc',
@@ -141,10 +141,10 @@ destinations:
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+rulesets: v0
 ---`,
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
           },
         },
         ast: {
@@ -164,7 +164,7 @@ mixdown: v0
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+rulesets: v0
 ---
 
 {{instructions}}
@@ -175,7 +175,7 @@ Do not modify these markers in v0.
 
 The value is {{$myVariable}}.`,
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
           },
         },
         ast: {
@@ -198,7 +198,7 @@ The value is {{$myVariable}}.`,
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+rulesets: v0
 destinations:
   cursor:
     path: "/test"
@@ -207,7 +207,7 @@ destinations:
 
 # Content`,
           frontmatter: {
-            mixdown: 'v0',
+            rulesets: 'v0',
             destinations: {
               cursor: { path: '/test' },
               windsurf: {},
@@ -250,7 +250,7 @@ describe('additional edge cases', () => {
   });
 
   it('should fill undefined metadata fields when front-matter keys are absent', () => {
-    const doc = makeDoc(`# Content without title/description`, { mixdown: 'v0' });
+    const doc = makeDoc(`# Content without title/description`, { rulesets: 'v0' });
     const { output } = compile(doc, 'windsurf');
     expect(output.metadata).toEqual(
       expect.objectContaining({
@@ -264,7 +264,7 @@ describe('additional edge cases', () => {
   it('should let destination config override project config on key conflict', () => {
     const doc = makeDoc(
       `---
-mixdown: v0
+rulesets: v0
 destinations:
   cursor:
     path: "/dest"
@@ -272,7 +272,7 @@ destinations:
 ---
 # body`,
       {
-        mixdown: 'v0',
+        rulesets: 'v0',
         destinations: { cursor: { path: '/dest', priority: 'low' } },
       },
     );
@@ -283,12 +283,12 @@ destinations:
     );
   });
 
-  it('should still return output for unsupported mixdown version', () => {
+  it('should still return output for unsupported rulesets version', () => {
     const doc = makeDoc(`---
-mixdown: v99
+rulesets: v99
 ---
 {{marker}}
-`, { mixdown: 'v99' });
+`, { rulesets: 'v99' });
     const result = compile(doc, 'cursor');
     expect(result.output.content).toContain('{{marker}}');
   });

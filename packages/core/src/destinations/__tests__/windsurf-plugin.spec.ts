@@ -1,4 +1,4 @@
-// TLDR: Unit tests for the Windsurf destination plugin (mixd-v0)
+// TLDR: Unit tests for the Windsurf destination plugin (rulesets-v0)
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
@@ -55,8 +55,8 @@ describe('WindsurfPlugin', () => {
   describe('write', () => {
     const mockCompiledDoc: CompiledDoc = {
       source: {
-        content: '---\nmixdown: v0\n---\n\n# Test Content',
-        frontmatter: { mixdown: 'v0' },
+        content: '---\nrulesets: v0\n---\n\n# Test Content',
+        frontmatter: { rulesets: 'v0' },
       },
       ast: {
         stems: [],
