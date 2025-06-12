@@ -8,9 +8,9 @@ describe('linter', () => {
     it('should pass a valid document with complete frontmatter', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nrulesets: { version: "0.1.0" }\ntitle: Test\ndescription: Test description\n---\n\n# Content',
+          content: '---\nruleset: { version: "0.1.0" }\ntitle: Test\ndescription: Test description\n---\n\n# Content',
           frontmatter: {
-            rulesets: { version: '0.1.0' },
+            ruleset: { version: '0.1.0' },
             title: 'Test',
             description: 'Test description',
           },
@@ -71,9 +71,9 @@ describe('linter', () => {
     it('should error when rulesets field is invalid', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nrulesets: 123\n---\n\n# Content',
+          content: '---\nruleset: 123\n---\n\n# Content',
           frontmatter: {
-            rulesets: 123,
+            ruleset: 123,
           },
         },
         ast: {
@@ -93,9 +93,9 @@ describe('linter', () => {
     it('should validate destinations structure', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nrulesets: { version: "0.1.0" }\ndestinations: ["cursor", "windsurf"]\n---\n\n# Content',
+          content: '---\nruleset: { version: "0.1.0" }\ndestinations: ["cursor", "windsurf"]\n---\n\n# Content',
           frontmatter: {
-            rulesets: { version: '0.1.0' },
+            ruleset: { version: '0.1.0' },
             destinations: ['cursor', 'windsurf'],
           },
         },
@@ -116,9 +116,9 @@ describe('linter', () => {
     it('should warn about unknown destinations when configured', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nrulesets: { version: "0.1.0" }\ndestinations:\n  unknown-dest:\n    path: "/test"\n---\n\n# Content',
+          content: '---\nruleset: { version: "0.1.0" }\ndestinations:\n  unknown-dest:\n    path: "/test"\n---\n\n# Content',
           frontmatter: {
-            rulesets: { version: '0.1.0' },
+            ruleset: { version: '0.1.0' },
             destinations: {
               'unknown-dest': { path: '/test' },
             },
@@ -144,9 +144,9 @@ describe('linter', () => {
     it('should provide info suggestions for missing title and description', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nrulesets: { version: "0.1.0" }\n---\n\n# Content',
+          content: '---\nruleset: { version: "0.1.0" }\n---\n\n# Content',
           frontmatter: {
-            rulesets: { version: '0.1.0' },
+            ruleset: { version: '0.1.0' },
           },
         },
         ast: {

@@ -115,7 +115,7 @@ yarn add @rulesets/core
 
 ```markdown
 ---
-rulesets: { version: "0.1.0" }
+ruleset: { version: "0.1.0" }
 title: My Coding Standards
 description: Rules for AI coding assistants
 destinations:

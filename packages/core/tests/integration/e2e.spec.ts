@@ -31,7 +31,7 @@ describe('E2E Integration Tests', () => {
 
   describe('runRulesetsV0', () => {
     const sampleContent = `---
-rulesets: { version: "0.1.0" }
+ruleset: { version: "0.1.0" }
 title: Integration Test Rules
 description: Testing the full pipeline
 destinations:
@@ -132,7 +132,7 @@ title: Missing rulesets version
 
     it('should process only specified destinations', async () => {
       const contentWithOneDestination = `---
-rulesets: { version: "0.1.0" }
+ruleset: { version: "0.1.0" }
 title: Single Destination
 destinations:
   cursor:
@@ -170,7 +170,7 @@ destinations:
 
     it('should preserve Rulesets markers in output', async () => {
       const contentWithMarkers = `---
-rulesets: { version: "0.1.0" }
+ruleset: { version: "0.1.0" }
 title: Markers Test
 ---
 
@@ -202,7 +202,7 @@ Variable: {{$myVar}}`;
 
     it('should use default paths when not specified', async () => {
       const minimalContent = `---
-rulesets: { version: "0.1.0" }
+ruleset: { version: "0.1.0" }
 ---
 
 # Content`;

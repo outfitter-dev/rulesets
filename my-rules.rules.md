@@ -1,5 +1,5 @@
 ---
-rulesets: { version: "0.1.0" }
+ruleset: { version: "0.1.0" }
 title: My First Rulesets Rule
 description: A simple rule for testing Rulesets v0.1.0.
 destinations:
@@ -12,4 +12,4 @@ destinations:
 ## Main content
 
 This is a paragraph of the rule. In v0, this content will be passed through as-is.
-`{{stems}}`, `{{$variables}}`, and `{{>imports}}` will be ignored by the v0 parser and compiler.
+`{{blocks}}`, `{{$variables}}`, and `{{>imports}}` will be ignored by the v0 parser and compiler.
