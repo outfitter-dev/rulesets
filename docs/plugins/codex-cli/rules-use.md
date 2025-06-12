@@ -121,7 +121,7 @@ The `.codex/` directory in your working directory can act as a shared workspace 
 | Primary docs | OpenAI Codex CLI documentation website |
 | Instructions specification | Updated in v1.2 (May 2025) |
 
-## Mixdown Integration
+## Rulesets Integration
 
 > [!NOTE]
-> 🚧 Pending Mixdown integration
+> 🚧 Pending Rulesets integration

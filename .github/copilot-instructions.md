@@ -75,7 +75,7 @@ We're implementing **Mixdown v0** with these limitations:
 - Linter validates basic frontmatter schema
 - Architecture designed for easy v0.1+ enhancement
 
-Reference `docs/project/plans/PLAN-mixdown-v0.md` for complete implementation details.
+Reference `docs/project/plans/PLAN-rulesets-v0.md` for complete implementation details.
 
 ## Development Workflow
 
@@ -111,6 +111,6 @@ pnpm turbo build   # Build all packages
 - `CLAUDE.md` - Project-specific concepts and workflows  
 - `docs/project/GREPABLE.md` - Master navigation guide
 - `docs/project/LANGUAGE.md` - Terminology specification
-- `docs/project/plans/PLAN-mixdown-v0.md` - Current implementation plan
+- `docs/project/plans/PLAN-rulesets-v0.md` - Current implementation plan
 
 Remember: Use grep first, browse files second. The marker system is designed to make code discovery fast and precise.

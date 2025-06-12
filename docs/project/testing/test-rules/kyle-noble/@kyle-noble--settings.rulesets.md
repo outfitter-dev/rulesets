@@ -1,5 +1,5 @@
 ---
-mixdown:
+rulesets:
   version: 0.1.0
 author:
   name: Kyle Noble

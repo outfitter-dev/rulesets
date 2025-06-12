@@ -1,12 +1,12 @@
-# Mixdown Project Language Specification
+# Rulesets Project Language Specification
 
-This document provides terminology guidance for consistent language in Mixdown documentation, code, and community communication. See the [changelog](#changelog) for recent updates to the terminology.
+This document provides terminology guidance for consistent language in Rulesets documentation, code, and community communication. See the [changelog](#changelog) for recent updates to the terminology.
 
 ## Key Terminology
 
 | Term | Definition | Usage Examples |
 |------|------------|----------------|
-| **Source rules** | Source files defining rules for AI assistants, written in Mixdown Notation | "Write your code standards in a source rules file." |
+| **Source rules** | Source files defining rules for AI assistants, written in Rulesets Notation | "Write your code standards in a source rules file." |
 | **Compiled rules** | Rules files generated from source rules for each destination | "Compile your source rules into compiled rules for each destination." |
 | **Destination** | A supported tool (e.g., Cursor, Claude Code) | "Each destination has specific formatting requirements." |
 | **Marker** | Element using `{{...}}` notation | "Use markers to direct the compiler." |
@@ -18,7 +18,7 @@ This document provides terminology guidance for consistent language in Mixdown d
 | **Variable** | Dynamic values replaced during compilation | "Use variables to include dynamic data." |
 | **System Variable** | Built-in variables provided by the compiler | "The `$destination` system variable contains the current destination ID." |
 | **Variable Substitution** | The process of replacing variables with their values | "Variable substitution happens automatically during compilation." |
-| **Mixin** | Reusable components stored in `.mixdown/src/_mixins` | "Import commonly used components as mixins." |
+| **Mixin** | Reusable components stored in `.rulesets/src/_mixins` | "Import commonly used components as mixins." |
 | **Property** | A configuration applied to stems or imports | "Apply the tag-omit property to remove XML tags in compiled rules." |
 | **Scope** | A destination-specific context for properties | "Use destination:property to apply properties in a specific scope." |
 | **Scoped Value** | A property value that applies only to specific destinations | "The destination:code-javascript is a destination-scoped value." |
@@ -77,14 +77,14 @@ This document provides terminology guidance for consistent language in Mixdown d
 - ✅ "Property value" (for values in parentheses like `name-("destination-rules")`)
 - ❌ "Property settings" (use "property values" instead)
 - ❌ "Destination-specific properties" (use "destination-scoped properties" instead)
-- ❌ "Attribute" (use "property" for Mixdown directives, "XML attribute" for compiled rules)
+- ❌ "Attribute" (use "property" for Rulesets directives, "XML attribute" for compiled rules)
 
 #### XML Generation
 
 - ✅ "Converted to XML tags"
 - ✅ "Translated to XML"
 - ✅ "Compiled as XML notation"
-- ✅ "Mixdown compiles rules into pure Markdown, XML, or a combination of the two"
+- ✅ "Rulesets compiles rules into pure Markdown, XML, or a combination of the two"
 - ❌ "Renders as XML" (outdated)
 - ❌ "Outputs XML notation" (outdated)
 - ❌ "The compiler generates XML" (myopic, as XML is just one potential output format)
@@ -95,22 +95,22 @@ This document provides terminology guidance for consistent language in Mixdown d
 |-------------|-------------------|---------|
 | Source Rules files | `kebab-case.mix.md` | `coding-standards.mix.md` |
 | Directory | `kebab-case` | `_mixins` |
-| Config files | `kebab-case.config.json` | `mixdown.config.json` |
+| Config files | `kebab-case.config.json` | `rulesets.config.json` |
 | Stem markers | `kebab-case` | `{{user-instructions}}` |
 | XML Tags in compiled rules | `snake_case` | `<user_instructions>` |
 
 ### Distribution Directory Structure
 
-The `.mixdown/dist/` directory stores compiled rules, compilation artifacts, and related data:
+The `.rulesets/dist/` directory stores compiled rules, compilation artifacts, and related data:
 
 | Path | Purpose |
 |------|---------|
-| `.mixdown/dist/latest/` | Symlink to the latest compilation |
-| `.mixdown/dist/runs/` | Directory for all compilations and their artifacts |
-| `.mixdown/dist/runs/run-<timestamp>/` | Directory containing specific compiled rules and artifacts |
-| `.mixdown/dist/runs/run-<timestamp>.json` | Compilation metadata for each run |
-| `.mixdown/dist/logs/` | Log files for all compilations |
-| `.mixdown/dist/logs/run-<timestamp>.log` | Compilation log for each run |
+| `.rulesets/dist/latest/` | Symlink to the latest compilation |
+| `.rulesets/dist/runs/` | Directory for all compilations and their artifacts |
+| `.rulesets/dist/runs/run-<timestamp>/` | Directory containing specific compiled rules and artifacts |
+| `.rulesets/dist/runs/run-<timestamp>.json` | Compilation metadata for each run |
+| `.rulesets/dist/logs/` | Log files for all compilations |
+| `.rulesets/dist/logs/run-<timestamp>.log` | Compilation log for each run |
 
 ### Destination Directories
 
@@ -122,7 +122,7 @@ The `.mixdown/dist/` directory stores compiled rules, compilation artifacts, and
 
 ## Delimiter Usage
 
-Mixdown uses specific delimiters consistently throughout the syntax:
+Rulesets uses specific delimiters consistently throughout the syntax:
 
 | Delimiter | Role | Example | Purpose |
 |-----------|------|---------|---------|
@@ -157,9 +157,9 @@ Mixdown uses specific delimiters consistently throughout the syntax:
 
 When referring to compilation versions:
 
-- Full version format: "Mixdown v0.1.0"
-- Major version format: "Mixdown v0"
-- Release candidate format: "Mixdown v0.1.0-rc1"
+- Full version format: "Rulesets v0.1.0"
+- Major version format: "Rulesets v0"
+- Release candidate format: "Rulesets v0.1.0-rc1"
 
 ## Terminology Best Practices
 
@@ -193,4 +193,4 @@ When referring to compilation versions:
 
 ---
 
-*This language spec is a living styleguide document and will evolve with Mixdown's development.*
+*This language spec is a living styleguide document and will evolve with Rulesets's development.*

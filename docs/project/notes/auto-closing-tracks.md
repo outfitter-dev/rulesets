@@ -2,11 +2,11 @@
 
 ## Overview
 
-This document outlines a proposal for implementing "auto-closing stems" in Mixdown. Auto-closing stems would allow users to write sequential stem markers without explicitly closing previous ones. The compiler would automatically close stems in the appropriate order.
+This document outlines a proposal for implementing "auto-closing stems" in Rulesets. Auto-closing stems would allow users to write sequential stem markers without explicitly closing previous ones. The compiler would automatically close stems in the appropriate order.
 
 ## Core Concept
 
-In traditional XML and Mixdown's current implementation, explicit closing tags are required. With auto-closing stems, users could write:
+In traditional XML and Rulesets' current implementation, explicit closing tags are required. With auto-closing stems, users could write:
 
 ```markdown
 {{stem-1}}

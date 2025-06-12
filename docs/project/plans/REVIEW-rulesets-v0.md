@@ -44,7 +44,7 @@ The following end-to-end scenarios must be manually tested and verified:
     - Linter should report errors detailing the schema violations or syntax issues.
     - Compilation might be skipped or proceed with warnings, depending on error severity. No output files should be generated if critical linting errors occur.
 - [ ] **Test 4: Invocation of Destination Plugins**
-  - **Action**: Use a valid `my-rules.mix.md` (as defined in `PLAN-mixdown-v0.md`).
+  - **Action**: Use a valid `my-rules.mix.md` (as defined in `PLAN-rulesets-v0.md`).
   - **Command**: Execute the main Mixdown v0 script/function.
   - **Expected Result**:
     - Logs or other indicators (e.g., mock file writes) confirm that both `CursorPlugin.write()` and `WindsurfPlugin.write()` were called with the correct `CompiledDoc.output.content` and `destPath`.
@@ -68,7 +68,7 @@ The following end-to-end scenarios must be manually tested and verified:
 - [x] **Review Documentation Completeness**:
   - `README.md` (root and `packages/core`) are informative and cover v0 scope. ✓
   - All public interfaces and functions have TSDoc comments. ✓
-  - `PLAN-mixdown-v0.md` is accurate and complete. ✓
+  - `PLAN-rulesets-v0.md` is accurate and complete. ✓
 - [x] **Validate API Design Against Requirements**:
   - `CompiledDoc` interface matches the agreed-upon structure. ✓
   - `DestinationPlugin` interface matches the agreed-upon contract. ✓

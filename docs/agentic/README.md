@@ -210,7 +210,7 @@ interface ParsedDoc {
 ### Project Context
 - `docs/project/GREPABLE.md` - Marker system and navigation
 - `docs/project/LANGUAGE.md` - Terminology specifications  
-- `docs/project/plans/PLAN-mixdown-v0.md` - Current implementation plan
+- `docs/project/plans/PLAN-rulesets-v0.md` - Current implementation plan
 
 ### Development Standards
 - `CLAUDE.md` - Project concepts and workflow

@@ -208,12 +208,12 @@ While v0 will not process Mixdown notation markers (`{{...}}`) within the conten
   - Describe the Mixdown project, its goals, and the monorepo structure.
   - **Acceptance Criteria**: Root `README.md` is created.
   - **Dependencies**: None.
-- [ ] **Task 3: Prepare `PLAN-mixdown-v0.md` (this document)**
+- [ ] **Task 3: Prepare `PLAN-rulesets-v0.md` (this document)**
   - Ensure it's up-to-date and accurately reflects all tasks.
-  - Place it in `docs/project/plans/PLAN-mixdown-v0.md`.
+  - Place it in `docs/project/plans/PLAN-rulesets-v0.md`.
   - **Acceptance Criteria**: Planning document is finalized.
   - **Dependencies**: All previous tasks.
-- [ ] **Task 4: Prepare `docs/project/plans/REVIEW-mixdown-v0.md`**
+- [ ] **Task 4: Prepare `docs/project/plans/REVIEW-rulesets-v0.md`**
   - Create the review document as specified in the prompt.
   - **Acceptance Criteria**: Review document is created.
   - **Dependencies**: None.
@@ -266,7 +266,7 @@ mixdown/
 ├─ docs/
 │  ├─ project/
 │  │  ├─ plans/
-│  │  │  └─ PLAN-mixdown-v0.md
+│  │  │  └─ PLAN-rulesets-v0.md
 │  │  └─ testing/
 │  │     └─ v0-implementation-review.md
 │  └─ ... (other existing docs)
@@ -913,7 +913,7 @@ export async function runMixdownV0(
 
 ### For the Human
 
-1. **Review `PLAN-mixdown-v0.md`**: Please review this entire document for accuracy, completeness, and clarity.
+1. **Review `PLAN-rulesets-v0.md`**: Please review this entire document for accuracy, completeness, and clarity.
 2. **Confirm Scope**: Confirm that the v0 scope (especially the pass-through nature of the compiler for the body content and frontmatter-only linter) is correctly captured.
 3. **Provide `JSONSchema7` type**: If a specific npm package is preferred for `JSONSchema7` type definition, please specify. Otherwise, I'll assume `json-schema` or a similar widely-used package.
 4. **Clarify Initial `LinterConfig`**: For `packages/core/src/linter/index.ts`, what basic `LinterConfig` structure should be anticipated, if any, beyond just the `ParsedDoc` for v0? For now, I've assumed it might be optional or minimal.

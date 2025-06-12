@@ -1,4 +1,4 @@
-# Effective Prompts for Jules Working on Mixdown
+# Effective Prompts for Jules Working on Rulesets
 
 ## Core Implementation Tasks
 
@@ -24,7 +24,7 @@ Requirements:
 - Transform ParsedDoc to CompiledDoc without processing markers
 - Raw body content goes to output.content unchanged
 - Mark as: "Pass-through compiler implementation (mixd-v0)"
-- Add TODO: "TODO (mixd-v0.1): Process Mixdown notation markers"
+- Add TODO: "TODO (mixd-v0.1): Process Rulesets notation markers"
 - Follow interface definitions in interfaces/compiled-doc.ts
 - Add unit tests verifying pass-through behavior
 ```
@@ -35,7 +35,7 @@ Implement basic frontmatter validation in packages/core/src/linter/index.ts
 
 Requirements:
 - Validate ParsedDoc frontmatter against basic schema
-- Check for required 'mixdown' key in frontmatter
+- Check for required 'rulesets' key in frontmatter
 - Return LintResult array with any validation errors
 - Comment as: "Basic frontmatter schema validation (mixd-v0)"
 - Add TODO: "TODO (mixd-v0.1): Add content body linting"
@@ -112,11 +112,11 @@ Requirements:
 
 ```
 Context for all tasks:
-- This is Mixdown v0 implementation in TypeScript monorepo
+- This is Rulesets v0 implementation in TypeScript monorepo
 - Use pnpm/Turborepo for package management and building
 - Follow grepable marker system from docs/project/GREPABLE.md
 - Use terminology from docs/project/LANGUAGE.md consistently
-- Reference implementation plan in docs/project/plans/PLAN-mixdown-v0.md
+- Reference implementation plan in docs/project/plans/PLAN-rulesets-v0.md
 - All code must include TLDR comments with (mixd-v0) markers
 - Add TODO (mixd-v0.1) markers for future enhancements
 - Follow SOLID principles and include descriptive comments

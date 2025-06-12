@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the plan for implementing the `.mix.md` file extension for Mixdown source rules files. This extension will improve discoverability, enable better search capabilities, and support IDE integration.
+This document outlines the plan for implementing the `.mix.md` file extension for Rulesets source rules files. This extension will improve discoverability, enable better search capabilities, and support IDE integration.
 
 ## Implementation Proposal
 
@@ -44,7 +44,7 @@ export interface SourceRulesFile {
 }
 
 // In compiler.ts
-class MixdownCompiler {
+class RulesetsCompiler {
   constructor(config: CompilerConfig) {
     this.config = {
       ...config,
@@ -69,27 +69,21 @@ class MixdownCompiler {
 ## Benefits
 
 1. **Discoverability**
-   - The `.mix.md` extension makes it clear these files are Mixdown source rules
+   - The `.mix.md` extension makes it clear these files are Rulesets source rules
    - Better distinction from regular Markdown files
 
 2. **IDE and Tooling Support**
-   - Enables IDE plugins to recognize Mixdown files specifically
+   - Enables IDE plugins to recognize Rulesets files specifically
    - Allows for custom syntax highlighting and validation
 
 3. **Search Improvements**
-   - Easier to find all Mixdown files with search tools
+   - Easier to find all Rulesets files with search tools
    - Clearer distinction in search results
 
 4. **Documentation**
    - Clearer documentation by referring to a specific extension
    - Easier to understand file patterns in project structure
 
-## Migration Strategy
-
-For existing projects:
-- Continue supporting `.md` for backward compatibility
-- Encourage migration to `.mix.md` for new files
-- Provide documentation on the benefits of the `.mix.md` extension
 
 ## Testing Strategy
 

@@ -6,7 +6,7 @@ You are a Staff Software Engineer charged with boot-strapping **Mixdown v0**—a
 
 You will be given all the necessary context to complete your task. If you need additional information, ask the human for clarification.
 
-Your deliverable to the human is a *sequenced planning document* (`docs/project/plans/PLAN-mixdown-v0.md`) that other agents can execute. This document should include a clear implementation checklist with nested tasks for each component of the Mixdown system, along with implementation details organized by specific files and modules.
+Your deliverable to the human is a *sequenced planning document* (`docs/project/plans/PLAN-rulesets-v0.md`) that other agents can execute. This document should include a clear implementation checklist with nested tasks for each component of the Mixdown system, along with implementation details organized by specific files and modules.
 
 ---
 
@@ -14,15 +14,15 @@ Your deliverable to the human is a *sequenced planning document* (`docs/project/
 
 1. **Begin every session by asking *exactly one* clarifying question.**  
    - After the human answers, decide whether you need another.  
-   - Repeat until you are ≥90% confident you can draft or refine `PLAN-mixdown-v0.md`.  
+   - Repeat until you are ≥90% confident you can draft or refine `PLAN-rulesets-v0.md`.  
    - Keep each question succinct, concrete, and scoped to a single decision.
-2. Once answers are sufficient, present or update `PLAN-mixdown-v0.md` **inside a fenced code-block.**
+2. Once answers are sufficient, present or update `PLAN-rulesets-v0.md` **inside a fenced code-block.**
 3. If new unknowns appear while you draft code, *pause* and ask another single question. Never assume.
 4. Proceed by making good judgments based on best practices and modern coding techniques when specific guidance is not provided.
 
 ---
 
-## 2. Architecture & repo scaffold (bake these into `PLAN-mixdown-v0.md`)
+## 2. Architecture & repo scaffold (bake these into `PLAN-rulesets-v0.md`)
 
 ### 2.1 Package layout (pnpm + Turborepo)
 
@@ -93,7 +93,7 @@ export interface DestinationPlugin {
 
 ## 3. Code-quality & process guard-rails
 
-Copy these rules verbatim into `PLAN-mixdown-v0.md` (under **"Engineering Conventions"**):
+Copy these rules verbatim into `PLAN-rulesets-v0.md` (under **"Engineering Conventions"**):
 
 - **No `--no-verify`** when committing.
 - Prefer simple, readable code; smallest reasonable diffs.
@@ -111,7 +111,7 @@ Copy these rules verbatim into `PLAN-mixdown-v0.md` (under **"Engineering Conven
 
 ---
 
-## 4. Starter snippets to include in `PLAN-mixdown-v0.md`
+## 4. Starter snippets to include in `PLAN-rulesets-v0.md`
 
 ### 4.1 Root `package.json`
 
@@ -277,9 +277,9 @@ The following components will need to be implemented for Mixdown v0. This is a r
   - **Windsurf Plugin**: plugin interface implementation, Windsurf-specific transformations
 - **Documentation and Release**: README, API docs, release process configuration
 
-## 8. `PLAN-mixdown-v0.md` Template
+## 8. `PLAN-rulesets-v0.md` Template
 
-When creating the `PLAN-mixdown-v0.md` document, use this structure:
+When creating the `PLAN-rulesets-v0.md` document, use this structure:
 
 ````markdown
 # Mixdown v0 Implementation Plan
