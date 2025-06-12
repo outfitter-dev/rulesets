@@ -61,7 +61,7 @@ describe('CursorPlugin', () => {
         frontmatter: { rulesets: 'v0' },
       },
       ast: {
-        stems: [],
+        blocks: [],
         imports: [],
         variables: [],
         markers: [],

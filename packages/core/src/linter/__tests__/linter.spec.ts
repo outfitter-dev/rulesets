@@ -16,7 +16,7 @@ describe('linter', () => {
           },
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -33,7 +33,7 @@ describe('linter', () => {
           content: '# Content without frontmatter',
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -55,7 +55,7 @@ describe('linter', () => {
           },
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -77,7 +77,7 @@ describe('linter', () => {
           },
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -100,7 +100,7 @@ describe('linter', () => {
           },
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -125,7 +125,7 @@ describe('linter', () => {
           },
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -150,7 +150,7 @@ describe('linter', () => {
           },
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -174,7 +174,7 @@ describe('linter', () => {
           frontmatter: {},
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],

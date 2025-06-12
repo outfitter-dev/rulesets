@@ -12,7 +12,7 @@ import type { ParsedDoc } from '../interfaces';
  */
 // :M: tldr: Parse frontmatter and body from markdown content
 // :M: v0.1.0: Simple YAML frontmatter extraction only
-// :M: todo(v0.2.0): Add support for stem parsing
+// :M: todo(v0.2.0): Add support for block parsing
 // :M: todo(v0.3.0): Add variable substitution
 export async function parse(content: string): Promise<ParsedDoc> {
   const lines = content.split('\n');
@@ -84,7 +84,7 @@ export async function parse(content: string): Promise<ParsedDoc> {
       frontmatter: Object.keys(frontmatter).length > 0 ? frontmatter : undefined,
     },
     ast: {
-      stems: [],      // Empty for v0 - no body processing
+      blocks: [],     // Empty for v0 - no body processing
       imports: [],    // Empty for v0 - no body processing
       variables: [],  // Empty for v0 - no body processing
       markers: [],    // Empty for v0 - no body processing

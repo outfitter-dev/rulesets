@@ -38,7 +38,7 @@ function getFieldName(path: string): string {
  */
 // :M: tldr: Validate frontmatter against basic schema requirements
 // :M: v0.1.0: Validates presence and types of frontmatter fields
-// :M: todo(v0.2.0): Add validation for stem properties
+// :M: todo(v0.2.0): Add validation for block properties
 // :M: todo(v0.3.0): Add validation for variables and imports
 export async function lint(
   parsedDoc: ParsedDoc,
