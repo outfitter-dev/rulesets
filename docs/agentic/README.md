@@ -1,8 +1,8 @@
-# Agentic-Driven Development for Mixdown
+# Agentic-Driven Development for Rulesets
 
 ## Overview
 
-Mixdown is being developed using an **agentic-driven development approach** where AI agents are primary contributors to the codebase. This document tracks our multi-agent strategy, tooling, and best practices for coordinating AI-driven development.
+Rulesets is being developed using an **agentic-driven development approach** where AI agents are primary contributors to the codebase. This document tracks our multi-agent strategy, tooling, and best practices for coordinating AI-driven development.
 
 ## Supported AI Agents
 
