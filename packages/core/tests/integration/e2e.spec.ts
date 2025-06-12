@@ -45,7 +45,7 @@ destinations:
 
 # Test Rules
 
-This is a test document with {{stems}} and {{$variables}} that should pass through.`;
+This is a test document with {{blocks}} and {{$variables}} that should pass through.`;
 
     it('should complete the full pipeline successfully', async () => {
       // Mock file read
@@ -68,7 +68,7 @@ This is a test document with {{stems}} and {{$variables}} that should pass throu
       );
 
       // Verify files were written with correct content
-      const expectedContent = '# Test Rules\n\nThis is a test document with {{stems}} and {{$variables}} that should pass through.';
+      const expectedContent = '# Test Rules\n\nThis is a test document with {{blocks}} and {{$variables}} that should pass through.';
       expect(fs.writeFile).toHaveBeenCalledTimes(2);
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.resolve('.cursor/rules/test.mdc'),

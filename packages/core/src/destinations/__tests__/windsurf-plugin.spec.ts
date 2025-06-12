@@ -55,11 +55,11 @@ describe('WindsurfPlugin', () => {
   describe('write', () => {
     const mockCompiledDoc: CompiledDoc = {
       source: {
-        content: '---\nmixdown: v0\n---\n\n# Test Content',
-        frontmatter: { mixdown: 'v0' },
+        content: '---\nruleset: v0\n---\n\n# Test Content',
+        frontmatter: { ruleset: 'v0' },
       },
       ast: {
-        stems: [],
+        blocks: [],
         imports: [],
         variables: [],
         markers: [],

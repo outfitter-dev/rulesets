@@ -13,7 +13,7 @@ import type { ParsedDoc, CompiledDoc } from '../interfaces';
  */
 // :M: tldr: Compiles parsed document to destination format
 // :M: v0.1.0: Pass-through implementation without transformation
-// :M: todo(v0.2.0): Process stem markers and convert to XML
+// :M: todo(v0.2.0): Process block markers and convert to XML
 // :M: todo(v0.3.0): Process variables and perform substitution
 export function compile(
   parsedDoc: ParsedDoc,
@@ -57,7 +57,7 @@ export function compile(
       frontmatter: source.frontmatter,
     },
     ast: {
-      stems: ast.stems,           // Pass through from parser (empty for v0)
+      blocks: ast.blocks,         // Pass through from parser (empty for v0)
       imports: ast.imports,       // Pass through from parser (empty for v0)
       variables: ast.variables,   // Pass through from parser (empty for v0)
       markers: ast.markers,       // Pass through from parser (empty for v0)
