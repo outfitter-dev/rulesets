@@ -132,7 +132,7 @@ Effective AGENTS.md files use a clear heading structure with concise, actionable
 | Primary docs | OpenAI Codex documentation website |
 | AGENTS specification | Updated in v2.0 (May 2025) |
 
-## Mixdown Integration
+## Rulesets Integration
 
 > [!NOTE]
-> 🚧 Pending Mixdown integration
+> 🚧 Pending Rulesets integration

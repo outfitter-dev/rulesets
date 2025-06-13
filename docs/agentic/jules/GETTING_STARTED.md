@@ -1,8 +1,8 @@
-# Jules Agent - Mixdown Development Context
+# Jules Agent - Rulesets Development Context
 
-## Your Role in Mixdown
+## Your Role in Rulesets
 
-**You are implementing Mixdown v0** - a CommonMark-compliant rules compiler. Focus on the core functionality in `/packages/core/`.
+**You are implementing Rulesets v0** - a CommonMark-compliant rules compiler. Focus on the core functionality in `/packages/core/`.
 
 ## Implementation Scope (mixd-v0)
 

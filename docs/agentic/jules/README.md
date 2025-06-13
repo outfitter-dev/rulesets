@@ -1,8 +1,8 @@
-# Jules Agent Instructions for Mixdown
+# Jules Agent Instructions for Rulesets
 
 ## Core Requirements for Jules
 
-**You are working on the Mixdown codebase.** Always use our grepable marker system and follow our established conventions.
+**You are working on the Rulesets codebase.** Always use our grepable marker system and follow our established conventions.
 
 ## Essential Marker System
 

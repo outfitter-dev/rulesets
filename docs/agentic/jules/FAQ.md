@@ -70,7 +70,7 @@ Available markers:
 ## Project Terminology
 
 ### Q: What are "source rules"?
-**A:** Markdown files with Mixdown notation (`.mix.md` extension) that get compiled into destination-specific rules files.
+**A:** Markdown files with Ruleset syntax (`.ruleset.md` extension) that get compiled into destination-specific rules files.
 
 ### Q: What are "compiled rules"?
 **A:** The output files generated for specific destinations (e.g., `.cursor/rules.mdc`, `CLAUDE.md`).
