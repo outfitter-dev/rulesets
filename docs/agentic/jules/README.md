@@ -25,7 +25,7 @@
 - **Monorepo Structure:** Focus work in `/packages/core/` for v0 implementation
 - **Testing:** Always run `pnpm turbo test && pnpm turbo lint` before completing
 - **Documentation:** Reference `docs/project/GREPABLE.md`, `LANGUAGE.md`, and `AGENTS.md`
-- **Scope:** Follow v0 limitations defined in `docs/project/plans/PLAN-mixdown-v0.md`
+- **Scope:** Follow v0 limitations defined in `docs/project/plans/PLAN-rulesets-v0.md`
 
 ## Code Standards
 

@@ -1,8 +1,8 @@
-# GitHub Copilot Instructions for Mixdown
+# GitHub Copilot Instructions for Rulesets
 
 ## Project Overview
 
-Mixdown is a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files for various AI tools and IDEs. Think of it as Terraform for AI rules: write once, compile for many destinations.
+Rulesets is a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files for various AI tools and IDEs. Think of it as Terraform for AI rules: write once, compile for many destinations.
 
 ## Essential Navigation Strategy
 

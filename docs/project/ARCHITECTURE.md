@@ -51,7 +51,7 @@ rulesets/
 
 - [packages/core/src/parser.ts](placeholder)
 - Responsible for parsing source rules files into an AST (Abstract Syntax Tree)
-- Uses a hybrid approach with specialized nodes for different Mixdown constructs
+- Uses a hybrid approach with specialized nodes for different Rulesets constructs
 - Preserves necessary source positions for error reporting while avoiding excessive metadata
 - Handles Ruleset syntax markers, blocks, imports, and variables
 
@@ -81,7 +81,7 @@ rulesets/
 ### Configuration
 
 - [packages/core/src/config.ts](placeholder)
-- Loads and validates configuration from mixdown.config.json
+- Loads and validates configuration from rulesets.config.json
 - Uses both JSON Schema validation and TypeScript types
 - Manages project-level settings
 - Provides runtime validation for dynamic configurations
@@ -297,7 +297,7 @@ A stub for `ruleset.config.json`:
   }
 }
 ```
-Note: Paths in `sources` (like `sourceRules` and `mixins`) and `dist` are typically relative to the project root directory (i.e., the directory containing the `.mixdown` folder itself).
+Note: Paths in `sources` (like `sourceRules` and `partials`) and `dist` are typically relative to the project root directory (i.e., the directory containing the `.ruleset` folder itself).
 
 ## Extension Points
 

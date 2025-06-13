@@ -20,7 +20,7 @@ The problem is, they all have different formats, behavior, and capabilities, whi
 
 Rulesets is "Terraform for AI rules": declare your ideal rules once, compile for dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative rules—no copy‑paste, no drift, just high‑quality, version-controlled context.
 
-With Rulesets, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single source rules file (`.mix.md`). This source rules file is the "gold master" for your instructions, from which individual compiled rules are created for each destination and sent to the right places.
+With Rulesets, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single source rules file (`.ruleset.md`). This source rules file is the "gold master" for your instructions, from which individual compiled rules are created for each destination and sent to the right places.
 
 The app consists of:
 
@@ -36,7 +36,7 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 ## Core Concepts
 
 **source rules**
-: source rules files, written in 100% previewable Markdown with `.rules.md` extension. Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
+: source rules files, written in 100% previewable Markdown with `.ruleset.md` extension. Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
 
 **compiled rules**
 : Destination-specific compiled files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their destination directories, these are referred to as "tool-ready rules".
@@ -111,7 +111,7 @@ yarn add @rulesets/core
 
 ## Quick Start
 
-### 1. Create a source rules file (`my-rules.rules.md`)
+### 1. Create a source rules file (`my-rules.ruleset.md`)
 
 ```markdown
 ---
@@ -141,7 +141,7 @@ async function main() {
   const logger = new ConsoleLogger();
   
   try {
-    await runRulesetsV0('./my-rules.rules.md', logger);
+    await runRulesetsV0('./my-rules.ruleset.md', logger);
     console.log('Rules compiled successfully!');
   } catch (error) {
     console.error('Error:', error);
@@ -175,9 +175,9 @@ project/
 │   ├── dist/              # Compiled rules output
 │   │   ├── cursor/        # Cursor-specific rules
 │   │   └── windsurf/      # Windsurf-specific rules
-│   └── src/               # Source rules files (*.rules.md, *.md)
+│   └── src/               # Source rules files (*.ruleset.md, *.md)
 │       └── _partials/     # Reusable content modules (future)
-├── my-rules.rules.md      # Your source rules file
+├── my-rules.ruleset.md      # Your source rules file
 └── package.json
 ```
 

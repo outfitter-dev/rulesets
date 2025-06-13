@@ -52,10 +52,10 @@ This is a test document with {{blocks}} and {{$variables}} that should pass thro
       vi.mocked(fs.readFile).mockResolvedValueOnce(sampleContent);
 
       // Run the pipeline
-      await runRulesetsV0('./test.mix.md', mockLogger);
+      await runRulesetsV0('./test.ruleset.md', mockLogger);
 
       // Verify file was read
-      expect(fs.readFile).toHaveBeenCalledWith('./test.mix.md', 'utf-8');
+      expect(fs.readFile).toHaveBeenCalledWith('./test.ruleset.md', 'utf-8');
 
       // Verify directories were created
       expect(fs.mkdir).toHaveBeenCalledWith(
@@ -89,7 +89,7 @@ This is a test document with {{blocks}} and {{$variables}} that should pass thro
       const contentWithoutFrontmatter = '# Just Content\n\nNo frontmatter here.';
       vi.mocked(fs.readFile).mockResolvedValueOnce(contentWithoutFrontmatter);
 
-      await runRulesetsV0('./test.mix.md', mockLogger);
+      await runRulesetsV0('./test.ruleset.md', mockLogger);
 
       // Should still process for all destinations
       expect(fs.writeFile).toHaveBeenCalledTimes(2); // cursor and windsurf
@@ -106,7 +106,7 @@ title: Missing rulesets version
 # Content`;
       vi.mocked(fs.readFile).mockResolvedValueOnce(invalidContent);
 
-      await expect(runRulesetsV0('./test.mix.md', mockLogger)).rejects.toThrow(
+      await expect(runRulesetsV0('./test.ruleset.md', mockLogger)).rejects.toThrow(
         'Linting failed with errors',
       );
 
@@ -120,12 +120,12 @@ title: Missing rulesets version
       const error = new Error('File not found');
       vi.mocked(fs.readFile).mockRejectedValueOnce(error);
 
-      await expect(runRulesetsV0('./nonexistent.mix.md', mockLogger)).rejects.toThrow(
+      await expect(runRulesetsV0('./nonexistent.ruleset.md', mockLogger)).rejects.toThrow(
         'File not found',
       );
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to read source file: ./nonexistent.mix.md',
+        'Failed to read source file: ./nonexistent.ruleset.md',
         error,
       );
     });
@@ -142,7 +142,7 @@ destinations:
 # Single Destination Content`;
       vi.mocked(fs.readFile).mockResolvedValueOnce(contentWithOneDestination);
 
-      await runRulesetsV0('./test.mix.md', mockLogger);
+      await runRulesetsV0('./test.ruleset.md', mockLogger);
 
       // Should only write to cursor, not windsurf
       expect(fs.writeFile).toHaveBeenCalledTimes(1);
@@ -158,7 +158,7 @@ destinations:
       const writeError = new Error('Permission denied');
       vi.mocked(fs.writeFile).mockRejectedValueOnce(writeError);
 
-      await expect(runRulesetsV0('./test.mix.md', mockLogger)).rejects.toThrow(
+      await expect(runRulesetsV0('./test.ruleset.md', mockLogger)).rejects.toThrow(
         'Permission denied',
       );
 
@@ -183,7 +183,7 @@ These are instructions that should be preserved.
 Variable: {{$myVar}}`;
       vi.mocked(fs.readFile).mockResolvedValueOnce(contentWithMarkers);
 
-      await runRulesetsV0('./test.mix.md', mockLogger);
+      await runRulesetsV0('./test.ruleset.md', mockLogger);
 
       const expectedOutput = `{{instructions}}
 These are instructions that should be preserved.
@@ -208,7 +208,7 @@ ruleset: { version: "0.1.0" }
 # Content`;
       vi.mocked(fs.readFile).mockResolvedValueOnce(minimalContent);
 
-      await runRulesetsV0('./test.mix.md', mockLogger);
+      await runRulesetsV0('./test.ruleset.md', mockLogger);
 
       // Should use default paths
       expect(fs.writeFile).toHaveBeenCalledTimes(2);
