@@ -57,7 +57,7 @@ Available markers:
 **A:** Critical references:
 - `docs/project/GREPABLE.md` - Marker system guide
 - `docs/project/LANGUAGE.md` - Terminology specifications
-- `docs/project/plans/PLAN-mixdown-v0.md` - Implementation requirements
+- `docs/project/plans/PLAN-rulesets-v0.md` - Implementation requirements
 - `AGENTS.md` - AI agent conventions
 
 ### Q: How should I handle errors?

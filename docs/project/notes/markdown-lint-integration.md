@@ -2,13 +2,13 @@
 
 ## Overview
 
-This document outlines how Mixdown integrates with markdown linting tools (particularly markdownlint) and provides configuration properties for controlling stylistic elements like line breaks after headings.
+This document outlines how Rulesets integrates with markdown linting tools (particularly markdownlint) and provides configuration properties for controlling stylistic elements like line breaks after headings.
 
 ## Core Concepts
 
-1. **Lint-aware transformations**: Mixdown's output format respects common markdown linting rules
+1. **Lint-aware transformations**: Rulesets' output format respects common markdown linting rules
 2. **User-configurable properties**: Provide user-friendly configuration that maps to underlying lint rules
-3. **Override hierarchy**: Clear precedence for global, per-mix, and per-stem settings
+3. **Override hierarchy**: Clear precedence for global, per-ruleset, and per-block settings
 
 ## Configuration Properties
 
@@ -16,7 +16,7 @@ This document outlines how Mixdown integrates with markdown linting tools (parti
 
 ```yaml
 ---
-mixdown:
+ruleset:
   markdown:
     style:
       heading_blank_lines: "after"   # Properties: "none", "before", "after", "both"
@@ -33,7 +33,7 @@ These user-friendly properties map to underlying markdownlint rules and are appl
 
 ```yaml
 ---
-mixdown:
+ruleset:
   heading:
     line_breaks:
       before: true    # Insert blank line before heading (default: true)
@@ -45,7 +45,7 @@ In context with other settings:
 
 ```yaml
 ---
-mixdown:
+ruleset:
   heading:
     level:
       min: 2
@@ -60,7 +60,7 @@ mixdown:
 ---
 ```
 
-### Global Configuration (mixdown.config.json)
+### Global Configuration (ruleset.config.json)
 
 ```json
 {
@@ -96,11 +96,11 @@ mixdown:
 
 ## Relationship with markdownlint
 
-Mixdown provides a simplified interface to common markdown style concerns, while also allowing direct control over specific markdownlint rules.
+Rulesets provides a simplified interface to common markdown style concerns, while also allowing direct control over specific markdownlint rules.
 
 ### Simplified-to-markdownlint Mapping
 
-| Mixdown Setting | markdownlint Rule |
+| Rulesets Setting | markdownlint Rule |
 |-----------------|-------------------|
 | `heading_blank_lines: "after"` | MD022 (blanks-around-headings) |
 | `list_indentation: 2` | MD007 (ul-indent) |
@@ -110,9 +110,9 @@ Mixdown provides a simplified interface to common markdown style concerns, while
 
 ### Precedence Rules
 
-1. **Stem-level properties**: Properties specified directly in stem notation
-2. **Mix-level properties**: Frontmatter settings for the specific Source Rules file
-3. **Global properties**: Project-wide settings in mixdown.config.json
+1. **Block-level properties**: Properties specified directly in block notation
+2. **Source rules-level properties**: Frontmatter settings for the specific Source Rules file
+3. **Global properties**: Project-wide settings in rulesets.config.json
 4. **Defaults**: Built-in defaults designed to follow common markdown conventions
 
 ## Implementation Considerations
@@ -173,11 +173,11 @@ Renders as:
 
 ## Integration with Existing Linting Workflows
 
-Mixdown aims to produce outputs that work well with existing markdown linting tools. When differences between Mixdown's style choices and a project's linting rules exist, there are three approaches:
+Rulesets aims to produce outputs that work well with existing markdown linting tools. When differences between Rulesets' style choices and a project's linting rules exist, there are three approaches:
 
-1. **Adjust Mixdown settings** to match the project's linting expectations
-2. **Configure markdownlint** to accept Mixdown's output (via .markdownlint.json)
-3. **Override specific rules** in Mixdown's configuration
+1. **Adjust Rulesets settings** to match the project's linting expectations
+2. **Configure markdownlint** to accept Rulesets' output (via .markdownlint.json)
+3. **Override specific rules** in Rulesets' configuration
 
 ## Benefits
 
@@ -188,7 +188,7 @@ Mixdown aims to produce outputs that work well with existing markdown linting to
 
 ## Future Enhancements
 
-1. **Linting rule generation**: Automatically generate .markdownlint.json based on Mixdown settings
+1. **Linting rule generation**: Automatically generate .markdownlint.json based on Rulesets settings
 2. **Style validation**: Test Source Rules files against linting rules before compilation
 3. **Style correction**: Automatically correct style issues during compilation
 4. **Additional style controls**: Expand to cover more markdown formatting concerns

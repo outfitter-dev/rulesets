@@ -27,7 +27,7 @@ export { destinations, CursorPlugin, WindsurfPlugin } from './destinations';
  * async function main() {
  *   const logger = new ConsoleLogger();
  *   try {
- *     await runRulesetsV0('./my-rules.mix.md', logger);
+ *     await runRulesetsV0('./my-rules.ruleset.md', logger);
  *     logger.info('Rulesets v0.1.0 process completed.');
  *   } catch (error) {
  *     logger.error('Rulesets v0.1.0 process failed:', error);
