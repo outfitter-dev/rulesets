@@ -37,7 +37,7 @@ export { destinations, CursorPlugin, WindsurfPlugin } from './destinations';
  * main();
  * ```
  *
- * @param sourceFilePath - The path to the source Rulesets file (e.g., my-rules.mix.md).
+ * @param sourceFilePath - The path to the source Rulesets file (e.g., my-rules.ruleset.md).
  * @param logger - An instance of the Logger interface.
  * @param projectConfig - Optional: The root Rulesets project configuration.
  * @returns A promise that resolves when the process is complete, or rejects on error.
@@ -169,7 +169,7 @@ export async function runRulesetsV0(
 // :M: todo(v0.2.0): Replace with proper CLI using commander or yargs
 if (require.main === module) {
   const logger = new ConsoleLogger();
-  const sourceFile = process.argv[2] || './my-rules.mix.md';
+  const sourceFile = process.argv[2] || './my-rules.ruleset.md';
   
   runRulesetsV0(sourceFile, logger)
     .then(() => {
