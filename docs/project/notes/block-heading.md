@@ -1,55 +1,3 @@
-6. Stem numbering should:
-
-Be configurable at multiple levels (global, Source Rules file, stem)
-Support different formats for headings and tags
-Handle hierarchical relationships automatically
-}
-
-### Source Rule Configuration (frontmatter)
-
-```yaml
----
-mixdown:
-  heading:
-    level:
-      min: 2             # Minimum heading level to start at (default: 2)
-      max: 5             # Maximum heading level (default: 5, capped at 6)
-    case: "title"        # Propertyal: stem name case transformation
-    line_breaks:
-      before: true       # Insert blank line before heading (default: true)
-      after: true        # Insert blank line after heading (default: true)
-  stem:
-    numbering:
-      heading: "before"     # before, after, or none
-      tag: "after"          # before, after, or none
-      children: 3           # max depth for hierarchical numbering
-      separator: "."        # separator between numbers (e.g., 1.[2.3])
----
-content_copy
-download
-Use code with caution.
-5. Numbering Configuration
-Control numbering globally or per-Source-Rules-file:
-
-mixdown:
-  stem:
-    numbering:
-      heading: "before"      # before, after, or none
-      tag: "after"           # before, after, or none
-      children: 3            # max depth for hierarchical numbering
-      separator: "."         # separator between numbers (e.g., 1.[2.3])
-content_copy
-download
-Use code with caution.
-Yaml
-### 2. Numbering Placement Properties
-
-Control where numbering appears in output:
-## Implementation Considerations
-
-1. The processor would need to determine the nesting depth for each stem when rendering.
-2. Configuration merging (global → destination → Source Rules file → stem) would need clear precedence rules.
-3. Heading transformation would need to happen at render time to account for various transformations.
 # Heading-Based Output Format Proposal
 
 ## Overview
@@ -58,25 +6,25 @@ Adding a heading-based output format would allow users to represent nested struc
 
 ## Core Concept
 
-I propose adding a new `heading` output format with optional level specification (defaulting to the stem's nesting level), along with frontmatter/config settings to control minimum/maximum heading levels and text case transformation.
+I propose adding a new `heading` output format with optional level specification (defaulting to the block's nesting level), along with frontmatter/config settings to control minimum/maximum heading levels and text case transformation.
 
 ## Proposed Format Properties
 
-Add the following output value within a stem:
+Add the following output value within a block:
 
 | Value | Description |
 |-------|-------------|
-| `heading` | Render stem as a Markdown heading instead of XML tags |
+| `heading` | Render block as a Markdown heading instead of XML tags |
 | `heading="3"` | Specify exact heading level |
 | `heading="inc"` | Increment heading level by 1 from parent/default level |
 | `heading="dec"` | Decrement heading level by 1 from parent/default level (never below h1) |
-| `heading="same"` | Keep the same heading level as parent/previous stem |
-| `heading="replace"` | Replace the first heading in the content with a stem name heading |
+| `heading="same"` | Keep the same heading level as parent/previous block |
+| `heading="replace"` | Replace the first heading in the content with a block name heading |
 | `h-1` to `h-6` | Shorthand for exact heading levels (h-1, h-2, h-3, h-4, h-5, h-6) |
 | `h-inc` | Shorthand for incrementing heading level |
 | `h-dec` | Shorthand for decrementing heading level |
 | `h-same` | Shorthand for keeping the same heading level |
-| `numbering` | Enable sequential numbering of stems based on position and hierarchy |
+| `numbering` | Enable sequential numbering of blocks based on position and hierarchy |
 | `numbering="heading:before tag:after"` | Control where numbering appears in output formats |
 | `"Example $n"` | Use `$n` variable in quoted strings for automatic sequential numbering |
 
@@ -85,17 +33,17 @@ Add the following output value within a stem:
 ### 1. Basic Heading Format
 
 ```markdown
-{{stem-name heading}}
-This content will be preceded by a heading based on the stem name
-{{/stem-name}}
+{{block-name heading}}
+This content will be preceded by a heading based on the block name
+{{/block-name}}
 ```
 
 This would output:
 
 ```markdown
-## Stem Name
+## Block Name
 
-This content will be preceded by a heading based on the stem name
+This content will be preceded by a heading based on the block name
 ```
 
 ### 2. Explicit Heading Level
@@ -103,39 +51,39 @@ This content will be preceded by a heading based on the stem name
 Users can specify an exact heading level:
 
 ```markdown
-{{stem-name heading="3"}}
+{{block-name heading="3"}}
 This content will use an h3 heading regardless of nesting
-{{/stem-name}}
+{{/block-name}}
 
 <!-- Or using the shorthand notation -->
-{{stem-name h-3}}
+{{block-name h-3}}
 This content will also use an h3 heading
-{{/stem-name}}
+{{/block-name}}
 ```
 
 This would output:
 
 ```markdown
-### Stem Name
+### Block Name
 
 This content will use an h3 heading regardless of nesting
 
-### Stem Name
+### Block Name
 
 This content will also use an h3 heading
 ```
 
-### 3. Nested Stem Heading Calculation
+### 3. Nested Block Heading Calculation
 
-When stems are nested, the heading level would automatically increment based on the nesting depth (unless explicitly overridden):
+When blocks are nested, the heading level would automatically increment based on the nesting depth (unless explicitly overridden):
 
 ```markdown
-{{outer-stem heading}}
+{{outer-block heading}}
 Outer content
 
-{{inner-stem heading}}
+{{inner-block heading}}
 Inner content
-{{/inner-stem}}
+{{/inner-block}}
 
 {{another-inner heading}}
 
@@ -147,17 +95,17 @@ Nesting more content
 
 {{/another-inner}}
 
-{{/outer-stem}}
+{{/outer-block}}
 ```
 
-With the `heading` property applied to all stems, this would output:
+With the `heading` property applied to all blocks, this would output:
 
 ```markdown
-## Outer Stem
+## Outer Block
 
 Outer content
 
-### Inner Stem
+### Inner Block
 
 Inner content
 
@@ -176,12 +124,12 @@ In frontmatter or config file:
 
 ```yaml
 ---
-mixdown:
+ruleset:
   heading:
     level:
       min: 2      # Minimum heading level to start at (default: 2)
       max: 5      # Maximum heading level (default: 5, capped at 6)
-    case: "title" # Optional: stem name case transformation
+    case: "title" # Optional: block name case transformation
     line_breaks:
       before: true # Insert blank line before heading (default: true)
       after: true   # Insert blank line after heading (default: true)
@@ -210,15 +158,15 @@ This shorthand automatically applies heading formatting and makes the opinionate
 
 ### 6. Nested XML to Headings Conversion
 
-When embedded stems use different output formats, maintain proper structure:
+When embedded blocks use different output formats, maintain proper structure:
 
 ```markdown
-{{outer-stem heading}}
+{{outer-block heading}}
 Outer content
 
-{{inner-stem}}
+{{inner-block}}
 Inner content with XML tags
-{{/inner-stem}}
+{{/inner-block}}
 
 {{another-inner h-4}}
 Another inner section with explicit heading level
@@ -228,19 +176,19 @@ Another inner section with explicit heading level
 Third inner section with shorthand heading notation
 {{/third-inner}}
 
-{{/outer-stem}}
+{{/outer-block}}
 ```
 
 Would output:
 
 ```markdown
-## Outer Stem
+## Outer Block
 
 Outer content
 
-<inner_stem>
+<inner_block>
 Inner content with XML tags
-</inner_stem>
+</inner_block>
 
 #### Another Inner
 
@@ -253,11 +201,11 @@ Third inner section with shorthand heading notation
 
 ## Configuration Properties
 
-### Global Configuration (mixdown.config.json)
+### Global Configuration (ruleset.config.json)
 
 ```json
 {
-  "mix": {
+  "ruleset": {
     "heading": {
       "level": {
         "min": 2,
@@ -269,7 +217,7 @@ Third inner section with shorthand heading notation
         "after": true
       }
     },
-    "stem": {
+    "block": {
       "numbering": {
         "heading": "before",
         "tag": "after",
@@ -281,20 +229,20 @@ Third inner section with shorthand heading notation
 }
 ```
 
-### Per-Mix Configuration (frontmatter)
+### Per-Ruleset Configuration (frontmatter)
 
 ```yaml
 ---
-mixdown:
+ruleset:
   heading:
     level:
       min: 2             # Minimum heading level to start at (default: 2)
       max: 5             # Maximum heading level (default: 5, capped at 6)
-    case: "title"        # Propertyal: stem name case transformation
+    case: "title"        # Optional: block name case transformation
     line_breaks:
       before: true       # Insert blank line before heading (default: true)
       after: true        # Insert blank line after heading (default: true)
-  stem:
+  block:
     numbering:
       heading: "before"     # before, after, or none
       tag: "after"          # before, after, or none
@@ -305,12 +253,12 @@ mixdown:
 
 ### Heading Text Case Properties
 
-- `title`: Title Case (`stem-name` → `# Stem Name`)
-- `sentence`: Sentence case (`stem-name` → `# Stem name`)
-- `lower`: lowercase (`stem-name` → `# stem name`)
-- `upper`: UPPERCASE (`stem-name` → `# TRACK NAME`)
-- `kebab`: Original form (`stem-name` → `# stem-name`)
-- `space`: Spaces for hyphens (`stem-name` → `# stem name`)
+- `title`: Title Case (`block-name` → `# Block Name`)
+- `sentence`: Sentence case (`block-name` → `# Block name`)
+- `lower`: lowercase (`block-name` → `# block name`)
+- `upper`: UPPERCASE (`block-name` → `# BLOCK NAME`)
+- `kebab`: Original form (`block-name` → `# block-name`)
+- `space`: Spaces for hyphens (`block-name` → `# block name`)
 
 ## Edge Cases and Handling
 
@@ -318,24 +266,24 @@ mixdown:
    - Heading levels respect `level.min` (default: 2) and `level.max` (default: 5).
    - If nesting would exceed `level.max`, the level is capped.
    - If nesting would exceed h6 (the maximum Markdown heading level), it's capped at h6.
-2. **Heading Content**: If a stem has a `name` property, that would be used for the heading text instead of the stem name.
-3. **Empty Stems**: If a stem has no content, it would still generate a heading, but implementations might choose to handle this differently.
+2. **Heading Content**: If a block has a `name` property, that would be used for the heading text instead of the block name.
+3. **Empty Blocks**: If a block has no content, it would still generate a heading, but implementations might choose to handle this differently.
 4. **Content With Existing Headings**: When using `heading="replace"`, special handling is needed:
 
    ```markdown
-   {{stem-name heading="replace"}}
+   {{block-name heading="replace"}}
    # Existing Heading
 
-   This content has an existing heading that will be replaced with the stem name
-   {{/stem-name}}
+   This content has an existing heading that will be replaced with the block name
+   {{/block-name}}
    ```
 
    Would output:
 
    ```markdown
-   # Stem Name
+   # Block Name
 
-   This content has an existing heading that will be replaced with the stem name
+   This content has an existing heading that will be replaced with the block name
    ```
 
    If there are no headings to replace, a new heading would be added at the beginning.
@@ -343,33 +291,33 @@ mixdown:
 5. **Simple Heading Structure**: Keep headings simple and focused on content structure:
 
    ```markdown
-   {{stem-name output="heading"}}
+   {{block-name output="heading"}}
    Content
-   {{/stem-name}}
+   {{/block-name}}
    ```
 
    Would output:
 
    ```markdown
-   ## Stem Name
+   ## Block Name
    
    Content
    ```
 
 6. **Quoted String Heading Derivation**: When using the simplified `{{"Heading"}}` syntax:
    - XML tag string is derived from heading (e.g., `{{"Getting Started"}}` → `<getting_started>`)
-   - Nesting is automatically stemmed for proper heading levels
+   - Nesting is automatically determined for proper heading levels
    - No XML tags appear in the output
    - Configuration properties like `level` and `case` still apply
    - `#` characters are not supported within quoted titles
 
 ## Sequential Numbering
 
-Sequential numbering allows stems to be automatically numbered based on their position and relationship to other stems. This feature is especially useful for creating structured documents with hierarchical sections.
+Sequential numbering allows blocks to be automatically numbered based on their position and relationship to other blocks. This feature is especially useful for creating structured documents with hierarchical sections.
 
 ### 1. Basic Numbering
 
-To enable numbering on a stem, use the `numbering` property:
+To enable numbering on a block, use the `numbering` property:
 
 ```markdown
 {{chapter numbering}}
@@ -402,7 +350,7 @@ Section content
 
 ### 3. Hierarchical Numbering
 
-Numbering can reflect the hierarchical structure of nested stems:
+Numbering can reflect the hierarchical structure of nested blocks:
 
 ```markdown
 {{chapter numbering}}
@@ -420,7 +368,7 @@ Subsection content (becomes "1.1.1 Subsection")
 
 ### 4. Quoted String Syntax with Numbering
 
-The simplified quoted string syntax also supports numbering. The `$n` variable is replaced inline with a number value based on the stem's position in the parent stem.
+The simplified quoted string syntax also supports numbering. The `$n` variable is replaced inline with a number value based on the block's position in the parent block.
 
 ```markdown
 {{"Example $n"}}
@@ -464,11 +412,11 @@ This renders as "Subsection 1.1.1"
 
 ### 5. Numbering Configuration
 
-Control numbering globally or per-mix:
+Control numbering globally or per-ruleset:
 
 ```yaml
-mixdown:
-  stem:
+ruleset:
+  block:
     numbering:
       heading: "before"      # before, after, or none
       tag: "after"           # before, after, or none
@@ -478,20 +426,20 @@ mixdown:
 
 ## Implementation Considerations
 
-1. The processor would need to stem nesting depth for each stem when rendering.
-2. Configuration merging (global → destination → mix → stem) would need clear precedence rules.
+1. The processor would need to determine nesting depth for each block when rendering.
+2. Configuration merging (global → destination → ruleset → block) would need clear precedence rules.
 3. Heading transformation would need to happen at render time to account for various transformations.
 4. Line break handling should respect both configuration and markdown linting standards:
    - By default, follow markdownlint rule MD022 (blanks-around-headings)
    - Allow overriding through `line_breaks` settings
-   - Provide inline control with stem properties: `heading line_breaks.after=false`
+   - Provide inline control with block properties: `heading line_breaks.after=false`
 5. Quoted string heading syntax should:
-   - Create a derived stem name (e.g., `{{"Getting Started"}}` → `getting-started`)
+   - Create a derived block name (e.g., `{{"Getting Started"}}` → `getting-started`)
    - Automatically apply heading formatting without XML tags
    - Respect heading nesting based on parent-child relationships
    - Provide the simplest way to create documentation
-6. Stem numbering should:
-   - Be configurable at multiple levels (global, mix, stem)
+6. Block numbering should:
+   - Be configurable at multiple levels (global, ruleset, block)
    - Support different formats for headings and tags
    - Handle hierarchical relationships automatically
    - Respect max depth settings to prevent overly complex number strings

@@ -1,41 +1,41 @@
-# Auto-Closing Stems Proposal
+# Auto-Closing Blocks Proposal
 
 ## Overview
 
-This document outlines a proposal for implementing "auto-closing stems" in Mixdown. Auto-closing stems would allow users to write sequential stem markers without explicitly closing previous ones. The compiler would automatically close stems in the appropriate order.
+This document outlines a proposal for implementing "auto-closing blocks" in Rulesets. Auto-closing blocks would allow users to write sequential block markers without explicitly closing previous ones. The compiler would automatically close blocks in the appropriate order.
 
 ## Core Concept
 
-In traditional XML and Mixdown's current implementation, explicit closing tags are required. With auto-closing stems, users could write:
+In traditional XML and Rulesets' current implementation, explicit closing tags are required. With auto-closing blocks, users could write:
 
 ```markdown
-{{stem-1}}
+{{block-1}}
 
-Content for stem 1
+Content for block 1
 
-{{stem-2}}
+{{block-2}}
 
-Content for stem 2
+Content for block 2
 
-{{stem-3}}
+{{block-3}}
 
-Content for stem 3
+Content for block 3
 ```
 
 The output would automatically add closing tags in last-in-first-out (LIFO) order:
 
 ```xml
-<stem_1>
-Content for stem 1
+<block_1>
+Content for block 1
 
-<stem_2>
-Content for stem 2
+<block_2>
+Content for block 2
 
-<stem_3>
-Content for stem 3
-</stem_3>
-</stem_2>
-</stem_1>
+<block_3>
+Content for block 3
+</block_3>
+</block_2>
+</block_1>
 ```
 
 ## Benefits
@@ -47,46 +47,46 @@ Content for stem 3
 
 ## Implementation Details
 
-### 1. Stem Stack Management
+### 1. Block Stack Management
 
-The compiler would maintain a stack of open stems:
+The compiler would maintain a stack of open blocks:
 
-1. When a new `{{stem-name}}` marker is encountered, push it onto the stack
-2. When an explicit closing `{{/stem-name}}` marker is encountered:
-   - Pop the matching stem from the stack
+1. When a new `{{block-name}}` marker is encountered, push it onto the stack
+2. When an explicit closing `{{/block-name}}` marker is encountered:
+   - Pop the matching block from the stack
    - Check that it matches the expected name (error if not)
 3. At the end of the document:
-   - Pop and close all remaining stems in the stack in reverse order
+   - Pop and close all remaining blocks in the stack in reverse order
 
-### 2. Stem Level Inference
+### 2. Block Level Inference
 
-The level/nesting of stems would be determined by their appearance in the document:
+The level/nesting of blocks would be determined by their appearance in the document:
 
 ```markdown
-{{outer-stem}}
+{{outer-block}}
 Outer content
 
-{{inner-stem}}
+{{inner-block}}
 Inner content
 
-{{deeper-stem}}
+{{deeper-block}}
 Deeper content
 ```
 
 Would produce:
 
 ```xml
-<outer_stem>
+<outer_block>
 Outer content
 
-<inner_stem>
+<inner_block>
 Inner content
 
-<deeper_stem>
+<deeper_block>
 Deeper content
-</deeper_stem>
-</inner_stem>
-</outer_stem>
+</deeper_block>
+</inner_block>
+</outer_block>
 ```
 
 ### 3. Mixed Explicit and Auto-Closing
@@ -94,154 +94,154 @@ Deeper content
 Users should be able to mix explicit closing and auto-closing as needed:
 
 ```markdown
-{{stem-1}}
+{{block-1}}
 Content
 
-{{stem-2}}
+{{block-2}}
 More content
-{{/stem-2}}
+{{/block-2}}
 
-{{stem-3}}
+{{block-3}}
 Even more content
 ```
 
 Would produce:
 
 ```xml
-<stem_1>
+<block_1>
 Content
 
-<stem_2>
+<block_2>
 More content
-</stem_2>
+</block_2>
 
-<stem_3>
+<block_3>
 Even more content
-</stem_3>
-</stem_1>
+</block_3>
+</block_1>
 ```
 
 ### 4. End-of-File Behavior
 
-At the end of the file, all open stems would be automatically closed in reverse order:
+At the end of the file, all open blocks would be automatically closed in reverse order:
 
 ```markdown
-{{stem-1}}
+{{block-1}}
 Content 1
 
-{{stem-2}}
+{{block-2}}
 Content 2
 
-{{stem-3}}
+{{block-3}}
 Content 3
 ```
 
 Produces:
 
 ```xml
-<stem_1>
+<block_1>
 Content 1
 
-<stem_2>
+<block_2>
 Content 2
 
-<stem_3>
+<block_3>
 Content 3
-</stem_3>
-</stem_2>
-</stem_1>
+</block_3>
+</block_2>
+</block_1>
 ```
 
-### 5. Heading-Derived Stems
+### 5. Heading-Derived Blocks
 
 This feature would be particularly useful when combined with the heading-based output formats:
 
 ```markdown
-{{stem-1 output="heading"}}
+{{block-1 output="heading"}}
 Content 1
 
-{{stem-2 output="heading"}}
+{{block-2 output="heading"}}
 Content 2
 
-{{stem-3 output="heading"}}
+{{block-3 output="heading"}}
 Content 3
 ```
 
 Would produce:
 
 ```markdown
-## Stem 1
+## Block 1
 
 Content 1
 
-### Stem 2
+### Block 2
 
 Content 2
 
-#### Stem 3
+#### Block 3
 
 Content 3
 ```
 
 ## Considerations and Edge Cases
 
-### 1. Explicit vs. Implicit Stem Closure
+### 1. Explicit vs. Implicit Block Closure
 
-When an explicit closing tag is encountered, the compiler must ensure it matches the expected stem:
+When an explicit closing tag is encountered, the compiler must ensure it matches the expected block:
 
 ```markdown
-{{stem-1}}
+{{block-1}}
 Content 1
 
-{{stem-2}}
+{{block-2}}
 Content 2
-{{/stem-1}} <!-- ERROR: Expected closing stem-2 -->
+{{/block-1}} <!-- ERROR: Expected closing block-2 -->
 ```
 
-This would result in a compilation error because we expected `{{/stem-2}}`.
+This would result in a compilation error because we expected `{{/block-2}}`.
 
 ### 2. Auto-closing at Same Level
 
-Special handling may be needed for stems at the same level:
+Special handling may be needed for blocks at the same level:
 
 ```markdown
-{{stem-1}}
+{{block-1}}
 Content 1
 
-{{stem-2}}
+{{block-2}}
 Content 2
 
-{{stem-3}}
+{{block-3}}
 Content 3
 ```
 
 Properties:
-- Close all previous stems (resulting in sequential stems)
-- Only auto-close stems of the same level (allowing nesting)
+- Close all previous blocks (resulting in sequential blocks)
+- Only auto-close blocks of the same level (allowing nesting)
 
-Recommendation: Stem distinct levels, closing only when necessary to maintain proper nesting.
+Recommendation: Block distinct levels, closing only when necessary to maintain proper nesting.
 
-### 3. Self-Closing Tags vs. Auto-Closing Stems
+### 3. Self-Closing Tags vs. Auto-Closing Blocks
 
 It's important to distinguish between:
 
-- **Self-closing tags**: `{{stem-name/}}` (a single tag with no content)
-- **Auto-closing stems**: `{{stem-1}}...{{stem-2}}...` (stems closed by inference)
+- **Self-closing tags**: `{{block-name/}}` (a single tag with no content)
+- **Auto-closing blocks**: `{{block-1}}...{{block-2}}...` (blocks closed by inference)
 
 ### 4. Property Inheritance
 
-Consider whether properties should be inherited between adjacent auto-closed stems:
+Consider whether properties should be inherited between adjacent auto-closed blocks:
 
 ```markdown
-{{stem-1 property="value"}}
+{{block-1 property="value"}}
 Content 1
 
-{{stem-2}}
+{{block-2}}
 Content 2
 ```
 
 Properties:
-- No inheritance (each stem has its own properties)
+- No inheritance (each block has its own properties)
 - Inherit non-conflicting properties from parent
 - Inherit specifically marked properties
 
@@ -249,29 +249,29 @@ Recommendation: No inheritance by default, with an opt-in inheritance property.
 
 ### 5. Destination Filtering Implications
 
-When stems are filtered out for specific targets, auto-closing needs to maintain proper structure:
+When blocks are filtered out for specific targets, auto-closing needs to maintain proper structure:
 
 ```markdown
-{{stem-1}}
+{{block-1}}
 Content 1
 
-{{stem-2 -cursor}}
+{{block-2 -cursor}}
 Content 2 (excluded for Cursor)
 
-{{stem-3}}
+{{block-3}}
 Content 3
 ```
 
 For Cursor, this would need to produce:
 
 ```xml
-<stem_1>
+<block_1>
 Content 1
 
-<stem_3>
+<block_3>
 Content 3
-</stem_3>
-</stem_1>
+</block_3>
+</block_1>
 ```
 
 ### 6. Indentation and Whitespace
@@ -279,13 +279,13 @@ Content 3
 Consider whether auto-closed sections should adjust indentation to reflect nesting level:
 
 ```markdown
-{{stem-1}}
+{{block-1}}
 Content 1
 
-  {{stem-2}}
+  {{block-2}}
   Content 2
 
-    {{stem-3}}
+    {{block-3}}
     Content 3
 ```
 
@@ -302,13 +302,13 @@ Recommendation: Preserve original indentation to maintain maximum fidelity with 
 An alternative could be to provide a special notation that explicitly indicates auto-closing behavior:
 
 ```markdown
-{{stem-1>}}  <!-- '>' indicates this stem will close when another stem appears -->
+{{block-1>}}  <!-- '>' indicates this block will close when another block appears -->
 Content 1
 
-{{stem-2>}}
+{{block-2>}}
 Content 2
 
-{{stem-3}}
+{{block-3}}
 Content 3
 ```
 
@@ -317,13 +317,13 @@ Content 3
 Explicit level markers could be added:
 
 ```markdown
-{{1:stem-1}}  <!-- Level 1 -->
+{{1:block-1}}  <!-- Level 1 -->
 Content 1
 
-{{2:stem-2}}  <!-- Level 2 -->
+{{2:block-2}}  <!-- Level 2 -->
 Content 2
 
-{{3:stem-3}}  <!-- Level 3 -->
+{{3:block-3}}  <!-- Level 3 -->
 Content 3
 ```
 
@@ -341,64 +341,64 @@ Content 3
 
 ```markdown
 ---
-mixdown:
+ruleset:
   auto-close: true
 ---
 
-{{stem-1}}
-Content for stem 1
+{{block-1}}
+Content for block 1
 
-{{stem-2}}
-Content for stem 2
+{{block-2}}
+Content for block 2
 
-{{stem-3}}
-Content for stem 3
+{{block-3}}
+Content for block 3
 ```
 
 Output:
 
 ```xml
-<stem_1>
-Content for stem 1
+<block_1>
+Content for block 1
 
-<stem_2>
-Content for stem 2
+<block_2>
+Content for block 2
 
-<stem_3>
-Content for stem 3
-</stem_3>
-</stem_2>
-</stem_1>
+<block_3>
+Content for block 3
+</block_3>
+</block_2>
+</block_1>
 ```
 
 ### 2. Mixed Explicit and Auto-Closing
 
 ```markdown
-{{stem-1}}
+{{block-1}}
 Content 1
 
-{{stem-2}}
+{{block-2}}
 Content 2
-{{/stem-2}}
+{{/block-2}}
 
-{{stem-3}}
+{{block-3}}
 Content 3
 ```
 
 Output:
 
 ```xml
-<stem_1>
+<block_1>
 Content 1
 
-<stem_2>
+<block_2>
 Content 2
-</stem_2>
+</block_2>
 
-<stem_3>
+<block_3>
 Content 3
-</stem_3>
-</stem_1>
+</block_3>
+</block_1>
 ```
 
 ### 3. With Heading Output Format
@@ -447,16 +447,16 @@ This is another subsection.
 
 ## Comparison with Self-Closing Tags
 
-Auto-closing stems are different from self-closing tags, which should still be implemented separately:
+Auto-closing blocks are different from self-closing tags, which should still be implemented separately:
 
 1. **Self-closing tags** (`{{tag-name/}}`) represent an empty element with no content or children
-2. **Auto-closing stems** represent the implied closing of a parent tag when a new sibling appears
+2. **Auto-closing blocks** represent the implied closing of a parent tag when a new sibling appears
 
-Both features would be complementary within the Mixdown ecosystem.
+Both features would be complementary within the Rulesets ecosystem.
 
 ## Conclusion
 
-Auto-closing stems would provide a more intuitive and efficient way to author hierarchical content in Mixdown. The implementation would need careful consideration of edge cases, but would result in cleaner source documents with less redundancy.
+Auto-closing blocks would provide a more intuitive and efficient way to author hierarchical content in Rulesets. The implementation would need careful consideration of edge cases, but would result in cleaner source documents with less redundancy.
 
 This feature would be particularly valuable when:
 - Creating deeply nested document structures
