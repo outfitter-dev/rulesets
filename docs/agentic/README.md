@@ -177,16 +177,16 @@ interface ParsedDoc {
 
 ## Current Implementation Status
 
-### Mixdown v0 (Active)
+### Rulesets v0 (Active)
 - **Scope**: Basic parser, pass-through compiler, stub plugins
 - **Primary Agent**: Google Jules for implementation
 - **Supporting Agent**: GitHub Copilot for code assistance
 - **Planning Agent**: Claude Code for architecture
 
 ### Future Versions
-- **v0.1**: Stem parsing and processing
+- **v0.1**: Block parsing and processing
 - **v0.2**: Variable substitution and imports
-- **v1.0**: Complete Mixdown notation support
+- **v1.0**: Complete Ruleset syntax support
 
 ## Troubleshooting
 
