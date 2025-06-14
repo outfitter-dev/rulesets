@@ -45,10 +45,9 @@ export class CursorPlugin implements DestinationPlugin {
     logger.info(`Writing Cursor rules to: ${destPath}`);
 
     // Determine the output path
-    const outputPath = (typeof config.outputPath === 'string' ? config.outputPath : undefined) || destPath;
-    const resolvedPath = path.isAbsolute(outputPath)
-      ? outputPath
-      : path.resolve(outputPath);
+    const outputPath =
+      (typeof config.outputPath === 'string' ? config.outputPath : undefined) || destPath;
+    const resolvedPath = path.isAbsolute(outputPath) ? outputPath : path.resolve(outputPath);
 
     // Ensure directory exists
     const dir = path.dirname(resolvedPath);
@@ -63,7 +62,7 @@ export class CursorPlugin implements DestinationPlugin {
     try {
       await fs.writeFile(resolvedPath, compiled.output.content, { encoding: 'utf8' });
       logger.info(`Successfully wrote Cursor rules to: ${resolvedPath}`);
-      
+
       // Log additional context for debugging
       logger.debug(`Destination: ${compiled.context.destinationId}`);
       logger.debug(`Config: ${JSON.stringify(config)}`);

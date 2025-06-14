@@ -41,7 +41,6 @@ export interface Marker {
   // position: { line: number, column: number }; // To be detailed in v0.1+
 }
 
-
 /**
  * Represents a document that has been parsed by the Rulesets parser.
  * This is an intermediate representation before full compilation.
@@ -52,7 +51,8 @@ export interface ParsedDoc {
     content: string; // Raw source content
     frontmatter?: Record<string, unknown>; // Parsed frontmatter data
   };
-  ast: { // Abstract Syntax Tree - minimal for v0
+  ast: {
+    // Abstract Syntax Tree - minimal for v0
     blocks: Block[];
     imports: Import[];
     variables: Variable[];
@@ -68,9 +68,9 @@ export interface ParsedDoc {
 export interface CompiledDoc {
   /** Original source content and metadata */
   source: {
-    path?: string;          // Original source file path, if applicable
-    content: string;       // Raw source content
-    frontmatter?: Record<string, unknown>;     // Parsed frontmatter data
+    path?: string; // Original source file path, if applicable
+    content: string; // Raw source content
+    frontmatter?: Record<string, unknown>; // Parsed frontmatter data
   };
 
   /**
@@ -80,15 +80,15 @@ export interface CompiledDoc {
    * The primary focus for v0.1.0 body content is that it's not processed for markers.
    */
   ast: {
-    blocks: Block[];         // Array of parsed blocks (empty for v0 body)
-    imports: Import[];     // Array of parsed imports (empty for v0 body)
+    blocks: Block[]; // Array of parsed blocks (empty for v0 body)
+    imports: Import[]; // Array of parsed imports (empty for v0 body)
     variables: Variable[]; // Array of parsed variables (empty for v0 body)
-    markers: Marker[];     // All markers found in the document (empty for v0 body)
+    markers: Marker[]; // All markers found in the document (empty for v0 body)
   };
 
   /** Destination-specific output */
   output: {
-    content: string;       // Transformed content for the destination (raw body for v0)
+    content: string; // Transformed content for the destination (raw body for v0)
     metadata?: Record<string, unknown>; // Any metadata needed by the destination (e.g., derived from frontmatter)
   };
 

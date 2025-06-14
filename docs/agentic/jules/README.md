@@ -7,6 +7,7 @@
 ## Essential Marker System
 
 **Use `mixd-*` markers in all code comments:**
+
 - `mixd-v0` - Current v0 implementation level
 - `mixd-v0.1` - Planned for next version
 - `mixd-sec` - Security-sensitive code
@@ -15,6 +16,7 @@
 - `mixd-test` - Testing-related annotations
 
 **Comment Format:**
+
 ```typescript
 // TLDR: Function purpose and implementation scope (mixd-v0)
 // TODO (mixd-v0.1): Future enhancement description

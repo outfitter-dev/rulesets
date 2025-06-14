@@ -50,6 +50,7 @@ mixd-v{major}.{minor}
 ```
 
 Examples:
+
 - `mixd-v0` - Initial v0 implementation
 - `mixd-v0.1` - Planned for v0.1 release
 - `mixd-v0.2` - Planned for v0.2 release
@@ -220,6 +221,7 @@ grep -r "TODO (mixd-v" . --include="*.ts"
 ### Code Reviews
 
 Reviewers can quickly identify:
+
 - Implementation scope and limitations
 - Future enhancement plans
 - Version-specific concerns
@@ -227,6 +229,7 @@ Reviewers can quickly identify:
 ### Documentation
 
 Version markers help maintain consistency between:
+
 - Code implementation
 - API documentation
 - Planning documents
@@ -234,6 +237,7 @@ Version markers help maintain consistency between:
 ### Release Planning
 
 Project managers can:
+
 - Track implementation progress
 - Plan feature releases
 - Estimate development effort

@@ -3,6 +3,7 @@
 ## Core Implementation Tasks
 
 ### Parser Module
+
 ```
 Implement frontmatter parsing in packages/core/src/parser/index.ts
 
@@ -16,7 +17,8 @@ Requirements:
 - Ensure pnpm turbo test passes
 ```
 
-### Compiler Module  
+### Compiler Module
+
 ```
 Implement pass-through compiler in packages/core/src/compiler/index.ts
 
@@ -30,6 +32,7 @@ Requirements:
 ```
 
 ### Linter Module
+
 ```
 Implement basic frontmatter validation in packages/core/src/linter/index.ts
 
@@ -43,6 +46,7 @@ Requirements:
 ```
 
 ### Destination Plugins
+
 ```
 Create stub destination plugins in packages/core/src/destinations/
 
@@ -58,6 +62,7 @@ Requirements:
 ## Advanced Tasks
 
 ### Integration Testing
+
 ```
 Add end-to-end integration tests in packages/core/tests/integration/
 
@@ -71,6 +76,7 @@ Requirements:
 ```
 
 ### TypeScript Configuration
+
 ```
 Enhance TypeScript configuration for strict type checking
 
@@ -85,6 +91,7 @@ Requirements:
 ## Code Quality Tasks
 
 ### Documentation
+
 ```
 Add comprehensive JSDoc documentation to all public interfaces
 
@@ -97,6 +104,7 @@ Requirements:
 ```
 
 ### Error Handling
+
 ```
 Implement robust error handling throughout the codebase
 

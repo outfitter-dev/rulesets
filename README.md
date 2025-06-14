@@ -27,7 +27,7 @@ The app consists of:
 1. A Node.js app with a compiler (featuring a plugin architecture for different tools), an API, CLI, and Model Context Protocol implementation for managing prompts and instructions.
 2. A CommonMark-compliant markup specification for creating effective and reusable rules, processed by the compiler to generate destination-specific rules files.
 
-Result: *author once, distribute everywhere, zero drift.*
+Result: _author once, distribute everywhere, zero drift._
 
 ## What's with the name?
 
@@ -64,17 +64,17 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 
 ## Supported Destinations
 
-| ID | Tool | Type | Status |
-|----|------|------|--------|
-| `cursor` | [Cursor](https://www.cursor.com/) | IDE | ✅ Supported |
-| `claude-code` | [Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) | CLI | 🟡 In Progress |
-| `roo-code` | [Roo Code](https://roocode.dev/) | VS Code Ext | 🟡 In Progress |
-| `cline` | [Cline](https://cline.dev/) | VS Code Ext | 🟡 In Progress |
-| `aider` | [Aider](https://aider.chat/) | CLI | 🔵 Planned |
-| `openai-codex` | [OpenAI Codex](https://github.com/openai/codex) | CLI | 🔵 Planned |
-| `windsurf` | [Windsurf](https://windsurf.dev/) | IDE | 🟡 In Progress |
+| ID             | Tool                                                                                    | Type        | Status         |
+| -------------- | --------------------------------------------------------------------------------------- | ----------- | -------------- |
+| `cursor`       | [Cursor](https://www.cursor.com/)                                                       | IDE         | ✅ Supported   |
+| `claude-code`  | [Claude Code](https://docs.anthropic.com/en/docs/agents-and-tools/claude-code/overview) | CLI         | 🟡 In Progress |
+| `roo-code`     | [Roo Code](https://roocode.dev/)                                                        | VS Code Ext | 🟡 In Progress |
+| `cline`        | [Cline](https://cline.dev/)                                                             | VS Code Ext | 🟡 In Progress |
+| `aider`        | [Aider](https://aider.chat/)                                                            | CLI         | 🔵 Planned     |
+| `openai-codex` | [OpenAI Codex](https://github.com/openai/codex)                                         | CLI         | 🔵 Planned     |
+| `windsurf`     | [Windsurf](https://windsurf.dev/)                                                       | IDE         | 🟡 In Progress |
 
-*Want a new destination? Implement `toolProvider` and publish `@ruleset/plugin-<your-tool>`. See existing plugin examples and general development guidelines.*
+_Want a new destination? Implement `toolProvider` and publish `@ruleset/plugin-<your-tool>`. See existing plugin examples and general development guidelines._
 
 ## Key Features
 
@@ -115,14 +115,14 @@ yarn add @rulesets/core
 
 ```markdown
 ---
-ruleset: { version: "0.1.0" }
+ruleset: { version: '0.1.0' }
 title: My Coding Standards
 description: Rules for AI coding assistants
 destinations:
   cursor:
-    outputPath: ".cursor/rules/standards.mdc"
+    outputPath: '.cursor/rules/standards.mdc'
   windsurf:
-    outputPath: ".windsurf/rules/standards.md"
+    outputPath: '.windsurf/rules/standards.md'
 ---
 
 # Coding Standards
@@ -139,7 +139,7 @@ import { runRulesetsV0, ConsoleLogger } from '@rulesets/core';
 
 async function main() {
   const logger = new ConsoleLogger();
-  
+
   try {
     await runRulesetsV0('./my-rules.ruleset.md', logger);
     console.log('Rules compiled successfully!');
@@ -152,6 +152,7 @@ main();
 ```
 
 ### 3. Find your compiled rules at:
+
 - `.cursor/rules/standards.mdc` (for Cursor)
 - `.windsurf/rules/standards.md` (for Windsurf)
 
@@ -183,18 +184,18 @@ project/
 
 ## Notation Cheatsheet
 
-| Token / Feature | Example | Notes |
-|-----------------|---------|-------|
-| **Block** | `{{instructions name-("Rules") +cli}}...{{/instructions}}` | Properties control name & export. |
-| **Front-matter** | `---\nname: foo\n---` | YAML at file top. |
-| **Import** | `{{> legal}}` | Embed content from another source rules file. |
-| **Import Block** | `{{> conventions#(block-name)}}` | Embed a specific block. |
-| **Internal Link** | `[Read more](rules.md)` | Standard Markdown links. |
-| **Project File Link** | `@path/to/file.txt` or `@path/to/file.txt("Custom Title")` | Links to project files, optionally with an alias. |
-| **Alias Variable** | `{{$project}}` | Resolved via `aliases` in config. |
-| **Data Variable** | `{{$.key}}` | Injects YAML frontmatter data. |
-| **Destination Variable** | `{{$destination}}` / `{{$destination.id}}` | Injects current destination name/ID. |
-| **Instruction Placeholder** | `[fill this in]` | Marker for LLM to complete. |
+| Token / Feature             | Example                                                    | Notes                                             |
+| --------------------------- | ---------------------------------------------------------- | ------------------------------------------------- |
+| **Block**                   | `{{instructions name-("Rules") +cli}}...{{/instructions}}` | Properties control name & export.                 |
+| **Front-matter**            | `---\nname: foo\n---`                                      | YAML at file top.                                 |
+| **Import**                  | `{{> legal}}`                                              | Embed content from another source rules file.     |
+| **Import Block**            | `{{> conventions#(block-name)}}`                           | Embed a specific block.                           |
+| **Internal Link**           | `[Read more](rules.md)`                                    | Standard Markdown links.                          |
+| **Project File Link**       | `@path/to/file.txt` or `@path/to/file.txt("Custom Title")` | Links to project files, optionally with an alias. |
+| **Alias Variable**          | `{{$project}}`                                             | Resolved via `aliases` in config.                 |
+| **Data Variable**           | `{{$.key}}`                                                | Injects YAML frontmatter data.                    |
+| **Destination Variable**    | `{{$destination}}` / `{{$destination.id}}`                 | Injects current destination name/ID.              |
+| **Instruction Placeholder** | `[fill this in]`                                           | Marker for LLM to complete.                       |
 
 The full Ruleset syntax specification can be found in `docs/project/OVERVIEW.md`.
 

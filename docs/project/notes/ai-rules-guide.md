@@ -3,28 +3,28 @@
 This guide explains how AI coding assistants use persistent instruction files (often called "rules" or "memory" files) to maintain consistent behavior across sessions and projects.
 
 - [AI Rules Overview](#ai-rules-overview)
-    - [What are AI Rules Files?](#what-are-ai-rules-files)
-    - [Where Rules Files Live](#where-rules-files-live)
-    - [Directory Structure Comparison](#directory-structure-comparison)
+  - [What are AI Rules Files?](#what-are-ai-rules-files)
+  - [Where Rules Files Live](#where-rules-files-live)
+  - [Directory Structure Comparison](#directory-structure-comparison)
 - [How Rules Work Across Tools](#how-rules-work-across-tools)
-    - [Common Patterns](#common-patterns)
+  - [Common Patterns](#common-patterns)
 - [Best Practices for AI Rules](#best-practices-for-ai-rules)
 - [Rule Processing](#rule-processing)
-    - [Example Rule Content](#example-rule-content)
+  - [Example Rule Content](#example-rule-content)
 - [Token and Character Limits](#token-and-character-limits)
 - [File Referencing Mechanisms](#file-referencing-mechanisms)
 - [Activation Mechanisms](#activation-mechanisms)
 - [UI Integration](#ui-integration)
 - [Tool-Specific Implementation Details](#tool-specific-implementation-details)
-    - [Cursor Rules System](#cursor-rules-system)
-        - [Nested Rules Feature (v0.50+, May 2025)](#nested-rules-feature-v050-may-2025)
-        - [Best Practices for Nested Rules](#best-practices-for-nested-rules)
-    - [Claude Code Memory System](#claude-code-memory-system)
-    - [Windsurf Rules System](#windsurf-rules-system)
-    - [Roo Code Rules System](#roo-code-rules-system)
-    - [OpenAI Codex AGENTS System](#openai-codex-agents-system)
-    - [OpenAI Codex CLI System](#openai-codex-cli-system)
-    - [Simpler Implementations](#simpler-implementations)
+  - [Cursor Rules System](#cursor-rules-system)
+    - [Nested Rules Feature (v0.50+, May 2025)](#nested-rules-feature-v050-may-2025)
+    - [Best Practices for Nested Rules](#best-practices-for-nested-rules)
+  - [Claude Code Memory System](#claude-code-memory-system)
+  - [Windsurf Rules System](#windsurf-rules-system)
+  - [Roo Code Rules System](#roo-code-rules-system)
+  - [OpenAI Codex AGENTS System](#openai-codex-agents-system)
+  - [OpenAI Codex CLI System](#openai-codex-cli-system)
+  - [Simpler Implementations](#simpler-implementations)
 - [Managing Rules Across Tools](#managing-rules-across-tools)
 - [Tool Comparison](#tool-comparison)
 - [Key Takeaways](#key-takeaways)
@@ -41,7 +41,7 @@ flowchart TD
     A --> C[Project Conventions]
     A --> D[Style Guidelines]
     A --> E[Workflow Preferences]
-    
+
     style A fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
@@ -49,17 +49,17 @@ flowchart TD
 
 Different AI tools use different file locations and naming conventions:
 
-| Tool | Project Rules | Global/User Rules | Format |
-|------|--------------|-------------------|--------|
-| **Claude Code** | `CLAUDE.md` in root and/or subdirs | `~/.claude/CLAUDE.md` | Markdown with `@file` imports |
-| **Cursor** | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based) | Markdown with YAML front-matter |
-| **Windsurf** | `.windsurf/rules/*.md` files (v1.9+) | `~/.config/windsurf/global_rules.md` | Markdown with activation modes (Always On, Manual, Model Decision, Glob) |
-| **Roo Code** | `.roo/rules/` and `.roo/rules-{mode}/` folders | No built-in global file | Markdown files in folders |
-| **OpenAI Codex CLI** | `codex.md` in root | `~/.codex/instructions.md` | Markdown text |
-| **OpenAI Codex AGENTS** | `AGENTS.md` in root and/or subdirs | `~/.codex/AGENTS.md` | Pure Markdown with section headings |
-| **GitHub Copilot** | `.github/copilot-instructions.md` and `prompts/*.prompt.md` | GitHub Profile → Custom Instructions | Plain-text Markdown |
-| **Cline** | `.clinerules` | N/A | Plain text file |
-| **Aider** | `.aider.memory.md` (needs explicit flag) | N/A | Standard Markdown |
+| Tool                    | Project Rules                                                             | Global/User Rules                    | Format                                                                   |
+| ----------------------- | ------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------------------------ |
+| **Claude Code**         | `CLAUDE.md` in root and/or subdirs                                        | `~/.claude/CLAUDE.md`                | Markdown with `@file` imports                                            |
+| **Cursor**              | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based)             | Markdown with YAML front-matter                                          |
+| **Windsurf**            | `.windsurf/rules/*.md` files (v1.9+)                                      | `~/.config/windsurf/global_rules.md` | Markdown with activation modes (Always On, Manual, Model Decision, Glob) |
+| **Roo Code**            | `.roo/rules/` and `.roo/rules-{mode}/` folders                            | No built-in global file              | Markdown files in folders                                                |
+| **OpenAI Codex CLI**    | `codex.md` in root                                                        | `~/.codex/instructions.md`           | Markdown text                                                            |
+| **OpenAI Codex AGENTS** | `AGENTS.md` in root and/or subdirs                                        | `~/.codex/AGENTS.md`                 | Pure Markdown with section headings                                      |
+| **GitHub Copilot**      | `.github/copilot-instructions.md` and `prompts/*.prompt.md`               | GitHub Profile → Custom Instructions | Plain-text Markdown                                                      |
+| **Cline**               | `.clinerules`                                                             | N/A                                  | Plain text file                                                          |
+| **Aider**               | `.aider.memory.md` (needs explicit flag)                                  | N/A                                  | Standard Markdown                                                        |
 
 ### Directory Structure Comparison
 
@@ -69,7 +69,7 @@ project/
 │   └── rules/
 │       ├── coding-style.mdc        # Project-wide coding style guidelines
 │       └── architecture.mdc        # Project architecture guidelines
-├── .roo/                         # Roo Code rules directory 
+├── .roo/                         # Roo Code rules directory
 │   ├── rules/                    # Common rules for all modes
 │   │   └── coding-style.md        # Applied regardless of mode
 │   │   └── terminology.md         # Project glossary and terms
@@ -109,32 +109,32 @@ graph TD
     root --> prompts[prompts/]
     root --> frontend[frontend/]
     root --> backend[backend/]
-    
+
     cursor --> cursor1[rule1.mdc]
     cursor --> cursor2[rule2.mdc]
-    
+
     github --> copilot[copilot-instructions.md]
     prompts --> prompt1[security-review.prompt.md]
-    
+
     frontend --> fcursor[.cursor/]
     frontend --> fclaudemd[CLAUDE.md]
     frontend --> fagentsmd[AGENTS.md]
     fcursor --> frules[rules/]
     frules --> frule1[ui-standards.mdc]
-    
+
     backend --> bcursor[.cursor/]
     backend --> bclaudemd[CLAUDE.md]
     backend --> bagentsmd[AGENTS.md]
     bcursor --> brules[rules/]
     brules --> brule1[api-standards.mdc]
-    
+
     roo --> roo1[rules/]
     roo --> roo2[rules-architect/]
     roo --> roo3[rules-debug/]
-    
+
     roo1 --> roo1a[style.md]
     roo1 --> roo1b[workflow.md]
-    
+
     subgraph "Global User Rules"
         global1[~/.claude/CLAUDE.md]
         global2[~/.config/windsurf/global_rules.md]
@@ -142,7 +142,7 @@ graph TD
         global4[~/.codex/AGENTS.md]
         global5[GitHub Profile → Custom Instructions]
     end
-    
+
     style root fill:#f9f,stroke:#333
     style global1 fill:#bbf,stroke:#333
     style global2 fill:#bbf,stroke:#333
@@ -163,7 +163,7 @@ sequenceDiagram
     participant Tool as AI Tool
     participant Rules as Rules Files
     participant AI as AI Model
-    
+
     User->>Tool: Start session
     Tool->>Rules: Load applicable rules
     Note over Rules: Merge global + project rules
@@ -206,7 +206,7 @@ graph LR
     A --> D[Example-Rich]
     A --> E[Regularly Updated]
     A --> F[Modular]
-    
+
     style A fill:#bbf,stroke:#333,stroke-width:2px
 ```
 
@@ -222,36 +222,36 @@ flowchart TD
     A --> E[Roo Code]
     A --> F[OpenAI Codex AGENTS]
     A --> G[GitHub Copilot]
-    
+
     B --> B1[Always Apply]
     B --> B2[Auto-Attach by glob]
     B --> B3[Agent-Requested]
     B --> B4[Manual]
     B --> B5[Nested rules in subdirs]
-    
+
     C --> C1[Recursive file discovery]
     C --> C2[Import with @file syntax]
     C --> C3[Directory-based scoping]
-    
+
     D --> D1[Global rules first]
     D --> D2[Project rules override]
     D --> D3[Four activation modes]
     D --> D4[Character limits (6K per file, 12K total)]
-    
+
     E --> E1[Common rules folder]
     E --> E2[Mode-specific rules folders]
     E --> E3[Hierarchical loading]
-    
+
     F --> F1[Upward path walking]
     F --> F2[Last file wins for conflicts]
     F --> F3[Section-based merging]
     F --> F4[Heading-based UI navigation]
-    
+
     G --> G1[Personal rules]
     G --> G2[Repository rules]
     G --> G3[Prompt files]
     G --> G4[Hot reload on changes]
-    
+
     style A fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
@@ -259,14 +259,17 @@ flowchart TD
 
 ```markdown
 # Project Overview
+
 This is a CommonMark-compliant rules compiler that converts Markdown to tool-specific rules files.
 
 # Key Terminology
+
 - **Source rules**: Source files in Markdown format, written in Mixdown Notation.
 - **Destination**: A supported tool (e.g., Cursor, Claude Code) for which Compiled Rules are generated.
 - **Stem**: Delimited content blocks (e.g., `{{instructions}}...{{/instructions}}`) with optional properties.
 
 # Coding Standards
+
 - Follow SOLID principles and conventional commits
 - Use kebab-case for filenames
 - Document all public functions
@@ -276,15 +279,16 @@ This is a CommonMark-compliant rules compiler that converts Markdown to tool-spe
 
 Different tools implement different limits to avoid context overload:
 
-| Tool | Limit Type | Limit Value | Implementation |
-|------|------------|-------------|----------------|
-| **Windsurf** | Per file / Total | 6K chars per file, 12K total | Hard limit with UI warning |
-| **Cursor** | Per file | ~500 lines recommended | Soft recommendation |
-| **GitHub Copilot** | Total | ~600 tokens recommended | Soft limit with silent truncation |
-| **Claude Code** | None documented | N/A | Model-dependent |
-| **OpenAI Codex** | Total | Model context ceiling (192K tokens) | Hard model limit |
+| Tool               | Limit Type       | Limit Value                         | Implementation                    |
+| ------------------ | ---------------- | ----------------------------------- | --------------------------------- |
+| **Windsurf**       | Per file / Total | 6K chars per file, 12K total        | Hard limit with UI warning        |
+| **Cursor**         | Per file         | ~500 lines recommended              | Soft recommendation               |
+| **GitHub Copilot** | Total            | ~600 tokens recommended             | Soft limit with silent truncation |
+| **Claude Code**    | None documented  | N/A                                 | Model-dependent                   |
+| **OpenAI Codex**   | Total            | Model context ceiling (192K tokens) | Hard model limit                  |
 
 Best practices for working with token limits:
+
 - Keep rules concise and focused on what the AI can't easily infer
 - Prioritize essential information when nearing limits
 - Use activation modes/scopes to load only relevant rules
@@ -295,33 +299,37 @@ Best practices for working with token limits:
 
 Several tools provide mechanisms to include content from external files:
 
-| Tool | Syntax | Example | Notes |
-|------|--------|---------|-------|
-| **Claude Code** | `@file` | `@docs/ARCHITECTURE.md` | Pulls in content from other files relative to current dir |
-| **Cursor** | `@filename` | `@templates/component-template.tsx` | Includes external file content |
-| **Windsurf** | `@relative/path.ext` | `@templates/component-template.tsx` | Similar to Cursor's approach |
-| **GitHub Copilot** | None | N/A | No file inclusion mechanism |
-| **OpenAI Codex** | None | N/A | No file inclusion mechanism |
+| Tool               | Syntax               | Example                             | Notes                                                     |
+| ------------------ | -------------------- | ----------------------------------- | --------------------------------------------------------- |
+| **Claude Code**    | `@file`              | `@docs/ARCHITECTURE.md`             | Pulls in content from other files relative to current dir |
+| **Cursor**         | `@filename`          | `@templates/component-template.tsx` | Includes external file content                            |
+| **Windsurf**       | `@relative/path.ext` | `@templates/component-template.tsx` | Similar to Cursor's approach                              |
+| **GitHub Copilot** | None                 | N/A                                 | No file inclusion mechanism                               |
+| **OpenAI Codex**   | None                 | N/A                                 | No file inclusion mechanism                               |
 
 ## Activation Mechanisms
 
 Tools offer various ways to control when rules are applied:
 
 1. **Always-On / Always Apply**: Rules included in every prompt/session
+
    - Cursor: `alwaysApply: true` in front-matter
    - Windsurf: `trigger: always_on` in front-matter
    - Claude Code: CLAUDE.md automatically loaded in relevant directories
    - GitHub Copilot: All rules automatically injected when repository is opened
 
 2. **Pattern-Based / Glob**: Rules included based on file path/pattern matches
+
    - Cursor: `globs: ["**/*.tsx"]` in front-matter
    - Windsurf: `trigger: glob` + `globs: "**/*.tsx"` in front-matter
 
 3. **Model Decision**: Model itself decides whether a rule is relevant
+
    - Windsurf: `trigger: model_decision` in front-matter
    - Cursor: Rules with `description` field are offered to the model
 
 4. **Manual / Explicit**: Rules included only when explicitly referenced
+
    - Windsurf: `trigger: manual` in front-matter
    - Cursor: Rules with no special front-matter
    - GitHub Copilot: `/prompt <filename>` in VS Code Chat
@@ -335,13 +343,13 @@ Tools offer various ways to control when rules are applied:
 
 Tools provide different user interfaces for managing rules:
 
-| Tool | UI Features | Controls |
-|------|-------------|----------|
-| **Cursor** | Dedicated Rules UI | Create, view, edit rules through Command Palette |
-| **Windsurf** | Toggle panel | Turn rules on/off, sort, edit, and view character count |
-| **GitHub Copilot** | Repository settings + UI | Set personal rules in GitHub profile UI |
-| **OpenAI Codex AGENTS** | Section navigation | Headings surfaced in UI for easy reference |
-| **Claude Code** | N/A | Edit files directly |
+| Tool                    | UI Features              | Controls                                                |
+| ----------------------- | ------------------------ | ------------------------------------------------------- |
+| **Cursor**              | Dedicated Rules UI       | Create, view, edit rules through Command Palette        |
+| **Windsurf**            | Toggle panel             | Turn rules on/off, sort, edit, and view character count |
+| **GitHub Copilot**      | Repository settings + UI | Set personal rules in GitHub profile UI                 |
+| **OpenAI Codex AGENTS** | Section navigation       | Headings surfaced in UI for easy reference              |
+| **Claude Code**         | N/A                      | Edit files directly                                     |
 
 ## Tool-Specific Implementation Details
 
@@ -374,8 +382,8 @@ project/
 
 ```yaml
 ---
-description: React Component Standards  
-globs: ["**/components/**/*.tsx"]
+description: React Component Standards
+globs: ['**/components/**/*.tsx']
 alwaysApply: false
 ---
 # React Component Guidelines
@@ -398,20 +406,20 @@ flowchart TD
     A[project/] --> B[.cursor/rules/]
     A --> C[apps/]
     A --> D[packages/]
-    
+
     C --> E[api/]
     C --> F[web/]
     D --> G[utils/]
-    
+
     E --> E1[.cursor/rules/]
     F --> F1[.cursor/rules/]
     G --> G1[.cursor/rules/]
-    
+
     B --> B1[project-wide rules]
     E1 --> E2[api-specific rules]
     F1 --> F2[web-specific rules]
     G1 --> G2[utils-specific rules]
-    
+
     style A fill:#f9f,stroke:#333
     style B fill:#bbf,stroke:#333
     style E1 fill:#dfd,stroke:#333
@@ -456,9 +464,11 @@ $HOME/
 
 ```markdown
 # Project Guidelines
+
 See @docs/ARCHITECTURE.md for the system overview.
 
 # Coding Standards
+
 - Follow RESTful principles for API endpoints
 - Document all functions with JSDoc comments
 ```
@@ -492,8 +502,8 @@ $HOME/.config/windsurf/global_rules.md    # Global user preferences
 ```markdown
 ---
 trigger: model_decision
-description: "Testing guidelines for all *.test.tsx files"
-globs: "**/*.test.ts?(x)"
+description: 'Testing guidelines for all *.test.tsx files'
+globs: '**/*.test.ts?(x)'
 ---
 ```
 
@@ -548,16 +558,19 @@ OpenAI Codex uses a section-based merging approach with a hierarchical loading s
 
 ```markdown
 ## Coding Standards
+
 - Use tabs for indentation
 - Follow PEP 8 for Python code
 - Maximum line length is 80 characters
 
 ## Error Handling
+
 - Use structured error objects
 - Log all errors with contextual information
 - Handle all Promise rejections
 
 ## Testing
+
 - Write unit tests for all new functionality
 - Use descriptive test names
 - Mock external dependencies
@@ -612,17 +625,20 @@ OpenAI Codex CLI uses a layered instructions approach with Markdown files to gui
 
 ```markdown
 # Coding Standards
+
 - Always use TypeScript for new JavaScript files
 - Follow AirBnB style guide for linting
 - Maximum line length is 100 characters
 - All exports should be typed
 
 # Testing Requirements
+
 - Write unit tests for all new functionality
 - Use Jest for testing framework
 - Maintain at least 80% code coverage
 
 # Command Policy
+
 - Never use git force push unless explicitly requested
 - Always run linting before committing code
 - Use npm for package management
@@ -659,7 +675,7 @@ GitHub Copilot (May 2025) accepts natural-language rules written in Markdown to 
 **Key Features:**
 
 - **File Format:** Plain-text Markdown (`.md`) with no front-matter or special syntax
-- **Scoping Mechanisms:** Personal (global), repository-level, and prompt files 
+- **Scoping Mechanisms:** Personal (global), repository-level, and prompt files
 - **Activation Method:** Loaded automatically when you open a repository
 - **Integration:** Native support in VS Code, Visual Studio 2022, and github.com
 - **Character Limits:** ~600 tokens recommended with silent truncation
@@ -680,7 +696,7 @@ GitHub Profile → Custom Instructions       # Personal rules (set via GitHub UI
 
 **Best Practices:**
 
-- Be specific with short imperative statements 
+- Be specific with short imperative statements
 - Group related points and keep to 1-2 lines each
 - Update regularly after major refactors
 - Test iteratively to confirm Copilot's understanding of rules
@@ -706,7 +722,7 @@ flowchart LR
     B --> G[AGENTS.md]
     B --> H[codex.md]
     B --> I[.github/copilot-instructions.md]
-    
+
     style A fill:#bbf,stroke:#333
     style B fill:#f9f,stroke:#333
 ```
@@ -721,18 +737,18 @@ graph TB
         C[Roo Code] --- C1[Mode-specific directories]
         I[GitHub Copilot] --- I1[Three-tier system with prompt files]
     end
-    
+
     subgraph "CLI Tools"
         D[Claude Code] --- D1[Hierarchical with imports]
         E[OpenAI Codex CLI] --- E1[Layered instructions]
         H[OpenAI Codex AGENTS] --- H1[Section-based merging]
     end
-    
+
     subgraph "Simple Approaches"
         F[Cline] --- F1[Single file]
         G[Aider] --- G1[Manual inclusion]
     end
-    
+
     style A fill:#bbf,stroke:#333
     style B fill:#bbf,stroke:#333
     style C fill:#bbf,stroke:#333

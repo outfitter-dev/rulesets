@@ -28,7 +28,7 @@ import { runRulesetsV0, ConsoleLogger } from '@rulesets/core';
 
 async function main() {
   const logger = new ConsoleLogger();
-  
+
   try {
     await runRulesetsV0('./my-rules.rules.md', logger);
     logger.info('Rulesets processing completed!');
@@ -68,7 +68,7 @@ import { lint } from '@rulesets/core';
 
 const lintResults = await lint(parsedDoc, {
   requireRulesetsVersion: true,
-  allowedDestinations: ['cursor', 'windsurf']
+  allowedDestinations: ['cursor', 'windsurf'],
 });
 // Returns: Array of LintResult objects
 ```
@@ -92,7 +92,7 @@ await cursorPlugin.write({
   compiled: compiledDoc,
   destPath: '.cursor/rules/my-rule.mdc',
   config: {},
-  logger
+  logger,
 });
 ```
 
@@ -102,14 +102,14 @@ Create a `.rules.md` file with frontmatter and content:
 
 ```markdown
 ---
-ruleset: { version: "0.1.0" }
+ruleset: { version: '0.1.0' }
 title: My Coding Standards
 description: Rules for AI assistants
 destinations:
   cursor:
-    outputPath: ".cursor/rules/standards.mdc"
+    outputPath: '.cursor/rules/standards.mdc'
   windsurf:
-    outputPath: ".windsurf/rules/standards.md"
+    outputPath: '.windsurf/rules/standards.md'
 ---
 
 # Coding Standards

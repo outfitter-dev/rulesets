@@ -15,7 +15,7 @@ vi.mock('fs', () => ({
 
 describe('E2E Integration Tests', () => {
   let mockLogger: ConsoleLogger;
-  
+
   beforeEach(() => {
     mockLogger = new ConsoleLogger();
     vi.spyOn(mockLogger, 'info').mockImplementation(() => {});
@@ -58,17 +58,16 @@ This is a test document with {{blocks}} and {{$variables}} that should pass thro
       expect(fs.readFile).toHaveBeenCalledWith('./test.ruleset.md', 'utf8');
 
       // Verify directories were created
-      expect(fs.mkdir).toHaveBeenCalledWith(
-        path.dirname(path.resolve('.cursor/rules/test.mdc')),
-        { recursive: true },
-      );
-      expect(fs.mkdir).toHaveBeenCalledWith(
-        path.dirname(path.resolve('.windsurf/rules/test.md')),
-        { recursive: true },
-      );
+      expect(fs.mkdir).toHaveBeenCalledWith(path.dirname(path.resolve('.cursor/rules/test.mdc')), {
+        recursive: true,
+      });
+      expect(fs.mkdir).toHaveBeenCalledWith(path.dirname(path.resolve('.windsurf/rules/test.md')), {
+        recursive: true,
+      });
 
       // Verify files were written with correct content
-      const expectedContent = '# Test Rules\n\nThis is a test document with {{blocks}} and {{$variables}} that should pass through.';
+      const expectedContent =
+        '# Test Rules\n\nThis is a test document with {{blocks}} and {{$variables}} that should pass through.';
       expect(fs.writeFile).toHaveBeenCalledTimes(2);
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.resolve('.cursor/rules/test.mdc'),
@@ -82,7 +81,9 @@ This is a test document with {{blocks}} and {{$variables}} that should pass thro
       );
 
       // Verify logging
-      expect(mockLogger.info).toHaveBeenCalledWith('Rulesets v0.1.0 processing completed successfully!');
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Rulesets v0.1.0 processing completed successfully!',
+      );
     });
 
     it('should handle missing frontmatter gracefully', async () => {
@@ -93,9 +94,7 @@ This is a test document with {{blocks}} and {{$variables}} that should pass thro
 
       // Should still process for all destinations
       expect(fs.writeFile).toHaveBeenCalledTimes(2); // cursor and windsurf
-      expect(mockLogger.warn).toHaveBeenCalledWith(
-        expect.stringContaining('No frontmatter found'),
-      );
+      expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining('No frontmatter found'));
     });
 
     it('should fail on lint errors', async () => {
@@ -193,11 +192,9 @@ These are instructions that should be preserved.
 
 Variable: {{$myVar}}`;
 
-      expect(fs.writeFile).toHaveBeenCalledWith(
-        expect.any(String),
-        expectedOutput,
-        { encoding: 'utf8' },
-      );
+      expect(fs.writeFile).toHaveBeenCalledWith(expect.any(String), expectedOutput, {
+        encoding: 'utf8',
+      });
     });
 
     it('should use default paths when not specified', async () => {

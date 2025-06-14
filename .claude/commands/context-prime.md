@@ -46,4 +46,4 @@ As you begin this session, be sure to check to see if anything in the overview o
 
 ## Follow-up Task
 
-After you've finished considering the above context, let the user know you're ready to begin. Summarize any changes you made to the context while priming, in a sequential list.  
+After you've finished considering the above context, let the user know you're ready to begin. Summarize any changes you made to the context while priming, in a sequential list.

@@ -19,11 +19,11 @@ This document outlines how Rulesets integrates with markdown linting tools (part
 ruleset:
   markdown:
     style:
-      heading_blank_lines: "after"   # Properties: "none", "before", "after", "both"
-      list_indentation: 2            # Number of spaces for list indentation (default: 2)
-      code_block_style: "fenced"     # Properties: "fenced", "indented"
-      emphasis_style: "asterisk"     # Properties: "asterisk", "underscore"
-      strong_style: "asterisk"       # Properties: "asterisk", "underscore"
+      heading_blank_lines: 'after' # Properties: "none", "before", "after", "both"
+      list_indentation: 2 # Number of spaces for list indentation (default: 2)
+      code_block_style: 'fenced' # Properties: "fenced", "indented"
+      emphasis_style: 'asterisk' # Properties: "asterisk", "underscore"
+      strong_style: 'asterisk' # Properties: "asterisk", "underscore"
 ---
 ```
 
@@ -36,8 +36,8 @@ These user-friendly properties map to underlying markdownlint rules and are appl
 ruleset:
   heading:
     line_breaks:
-      before: true    # Insert blank line before heading (default: true)
-      after: true      # Insert blank line after heading (default: true)
+      before: true # Insert blank line before heading (default: true)
+      after: true # Insert blank line after heading (default: true)
 ---
 ```
 
@@ -50,13 +50,13 @@ ruleset:
     level:
       min: 2
       max: 5
-    case: "title"
+    case: 'title'
     line_breaks:
       before: true
       after: true
   markdown:
     style:
-      heading_blank_lines: "after"
+      heading_blank_lines: 'after'
 ---
 ```
 
@@ -84,9 +84,9 @@ ruleset:
       "lint": {
         "enabled": true,
         "rules": {
-          "MD012": false,  // no-multiple-blanks
-          "MD022": true,   // blanks-around-headings
-          "MD023": true    // heading-start-left
+          "MD012": false, // no-multiple-blanks
+          "MD022": true, // blanks-around-headings
+          "MD023": true // heading-start-left
         }
       }
     }
@@ -100,13 +100,13 @@ Rulesets provides a simplified interface to common markdown style concerns, whil
 
 ### Simplified-to-markdownlint Mapping
 
-| Rulesets Setting | markdownlint Rule |
-|-----------------|-------------------|
+| Rulesets Setting               | markdownlint Rule              |
+| ------------------------------ | ------------------------------ |
 | `heading_blank_lines: "after"` | MD022 (blanks-around-headings) |
-| `list_indentation: 2` | MD007 (ul-indent) |
-| `code_block_style: "fenced"` | MD046 (code-block-style) |
-| `emphasis_style: "asterisk"` | MD049 (emphasis-style) |
-| `strong_style: "asterisk"` | MD050 (strong-style) |
+| `list_indentation: 2`          | MD007 (ul-indent)              |
+| `code_block_style: "fenced"`   | MD046 (code-block-style)       |
+| `emphasis_style: "asterisk"`   | MD049 (emphasis-style)         |
+| `strong_style: "asterisk"`     | MD050 (strong-style)           |
 
 ### Precedence Rules
 
@@ -131,6 +131,7 @@ Content starts here.
 # With line_breaks.after: false
 
 ## Heading
+
 Content starts here.
 ```
 
@@ -140,9 +141,10 @@ Content starts here.
 
 ```markdown
 {{instructions output="heading"}}
+
 - Follow these guidelines
 - Use consistent formatting
-{{/instructions}}
+  {{/instructions}}
 ```
 
 Renders as:
@@ -158,15 +160,17 @@ Renders as:
 
 ```markdown
 {{instructions output="heading" line_breaks.after=false}}
+
 - Follow these guidelines
 - Use consistent formatting
-{{/instructions}}
+  {{/instructions}}
 ```
 
 Renders as:
 
 ```markdown
 ## Instructions
+
 - Follow these guidelines
 - Use consistent formatting
 ```

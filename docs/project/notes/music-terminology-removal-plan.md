@@ -16,49 +16,49 @@ This document outlines the complete removal of all music-related terminology fro
 
 ### 1. Project Identity
 
-| Old Term | New Term | Notes |
-|----------|----------|-------|
-| Mixdown | Rulesets | The project name |
-| mixdown | ruleset | CLI command, package names |
-| .mixdown/ | .ruleset/ | Configuration directory |
-| mixdown.config.json | ruleset.config.json | Configuration file |
-| @mixdown/* | @ruleset/* | Package namespace |
+| Old Term            | New Term            | Notes                      |
+| ------------------- | ------------------- | -------------------------- |
+| Mixdown             | Rulesets            | The project name           |
+| mixdown             | ruleset             | CLI command, package names |
+| .mixdown/           | .ruleset/           | Configuration directory    |
+| mixdown.config.json | ruleset.config.json | Configuration file         |
+| @mixdown/\*         | @ruleset/\*         | Package namespace          |
 
 ### 2. Core Concepts
 
-| Old Term | New Term | Definition |
-|----------|----------|------------|
-| stem | block | A delimited content block marked with `{{block}}...{{/block}}` |
-| mixin | partial | Reusable component stored in `_partials/` |
-| Mixdown Notation | Ruleset Syntax | The `{{...}}` syntax system |
-| mix/source rules | ruleset | A source file defining rules |
-| track (legacy) | block | Already transitioned to stem, now to block |
+| Old Term         | New Term       | Definition                                                     |
+| ---------------- | -------------- | -------------------------------------------------------------- |
+| stem             | block          | A delimited content block marked with `{{block}}...{{/block}}` |
+| mixin            | partial        | Reusable component stored in `_partials/`                      |
+| Mixdown Notation | Ruleset Syntax | The `{{...}}` syntax system                                    |
+| mix/source rules | ruleset        | A source file defining rules                                   |
+| track (legacy)   | block          | Already transitioned to stem, now to block                     |
 
 ### 3. Directory Structure
 
-| Old Path | New Path |
-|----------|----------|
-| .mixdown/ | .ruleset/ |
-| .mixdown/src/ | .ruleset/src/ |
-| .mixdown/src/_mixins/ | .ruleset/src/_partials/ |
-| .mixdown/dist/ | .ruleset/dist/ |
+| Old Path               | New Path                 |
+| ---------------------- | ------------------------ |
+| .mixdown/              | .ruleset/                |
+| .mixdown/src/          | .ruleset/src/            |
+| .mixdown/src/\_mixins/ | .ruleset/src/\_partials/ |
+| .mixdown/dist/         | .ruleset/dist/           |
 
 ### 4. File Extensions
 
 | Old Extension | New Extension |
-|---------------|---------------|
-| .mix.md | .ruleset.md |
-| .mixdown.md | .ruleset.md |
+| ------------- | ------------- |
+| .mix.md       | .ruleset.md   |
+| .mixdown.md   | .ruleset.md   |
 
 ### 5. Syntax Updates
 
-| Old Syntax | New Syntax |
-|------------|------------|
-| `{{stem}}...{{/stem}}` | `{{block}}...{{/block}}` |
+| Old Syntax                | New Syntax                 |
+| ------------------------- | -------------------------- |
+| `{{stem}}...{{/stem}}`    | `{{block}}...{{/block}}`   |
 | `{{stem name="example"}}` | `{{block name="example"}}` |
-| `{{> @mixin }}` | `{{> @partial }}` |
-| "stem content" | "block content" |
-| "stem name" | "block name" |
+| `{{> @mixin }}`           | `{{> @partial }}`          |
+| "stem content"            | "block content"            |
+| "stem name"               | "block name"               |
 
 ## Implementation Checklist
 
@@ -113,10 +113,10 @@ This document outlines the complete removal of all music-related terminology fro
 
 ### Source Code Files
 
-1. All TypeScript files (*.ts)
-2. All JavaScript files (*.js)
-3. All test files (*.spec.ts, *.test.ts)
-4. Configuration files (*.json, *.config.*)
+1. All TypeScript files (\*.ts)
+2. All JavaScript files (\*.js)
+3. All test files (_.spec.ts, _.test.ts)
+4. Configuration files (_.json, _.config.\*)
 
 ### Remove Entirely
 
@@ -158,18 +158,20 @@ The project should appear as if it had always been called Rulesets and had alway
 
 ```markdown
 {{stem name="instructions"}}
+
 - This is a stem in a mix file
 - Import mixins with {{> @legal}}
-{{/stem}}
+  {{/stem}}
 ```
 
 ### After
 
 ```markdown
 {{block name="instructions"}}
+
 - This is a block in a ruleset
 - Import partials with {{> @legal}}
-{{/block}}
+  {{/block}}
 ```
 
 ### Before (Directory Structure)

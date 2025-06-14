@@ -9,14 +9,17 @@ This document outlines the plan for implementing the `.mix.md` file extension fo
 ### Core Features
 
 1. **Dual Extension Support**
+
    - Both `.md` and `.mix.md` extensions should be recognized as valid source rules files
    - `.mix.md` should be treated as the preferred extension
 
 2. **Compiler Implementation**
+
    - The compiler should scan for both `.md` and `.mix.md` files
    - Add a configuration option to prefer one extension over the other (default to `.mix.md`)
 
 3. **Type Definitions**
+
    - Define supported extensions as constants
    - Create proper TypeScript types for supported extensions
 
@@ -31,7 +34,7 @@ The proposed implementation would involve these changes to the core package:
 ```typescript
 // In types.ts
 export const SUPPORTED_EXTENSIONS = ['.md', '.mix.md'] as const;
-export type SupportedExtension = typeof SUPPORTED_EXTENSIONS[number];
+export type SupportedExtension = (typeof SUPPORTED_EXTENSIONS)[number];
 
 export interface CompilerConfig {
   // ...existing config
@@ -48,7 +51,7 @@ class MixdownCompiler {
   constructor(config: CompilerConfig) {
     this.config = {
       ...config,
-      preferMixExtension: config.preferMixExtension ?? true // Default to preferring .mix.md
+      preferMixExtension: config.preferMixExtension ?? true, // Default to preferring .mix.md
     };
   }
 
@@ -61,7 +64,7 @@ class MixdownCompiler {
   }
 
   isSourceRulesFile(filePath: string): boolean {
-    return SUPPORTED_EXTENSIONS.some(ext => filePath.endsWith(ext));
+    return SUPPORTED_EXTENSIONS.some((ext) => filePath.endsWith(ext));
   }
 }
 ```
@@ -69,14 +72,17 @@ class MixdownCompiler {
 ## Benefits
 
 1. **Discoverability**
+
    - The `.mix.md` extension makes it clear these files are Mixdown source rules
    - Better distinction from regular Markdown files
 
 2. **IDE and Tooling Support**
+
    - Enables IDE plugins to recognize Mixdown files specifically
    - Allows for custom syntax highlighting and validation
 
 3. **Search Improvements**
+
    - Easier to find all Mixdown files with search tools
    - Clearer distinction in search results
 
@@ -87,6 +93,7 @@ class MixdownCompiler {
 ## Migration Strategy
 
 For existing projects:
+
 - Continue supporting `.md` for backward compatibility
 - Encourage migration to `.mix.md` for new files
 - Provide documentation on the benefits of the `.mix.md` extension
@@ -94,6 +101,7 @@ For existing projects:
 ## Testing Strategy
 
 Testing should verify:
+
 - Both extensions are properly recognized
 - The correct preferences are applied
 - File finder functionality works with both extensions

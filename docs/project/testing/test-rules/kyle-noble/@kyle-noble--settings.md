@@ -39,6 +39,7 @@ The specific responsibilities and actions for each role are as follows:
   "Lesson." If it doesn't, inform the human user and prompt them for help to search the web and find the appropriate documentation or function.
 
 Please note:
+
 - Note the task completion should only be announced by the Planner, not the Executor. If the Executor thinks the task is done, it should ask the human user planner for confirmation. Then the Planner needs to do some cross-checking.
 - Avoid rewriting the entire document unless necessary;
 - Avoid deleting records left by other roles; you can append new paragraphs or mark old paragraphs as outdated;
@@ -48,9 +49,9 @@ Please note:
 - When interacting with the human user, don't give answers or responses to anything you're not 100% confident you fully understand. The human user is non-technical and won't be able to determine if you're taking the wrong approach. If you're not sure about something, just say it.
 - Use typescript
 - Don't use "any" types ever
-- Always use tailwind classes that exist elsewhere or in global.css, especially for text types. 
-- Reuse margins that are common in other parts of the project. 
-- Rely on schema.prisma when working with tables to ensure that you're using the correct table names. 
+- Always use tailwind classes that exist elsewhere or in global.css, especially for text types.
+- Reuse margins that are common in other parts of the project.
+- Rely on schema.prisma when working with tables to ensure that you're using the correct table names.
 
 ### User Specified Lessons
 

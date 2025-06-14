@@ -8,7 +8,8 @@ describe('linter', () => {
     it('should pass a valid document with complete frontmatter', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nruleset: { version: "0.1.0" }\ntitle: Test\ndescription: Test description\n---\n\n# Content',
+          content:
+            '---\nruleset: { version: "0.1.0" }\ntitle: Test\ndescription: Test description\n---\n\n# Content',
           frontmatter: {
             ruleset: { version: '0.1.0' },
             title: 'Test',
@@ -63,7 +64,7 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const rulesetsError = results.find(r => r.message.includes('Missing required'));
+      const rulesetsError = results.find((r) => r.message.includes('Missing required'));
       expect(rulesetsError).toBeDefined();
       expect(rulesetsError!.severity).toBe('error');
     });
@@ -85,7 +86,7 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const typeError = results.find(r => r.message.includes('Invalid'));
+      const typeError = results.find((r) => r.message.includes('Invalid'));
       expect(typeError).toBeDefined();
       expect(typeError!.severity).toBe('error');
     });
@@ -93,7 +94,8 @@ describe('linter', () => {
     it('should validate destinations structure', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nruleset: { version: "0.1.0" }\ndestinations: ["cursor", "windsurf"]\n---\n\n# Content',
+          content:
+            '---\nruleset: { version: "0.1.0" }\ndestinations: ["cursor", "windsurf"]\n---\n\n# Content',
           frontmatter: {
             ruleset: { version: '0.1.0' },
             destinations: ['cursor', 'windsurf'],
@@ -108,7 +110,9 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const destError = results.find(r => r.message.includes('Invalid Destination configurations'));
+      const destError = results.find((r) =>
+        r.message.includes('Invalid Destination configurations'),
+      );
       expect(destError).toBeDefined();
       expect(destError!.severity).toBe('error');
     });
@@ -116,7 +120,8 @@ describe('linter', () => {
     it('should warn about unknown destinations when configured', async () => {
       const parsedDoc: ParsedDoc = {
         source: {
-          content: '---\nruleset: { version: "0.1.0" }\ndestinations:\n  unknown-dest:\n    path: "/test"\n---\n\n# Content',
+          content:
+            '---\nruleset: { version: "0.1.0" }\ndestinations:\n  unknown-dest:\n    path: "/test"\n---\n\n# Content',
           frontmatter: {
             ruleset: { version: '0.1.0' },
             destinations: {
@@ -136,7 +141,7 @@ describe('linter', () => {
         allowedDestinations: ['cursor', 'windsurf'],
       });
 
-      const destWarning = results.find(r => r.message.includes('Unknown destination'));
+      const destWarning = results.find((r) => r.message.includes('Unknown destination'));
       expect(destWarning).toBeDefined();
       expect(destWarning!.severity).toBe('warning');
     });
@@ -158,9 +163,11 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const titleInfo = results.find(r => r.message.includes('Consider adding a Document title'));
-      const descInfo = results.find(r => r.message.includes('Consider adding a Document description'));
-      
+      const titleInfo = results.find((r) => r.message.includes('Consider adding a Document title'));
+      const descInfo = results.find((r) =>
+        r.message.includes('Consider adding a Document description'),
+      );
+
       expect(titleInfo).toBeDefined();
       expect(titleInfo!.severity).toBe('info');
       expect(descInfo).toBeDefined();
@@ -189,7 +196,9 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const parseError = results.find(r => r.message.includes('Failed to parse frontmatter YAML'));
+      const parseError = results.find((r) =>
+        r.message.includes('Failed to parse frontmatter YAML'),
+      );
       expect(parseError).toBeDefined();
       expect(parseError!.severity).toBe('error');
       expect(parseError!.line).toBe(2);

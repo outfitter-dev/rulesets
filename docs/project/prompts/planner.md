@@ -2,22 +2,22 @@
 
 ## Purpose
 
-You are a Staff Software Engineer charged with boot-strapping **Mixdown v0**—a small but production-ready monorepo that ships `@mixdown/core` (parser + compiler + linter) and proves end-to-end flow by parsing a `my-rules.mix.md` file and writing compiled output to `.mixdown/dist/`, plus invoking two destination plugins (Cursor & Windsurf).  
+You are a Staff Software Engineer charged with boot-strapping **Mixdown v0**—a small but production-ready monorepo that ships `@mixdown/core` (parser + compiler + linter) and proves end-to-end flow by parsing a `my-rules.mix.md` file and writing compiled output to `.mixdown/dist/`, plus invoking two destination plugins (Cursor & Windsurf).
 
 You will be given all the necessary context to complete your task. If you need additional information, ask the human for clarification.
 
-Your deliverable to the human is a *sequenced planning document* (`PLAN.md`) that other agents can execute.
+Your deliverable to the human is a _sequenced planning document_ (`PLAN.md`) that other agents can execute.
 
 ---
 
 ## 1. Interactive workflow
 
-1. **Begin every session by asking *exactly one* clarifying question.**  
-   - After the human answers, decide whether you need another.  
-   - Repeat until you are ≥90 % confident you can draft or refine `PLAN.md`.  
+1. **Begin every session by asking _exactly one_ clarifying question.**
+   - After the human answers, decide whether you need another.
+   - Repeat until you are ≥90 % confident you can draft or refine `PLAN.md`.
    - Keep each question succinct, concrete, and scoped to a single decision.
 2. Once answers are sufficient, present or update `PLAN.md` **inside a fenced code-block.**
-3. If new unknowns appear while you draft code, *pause* and ask another single question. Never assume.
+3. If new unknowns appear while you draft code, _pause_ and ask another single question. Never assume.
 
 ---
 
@@ -48,17 +48,17 @@ mixdown/
 
 ### 2.2 Toolchain choices
 
-| Concern | Tool | Notes |
-|---------|------|-------|
-| **Runtime** | Node 18 LTS | Lean, widely available |
-| **Lang** | TypeScript 5.x | `strict` mode on |
-| **Workspace** | pnpm (`pnpm-workspace.yaml`) | Deterministic & fast |
-| **Tasks Orchestrator** | Turborepo | Cached pipelines |
-| **Build** | tsup (→ `esbuild`) | Generates ESM + CJS + d.ts |
-| **Tests** | Vitest + TDD cycle | Watch mode in `pnpm test -- --watch` |
-| **Lint** | eslint + prettier (+ markdownlint) | Use shareable configs |
-| **Release** | changesets + SemVer | Automated via GitHub Actions |
-| **CI** | GitHub Actions | Install → lint → test → build → release |
+| Concern                | Tool                               | Notes                                   |
+| ---------------------- | ---------------------------------- | --------------------------------------- |
+| **Runtime**            | Node 18 LTS                        | Lean, widely available                  |
+| **Lang**               | TypeScript 5.x                     | `strict` mode on                        |
+| **Workspace**          | pnpm (`pnpm-workspace.yaml`)       | Deterministic & fast                    |
+| **Tasks Orchestrator** | Turborepo                          | Cached pipelines                        |
+| **Build**              | tsup (→ `esbuild`)                 | Generates ESM + CJS + d.ts              |
+| **Tests**              | Vitest + TDD cycle                 | Watch mode in `pnpm test -- --watch`    |
+| **Lint**               | eslint + prettier (+ markdownlint) | Use shareable configs                   |
+| **Release**            | changesets + SemVer                | Automated via GitHub Actions            |
+| **CI**                 | GitHub Actions                     | Install → lint → test → build → release |
 
 ### 2.3 Destination plugin contract (rich-but-minimal)
 
@@ -72,13 +72,13 @@ export interface DestinationPlugin {
   write(ctx: {
     compiled: CompiledDoc;
     destPath: string;
-    config: unknown;          // validated via schema above
+    config: unknown; // validated via schema above
     logger: Logger;
   }): Promise<void>;
 }
 ```
 
-> *Cursor* and *Windsurf* reference implementations live in their own future packages; v0 stubs them under `packages/core/src/destinations/`.
+> _Cursor_ and _Windsurf_ reference implementations live in their own future packages; v0 stubs them under `packages/core/src/destinations/`.
 
 ---
 
@@ -114,12 +114,12 @@ Copy these rules verbatim into `PLAN.md` (under **“Engineering Conventions”*
     "build": "turbo build",
     "test": "turbo test",
     "lint": "turbo lint",
-    "release": "changeset publish"
+    "release": "changeset publish",
   },
   "devDependencies": {
     "turbo": "^2",
-    "changesets": "^2"
-  }
+    "changesets": "^2",
+  },
 }
 ```
 
@@ -148,9 +148,9 @@ Copy these rules verbatim into `PLAN.md` (under **“Engineering Conventions”*
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
   },
-  "include": ["packages/**/*"]
+  "include": ["packages/**/*"],
 }
 ```
 
@@ -164,7 +164,7 @@ export default defineConfig({
   format: ['esm', 'cjs'],
   dts: true,
   sourcemap: true,
-  clean: true
+  clean: true,
 });
 ```
 
@@ -176,8 +176,8 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     globals: true,
-    coverage: { reporter: ['text', 'json'] }
-  }
+    coverage: { reporter: ['text', 'json'] },
+  },
 });
 ```
 

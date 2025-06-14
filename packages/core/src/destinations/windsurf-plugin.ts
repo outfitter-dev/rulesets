@@ -44,9 +44,10 @@ export class WindsurfPlugin implements DestinationPlugin {
     const { compiled, destPath, config, logger } = ctx;
 
     // Determine the output path
-    const outputPath = (typeof config.outputPath === 'string' ? config.outputPath : undefined) || destPath;
+    const outputPath =
+      (typeof config.outputPath === 'string' ? config.outputPath : undefined) || destPath;
     const resolvedPath = path.resolve(outputPath);
-    
+
     logger.info(`Writing Windsurf rules to: ${resolvedPath}`);
 
     // Ensure directory exists
@@ -62,7 +63,7 @@ export class WindsurfPlugin implements DestinationPlugin {
     try {
       await fs.writeFile(resolvedPath, compiled.output.content, { encoding: 'utf8' });
       logger.info(`Successfully wrote Windsurf rules to: ${resolvedPath}`);
-      
+
       // Log additional context for debugging
       logger.debug(`Destination: ${compiled.context.destinationId}`);
       logger.debug(`Config: ${JSON.stringify(config)}`);

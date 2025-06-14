@@ -87,24 +87,24 @@ project/
 
 ## Goals
 
-| Goal | Description |
-|------|-------------|
-| ✨ **Simplicity** | Reduce bespoke format/structure for each tool to just one. |
-| 🧹 **Lintability** | Files must pass standard markdown-lint without hacks. |
-| 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc. |
-| 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new notation. |
+| Goal                  | Description                                                         |
+| --------------------- | ------------------------------------------------------------------- |
+| ✨ **Simplicity**     | Reduce bespoke format/structure for each tool to just one.          |
+| 🧹 **Lintability**    | Files must pass standard markdown-lint without hacks.               |
+| 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc.                   |
+| 🧩 **Extensibility**  | Advanced behaviors declared via attributes instead of new notation. |
 
 ## Destination Providers
 
-| ID | Tool | Type |
-|----|------|------|
-| `cursor` | Cursor | IDE |
-| `windsurf` | Windsurf | IDE |
-| `claude-code` | Claude Code | CLI |
-| `roo-code` | Roo Code | VS Code Extension |
-| `cline` | Cline | VS Code Extension |
-| `codex-cli` | OpenAI Codex CLI | CLI |
-| `codex-agent` | OpenAI Codex Agent | Web agent |
+| ID            | Tool               | Type              |
+| ------------- | ------------------ | ----------------- |
+| `cursor`      | Cursor             | IDE               |
+| `windsurf`    | Windsurf           | IDE               |
+| `claude-code` | Claude Code        | CLI               |
+| `roo-code`    | Roo Code           | VS Code Extension |
+| `cline`       | Cline              | VS Code Extension |
+| `codex-cli`   | OpenAI Codex CLI   | CLI               |
+| `codex-agent` | OpenAI Codex Agent | Web agent         |
 
 ## Ruleset Syntax
 
@@ -112,16 +112,17 @@ project/
 
 ```markdown
 {{instructions +cursor -claude-code}}
+
 - IMPORTANT: You must follow these coding standards...
-{{/instructions}}
+  {{/instructions}}
 ```
 
 ### Imports
 
 ```markdown
-{{> @legal}}  <!-- Embeds `/_partials/legal.md` -->
-{{> conventions#block-name}}  <!-- Embed a specific block -->
-{{> my-rules blocks="important-considerations,!less-important-considerations"}}  <!-- Filter blocks -->
+{{> @legal}} <!-- Embeds `/_partials/legal.md` -->
+{{> conventions#block-name}} <!-- Embed a specific block -->
+{{> my-rules blocks="important-considerations,!less-important-considerations"}} <!-- Filter blocks -->
 ```
 
 ### Variables
@@ -154,19 +155,20 @@ Content without surrounding XML tags
 ### Raw Notation
 
 ```markdown
-{{{examples}}}  <!-- Triple braces preserve Ruleset syntax -->
+{{{examples}}} <!-- Triple braces preserve Ruleset syntax -->
 {{example}}
+
 - Instructions
 - Rules
-{{/example}}
-{{{/examples}}}
+  {{/example}}
+  {{{/examples}}}
 ```
 
 ### Placeholders
 
 ```markdown
-[requirements]  <!-- Instruction placeholder for AI to fill -->
-{requirements}  <!-- Alternative placeholder notation -->
+[requirements] <!-- Instruction placeholder for AI to fill -->
+{requirements} <!-- Alternative placeholder notation -->
 ```
 
 ## Frontmatter Example
@@ -176,18 +178,18 @@ Content without surrounding XML tags
 # .ruleset/src/my-rule.md
 ruleset:
   version: 0.1.0 # version number for the Ruleset format used
-description: "Rules for this project" # useful for tools that use descriptions
-globs: ["**/*.{txt,md,mdc}"] # globs re-written based on destination-specific needs
+description: 'Rules for this project' # useful for tools that use descriptions
+globs: ['**/*.{txt,md,mdc}'] # globs re-written based on destination-specific needs
 # Destination filter examples:
 destination:
-  include: ["cursor", "windsurf"]
-  exclude: ["claude-code"]
-  path: "./custom/output/path"
+  include: ['cursor', 'windsurf']
+  exclude: ['claude-code']
+  path: './custom/output/path'
 # Destination-specific frontmatter:
 cursor:
   alwaysApply: false
   destination:
-    path: "./custom/.cursor/rules"
+    path: './custom/.cursor/rules'
 # Additional metadata:
 name: my-rule # defaults to filename
 version: 2.0 # version number for this file

@@ -6,7 +6,7 @@ import type { ParsedDoc } from '../interfaces';
 /**
  * Parses a Rulesets source rules file to extract frontmatter and body content.
  * For v0.1.0, this is a simple implementation that doesn't process Rulesets markers.
- * 
+ *
  * @param content - The raw markdown content to parse
  * @returns A promise that resolves to a ParsedDoc
  */
@@ -36,13 +36,13 @@ export async function parse(content: string): Promise<ParsedDoc> {
       // Extract and parse frontmatter
       const frontmatterContent = lines.slice(frontmatterStart + 1, frontmatterEnd).join('\n');
       try {
-        frontmatter = yaml.load(frontmatterContent) as Record<string, unknown> || {};
+        frontmatter = (yaml.load(frontmatterContent) as Record<string, unknown>) || {};
       } catch (error) {
         let friendlyMessage = 'Invalid YAML syntax in frontmatter. ';
-        
+
         if (error instanceof Error) {
           const message = error.message.toLowerCase();
-          
+
           // Add user-friendly context based on common YAML errors
           if (message.includes('unexpected end')) {
             friendlyMessage += 'Make sure all strings are properly quoted and closed.';
@@ -50,7 +50,10 @@ export async function parse(content: string): Promise<ParsedDoc> {
             friendlyMessage += 'Check that your indentation is consistent (use spaces, not tabs).';
           } else if (message.includes('duplicate key')) {
             friendlyMessage += 'You have duplicate keys in your frontmatter.';
-          } else if (message.includes('unexpected token') || message.includes('unexpected character')) {
+          } else if (
+            message.includes('unexpected token') ||
+            message.includes('unexpected character')
+          ) {
             friendlyMessage += 'Check for special characters that need to be quoted or escaped.';
           } else {
             friendlyMessage += `Details: ${error.message}`;
@@ -58,7 +61,7 @@ export async function parse(content: string): Promise<ParsedDoc> {
         } else {
           friendlyMessage += 'Please check your frontmatter formatting.';
         }
-        
+
         errors.push({
           message: friendlyMessage,
           line: frontmatterStart + 1,
@@ -84,10 +87,10 @@ export async function parse(content: string): Promise<ParsedDoc> {
       frontmatter: Object.keys(frontmatter).length > 0 ? frontmatter : undefined,
     },
     ast: {
-      blocks: [],     // Empty for v0 - no body processing
-      imports: [],    // Empty for v0 - no body processing
-      variables: [],  // Empty for v0 - no body processing
-      markers: [],    // Empty for v0 - no body processing
+      blocks: [], // Empty for v0 - no body processing
+      imports: [], // Empty for v0 - no body processing
+      variables: [], // Empty for v0 - no body processing
+      markers: [], // Empty for v0 - no body processing
     },
   };
 

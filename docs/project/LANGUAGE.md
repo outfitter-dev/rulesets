@@ -4,28 +4,28 @@ This document provides terminology guidance for consistent language in Rulesets 
 
 ## Key Terminology
 
-| Term | Definition | Usage Examples |
-|------|------------|----------------|
-| **Source rules** | Source files defining rules for AI assistants, written in Ruleset Syntax | "Write your code standards in a source rules file." |
-| **Compiled rules** | Rules files generated from source rules for each destination | "Compile your source rules into compiled rules for each destination." |
-| **Destination** | A supported tool (e.g., Cursor, Claude Code) | "Each destination has specific formatting requirements." |
-| **Marker** | Element using `{{...}}` notation | "Use markers to direct the compiler." |
-| **Block** | Delimited blocks marked with `{{block}}...{{/block}}` | "Define a block for agent instructions." |
-| **Block Content** | The content between opening and closing block markers | "The block content contains the actual instructions for the AI assistant." |
-| **Block Name** | The kebab-case or snake_case identifier after the opening `{{` | "Use a descriptive block name like {{user-instructions}}." |
-| **Import** | A reference to another source rules file or block | "Import common guidelines into multiple files." |
-| **Import Scope** | Selective filtering of blocks during import | "Use import scope with `{{> my-rules#(my-block) }}` to import specific blocks." |
-| **Variable** | Dynamic values replaced during compilation | "Use variables to include dynamic data." |
-| **System Variable** | Built-in variables provided by the compiler | "The `$destination` system variable contains the current destination ID." |
-| **Variable Substitution** | The process of replacing variables with their values | "Variable substitution happens automatically during compilation." |
-| **Partial** | Reusable components stored in `.ruleset/src/_partials` | "Import commonly used components as partials." |
-| **Property** | A configuration applied to blocks or imports | "Apply the tag-omit property to remove XML tags in compiled rules." |
-| **Scope** | A destination-specific context for properties | "Use destination:property to apply properties in a specific scope." |
-| **Scoped Value** | A property value that applies only to specific destinations | "The destination:code-javascript is a destination-scoped value." |
-| **Property Family** | The prefix part before the hyphen in properties (e.g., `code-` in `code-javascript`) | "The code- family includes language-specific formatting properties." |
-| **Property Value** | Value enclosed in parentheses after a property family | "The code-javascript defines JavaScript-specific formatting." |
-| **Property Group** | A collection of related properties that serve a common purpose, regardless of prefix | "The formatting property group includes properties like code-javascript, indent-4, and wrap-80." |
-| **Modifier** | Special symbol that changes inclusion/exclusion | "Use the + modifier to include content for a destination." |
+| Term                      | Definition                                                                           | Usage Examples                                                                                   |
+| ------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| **Source rules**          | Source files defining rules for AI assistants, written in Ruleset Syntax             | "Write your code standards in a source rules file."                                              |
+| **Compiled rules**        | Rules files generated from source rules for each destination                         | "Compile your source rules into compiled rules for each destination."                            |
+| **Destination**           | A supported tool (e.g., Cursor, Claude Code)                                         | "Each destination has specific formatting requirements."                                         |
+| **Marker**                | Element using `{{...}}` notation                                                     | "Use markers to direct the compiler."                                                            |
+| **Block**                 | Delimited blocks marked with `{{block}}...{{/block}}`                                | "Define a block for agent instructions."                                                         |
+| **Block Content**         | The content between opening and closing block markers                                | "The block content contains the actual instructions for the AI assistant."                       |
+| **Block Name**            | The kebab-case or snake_case identifier after the opening `{{`                       | "Use a descriptive block name like {{user-instructions}}."                                       |
+| **Import**                | A reference to another source rules file or block                                    | "Import common guidelines into multiple files."                                                  |
+| **Import Scope**          | Selective filtering of blocks during import                                          | "Use import scope with `{{> my-rules#(my-block) }}` to import specific blocks."                  |
+| **Variable**              | Dynamic values replaced during compilation                                           | "Use variables to include dynamic data."                                                         |
+| **System Variable**       | Built-in variables provided by the compiler                                          | "The `$destination` system variable contains the current destination ID."                        |
+| **Variable Substitution** | The process of replacing variables with their values                                 | "Variable substitution happens automatically during compilation."                                |
+| **Partial**               | Reusable components stored in `.ruleset/src/_partials`                               | "Import commonly used components as partials."                                                   |
+| **Property**              | A configuration applied to blocks or imports                                         | "Apply the tag-omit property to remove XML tags in compiled rules."                              |
+| **Scope**                 | A destination-specific context for properties                                        | "Use destination:property to apply properties in a specific scope."                              |
+| **Scoped Value**          | A property value that applies only to specific destinations                          | "The destination:code-javascript is a destination-scoped value."                                 |
+| **Property Family**       | The prefix part before the hyphen in properties (e.g., `code-` in `code-javascript`) | "The code- family includes language-specific formatting properties."                             |
+| **Property Value**        | Value enclosed in parentheses after a property family                                | "The code-javascript defines JavaScript-specific formatting."                                    |
+| **Property Group**        | A collection of related properties that serve a common purpose, regardless of prefix | "The formatting property group includes properties like code-javascript, indent-4, and wrap-80." |
+| **Modifier**              | Special symbol that changes inclusion/exclusion                                      | "Use the + modifier to include content for a destination."                                       |
 
 ## Linguistic Conventions
 
@@ -91,26 +91,26 @@ This document provides terminology guidance for consistent language in Rulesets 
 
 ## File and Directory Structure
 
-| Entity Type | Naming Convention | Example |
-|-------------|-------------------|---------|
-| Source Rules files | `kebab-case.ruleset.md` | `coding-standards.ruleset.md` |
-| Directory | `kebab-case` | `_partials` |
-| Config files | `kebab-case.config.json` | `ruleset.config.json` |
-| Block markers | `kebab-case` | `{{user-instructions}}` |
-| XML Tags in compiled rules | `snake_case` | `<user_instructions>` |
+| Entity Type                | Naming Convention        | Example                       |
+| -------------------------- | ------------------------ | ----------------------------- |
+| Source Rules files         | `kebab-case.ruleset.md`  | `coding-standards.ruleset.md` |
+| Directory                  | `kebab-case`             | `_partials`                   |
+| Config files               | `kebab-case.config.json` | `ruleset.config.json`         |
+| Block markers              | `kebab-case`             | `{{user-instructions}}`       |
+| XML Tags in compiled rules | `snake_case`             | `<user_instructions>`         |
 
 ### Distribution Directory Structure
 
 The `.ruleset/dist/` directory stores compiled rules, compilation artifacts, and related data:
 
-| Path | Purpose |
-|------|---------|
-| `.ruleset/dist/latest/` | Symlink to the latest compilation |
-| `.ruleset/dist/runs/` | Directory for all compilations and their artifacts |
-| `.ruleset/dist/runs/run-<timestamp>/` | Directory containing specific compiled rules and artifacts |
-| `.ruleset/dist/runs/run-<timestamp>.json` | Compilation metadata for each run |
-| `.ruleset/dist/logs/` | Log files for all compilations |
-| `.ruleset/dist/logs/run-<timestamp>.log` | Compilation log for each run |
+| Path                                      | Purpose                                                    |
+| ----------------------------------------- | ---------------------------------------------------------- |
+| `.ruleset/dist/latest/`                   | Symlink to the latest compilation                          |
+| `.ruleset/dist/runs/`                     | Directory for all compilations and their artifacts         |
+| `.ruleset/dist/runs/run-<timestamp>/`     | Directory containing specific compiled rules and artifacts |
+| `.ruleset/dist/runs/run-<timestamp>.json` | Compilation metadata for each run                          |
+| `.ruleset/dist/logs/`                     | Log files for all compilations                             |
+| `.ruleset/dist/logs/run-<timestamp>.log`  | Compilation log for each run                               |
 
 ### Destination Directories
 
@@ -124,14 +124,14 @@ The `.ruleset/dist/` directory stores compiled rules, compilation artifacts, and
 
 Rulesets uses specific delimiters consistently throughout the syntax:
 
-| Delimiter | Role | Example | Purpose |
-|-----------|------|---------|---------|
-| `:` | Scope indicator | `destination:code-javascript` | Indicates that properties are scoped to a specific destination |
-| `()` | Property value container | `name-("destination-rules")` | Contains value for a property family |
-| `[]` | Property grouping | `destination:[property-1 property-2]` | Groups multiple properties for readability |
-| `+` | Inclusion modifier | `+destination` | Indicates inclusion of a destination |
-| `!` | Exclusion modifier | `!destination`, `!block-two` | Indicates exclusion of a destination or block on imports |
-| `""` | XML attribute value | `priority="high"` | Contains custom XML attribute values |
+| Delimiter | Role                     | Example                               | Purpose                                                        |
+| --------- | ------------------------ | ------------------------------------- | -------------------------------------------------------------- |
+| `:`       | Scope indicator          | `destination:code-javascript`         | Indicates that properties are scoped to a specific destination |
+| `()`      | Property value container | `name-("destination-rules")`          | Contains value for a property family                           |
+| `[]`      | Property grouping        | `destination:[property-1 property-2]` | Groups multiple properties for readability                     |
+| `+`       | Inclusion modifier       | `+destination`                        | Indicates inclusion of a destination                           |
+| `!`       | Exclusion modifier       | `!destination`, `!block-two`          | Indicates exclusion of a destination or block on imports       |
+| `""`      | XML attribute value      | `priority="high"`                     | Contains custom XML attribute values                           |
 
 ## Markdown Formatting
 
@@ -192,4 +192,4 @@ When referring to compilation versions:
 
 ---
 
-*This language spec is a living styleguide document and will evolve with Rulesets' development.*
+_This language spec is a living styleguide document and will evolve with Rulesets' development._
