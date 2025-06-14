@@ -134,7 +134,7 @@ When working with Copilot, the rules are processed as follows:
 | Documentation sources | GitHub Docs articles on repository instructions, personal instructions, prompt files |
 | Staleness warning     | None – all sources ≤ 1 week old                                                      |
 
-## Mixdown Integration
+## Rulesets Integration
 
 > [!NOTE]
-> 🚧 Pending Mixdown integration
+> 🚧 Pending Rulesets integration

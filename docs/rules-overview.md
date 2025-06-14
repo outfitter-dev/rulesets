@@ -239,7 +239,7 @@ graph TB
 1. AI rules files provide persistent instructions across sessions
 2. Each tool has its preferred location and format, but all use Markdown
 3. Effective rules are concise, specific, and well-structured
-4. Consider tools like Mixdown to manage rules across multiple AI assistants
+4. Consider using Rulesets to write rules once and compile to tool-specific outputs
 5. Update rules as your project evolves to keep AI assistance relevant
 
 ## Tool-Specific Documentation

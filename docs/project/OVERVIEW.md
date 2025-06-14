@@ -167,11 +167,11 @@ npx @rulesets/cli init
 ### Quick Start
 
 ```bash
-rulesets init      # scaffolds .rulesets/ directory structure
+rulesets init      # scaffolds .ruleset/ directory structure
 
 rulesets import    # imports existing rules files into the rulesets format
 
-rulesets build     # writes compiled rules to .rulesets/dist/
+rulesets build     # writes compiled rules to .ruleset/dist/
 ```
 
 ## Notation Reference
@@ -261,9 +261,9 @@ Any property can be given a per-destination override by suffixing the destinatio
 {{/instructions}}
 ```
 
-In this example the stem will use the name "cursor-instructions" when compiled for the _cursor_ destination. The same pattern works with groups once they arrive (e.g. `ide:name-("ide-instructions")`).
+In this example the block will use the name "cursor-instructions" when compiled for the _cursor_ destination. The same pattern works with groups once they arrive (e.g. `ide:name-("ide-instructions")`).
 
-Note: You can also use the `+destination` notation to both include the stem for specific destinations _and_ apply destination-specific overrides.
+Note: You can also use the `+destination` notation to both include the block for specific destinations _and_ apply destination-specific overrides.
 
 #### Destination-scoped Multiple Properties
 
@@ -277,7 +277,7 @@ This applies both `name-("cursor-rules")` and `code-javascript` properties only 
 
 #### Property Processing Order
 
-Properties within a stem marker are processed sequentially from left to right. This processing order affects three main categories of properties:
+Properties within a block marker are processed sequentially from left to right. This processing order affects three main categories of properties:
 
 1. **Basic Properties**: Simple formatting properties like `unwrap` or `code-javascript`
 2. **Destination Inclusion/Exclusion**: Modifiers like `+destination` and `!destination`
@@ -291,7 +291,7 @@ The evaluation follows this simple rule:
 **Simple Example:**
 
 ```markdown
-{{stem code-javascript unwrap}}
+{{block code-javascript unwrap}}
 ```
 
 First applies `code-javascript` (JavaScript code block formatting), then applies `unwrap` (removes surrounding XML tags).
@@ -299,22 +299,22 @@ First applies `code-javascript` (JavaScript code block formatting), then applies
 **Practical Destination Example:**
 
 ```markdown
-{{stem +ide !windsurf cursor:[unwrap]}}
+{{block +ide !windsurf cursor:[unwrap]}}
 ```
 
 This would:
 
-1. Include the stem for all IDE destinations (`+ide`)
+1. Include the block for all IDE destinations (`+ide`)
 2. Exclude it specifically for Windsurf (`!windsurf`), even though Windsurf might be in the IDE group
 3. Apply the `unwrap` property, but only when building for Cursor
 
 **Conflict Resolution Example:**
 
 ```markdown
-{{stem h-2 h-3}}
+{{block h-2 h-3}}
 ```
 
-The stem would use heading level 3 because `h-3` appears last and overrides `h-2`.
+The block would use heading level 3 because `h-3` appears last and overrides `h-2`.
 
 > [!NOTE]
 > While properties are processed left-to-right, certain property types like `name-()` might have special handling if specified multiple times. When in doubt about complex combinations, the last specified property for a particular feature usually takes precedence.
@@ -325,11 +325,11 @@ Destination filtering properties control which destinations receive content. The
 
 | Property       | Description                             | Example              |
 | -------------- | --------------------------------------- | -------------------- |
-| `+destination` | Include for a specific destination      | `{{stem +cursor}}`   |
-| `!destination` | Exclude for a specific destination      | `{{stem !windsurf}}` |
-| `+all`         | Include for all configured destinations | `{{stem +all}}`      |
-| `+group`       | Include for all destinations in a group | `{{stem +ide}}`      |
-| `!group`       | Exclude for all destinations in a group | `{{stem !cli}}`      |
+| `+destination` | Include for a specific destination      | `{{block +cursor}}`   |
+| `!destination` | Exclude for a specific destination      | `{{block !windsurf}}` |
+| `+all`         | Include for all configured destinations | `{{block +all}}`      |
+| `+group`       | Include for all destinations in a group | `{{block +ide}}`      |
+| `!group`       | Exclude for all destinations in a group | `{{block !cli}}`      |
 
 The `+all` property is particularly useful for explicitly indicating that content should be included for all destinations. This is helpful when you want to be explicit about inclusion, even though the default behavior is already to include content for all destinations.
 
@@ -355,7 +355,7 @@ In this example, even though `claude-code` is a member of the `cli` group, the e
 
 #### Self-Closing Tags
 
-For stems with no content, you can use a self-closing tag format:
+For blocks with no content, you can use a self-closing tag format:
 
 ```markdown
 {{empty-stem /}}
@@ -379,25 +379,25 @@ Self-closing tags render as empty XML tags in the output:
 
 - **Inclusion for a destination with a specific property:**
   `{{instructions +cursor:name-("only-for-cursor")}}`
-  *(Includes this stem *only* for the `cursor` destination, and for `cursor`, it uses `name-("only-for-cursor")`.)*
+  *(Includes this block *only* for the `cursor` destination, and for `cursor`, it uses `name-("only-for-cursor")`.)*
 
 - **Inclusion for a destination with multiple specific properties:**
   `{{instructions +cursor:[name-("cursor-rules") code-javascript]}}`
-  *(Includes this stem *only* for the `cursor` destination, applying both `name-("cursor-rules")` and `code-javascript` for `cursor`.)*
+  *(Includes this block *only* for the `cursor` destination, applying both `name-("cursor-rules")` and `code-javascript` for `cursor`.)*
 
 - **Exclusion for a destination, even if a scoped property is present:**
   `{{instructions !cursor:name-("ignored-for-cursor")}}`
-  _(Excludes this stem for the `cursor` destination. The `name-("ignored-for-cursor")` property would not apply as the stem is excluded for `cursor`.)_
+  _(Excludes this block for the `cursor` destination. The `name-("ignored-for-cursor")` property would not apply as the block is excluded for `cursor`.)_
 
 - **Group inclusion with member exclusion and scoped properties for the group:**
   `{{instructions +ide:[code-javascript] !cursor}}`
-  _(Includes this stem for all destinations in the `ide` group, applying the `code-javascript` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `rulesets.config.json`.)_
+  _(Includes this block for all destinations in the `ide` group, applying the `code-javascript` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `ruleset.config.json`.)_
 
 > [!IMPORTANT]
 > Differentiating Scoped Properties from Scoped Inclusion:
 >
-> - `destination:[my-property]` means "If this stem is rendered for `destination`, apply `my-property`." The stem's general inclusion is determined elsewhere (e.g. by default, or by a `+destination` on its own).
-> - `+destination:[my-property]` means "Render this stem _only_ for `destination`, and when doing so, apply `my-property`." This controls both inclusion and destination-specific properties simultaneously.
+> - `destination:[my-property]` means "If this block is rendered for `destination`, apply `my-property`." The stem's general inclusion is determined elsewhere (e.g. by default, or by a `+destination` on its own).
+> - `+destination:[my-property]` means "Render this block _only_ for `destination`, and when doing so, apply `my-property`." This controls both inclusion and destination-specific properties simultaneously.
 
 #### Multi-line Markers for Readability
 
@@ -413,7 +413,7 @@ This is the content of the instructions section.
 {{/instructions}}
 
 <!-- Note: Using the name-("value") syntax specifically sets the 'name' attribute
-  (e.g., name="important-rules") in the rendered XML output. The value provided in name-("...") is used as-is and is not transformed to snake_case (unlike stem names themselves). -->
+  (e.g., name="important-rules") in the rendered XML output. The value provided in name-("...") is used as-is and is not transformed to snake_case (unlike block names themselves). -->
 
 ---
 
@@ -429,8 +429,8 @@ This is the content of the instructions section.
 | Property                   | Type      | Purpose                                                                                                                                                        |
 | -------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `+/!destination`           | flag      | Include/exclude for specific destinations (e.g., `+cursor !windsurf`).                                                                                         |
-| `name-("value")`           | value     | Sets a name with a specified value for the stem (e.g., `name-("my-section")` becomes `name="my-section"`).                                                     |
-| `id-("value")`             | value     | Sets a unique XML `id` attribute for the stem (e.g., `id-("unique-identifier")` becomes `id="unique-identifier"`), useful for linking or specific referencing. |
+| `name-("value")`           | value     | Sets a name with a specified value for the block (e.g., `name-("my-section")` becomes `name="my-section"`).                                                     |
+| `id-("value")`             | value     | Sets a unique XML `id` attribute for the block (e.g., `id-("unique-identifier")` becomes `id="unique-identifier"`), useful for linking or specific referencing. |
 | `unwrap`, `inline`, etc.   | flag      | Controls how content is processed (see [Output Format](#output-format) below).                                                                                 |
 | `code-`, `h-`, `num-`      | flag      | Family-specific properties for code blocks, headings, and numbering.                                                                                           |
 | `[property1 property2]`    | group     | Groups multiple properties together for readability.                                                                                                           |
@@ -439,7 +439,7 @@ This is the content of the instructions section.
 
 #### Output Format
 
-Output properties provide flexible control over how content is formatted in compiled artifacts. These properties are available for stems, imports, and inclusions.
+Output properties provide flexible control over how content is formatted in compiled artifacts. These properties are available for blocks, imports, and inclusions.
 
 ```markdown
 {{instructions unwrap}}
@@ -509,7 +509,7 @@ Heading properties control how headings are processed:
 
 **Heading Shortcut:**
 
-For convenience, you can use a string as the first item in a stem to automatically create a heading:
+For convenience, you can use a string as the first item in a block to automatically create a heading:
 
 ```markdown
 {{section "Section Name" h-3}}
@@ -523,7 +523,7 @@ The heading shortcut will automatically:
 
 - Set the heading level (via h-\* properties)
 - Use the provided text as the heading
-- Apply the heading to the beginning of the stem content
+- Apply the heading to the beginning of the block content
 
 **Numbering Properties (num-\* family):**
 
@@ -592,15 +592,15 @@ The following table provides a quick reference to common invocation patterns for
 
 | Pattern                                            | Example                                               | Description                                                                                                                                                                                                                                          |
 | -------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Basic Grouping                                     | `{{stem [opt1 opt2 opt3]}}`                           | Visually groups space-delimited properties.                                                                                                                                                                                                          |
-| Multi-line Grouping                                | `{{stem [\n opt1 \n opt2 \n]}}`                       | Improves readability for many properties.                                                                                                                                                                                                            |
-| Destination-Scoped Single Property (no group)      | `{{stem destination:opt1}}`                           | Applies `opt1` only when compiling for `destination`. The stem itself is included for all destinations by default, unless other inclusion/exclusion properties (e.g., `+destination`, `!anotherDest`) are present that alter its general visibility. |
-| Destination-Scoped Multiple Properties (via group) | `{{stem destination:[opt1 opt2]}}`                    | Applies `opt1` and `opt2` only for `destination`. Block included for all.                                                                                                                                                                            |
-| Inclusion for Destination + Scoped Single Opt      | `{{stem +destination:opt1}}`                          | Includes block only for `destination`, applying `opt1`.                                                                                                                                                                                              |
-| Inclusion for Destination + Scoped Multi Opts      | `{{stem +destination:[opt1 opt2]}}`                   | Includes block only for `destination`, applying `opt1` and `opt2`.                                                                                                                                                                                   |
-| Exclusion for Destination (scoped opts moot)       | `{{stem !destination:opt1}}` or `!destination:[opt1]` | Excludes block for `destination`.                                                                                                                                                                                                                    |
-| Group Inclusion + Member Exclusion                 | `{{stem +group:[opt1] !member}}`                      | Includes for `group` with `opt1`, but excludes for `member`.                                                                                                                                                                                         |
-| All Destinations Inclusion                         | `{{stem +all}}`                                       | Explicitly includes content for all configured destinations.                                                                                                                                                                                         |
+| Basic Grouping                                     | `{{block [opt1 opt2 opt3]}}`                           | Visually groups space-delimited properties.                                                                                                                                                                                                          |
+| Multi-line Grouping                                | `{{block [\n opt1 \n opt2 \n]}}`                       | Improves readability for many properties.                                                                                                                                                                                                            |
+| Destination-Scoped Single Property (no group)      | `{{block destination:opt1}}`                           | Applies `opt1` only when compiling for `destination`. The block itself is included for all destinations by default, unless other inclusion/exclusion properties (e.g., `+destination`, `!anotherDest`) are present that alter its general visibility. |
+| Destination-Scoped Multiple Properties (via group) | `{{block destination:[opt1 opt2]}}`                    | Applies `opt1` and `opt2` only for `destination`. Block included for all.                                                                                                                                                                            |
+| Inclusion for Destination + Scoped Single Opt      | `{{block +destination:opt1}}`                          | Includes block only for `destination`, applying `opt1`.                                                                                                                                                                                              |
+| Inclusion for Destination + Scoped Multi Opts      | `{{block +destination:[opt1 opt2]}}`                   | Includes block only for `destination`, applying `opt1` and `opt2`.                                                                                                                                                                                   |
+| Exclusion for Destination (scoped opts moot)       | `{{block !destination:opt1}}` or `!destination:[opt1]` | Excludes block for `destination`.                                                                                                                                                                                                                    |
+| Group Inclusion + Member Exclusion                 | `{{block +group:[opt1] !member}}`                      | Includes for `group` with `opt1`, but excludes for `member`.                                                                                                                                                                                         |
+| All Destinations Inclusion                         | `{{block +all}}`                                       | Explicitly includes content for all configured destinations.                                                                                                                                                                                         |
 
 The standalone `code` property (without a language suffix) automatically determines the appropriate language based on context. When used with partials, it detects the language based on the partial file's extension:
 
@@ -634,15 +634,15 @@ When `allow-bare-xml-tags` is set to `true` in frontmatter or `.ruleset.config.j
 ```markdown
 <!-- XML tags with `allow-bare-xml-tags` set to `true` -->
 
-<stem_name>
+<block_name>
 ...
-</stem_name>
+</block_name>
 
 Renders as:
 
-<stem_name>
+<block_name>
 ...
-</stem_name>
+</block_name>
 ```
 
 ### Rulesets Frontmatter
@@ -731,7 +731,7 @@ Variables are dynamic values using the `{{$...}}` notation. They are replaced in
 The syntax for variables depends on the context:
 
 - `{{$key}}` is used when the variable is standalone in the content. For example: `Welcome, {{$userName}}!`
-- `$key` is used when the variable is within another Rulesets `{{...}}` marker. For example: `{{stem class-($userTheme)}}`
+- `$key` is used when the variable is within another Rulesets `{{...}}` marker. For example: `{{block class-($userTheme)}}`
 
 | Type                     | Notation                      | Notes                                                                                                                                                                                                                                    |
 | ------------------------ | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -824,7 +824,7 @@ Examples:
 
 #### Destination-Specific Stem Filtering
 
-You can also apply destination-specific stem filtering for imports:
+You can also apply destination-specific block filtering for imports:
 
 ```markdown
 {{> my-rules#(common-stem !legacy-stem cursor:[cursor-specific-stem])}}
@@ -838,15 +838,15 @@ This would:
 
 #### Stem References and Import Scope
 
-Stem references using the `#` symbol provide a way to selectively include or exclude stems from source rules files during import. There are several ways to use stem references:
+Stem references using the `#` symbol provide a way to selectively include or exclude blocks from source rules files during import. There are several ways to use block references:
 
-- **Single stem reference**: `{{> source-file#stem-name}}` - Import only the specified stem
-- **Internal stem reference**: `{{> #stem-name}}` - Reference a stem within the current file
-- **Multiple stems with import scope**: `{{> source-file#(stem-one stem-two)}}` - Import multiple specific stems
-- **Exclusion with import scope**: `{{> source-file#(!stem-three)}}` - Import all stems except the specified one
-- **Destination-scoped stems**: `{{> source-file#(common-stem cursor:[cursor-only-stem])}}` - Include destination-specific stems
+- **Single block reference**: `{{> source-file#block-name}}` - Import only the specified stem
+- **Internal block reference**: `{{> #block-name}}` - Reference a block within the current file
+- **Multiple blocks with import scope**: `{{> source-file#(stem-one stem-two)}}` - Import multiple specific blocks
+- **Exclusion with import scope**: `{{> source-file#(!stem-three)}}` - Import all blocks except the specified one
+- **Destination-scoped blocks**: `{{> source-file#(common-stem cursor:[cursor-only-stem])}}` - Include destination-specific blocks
 
-Import scope provides a powerful way to control exactly which stems are included from source rules during compilation. This selective filtering allows for greater flexibility when reusing content across multiple files while maintaining destination-specific customizations.
+Import scope provides a powerful way to control exactly which blocks are included from source rules during compilation. This selective filtering allows for greater flexibility when reusing content across multiple files while maintaining destination-specific customizations.
 
 ### Imports vs. Variables (Substitution)
 
@@ -860,8 +860,8 @@ It's important to distinguish between imports (`{{> ...}}`) and variable substit
 Partials are modular, reusable components, stored in the `.ruleset/src/_partials/` directory. Like programming partials that can be incorporated into different classes or components, Rulesets partials provide isolated content blocks that can be imported into multiple source rules files.
 
 - A partial typically contains one or more blocks that perform a specific function
-- Mixins are imported using the `{{> @mixin-name}}` notation
-- Mixins are converted to `<mixin_name>` tags in the compiled artifact, unless modified with `unwrap` or `inline` properties
+- Partials are imported using the `{{> @partial-name}}` notation
+- Partials are converted to `<partial_name>` tags in the compiled artifact, unless modified with `unwrap` or `inline` properties
 
 Example:
 
@@ -908,7 +908,7 @@ Rulesets notation can be compiled as raw notation using the `{{{...}}}` syntax. 
 
 ```markdown
 > Triple braces will preserve the Rulesets notation on render.
-> Adding `unwrap` will remove those stem tags from the compiled artifact.
+> Adding `unwrap` will remove those block tags from the compiled artifact.
 > Adding `+cursor` will only include the section for the `cursor` destination.
 
 {{{examples unwrap +cursor}}}
@@ -1036,9 +1036,9 @@ project/
 
 ## XML Generation
 
-Rulesets converts notation markers to XML tags during the compilation process. When stems are converted to XML:
+Rulesets converts notation markers to XML tags during the compilation process. When blocks are converted to XML:
 
-- Stem markers are converted to XML tags with corresponding names (`{{stem-name}}` → `<stem_name>`)
+- Block markers are converted to XML tags with corresponding names (`{{block-name}}` → `<block_name>`)
 - Properties become XML attributes in the output tags
 - Content between markers becomes the XML tag content
 - Rulesets can compile rules into pure Markdown, XML, or a combination of the two
@@ -1115,15 +1115,15 @@ The table below organizes properties by their categories with comprehensive info
 | `num-tag-first`                      | Flag          | `num-tag-first`                           | ✅   | ✅     | ❌          | Number first tag only                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | `num-tag-last`                       | Flag          | `num-tag-last`                            | ✅   | ✅     | ❌          | Number last tag only                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | **Raw Notation Properties**          |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| `process-content`                    | Flag          | `process-content`                         | ✅   | ✅     | ❌          | Used within `{{{...}}}` (raw notation) stems. When `process-content` is applied to such a stem, the content _inside_ the raw block is compiled by Rulesets as if it were regular Rulesets content, while the outer `{{{stemName}}}` and `{{{/stemName}}}` are still rendered as raw. This is useful for selectively processing parts of a raw block, for example, to demonstrate a Rulesets feature that itself involves further compilation. |
+| `process-content`                    | Flag          | `process-content`                         | ✅   | ✅     | ❌          | Used within `{{{...}}}` (raw notation) blocks. When `process-content` is applied to such a stem, the content _inside_ the raw block is compiled by Rulesets as if it were regular Rulesets content, while the outer `{{{blockName}}}` and `{{{/stemName}}}` are still rendered as raw. This is useful for selectively processing parts of a raw block, for example, to demonstrate a Rulesets feature that itself involves further compilation. |
 
-**Note:** These properties are exclusively used within the import syntax, e.g., `{{> fileName#stem }}`.
+**Note:** These properties are exclusively used within the import syntax, e.g., `{{> fileName#block }}`.
 
 | **Import Scope** |||||||
-| `#stem` | Single stem | `#stem-name` | ❌ | ✅ | ❌ | Include specific stem from import. |
-| `#!stem` | Single exclusion | `#!stem-name` | ❌ | ✅ | ❌ | Exclude specific stem from import. |
-| `#(stem1 !stem2)` | Multiple stems | `#(section-a section-b)` | ❌ | ✅ | ❌ | Include/exclude multiple specific stems. |
-| `#(destination:[stem])` | Scoped stem | `#(cursor:[section-a])` | ❌ | ✅ | ❌ | Destination-specific stem inclusion. |
+| `#block` | Single block | `#block-name` | ❌ | ✅ | ❌ | Include specific block from import. |
+| `#!block` | Single exclusion | `#!block-name` | ❌ | ✅ | ❌ | Exclude specific block from import. |
+| `#(stem1 !stem2)` | Multiple blocks | `#(section-a section-b)` | ❌ | ✅ | ❌ | Include/exclude multiple specific blocks. |
+| `#(destination:[stem])` | Scoped block | `#(cursor:[section-a])` | ❌ | ✅ | ❌ | Destination-specific block inclusion. |
 | **Frontmatter Configuration** |||||||
 | `ruleset.version` | YAML | `ruleset.version: 0.1.0` | ❌ | ❌ | ✅ | Rulesets format version for the file |
 | `description` | YAML | `description: "Project rules"` | ❌ | ❌ | ✅ | Short description of the source rules |
@@ -1147,15 +1147,15 @@ Most common programming languages are supported using the `code-language` patter
 ```markdown
 <!-- Basic formatting properties -->
 
-{{stem unwrap}} <!-- Remove XML tags, keep block formatting -->
-{{stem inline}} <!-- Render inline without tags -->
-{{stem code-javascript unwrap}} <!-- JavaScript code block without XML wrapper -->
+{{block unwrap}} <!-- Remove XML tags, keep block formatting -->
+{{block inline}} <!-- Render inline without tags -->
+{{block code-javascript unwrap}} <!-- JavaScript code block without XML wrapper -->
 
 <!-- Destination scoping properties -->
 
-{{stem +cursor !windsurf}} <!-- Include for Cursor, exclude for Windsurf -->
-{{stem +ide:[code-javascript]}} <!-- Include for all IDE destinations with code-javascript formatting -->
-{{stem cursor:unwrap}} <!-- Apply unwrap only for Cursor -->
+{{block +cursor !windsurf}} <!-- Include for Cursor, exclude for Windsurf -->
+{{block +ide:[code-javascript]}} <!-- Include for all IDE destinations with code-javascript formatting -->
+{{block cursor:unwrap}} <!-- Apply unwrap only for Cursor -->
 
 <!-- Import properties -->
 

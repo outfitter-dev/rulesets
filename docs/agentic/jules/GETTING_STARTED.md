@@ -15,7 +15,7 @@
 
 ```typescript
 // TLDR: Simple parser implementation that extracts frontmatter (mixd-v0)
-// TODO (mixd-v0.1): Add support for stem parsing
+// TODO (mixd-v0.1): Add support for block parsing
 export function parse(content: string): ParsedDoc {
   // Implementation...
 }

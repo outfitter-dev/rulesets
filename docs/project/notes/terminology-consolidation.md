@@ -355,16 +355,16 @@
 
 ## Additional Terminology Changes
 
-### Mixin
+### Partial
 
 - **Description:** Reusable, standalone components that can be imported into Source Rules
 - **Current:** "Snippet", "Reusable component", "Partial", "Include", "Fragment"
 - **Recommendation:** Standardize on a programming-familiar term that complements Source Rules
-- **Decision:** Use "Mixin" as the primary term for reusable components
+- **Decision:** Use "Partial" as the primary term for reusable components
 - **Proposed:**
-  1. ✴️ "Mixin" ← "Snippet", "Reusable component", "Fragment"
-     - Reasoning: In programming, mixins are reusable pieces of code that can be incorporated into different classes or components - exactly matching our use case.
-     - Example: "Import authentication mixins to add user authentication to your Source Rules."
+  1. ✴️ "Partial" ← "Snippet", "Reusable component", "Fragment"
+     - Reasoning: In programming, partials are reusable pieces of code that can be incorporated into different classes or components - exactly matching our use case.
+     - Example: "Import authentication partials to add user authentication to your Source Rules."
   2. "Component" ← "Reusable component", "Fragment"
      - Reasoning: Generic but clear term that emphasizes the modular nature.
      - Example: "Store common components in the \_components directory for reuse."
@@ -372,7 +372,7 @@
      - Reasoning: Continues the music production theme alongside "stem".
      - Example: "Import the header sample into multiple Source Rules files."
 - **Decision:**
-  - We should use **Mixin** as the standard term for reusable components that can be imported into Source Rules
-  - We should rename the `.mixdown/mixes/_snippets` directory to `.mixdown/src/_mixins`
-  - A mixin typically contains one or more stems that perform a specific function
-  - A mixin can be imported into multiple Source Rules files using the import notation `{{> mixin-name}}`
+  - We should use **Partial** as the standard term for reusable components that can be imported into Source Rules
+  - We should rename the `.mixdown/mixes/_snippets` directory to `.mixdown/src/_partials`
+  - A partial typically contains one or more stems that perform a specific function
+  - A partial can be imported into multiple Source Rules files using the import notation `{{> partial-name}}`
