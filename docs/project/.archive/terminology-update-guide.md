@@ -6,19 +6,19 @@ This document outlines all terminology changes from the terminology consolidatio
 
 The table below shows the primary terminology changes that need to be implemented across the codebase:
 
-| Old Term | New Term | Description |
-|----------|----------|-------------|
-| **Mix**, Mix file, Source mix, etc. | **Source Rules** | Files defining instructions for AI assistants |
-| **Track** | **Stem** | Delimited content blocks with opening and closing markers |
-| **Snippet** | **Mixin** | Reusable components imported into source rules |
-| **Target**, Target tool, etc. | **Destination** | AI assistant platform (e.g., Cursor, Claude Code) |
-| **Output**, Tool-specific rules, etc. | **Compiled Rules** | Rules files generated from source rules |
-| **Option** | **Property** | Configuration applied to stems or imports |
-| **Notation Marker**, Marker notation | **Marker** (or **Mixdown Marker**) | Element using `{{...}}` notation |
-| **Track filtering** | **Import scope** | Filtering stems during import using `{{> file#(stem-a !stem-b)}}` |
-| **.mixdown/mixes/** | **.mixdown/src/** | Directory for source rules files |
-| **.mixdown/mixes/_snippets/** | **.mixdown/src/_mixins/** | Directory for reusable components |
-| **.mixdown/output/** | **.mixdown/dist/** | Directory for compiled rules and artifacts |
+| Old Term                              | New Term                           | Description                                                       |
+| ------------------------------------- | ---------------------------------- | ----------------------------------------------------------------- |
+| **Mix**, Mix file, Source mix, etc.   | **Source Rules**                   | Files defining instructions for AI assistants                     |
+| **Track**                             | **Stem**                           | Delimited content blocks with opening and closing markers         |
+| **Snippet**                           | **Mixin**                          | Reusable components imported into source rules                    |
+| **Target**, Target tool, etc.         | **Destination**                    | AI assistant platform (e.g., Cursor, Claude Code)                 |
+| **Output**, Tool-specific rules, etc. | **Compiled Rules**                 | Rules files generated from source rules                           |
+| **Option**                            | **Property**                       | Configuration applied to stems or imports                         |
+| **Notation Marker**, Marker notation  | **Marker** (or **Mixdown Marker**) | Element using `{{...}}` notation                                  |
+| **Track filtering**                   | **Import scope**                   | Filtering stems during import using `{{> file#(stem-a !stem-b)}}` |
+| **.mixdown/mixes/**                   | **.mixdown/src/**                  | Directory for source rules files                                  |
+| **.mixdown/mixes/\_snippets/**        | **.mixdown/src/\_mixins/**         | Directory for reusable components                                 |
+| **.mixdown/output/**                  | **.mixdown/dist/**                 | Directory for compiled rules and artifacts                        |
 
 ## Directory Structure Changes
 
@@ -67,7 +67,7 @@ project/
 
 ### Tool-Ready Rules
 
-- **Old**: "Tool-ready rules", "Tool-ready output", "Deployed rules", "Tool-installed rules" 
+- **Old**: "Tool-ready rules", "Tool-ready output", "Deployed rules", "Tool-installed rules"
 - **New**: See "Compiled Rules" terminology
 - **Reasoning**: Consolidated with "Compiled Rules" terminology
 
@@ -83,7 +83,7 @@ project/
 - **New**: "Compile" (standard verb for the transformation process)
 - **Reasoning**: Best represents the transformation process and aligns with standard programming terminology
 
-### Compiler 
+### Compiler
 
 - **Old**: "Rules compiler", "Prompt compiler", "Compiler", "Mixdown compiler", "Rules processor"
 - **New**: "Compiler" (for component itself), "Rules compiler" (for the process)
@@ -144,7 +144,7 @@ project/
 
 ### Code Options
 
-- **Old**: "code-*", "code-js", "code-py", "code-block"
+- **Old**: "code-\*", "code-js", "code-py", "code-block"
 - **New**: "code-lang" (generic reference), "code" (auto-language)
 - **Reasoning**: More consistent pattern for language-specific code blocks
 
@@ -159,12 +159,14 @@ project/
 ### Core Documentation Files
 
 1. **README.md**
+
    - Update "Core Concepts" section with new terminology
    - Replace "Mix", "Track", "Snippet", "Target", "Output" in all descriptions
    - Update directory structure diagram
    - Update notation cheatsheet with new terms
 
 2. **spec/OVERVIEW.md**
+
    - Update "Core Concepts" section completely
    - Replace all instances of old terminology throughout the document
    - Update all examples to use new terminology
@@ -178,10 +180,12 @@ project/
 ### Documentation Directory
 
 4. **docs/index.md**
+
    - Update introduction and overview sections with new terminology
-   - Update any diagrams or illustrations 
+   - Update any diagrams or illustrations
 
 5. **docs/rules-overview.md**
+
    - Complete revision to use new terminology throughout
    - Update all examples to use new terms
 
@@ -192,14 +196,17 @@ project/
 ### Notes Directory
 
 7. **notes/ai-rules-guide.md**
+
    - Update terminology throughout
    - Pay special attention to conceptual explanations that use old terms
 
 8. **notes/mixdown-compiler-patterns.md**
+
    - Update to reference new directory structure
    - Update all process terminology to use "Compile/Compilation"
 
 9. **notes/prompt-rules-use.md**
+
    - Update with new "Source Rules" and "Stem" terminology
    - Review examples and update accordingly
 
@@ -216,14 +223,17 @@ project/
 ## Special Cases and Exceptions
 
 1. **Musical Theme Alignment**
+
    - When introducing new terms, explain their connection to music production terminology
    - Emphasize the connection between "Source Rules" → "Compilation" → "Compiled Rules" and audio production workflow
 
 2. **XML Output References**
+
    - Replace "Outputs XML notation" with more accurate "Compiled as XML notation"
    - Acknowledge that XML is just one potential output format
 
 3. **Historical References**
+
    - When referencing past versions or documentation, note the terminology change
    - Example: "Previously called 'Mix files', now known as 'Source Rules'"
 

@@ -8,7 +8,7 @@ describe('compiler', () => {
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+ruleset: v0
 title: Test Rules
 description: Test description
 destinations:
@@ -19,9 +19,9 @@ destinations:
 
 # Test Content
 
-This is the body with {{stems}} and {{$variables}}.`,
+This is the body with {{blocks}} and {{$variables}}.`,
           frontmatter: {
-            mixdown: 'v0',
+            ruleset: 'v0',
             title: 'Test Rules',
             description: 'Test description',
             destinations: {
@@ -33,7 +33,7 @@ This is the body with {{stems}} and {{$variables}}.`,
           },
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -49,7 +49,9 @@ This is the body with {{stems}} and {{$variables}}.`,
       expect(result.ast).toEqual(parsedDoc.ast);
 
       // Output should contain only the body
-      expect(result.output.content).toBe('# Test Content\n\nThis is the body with {{stems}} and {{$variables}}.');
+      expect(result.output.content).toBe(
+        '# Test Content\n\nThis is the body with {{blocks}} and {{$variables}}.',
+      );
 
       // Metadata should include relevant fields
       expect(result.output.metadata).toEqual({
@@ -74,7 +76,7 @@ This is the body with {{stems}} and {{$variables}}.`,
           content: '# Just Content\n\nNo frontmatter here.',
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -96,7 +98,7 @@ This is the body with {{stems}} and {{$variables}}.`,
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+ruleset: v0
 destinations:
   cursor:
     outputPath: ".cursor/rules/test.mdc"
@@ -105,7 +107,7 @@ destinations:
 
 # Content`,
           frontmatter: {
-            mixdown: 'v0',
+            ruleset: 'v0',
             destinations: {
               cursor: {
                 outputPath: '.cursor/rules/test.mdc',
@@ -115,7 +117,7 @@ destinations:
           },
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -141,14 +143,14 @@ destinations:
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+ruleset: v0
 ---`,
           frontmatter: {
-            mixdown: 'v0',
+            ruleset: 'v0',
           },
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -164,7 +166,7 @@ mixdown: v0
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+ruleset: v0
 ---
 
 {{instructions}}
@@ -175,11 +177,11 @@ Do not modify these markers in v0.
 
 The value is {{$myVariable}}.`,
           frontmatter: {
-            mixdown: 'v0',
+            ruleset: 'v0',
           },
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],
@@ -198,7 +200,7 @@ The value is {{$myVariable}}.`,
       const parsedDoc: ParsedDoc = {
         source: {
           content: `---
-mixdown: v0
+ruleset: v0
 destinations:
   cursor:
     path: "/test"
@@ -207,7 +209,7 @@ destinations:
 
 # Content`,
           frontmatter: {
-            mixdown: 'v0',
+            ruleset: 'v0',
             destinations: {
               cursor: { path: '/test' },
               windsurf: {},
@@ -215,7 +217,7 @@ destinations:
           },
         },
         ast: {
-          stems: [],
+          blocks: [],
           imports: [],
           variables: [],
           markers: [],

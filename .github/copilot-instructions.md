@@ -1,8 +1,8 @@
-# GitHub Copilot Instructions for Mixdown
+# GitHub Copilot Instructions for Rulesets
 
 ## Project Overview
 
-Mixdown is a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files for various AI tools and IDEs. Think of it as Terraform for AI rules: write once, compile for many destinations.
+Rulesets is a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files for various AI tools and IDEs. Think of it as Terraform for AI rules: write once, compile for many destinations.
 
 ## Essential Navigation Strategy
 
@@ -12,7 +12,7 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 # Find version-specific code
 grep -r "mixd-v0" . --include="*.ts"
 
-# Find security-sensitive areas  
+# Find security-sensitive areas
 grep -r "mixd-sec" . --include="*.ts"
 
 # Find performance bottlenecks
@@ -27,11 +27,13 @@ Consult `docs/project/GREPABLE.md` for the complete marker system and navigation
 ## Code Standards
 
 ### Comment Format
+
 - Start all files with: `// TLDR: File purpose description (mixd-v0)`
 - Add function comments: `// TLDR: Function purpose (mixd-v0)`
 - Use TODO format: `// TODO (mixd-v0.1): Future enhancement description`
 
 ### Markers to Use
+
 - `mixd-v{version}` - Version-specific implementations
 - `mixd-sec` - Security-sensitive code
 - `mixd-perf` - Performance-critical paths
@@ -44,6 +46,7 @@ Consult `docs/project/GREPABLE.md` for the complete marker system and navigation
 - `mixd-temp` - Temporary code needing cleanup
 
 ### TypeScript Conventions
+
 - Use strict TypeScript settings
 - Follow SOLID, DRY, and KISS principles
 - Add descriptive inline comments for complex logic
@@ -70,6 +73,7 @@ Consult `docs/project/GREPABLE.md` for the complete marker system and navigation
 ## Current Implementation Status
 
 We're implementing **Mixdown v0** with these limitations:
+
 - Parser handles frontmatter and raw body only
 - Compiler is pass-through (no marker processing)
 - Linter validates basic frontmatter schema
@@ -80,11 +84,13 @@ Reference `docs/project/plans/PLAN-mixdown-v0.md` for complete implementation de
 ## Development Workflow
 
 ### Branch Strategy
+
 - Work from feature branches off `main`
 - Use conventional commit messages: `type(scope): description`
 - Commit regularly with logical groupings
 
 ### Testing Requirements
+
 ```bash
 pnpm turbo test    # Run all tests
 pnpm turbo lint    # Lint all packages
@@ -92,6 +98,7 @@ pnpm turbo build   # Build all packages
 ```
 
 ### Before Submitting Code
+
 1. Run all checks: `pnpm turbo lint && pnpm turbo test && pnpm turbo build`
 2. Ensure proper `mixd-*` markers are included
 3. Verify terminology follows `LANGUAGE.md` spec
@@ -108,7 +115,7 @@ pnpm turbo build   # Build all packages
 ## Resources
 
 - `AGENTS.md` - Comprehensive AI agent guidance
-- `CLAUDE.md` - Project-specific concepts and workflows  
+- `CLAUDE.md` - Project-specific concepts and workflows
 - `docs/project/GREPABLE.md` - Master navigation guide
 - `docs/project/LANGUAGE.md` - Terminology specification
 - `docs/project/plans/PLAN-mixdown-v0.md` - Current implementation plan

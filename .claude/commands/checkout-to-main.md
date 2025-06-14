@@ -26,6 +26,7 @@ When the user invokes this command, follow these steps in sequence:
 ### 2. Handle Uncommitted Changes
 
 If uncommitted changes exist:
+
 - Categorize the changes (staged, unstaged, untracked)
 - Present options to the user:
   - Stash changes for later retrieval (recommended for work in progress)

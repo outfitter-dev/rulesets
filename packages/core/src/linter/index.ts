@@ -16,8 +16,8 @@ export interface LintResult {
 
 // Human-readable field names for error messages
 const FIELD_NAMES: Record<string, string> = {
-  '/rulesets': 'Rulesets version declaration',
-  '/rulesets/version': 'Rulesets version number',
+  '/ruleset': 'Rulesets version declaration',
+  '/ruleset/version': 'Rulesets version number',
   '/destinations': 'Destination configurations',
   '/title': 'Document title',
   '/description': 'Document description',
@@ -31,19 +31,16 @@ function getFieldName(path: string): string {
 /**
  * Lints a parsed Rulesets document by validating its frontmatter.
  * For v0.1.0, this performs basic schema validation on the frontmatter.
- * 
+ *
  * @param parsedDoc - The parsed document to lint
  * @param config - Optional linter configuration
  * @returns A promise that resolves to an array of lint results
  */
 // :M: tldr: Validate frontmatter against basic schema requirements
 // :M: v0.1.0: Validates presence and types of frontmatter fields
-// :M: todo(v0.2.0): Add validation for stem properties
+// :M: todo(v0.2.0): Add validation for block properties
 // :M: todo(v0.3.0): Add validation for variables and imports
-export async function lint(
-  parsedDoc: ParsedDoc,
-  config: LinterConfig = {},
-): Promise<LintResult[]> {
+export async function lint(parsedDoc: ParsedDoc, config: LinterConfig = {}): Promise<LintResult[]> {
   const results: LintResult[] = [];
   const { frontmatter } = parsedDoc.source;
 
@@ -62,7 +59,8 @@ export async function lint(
   // If no frontmatter, warn
   if (!frontmatter) {
     results.push({
-      message: 'No frontmatter found. Consider adding frontmatter with rulesets version and metadata.',
+      message:
+        'No frontmatter found. Consider adding frontmatter with rulesets version and metadata.',
       line: 1,
       column: 1,
       severity: 'warning',
@@ -70,18 +68,23 @@ export async function lint(
     return results;
   }
 
-  // Check for rulesets version
+  // Check for ruleset version
   if (config.requireRulesetsVersion !== false) {
-    if (!frontmatter.rulesets) {
+    if (!frontmatter.ruleset) {
       results.push({
-        message: `Missing required ${getFieldName('/rulesets')}. Specify the Rulesets version (e.g., rulesets: { version: "0.1.0" }).`,
+        message: `Missing required ${getFieldName('/ruleset')}. Specify the Rulesets version (e.g., ruleset: { version: "0.1.0" }).`,
         line: 1,
         column: 1,
         severity: 'error',
       });
-    } else if (typeof frontmatter.rulesets !== 'object' || !frontmatter.rulesets.version) {
+    } else if (
+      typeof frontmatter.ruleset !== 'object' ||
+      frontmatter.ruleset === null ||
+      !('version' in frontmatter.ruleset) ||
+      !frontmatter.ruleset.version
+    ) {
       results.push({
-        message: `Invalid ${getFieldName('/rulesets')}. Expected object with version property, got ${typeof frontmatter.rulesets}.`,
+        message: `Invalid ${getFieldName('/ruleset')}. Expected object with version property, got ${typeof frontmatter.ruleset}.`,
         line: 1,
         column: 1,
         severity: 'error',

@@ -72,7 +72,7 @@ git fetch --all --prune
 git checkout main
 git pull
 
-# Show merged branches 
+# Show merged branches
 git branch --merged main | grep -v "^\*\|main\|master\|dev\|develop"
 
 # List branches whose remote tracking branches no longer exist

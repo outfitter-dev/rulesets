@@ -6,7 +6,7 @@ describe('parser', () => {
   describe('parse', () => {
     it('should parse a document with frontmatter and body', async () => {
       const content = `---
-mixdown: v0
+ruleset: v0
 title: Test Rule
 destinations:
   cursor:
@@ -21,7 +21,7 @@ This is the body content.`;
 
       expect(result.source.content).toBe(content);
       expect(result.source.frontmatter).toEqual({
-        mixdown: 'v0',
+        ruleset: 'v0',
         title: 'Test Rule',
         destinations: {
           cursor: {
@@ -29,7 +29,7 @@ This is the body content.`;
           },
         },
       });
-      expect(result.ast.stems).toEqual([]);
+      expect(result.ast.blocks).toEqual([]);
       expect(result.ast.imports).toEqual([]);
       expect(result.ast.variables).toEqual([]);
       expect(result.ast.markers).toEqual([]);
@@ -72,7 +72,7 @@ invalid: yaml: content
 
       expect(result.errors).toBeDefined();
       expect(result.errors).toHaveLength(1);
-      expect(result.errors![0].message).toContain('Failed to parse frontmatter YAML');
+      expect(result.errors![0].message).toContain('Invalid YAML syntax');
       expect(result.errors![0].line).toBe(1);
     });
 
@@ -108,11 +108,12 @@ title: Test
 
 # Test Content
 
-This has {{stems}} and {{$variables}} and {{>imports}} that should be preserved.`;
+This has {{blocks}} and {{$variables}} and {{>imports}} that should be preserved.`;
 
       const result = await parse(content);
 
-      const expectedBody = '\n# Test Content\n\nThis has {{stems}} and {{$variables}} and {{>imports}} that should be preserved.';
+      const expectedBody =
+        '\n# Test Content\n\nThis has {{blocks}} and {{$variables}} and {{>imports}} that should be preserved.';
       expect(result.source.content).toContain(expectedBody);
     });
   });

@@ -9,12 +9,7 @@ export default defineConfig({
       provider: 'v8', // or 'istanbul'
       reporter: ['text', 'json', 'html'],
       include: ['src/**/*.{ts,tsx,mts,cts}'],
-      exclude: [
-        'src/interfaces/**',
-        'src/**/__tests__/**',
-        'src/**/*.spec.ts',
-        'src/**/*.test.ts',
-      ],
+      exclude: ['src/interfaces/**', 'src/**/__tests__/**', 'src/**/*.spec.ts', 'src/**/*.test.ts'],
     },
   },
 });

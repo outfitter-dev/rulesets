@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Mixdown is a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as Terraform for AI rules: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
+Rulesets is a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as Terraform for AI rules: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
 
 ## Critical Instructions
 
@@ -25,10 +25,10 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 ### Source rules
 
 - Source files defining rules, written in 100% previewable Markdown.
-- Use `.mix.md` extension (preferred) or `.md` extension.
-- Written in Mixdown notation and use `{{...}}` notation markers to direct the compiler.
+- Use `.ruleset.md` extension (preferred) or `.md` extension.
+- Written in Ruleset syntax and use `{{...}}` notation markers to direct the compiler.
 - Compiled into destination-specific rules files:
-  - `./mixdown/src/my-rule.mix.md` → `.cursor/rules/my-rule.mdc`
+  - `./ruleset/src/my-rule.ruleset.md` → `.cursor/rules/my-rule.mdc`
 
 ### Destination
 
@@ -48,16 +48,16 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 ### Notation Marker
 
 - Syntax: `{{...}}`
-- Fundamental building block of Mixdown notation
-- Used to direct the compiler for various purposes (stems, imports, variables)
-- All Mixdown directives use marker notation, but serve different functions
+- Fundamental building block of Ruleset syntax
+- Used to direct the compiler for various purposes (blocks, imports, variables)
+- All Ruleset directives use marker notation, but serve different functions
 - Similar to `<xml-tags>`, but fully Markdown-previewable.
 
-### Stem
+### Block
 
-- Syntax: `{{stem-name}}...{{/stem-name}}`
+- Syntax: `{{block-name}}...{{/block-name}}`
 - A specific application of notation markers that creates delimited content blocks
-- Translates directly to XML tags in compiled output: `<stem_name>...</stem_name>`
+- Translates directly to XML tags in compiled output: `<block_name>...</block_name>`
 - Has opening and closing notation markers that surround content
 - Can contain properties that control rendering behavior
 - Example: `{{instructions}}This is instruction content{{/instructions}}`
@@ -65,7 +65,7 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 ### Import
 
 - Syntax: `{{> my-rule }}`
-- Embed content from another source rules file, stem, mixin, or template.
+- Embed content from another source rules file, block, partial, or template.
 
 ### Variable
 
@@ -77,51 +77,52 @@ Mixdown is a CommonMark-compliant rules compiler that lets you author a single s
 
 ```text
 project/
-├── .mixdown/
+├── .ruleset/
 │   ├── dist/
 │   │   └── latest/         # compiled rules
-│   ├── src/                # source rules files (*.mix.md, *.md)
-│   │   └── _mixins/        # reusable content modules
-│   └── mixdown.config.json # Mixdown config file
+│   ├── src/                # source rules files (*.ruleset.md, *.md)
+│   │   └── _partials/      # reusable content modules
+│   └── ruleset.config.json # Ruleset config file
 ```
 
 ## Goals
 
-| Goal | Description |
-|------|-------------|
-| ✨ **Simplicity** | Reduce bespoke format/structure for each tool to just one. |
-| 🧹 **Lintability** | Files must pass standard markdown-lint without hacks. |
-| 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc. |
-| 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new notation. |
+| Goal                  | Description                                                         |
+| --------------------- | ------------------------------------------------------------------- |
+| ✨ **Simplicity**     | Reduce bespoke format/structure for each tool to just one.          |
+| 🧹 **Lintability**    | Files must pass standard markdown-lint without hacks.               |
+| 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc.                   |
+| 🧩 **Extensibility**  | Advanced behaviors declared via attributes instead of new notation. |
 
 ## Destination Providers
 
-| ID | Tool | Type |
-|----|------|------|
-| `cursor` | Cursor | IDE |
-| `windsurf` | Windsurf | IDE |
-| `claude-code` | Claude Code | CLI |
-| `roo-code` | Roo Code | VS Code Extension |
-| `cline` | Cline | VS Code Extension |
-| `codex-cli` | OpenAI Codex CLI | CLI |
-| `codex-agent` | OpenAI Codex Agent | Web agent |
+| ID            | Tool               | Type              |
+| ------------- | ------------------ | ----------------- |
+| `cursor`      | Cursor             | IDE               |
+| `windsurf`    | Windsurf           | IDE               |
+| `claude-code` | Claude Code        | CLI               |
+| `roo-code`    | Roo Code           | VS Code Extension |
+| `cline`       | Cline              | VS Code Extension |
+| `codex-cli`   | OpenAI Codex CLI   | CLI               |
+| `codex-agent` | OpenAI Codex Agent | Web agent         |
 
-## Mixdown Notation
+## Ruleset Syntax
 
 ### Example
 
 ```markdown
 {{instructions +cursor -claude-code}}
+
 - IMPORTANT: You must follow these coding standards...
-{{/instructions}}
+  {{/instructions}}
 ```
 
 ### Imports
 
 ```markdown
-{{> @legal}}  <!-- Embeds `/_mixins/legal.md` -->
-{{> conventions#stem-name}}  <!-- Embed a specific stem -->
-{{> my-rules stems="important-considerations,!less-important-considerations"}}  <!-- Filter stems -->
+{{> @legal}} <!-- Embeds `/_partials/legal.md` -->
+{{> conventions#block-name}} <!-- Embed a specific block -->
+{{> my-rules blocks="important-considerations,!less-important-considerations"}} <!-- Filter blocks -->
 ```
 
 ### Variables
@@ -154,40 +155,41 @@ Content without surrounding XML tags
 ### Raw Notation
 
 ```markdown
-{{{examples}}}  <!-- Triple braces preserve Mixdown notation -->
+{{{examples}}} <!-- Triple braces preserve Ruleset syntax -->
 {{example}}
+
 - Instructions
 - Rules
-{{/example}}
-{{{/examples}}}
+  {{/example}}
+  {{{/examples}}}
 ```
 
 ### Placeholders
 
 ```markdown
-[requirements]  <!-- Instruction placeholder for AI to fill -->
-{requirements}  <!-- Alternative placeholder notation -->
+[requirements] <!-- Instruction placeholder for AI to fill -->
+{requirements} <!-- Alternative placeholder notation -->
 ```
 
 ## Frontmatter Example
 
 ```yaml
 ---
-# .mixdown/src/my-rule.md
-mixdown:
-  version: 0.1.0 # version number for the Mixdown format used
-description: "Rules for this project" # useful for tools that use descriptions
-globs: ["**/*.{txt,md,mdc}"] # globs re-written based on destination-specific needs
+# .ruleset/src/my-rule.md
+ruleset:
+  version: 0.1.0 # version number for the Ruleset format used
+description: 'Rules for this project' # useful for tools that use descriptions
+globs: ['**/*.{txt,md,mdc}'] # globs re-written based on destination-specific needs
 # Destination filter examples:
 destination:
-  include: ["cursor", "windsurf"]
-  exclude: ["claude-code"]
-  path: "./custom/output/path"
+  include: ['cursor', 'windsurf']
+  exclude: ['claude-code']
+  path: './custom/output/path'
 # Destination-specific frontmatter:
 cursor:
   alwaysApply: false
   destination:
-    path: "./custom/.cursor/rules"
+    path: './custom/.cursor/rules'
 # Additional metadata:
 name: my-rule # defaults to filename
 version: 2.0 # version number for this file
@@ -196,10 +198,10 @@ version: 2.0 # version number for this file
 
 ## Naming Conventions
 
-- Source rules files: `kebab-case.mix.md` (preferred) (e.g., `coding-standards.mix.md`)
-- Directories: `kebab-case` (e.g., `_mixins`)
-- Config files: `kebab-case.config.json` (e.g., `mixdown.config.json`)
-- Stem names: `kebab-case` (e.g., `{{user-instructions}}`)
+- Source rules files: `kebab-case.ruleset.md` (preferred) (e.g., `coding-standards.ruleset.md`)
+- Directories: `kebab-case` (e.g., `_partials`)
+- Config files: `kebab-case.config.json` (e.g., `ruleset.config.json`)
+- Block names: `kebab-case` (e.g., `{{user-instructions}}`)
 - XML output tags: `snake_case` (e.g., `<user_instructions>`)
 
 ## Contributing Guidelines
@@ -207,9 +209,8 @@ version: 2.0 # version number for this file
 When contributing to this project:
 
 1. Follow the naming conventions and terminology outlined in the language spec
-2. Be consistent with the musical theme alignment in feature naming
-3. Ensure all documentation uses clear, specific terminology over vague descriptions
-4. Write mixes using Markdown ATX-style headers and proper code blocks with language identifiers
+2. Ensure all documentation uses clear, specific terminology over vague descriptions
+3. Write rulesets using Markdown ATX-style headers and proper code blocks with language identifiers
 
 ## Package Management
 

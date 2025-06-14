@@ -22,7 +22,7 @@ With the proposed notation update, we can write the same examples more concisely
 
 ```markdown
 {{instructions tag-omit}}
-Content without surrounding XML tags 
+Content without surrounding XML tags
 {{/instructions}}
 
 {{> @code-example code-js}}
@@ -42,81 +42,81 @@ Below are logical groupings of the updated notation, with examples from the curr
 
 ### Output Format Options
 
-| Current Notation | Proposed Notation | Description |
-|-----------------|-------------------|-------------|
-| `output="tag:omit"` | `tag-omit` | Remove XML tags |
-| `output="inline"` | `inline` | Render content inline |
-| `output="inline:tags"` | `inline-with-tags` | Inline with XML tags preserved |
-| `output="raw:all"` | `raw-all` | Raw Mixdown notation |
-| `output="raw:content"` | `raw-content` | Process markers, keep content raw |
-| `output="raw:tags"` | `raw-tags` | Process content, keep markers raw |
+| Current Notation       | Proposed Notation  | Description                       |
+| ---------------------- | ------------------ | --------------------------------- |
+| `output="tag:omit"`    | `tag-omit`         | Remove XML tags                   |
+| `output="inline"`      | `inline`           | Render content inline             |
+| `output="inline:tags"` | `inline-with-tags` | Inline with XML tags preserved    |
+| `output="raw:all"`     | `raw-all`          | Raw Mixdown notation              |
+| `output="raw:content"` | `raw-content`      | Process markers, keep content raw |
+| `output="raw:tags"`    | `raw-tags`         | Process content, keep markers raw |
 
 ### Code Block Options
 
-| Current Notation | Proposed Notation | Description |
-|-----------------|-------------------|-------------|
-| `output="code:javascript"` | `code-js` | JavaScript code block |
-| `output="code:python"` | `code-py` | Python code block |
-| `output="code:ruby"` | `code-rb` | Ruby code block |
-| `output="code:html"` | `code-html` | HTML code block |
-| `output="code:css"` | `code-css` | CSS code block |
+| Current Notation           | Proposed Notation | Description           |
+| -------------------------- | ----------------- | --------------------- |
+| `output="code:javascript"` | `code-js`         | JavaScript code block |
+| `output="code:python"`     | `code-py`         | Python code block     |
+| `output="code:ruby"`       | `code-rb`         | Ruby code block       |
+| `output="code:html"`       | `code-html`       | HTML code block       |
+| `output="code:css"`        | `code-css`        | CSS code block        |
 
-### Heading Options (h-* group)
+### Heading Options (h-\* group)
 
-| Current Notation | Proposed Notation | Description |
-|-----------------|-------------------|-------------|
-| `output="heading"` | `heading` | Add heading without tags (shortcut for `h-add tag-omit`) |
-| `heading="1"` | `h-1` | Heading level 1 |
-| `heading="2"` | `h-2` | Heading level 2 |
-| `heading="3"` | `h-3` | Heading level 3 |
-| `heading="4"` | `h-4` | Heading level 4 |
-| `heading="5"` | `h-5` | Heading level 5 |
-| `heading="6"` | `h-6` | Heading level 6 |
-| `heading="inc"` | `h-inc` | Increment heading level |
-| `heading="dec"` | `h-dec` | Decrement heading level |
-| `heading="same"` | `h-same` | Same heading level |
-| `heading="replace:first"` | `h-initial` | Replace first heading |
+| Current Notation          | Proposed Notation | Description                                              |
+| ------------------------- | ----------------- | -------------------------------------------------------- |
+| `output="heading"`        | `heading`         | Add heading without tags (shortcut for `h-add tag-omit`) |
+| `heading="1"`             | `h-1`             | Heading level 1                                          |
+| `heading="2"`             | `h-2`             | Heading level 2                                          |
+| `heading="3"`             | `h-3`             | Heading level 3                                          |
+| `heading="4"`             | `h-4`             | Heading level 4                                          |
+| `heading="5"`             | `h-5`             | Heading level 5                                          |
+| `heading="6"`             | `h-6`             | Heading level 6                                          |
+| `heading="inc"`           | `h-inc`           | Increment heading level                                  |
+| `heading="dec"`           | `h-dec`           | Decrement heading level                                  |
+| `heading="same"`          | `h-same`          | Same heading level                                       |
+| `heading="replace:first"` | `h-initial`       | Replace first heading                                    |
 
-### Numbering Options (num-* group)
+### Numbering Options (num-\* group)
 
-| Current Notation | Proposed Notation | Description |
-|-----------------|-------------------|-------------|
-| `numbering` | `num` | Enable numbering with defaults |
-| `numbering="heading:before"` | `num-heading-before` | Numbering before heading |
-| `numbering="heading:after"` | `num-heading-after` | Numbering after heading |
-| `numbering="tag:before"` | `num-tag-before` | Numbering before tag |
-| `numbering="tag:after"` | `num-tag-after` | Numbering after tag |
+| Current Notation             | Proposed Notation    | Description                    |
+| ---------------------------- | -------------------- | ------------------------------ |
+| `numbering`                  | `num`                | Enable numbering with defaults |
+| `numbering="heading:before"` | `num-heading-before` | Numbering before heading       |
+| `numbering="heading:after"`  | `num-heading-after`  | Numbering after heading        |
+| `numbering="tag:before"`     | `num-tag-before`     | Numbering before tag           |
+| `numbering="tag:after"`      | `num-tag-after`      | Numbering after tag            |
 
 ### Target Filtering
 
-| Current Notation | Proposed Notation | Description |
-|-----------------|-------------------|-------------|
-| `+cursor` | `+cursor` | Include target (unchanged) |
-| `-windsurf` | `!windsurf` | Exclude target |
+| Current Notation | Proposed Notation | Description                |
+| ---------------- | ----------------- | -------------------------- |
+| `+cursor`        | `+cursor`         | Include target (unchanged) |
+| `-windsurf`      | `!windsurf`       | Exclude target             |
 
 ### Named Tracks
 
-| Current Notation | Proposed Notation | Description |
-|-----------------|-------------------|-------------|
-| `name="important_rules"` | `name-(important-rules)` | Named track (parens needed) |
-| `tracks="included,!excluded"` | `tracks-(included,!excluded)` | Filter tracks in imports |
+| Current Notation              | Proposed Notation             | Description                 |
+| ----------------------------- | ----------------------------- | --------------------------- |
+| `name="important_rules"`      | `name-(important-rules)`      | Named track (parens needed) |
+| `tracks="included,!excluded"` | `tracks-(included,!excluded)` | Filter tracks in imports    |
 
 ### Scoped Options
 
-| Current Notation | Proposed Notation | Description |
-|-----------------|-------------------|-------------|
-| `cursor:name="value"` | `cursor:name-(value)` | Scoped option with value |
-| `cursor:head="Heading Title"` | `cursor:("Heading Title")` | Scoped heading with quoted string |
-| `cursor:[multiple,values]` | `cursor:[multiple,values]` | Scoped option with multiple values |
-| `+cursor cursor?name="value"` | `+cursor:name-(value)` | Combined target inclusion with scope |
-| `cursor?name="specific"` | `cursor:name-(specific)` | Target-scoped option |
+| Current Notation              | Proposed Notation          | Description                          |
+| ----------------------------- | -------------------------- | ------------------------------------ |
+| `cursor:name="value"`         | `cursor:name-(value)`      | Scoped option with value             |
+| `cursor:head="Heading Title"` | `cursor:("Heading Title")` | Scoped heading with quoted string    |
+| `cursor:[multiple,values]`    | `cursor:[multiple,values]` | Scoped option with multiple values   |
+| `+cursor cursor?name="value"` | `+cursor:name-(value)`     | Combined target inclusion with scope |
+| `cursor?name="specific"`      | `cursor:name-(specific)`   | Target-scoped option                 |
 
 ### Custom Attributes
 
-| Current Notation | Proposed Notation | Description |
-|-----------------|-------------------|-------------|
+| Current Notation         | Proposed Notation        | Description                              |
+| ------------------------ | ------------------------ | ---------------------------------------- |
 | `my-custom-attr="value"` | `my-custom-attr="value"` | Custom attributes included in XML output |
-| `\name="core_rules"` | `name="core_rules"` | No escape needed for basic attributes |
+| `\name="core_rules"`     | `name="core_rules"`      | No escape needed for basic attributes    |
 
 ## Example Usage
 
@@ -253,6 +253,7 @@ First, install the dependencies:
 ```bash
 npm install
 ```
+
 {{/"Installation"}}
 
 {{"Configuration" h-3}}
@@ -272,7 +273,7 @@ The parser would need to:
 2. Categorize them based on pattern recognition:
    - Starting with `+` (but no `:`): Target inclusion
    - Starting with `+` and containing `:`: Scoped option for included target
-   - Starting with `!`: Target exclusion 
+   - Starting with `!`: Target exclusion
    - Starting with `h-` followed by a number (1-6): Heading level
    - Starting with `h-`: Heading modifier
    - Starting with `num-`: Numbering directive
@@ -285,29 +286,29 @@ The parser would need to:
 
 ## Side-by-Side Comparison with Actual Mixdown Options
 
-| Use Case | Current Notation | Proposed Notation |
-|----------|-----------------|-------------------|
-| Remove XML tags | `{{track output="tag:omit"}}` | `{{track tag-omit}}` |
-| JavaScript code block | `{{code output="code:javascript"}}` | `{{code code-js}}` |
-| Named track | `{{track name="custom_name"}}` | `{{track name-(custom-name)}}` |
-| Include for target | `{{track +cursor}}` | `{{track +cursor}}` |
-| Exclude for target | `{{track -windsurf}}` | `{{track !windsurf}}` |
-| Multiple options | `{{track output="code:js" name="example"}}` | `{{track code-js name-(example)}}` |
-| Custom attribute | `{{track \name="core_rules"}}` | `{{track name-(core-rules)}}` |
-| Import tracks filter | `{{> rules tracks="included,!excluded"}}` | `{{> rules tracks-(included,!excluded)}}` |
-| Heading level | `{{section heading="2"}}` | `{{section h-2}}` |
-| Combined target inclusion with scope | `{{track +cursor cursor?name="value"}}` | `{{track +cursor:name-(value)}}` |
+| Use Case                             | Current Notation                            | Proposed Notation                         |
+| ------------------------------------ | ------------------------------------------- | ----------------------------------------- |
+| Remove XML tags                      | `{{track output="tag:omit"}}`               | `{{track tag-omit}}`                      |
+| JavaScript code block                | `{{code output="code:javascript"}}`         | `{{code code-js}}`                        |
+| Named track                          | `{{track name="custom_name"}}`              | `{{track name-(custom-name)}}`            |
+| Include for target                   | `{{track +cursor}}`                         | `{{track +cursor}}`                       |
+| Exclude for target                   | `{{track -windsurf}}`                       | `{{track !windsurf}}`                     |
+| Multiple options                     | `{{track output="code:js" name="example"}}` | `{{track code-js name-(example)}}`        |
+| Custom attribute                     | `{{track \name="core_rules"}}`              | `{{track name-(core-rules)}}`             |
+| Import tracks filter                 | `{{> rules tracks="included,!excluded"}}`   | `{{> rules tracks-(included,!excluded)}}` |
+| Heading level                        | `{{section heading="2"}}`                   | `{{section h-2}}`                         |
+| Combined target inclusion with scope | `{{track +cursor cursor?name="value"}}`     | `{{track +cursor:name-(value)}}`          |
 
 ## Real-world Example with Multiple Options
 
 **Current notation:**
 
 ```markdown
-{{instructions 
-  output="tag:omit" 
-  name="important_rules" 
-  +cursor 
-  -claude-code 
+{{instructions
+  output="tag:omit"
+  name="important_rules"
+  +cursor
+  -claude-code
   cursor?name="cursor_specific"
   tracks="included,!excluded"}}
 Content
@@ -317,7 +318,7 @@ Content
 **Proposed notation:**
 
 ```markdown
-{{instructions 
+{{instructions
   tag-omit
   name="important_rules"
   +cursor
@@ -331,7 +332,7 @@ Content
 **Further simplified notation:**
 
 ```markdown
-{{instructions 
+{{instructions
   tag-omit
   name="important_rules"
   +cursor:name-(cursor-specific)

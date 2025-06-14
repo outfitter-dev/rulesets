@@ -57,11 +57,11 @@ describe('CursorPlugin', () => {
   describe('write', () => {
     const mockCompiledDoc: CompiledDoc = {
       source: {
-        content: '---\nrulesets: v0\n---\n\n# Test Content',
-        frontmatter: { rulesets: 'v0' },
+        content: '---\nruleset: v0\n---\n\n# Test Content',
+        frontmatter: { ruleset: 'v0' },
       },
       ast: {
-        stems: [],
+        blocks: [],
         imports: [],
         variables: [],
         markers: [],
@@ -91,13 +91,13 @@ describe('CursorPlugin', () => {
       const dir = path.dirname(resolvedPath);
 
       expect(fs.mkdir).toHaveBeenCalledWith(dir, { recursive: true });
-      expect(fs.writeFile).toHaveBeenCalledWith(
-        resolvedPath,
-        mockCompiledDoc.output.content,
-        { encoding: 'utf8' },
-      );
+      expect(fs.writeFile).toHaveBeenCalledWith(resolvedPath, mockCompiledDoc.output.content, {
+        encoding: 'utf8',
+      });
       expect(mockLogger.info).toHaveBeenCalledWith(`Writing Cursor rules to: ${destPath}`);
-      expect(mockLogger.info).toHaveBeenCalledWith(`Successfully wrote Cursor rules to: ${resolvedPath}`);
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        `Successfully wrote Cursor rules to: ${resolvedPath}`,
+      );
     });
 
     it('should use outputPath from config if provided', async () => {
@@ -112,11 +112,9 @@ describe('CursorPlugin', () => {
       });
 
       const resolvedPath = path.resolve(config.outputPath);
-      expect(fs.writeFile).toHaveBeenCalledWith(
-        resolvedPath,
-        mockCompiledDoc.output.content,
-        { encoding: 'utf8' },
-      );
+      expect(fs.writeFile).toHaveBeenCalledWith(resolvedPath, mockCompiledDoc.output.content, {
+        encoding: 'utf8',
+      });
     });
 
     it('should log debug information', async () => {
@@ -131,9 +129,7 @@ describe('CursorPlugin', () => {
       });
 
       expect(mockLogger.debug).toHaveBeenCalledWith('Destination: cursor');
-      expect(mockLogger.debug).toHaveBeenCalledWith(
-        expect.stringContaining('Config:'),
-      );
+      expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining('Config:'));
       expect(mockLogger.debug).toHaveBeenCalledWith('Priority: high');
     });
 

@@ -1,12 +1,13 @@
-# Jules Agent Instructions for Mixdown
+# Jules Agent Instructions for Rulesets
 
 ## Core Requirements for Jules
 
-**You are working on the Mixdown codebase.** Always use our grepable marker system and follow our established conventions.
+**You are working on the Rulesets codebase.** Always use our grepable marker system and follow our established conventions.
 
 ## Essential Marker System
 
 **Use `mixd-*` markers in all code comments:**
+
 - `mixd-v0` - Current v0 implementation level
 - `mixd-v0.1` - Planned for next version
 - `mixd-sec` - Security-sensitive code
@@ -15,6 +16,7 @@
 - `mixd-test` - Testing-related annotations
 
 **Comment Format:**
+
 ```typescript
 // TLDR: Function purpose and implementation scope (mixd-v0)
 // TODO (mixd-v0.1): Future enhancement description
@@ -25,7 +27,7 @@
 - **Monorepo Structure:** Focus work in `/packages/core/` for v0 implementation
 - **Testing:** Always run `pnpm turbo test && pnpm turbo lint` before completing
 - **Documentation:** Reference `docs/project/GREPABLE.md`, `LANGUAGE.md`, and `AGENTS.md`
-- **Scope:** Follow v0 limitations defined in `docs/project/plans/PLAN-mixdown-v0.md`
+- **Scope:** Follow v0 limitations defined in `docs/project/plans/PLAN-rulesets-v0.md`
 
 ## Code Standards
 

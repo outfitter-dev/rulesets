@@ -28,7 +28,7 @@ import { runRulesetsV0, ConsoleLogger } from '@rulesets/core';
 
 async function main() {
   const logger = new ConsoleLogger();
-  
+
   try {
     await runRulesetsV0('./my-rules.rules.md', logger);
     logger.info('Rulesets processing completed!');
@@ -68,7 +68,7 @@ import { lint } from '@rulesets/core';
 
 const lintResults = await lint(parsedDoc, {
   requireRulesetsVersion: true,
-  allowedDestinations: ['cursor', 'windsurf']
+  allowedDestinations: ['cursor', 'windsurf'],
 });
 // Returns: Array of LintResult objects
 ```
@@ -92,7 +92,7 @@ await cursorPlugin.write({
   compiled: compiledDoc,
   destPath: '.cursor/rules/my-rule.mdc',
   config: {},
-  logger
+  logger,
 });
 ```
 
@@ -102,14 +102,14 @@ Create a `.rules.md` file with frontmatter and content:
 
 ```markdown
 ---
-rulesets: { version: "0.1.0" }
+ruleset: { version: '0.1.0' }
 title: My Coding Standards
 description: Rules for AI assistants
 destinations:
   cursor:
-    outputPath: ".cursor/rules/standards.mdc"
+    outputPath: '.cursor/rules/standards.mdc'
   windsurf:
-    outputPath: ".windsurf/rules/standards.md"
+    outputPath: '.windsurf/rules/standards.md'
 ---
 
 # Coding Standards
@@ -122,7 +122,7 @@ These are my coding standards...
 This is the initial v0 release with intentional limitations:
 
 - **No Marker Processing**: Rulesets notation markers (`{{...}}`) are passed through as-is
-- **No Stem Support**: Content blocks are not parsed or processed
+- **No Block Support**: Content blocks are not parsed or processed
 - **No Variable Substitution**: Variables (`{{$var}}`) are not replaced
 - **No Import Support**: Import statements (`{{> file}}`) are not processed
 
@@ -130,7 +130,7 @@ These features are planned for future v0.x releases.
 
 ## Roadmap
 
-- **v0.1**: Stem parsing and basic marker processing
+- **v0.1**: Block parsing and basic marker processing
 - **v0.2**: Variable substitution and system variables
 - **v0.3**: Import support and file inclusion
 - **v1.0**: Full Rulesets notation support

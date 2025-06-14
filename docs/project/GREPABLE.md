@@ -39,7 +39,7 @@ This approach is faster and more precise than traditional file browsing, especia
 
 ## Versioning Strategy
 
-The remainder of this document focuses specifically on the `mixd-v*` versioning markers used throughout the Mixdown codebase. These markers enable rapid navigation and identification of version-specific code through simple grep commands.
+The remainder of this document focuses specifically on the `mixd-v*` versioning markers used throughout the Rulesets codebase. These markers enable rapid navigation and identification of version-specific code through simple grep commands.
 
 ## What are `mixd-*` Markers?
 
@@ -50,6 +50,7 @@ mixd-v{major}.{minor}
 ```
 
 Examples:
+
 - `mixd-v0` - Initial v0 implementation
 - `mixd-v0.1` - Planned for v0.1 release
 - `mixd-v0.2` - Planned for v0.2 release
@@ -82,7 +83,7 @@ Use TODO comments to indicate planned enhancements:
 
 ```typescript
 // TLDR: Basic frontmatter parser (mixd-v0)
-// TODO (mixd-v0.1): Add support for stem parsing
+// TODO (mixd-v0.1): Add support for block parsing
 // TODO (mixd-v0.2): Add variable substitution
 function parseContent(content: string) {
   // Current implementation
@@ -220,6 +221,7 @@ grep -r "TODO (mixd-v" . --include="*.ts"
 ### Code Reviews
 
 Reviewers can quickly identify:
+
 - Implementation scope and limitations
 - Future enhancement plans
 - Version-specific concerns
@@ -227,6 +229,7 @@ Reviewers can quickly identify:
 ### Documentation
 
 Version markers help maintain consistency between:
+
 - Code implementation
 - API documentation
 - Planning documents
@@ -234,6 +237,7 @@ Version markers help maintain consistency between:
 ### Release Planning
 
 Project managers can:
+
 - Track implementation progress
 - Plan feature releases
 - Estimate development effort

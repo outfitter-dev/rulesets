@@ -12,7 +12,7 @@ flowchart TD
     A --> C[Project Conventions]
     A --> D[Style Guidelines]
     A --> E[Workflow Preferences]
-    
+
     style A fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
@@ -20,16 +20,16 @@ flowchart TD
 
 Different AI tools use different file locations and naming conventions:
 
-| Tool | Project Rules | Global/User Rules | Format |
-|------|--------------|-------------------|--------|
-| **[Claude Code](./plugins/claude-code/rules-use.md)** | `CLAUDE.md` in root and/or subdirs | `~/.claude/CLAUDE.md` | Markdown with `@file` imports |
-| **[Cursor](./plugins/cursor/rules-use.md)** | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based) | Markdown with YAML front-matter and `@filename` imports |
-| **[Windsurf](./plugins/windsurf/rules-use.md)** | `.windsurf/rules/*.md` files (v1.9+) | `~/.config/windsurf/global_rules.md` | Markdown with YAML-ish front-matter and `@path` imports |
-| **[Roo Code](./plugins/roo-code/rules-use.md)** | `.roo/rules/` and `.roo/rules-{mode}/` folders | No built-in global file | Markdown files in folders |
-| **[OpenAI Codex CLI](./plugins/codex-cli/rules-use.md)** | `codex.md` in root | `~/.codex/instructions.md` | Markdown text |
-| **[OpenAI Codex AGENTS](./plugins/codex-agent/rules-use.md)** | `AGENTS.md` in root and/or subdirs | `~/.codex/AGENTS.md` | Pure Markdown with section headings |
-| **[Cline](./plugins/cline/rules-use.md)** | `.clinerules` in root | None | Plain text |
-| **[Aider](./plugins/aider/rules-use.md)** | `.aider.memory.md` (manually included) | None | Markdown |
+| Tool                                                          | Project Rules                                                             | Global/User Rules                    | Format                                                  |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------- |
+| **[Claude Code](./plugins/claude-code/rules-use.md)**         | `CLAUDE.md` in root and/or subdirs                                        | `~/.claude/CLAUDE.md`                | Markdown with `@file` imports                           |
+| **[Cursor](./plugins/cursor/rules-use.md)**                   | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based)             | Markdown with YAML front-matter and `@filename` imports |
+| **[Windsurf](./plugins/windsurf/rules-use.md)**               | `.windsurf/rules/*.md` files (v1.9+)                                      | `~/.config/windsurf/global_rules.md` | Markdown with YAML-ish front-matter and `@path` imports |
+| **[Roo Code](./plugins/roo-code/rules-use.md)**               | `.roo/rules/` and `.roo/rules-{mode}/` folders                            | No built-in global file              | Markdown files in folders                               |
+| **[OpenAI Codex CLI](./plugins/codex-cli/rules-use.md)**      | `codex.md` in root                                                        | `~/.codex/instructions.md`           | Markdown text                                           |
+| **[OpenAI Codex AGENTS](./plugins/codex-agent/rules-use.md)** | `AGENTS.md` in root and/or subdirs                                        | `~/.codex/AGENTS.md`                 | Pure Markdown with section headings                     |
+| **[Cline](./plugins/cline/rules-use.md)**                     | `.clinerules` in root                                                     | None                                 | Plain text                                              |
+| **[Aider](./plugins/aider/rules-use.md)**                     | `.aider.memory.md` (manually included)                                    | None                                 | Markdown                                                |
 
 ## Directory Structure Comparison
 
@@ -39,7 +39,7 @@ project/
 │   └── rules/
 │       ├── coding-style.mdc        # Project-wide coding style guidelines
 │       └── architecture.mdc        # Project architecture guidelines
-├── .roo/                         # Roo Code rules directory 
+├── .roo/                         # Roo Code rules directory
 │   ├── rules/                    # Common rules for all modes
 │   │   └── coding-style.md        # General coding style guidelines
 │   └── rules-architect/          # Mode-specific rules
@@ -72,7 +72,7 @@ sequenceDiagram
     participant Tool as AI Tool
     participant Rules as Rules Files
     participant AI as AI Model
-    
+
     User->>Tool: Start session
     Tool->>Rules: Load applicable rules
     Note over Rules: Merge global + project rules
@@ -115,7 +115,7 @@ graph LR
     A --> D[Example-Rich]
     A --> E[Regularly Updated]
     A --> F[Modular]
-    
+
     style A fill:#bbf,stroke:#333,stroke-width:2px
 ```
 
@@ -123,14 +123,17 @@ graph LR
 
 ```markdown
 # Project Overview
+
 This is a CommonMark-compliant rules compiler that converts Markdown to tool-specific rules files.
 
 # Key Terminology
-- **Source Rules**: Source files in Markdown format, written in Mixdown Notation.
+
+- **Source Rules**: Source files in Markdown format, written in Ruleset Syntax.
 - **Destination**: A supported tool (e.g., Cursor, Claude Code) for which Compiled Rules are generated.
-- **Stem**: Delimited content blocks (e.g., `{{instructions}}...{{/instructions}}`) with optional properties.
+- **Block**: Delimited content blocks (e.g., `{{instructions}}...{{/instructions}}`) with optional properties.
 
 # Coding Standards
+
 - Follow SOLID principles and conventional commits
 - Use kebab-case for filenames
 - Document all public functions
@@ -148,54 +151,54 @@ flowchart TD
     A --> E[Roo Code]
     A --> F[OpenAI Codex AGENTS]
     A --> G[OpenAI Codex CLI]
-    
+
     B --> B1[Always Apply]
     B --> B2[Auto-Attach by glob]
     B --> B3[Agent-Requested by description]
     B --> B4[Manual reference]
     B --> B5[Nested rules in subdirs]
     B --> B6[File referencing with @filename]
-    
+
     C --> C1[Recursive file discovery]
     C --> C2[Import with @file syntax]
     C --> C3[Directory-based scoping]
-    
+
     D --> D1[Global rules first]
     D --> D2[Project rules override]
     D --> D3[Four activation modes]
     D --> D4[Character limits (6K per file, 12K total)]
-    
+
     E --> E1[Common rules folder]
     E --> E2[Mode-specific rules folders]
     E --> E3[Hierarchical loading]
-    
+
     F --> F1[Upward path walking]
     F --> F2[Last file wins for conflicts]
     F --> F3[Section-based merging]
     F --> F4[Heading-based UI navigation]
-    
+
     G --> G1[Global instructions first]
     G --> G2[Project instructions override]
     G --> G3[Terminal integration]
     G --> G4[Command policies]
-    
+
     style A fill:#f9f,stroke:#333,stroke-width:2px
 ```
 
 ## Managing Rules Across Tools
 
-Instead of maintaining separate rule files for each AI tool, consider using Mixdown to write rules once and compile to tool-specific outputs.
+Instead of maintaining separate rule files for each AI tool, consider using Rulesets to write rules once and compile to tool-specific outputs.
 
 ```mermaid
 flowchart LR
-    A[Source Rules File] --> B[Mixdown Compiler]
+    A[Source Rules File] --> B[Rulesets Compiler]
     B --> C[CLAUDE.md]
     B --> D[.cursor/rules/*.mdc]
     B --> E[.windsurf/rules/]
     B --> F[.roo/rules/*.md]
     B --> G[AGENTS.md]
     B --> H[codex.md]
-    
+
     style A fill:#bbf,stroke:#333
     style B fill:#f9f,stroke:#333
 ```
@@ -209,18 +212,18 @@ graph TB
         B[Windsurf] --- B1[Multiple files with activation modes]
         C[Roo Code] --- C1[Mode-specific directories]
     end
-    
+
     subgraph "CLI Tools"
         D[Claude Code] --- D1[Hierarchical with imports]
         E[OpenAI Codex CLI] --- E1[Layered instructions]
         H[OpenAI Codex AGENTS] --- H1[Section-based merging]
     end
-    
+
     subgraph "Simple Approaches"
         F[Cline] --- F1[Single file]
         G[Aider] --- G1[Manual inclusion]
     end
-    
+
     style A fill:#bbf,stroke:#333
     style B fill:#bbf,stroke:#333
     style C fill:#bbf,stroke:#333
@@ -236,7 +239,7 @@ graph TB
 1. AI rules files provide persistent instructions across sessions
 2. Each tool has its preferred location and format, but all use Markdown
 3. Effective rules are concise, specific, and well-structured
-4. Consider tools like Mixdown to manage rules across multiple AI assistants
+4. Consider using Rulesets to write rules once and compile to tool-specific outputs
 5. Update rules as your project evolves to keep AI assistance relevant
 
 ## Tool-Specific Documentation

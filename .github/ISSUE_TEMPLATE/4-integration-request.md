@@ -1,9 +1,9 @@
 ---
-name: "🧩 Integration Request"
-about: "Request a new destination or plugin for Mixdown"
-title: "[Integration]: "
-labels: ["triage"]
-type: "integration"
+name: '🧩 Integration Request'
+about: 'Request a new destination or plugin for Mixdown'
+title: '[Integration]: '
+labels: ['triage']
+type: 'integration'
 ---
 
 ## Tool/Platform to Integrate

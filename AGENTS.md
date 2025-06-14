@@ -1,6 +1,6 @@
 # Project Agents.md Guide for AI Assistants
 
-This Agents.md file provides comprehensive guidance for AI agents working with the Mixdown codebase.
+This Agents.md file provides comprehensive guidance for AI agents working with the Rulesets codebase.
 
 ## Project Structure for AI Agent Navigation
 
@@ -9,8 +9,8 @@ This Agents.md file provides comprehensive guidance for AI agents working with t
   - `/project/LANGUAGE.md`: Terminology and language spec for consistent communication
   - `/project/plans/`: Implementation plans that AI agents should follow
 - `/packages`: Monorepo packages where AI agents will implement code
-  - `/core`: Core Mixdown library that AI agents should enhance iteratively
-- `.mixdown/`: Mixdown-specific configurations and compiled rules
+  - `/core`: Core Rulesets library that AI agents should enhance iteratively
+- `.ruleset/`: Ruleset-specific configurations and compiled rules
 
 ## Coding Conventions for AI Agents
 
@@ -64,7 +64,7 @@ AI agents should run tests with the following commands:
 pnpm turbo test
 
 # Run tests for specific package
-pnpm test --filter=@mixdown/core
+pnpm test --filter=@rulesets/core
 
 # Run tests with coverage
 pnpm test --coverage
@@ -155,9 +155,9 @@ AI agents must consult these documents regularly:
 
 - `@docs/project/GREPABLE.md`: Master guide for marker system and grep navigation
 - `@docs/project/LANGUAGE.md`: Terminology spec for consistent communication
-- `@docs/project/plans/PLAN-mixdown-v0.md`: Current implementation plan and scope
+- `@docs/project/plans/PLAN-rulesets-v0.md`: Current implementation plan and scope
 - `CLAUDE.md`: Project-specific guidance and concepts
 - `@docs/agentic/`: Agentic development coordination and agent-specific guides
 - `@docs/agentic/jules/`: Google Jules integration guides and prompts
 
-This structured approach ensures AI agents can efficiently navigate, understand, and contribute to the Mixdown codebase while maintaining consistency and quality.
+This structured approach ensures AI agents can efficiently navigate, understand, and contribute to the Rulesets codebase while maintaining consistency and quality.

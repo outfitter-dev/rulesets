@@ -9,6 +9,7 @@
 To update the spec/overview.md document with the new options syntax, the following changes are needed:
 
 1. **Update Track Marker Syntax** (Lines ~170-176, ~196-202)
+
    - [x] Replace `-target` with `!target` for exclusion throughout the document
      - [x] Change line 173: `{{instructions +cursor -claude-code}}` to `{{instructions +cursor !claude-code}}`
      - [x] Change line 196: `{{track-two +* -claude-code}}` to `{{track-two +* !claude-code}}`
@@ -17,17 +18,19 @@ To update the spec/overview.md document with the new options syntax, the followi
    - [x] Add explanation of option ordering for inclusion/exclusion (based on new section in this proposal)
 
 2. **Update Track Attribute Syntax** (Lines ~256-274, ~277-283)
+
    - [x] Replace `attribute="value"` syntax with new kebab-case option patterns
      - [x] Update lines ~256-266 to remove backslash `\` escape mechanism
      - [x] Change `\name="important_rules"` to `name(important-rules)` in examples
      - [x] Replace attribute declaration examples with new syntax
-   - [x] Update Track Attributes table (lines ~277-283) 
+   - [x] Update Track Attributes table (lines ~277-283)
      - [x] Remove the `\key` flag row or replace with explanation of direct XML attributes
-     - [x] Add rows for structured prefixes (h-*, num-*, etc.)
+     - [x] Add rows for structured prefixes (h-_, num-_, etc.)
      - [x] Change the `+/-target` to `+/!target` in the table
 
 3. **Update Target-scoped Attributes** (Lines ~220-233)
-   - [x] Replace `cursor?name="value"` with `cursor:name(value)` syntax 
+
+   - [x] Replace `cursor?name="value"` with `cursor:name(value)` syntax
      - [x] Update section at line ~220-233 to use colon instead of question mark
      - [x] Change `cursor?name="cursor_instructions"` to `cursor:name(cursor-instructions)`
    - [x] Add comprehensive examples for all scoping patterns:
@@ -40,6 +43,7 @@ To update the spec/overview.md document with the new options syntax, the followi
    - [x] Add explanation of target-scoped brackets for multiple options
 
 4. **Update Output Format** (Lines ~286-347)
+
    - [x] Replace `output="tag:omit"` with direct `tag-omit` syntax
      - [x] Update all examples to use kebab-case options
      - [x] Line ~290: `{{instructions output="tag:omit"}}` → `{{instructions tag-omit}}`
@@ -61,6 +65,7 @@ To update the spec/overview.md document with the new options syntax, the followi
    - [x] Update line ~324-347 with new code block examples using `code-js`, etc.
 
 5. **Add New Option Grouping Section** (after Output Format section)
+
    - [x] Create new section documenting square bracket syntax for option grouping
      - [x] Explain basic grouping: `{{rules [ option1 option2 option3 ]}}`
      - [x] Explain how grouped options behave the same as space-delimited options
@@ -75,6 +80,7 @@ To update the spec/overview.md document with the new options syntax, the followi
    - [x] Add example patterns section with comprehensive examples of different option grouping patterns
 
 6. **Update Import Filtering Syntax** (Lines ~498-507)
+
    - [x] Replace `tracks="included,!excluded"` with parentheses syntax
      - [x] Line ~501: `{{> my-rules tracks="track-name,!track-name-to-exclude"}}` → `{{> my-rules(+track-name !track-name-to-exclude)}}`
      - [x] Update lines ~513-521 examples with new parentheses syntax
@@ -85,10 +91,11 @@ To update the spec/overview.md document with the new options syntax, the followi
    - [x] Update Import Attributes section (line ~499-507) to reflect new syntax
 
 7. **Update Comprehensive Attribute Reference Table** (Lines ~712-737)
+
    - [x] Update the entire table with new syntax
      - [x] Replace all `output="value"` entries with kebab-case options
      - [x] Remove backslash escape mechanism entries
-     - [x] Add prefix family options (h-*, num-*, etc.)
+     - [x] Add prefix family options (h-_, num-_, etc.)
      - [x] Change target filter notation from `+/-target` to `+/!target`
      - [x] Update examples to use new syntax patterns
    - [x] Add new rows for option grouping syntax
@@ -123,13 +130,13 @@ This proposal builds upon and replaces the simplified approach outlined in the s
 
 The Mixdown options syntax follows strict delimiter rules to maintain consistency and clarity:
 
-| Delimiter | Role | Example | Purpose |
-|-----------|------|---------|---------| 
-| `:` | Scope indicator | `target:code-js` | Indicates that options are scoped to a specific target |
-| `()` | Value container | `name(value)` | Contains values for a specific option |
-| `[]` | Option grouping | `target:[option-1 option-2]` | Groups multiple options within a scope |
-| `+` | Inclusion | `+target`, `+track-one` | Indicates inclusion of a target or track |
-| `!` | Exclusion | `!target`, `!track-two` | Indicates exclusion of a target or track |
+| Delimiter | Role            | Example                      | Purpose                                                |
+| --------- | --------------- | ---------------------------- | ------------------------------------------------------ |
+| `:`       | Scope indicator | `target:code-js`             | Indicates that options are scoped to a specific target |
+| `()`      | Value container | `name(value)`                | Contains values for a specific option                  |
+| `[]`      | Option grouping | `target:[option-1 option-2]` | Groups multiple options within a scope                 |
+| `+`       | Inclusion       | `+target`, `+track-one`      | Indicates inclusion of a target or track               |
+| `!`       | Exclusion       | `!target`, `!track-two`      | Indicates exclusion of a target or track               |
 
 These delimiters always maintain their role throughout the syntax, making the language more intuitive and easier to learn.
 
@@ -160,54 +167,54 @@ From the perspective of authors writing mix files:
 
 All options follow a consistent prefix pattern for categorization:
 
-| Prefix   | Purpose            | Examples                        |
-|----------|--------------------|---------------------------------|
-| (none)   | Direct operations  | `tag-omit`, `inline`, `code-js` |
-| `h-`     | Heading related    | `h-2`, `h-inc`, `h-dec`         |
-| `num-`   | Numbering related  | `num`, `num-tag-first`         |
-| `+`      | Target inclusion   | `+cursor`, `+all`               |
-| `!`      | Target exclusion   | `!windsurf`, `!claude-code`     |
+| Prefix | Purpose           | Examples                        |
+| ------ | ----------------- | ------------------------------- |
+| (none) | Direct operations | `tag-omit`, `inline`, `code-js` |
+| `h-`   | Heading related   | `h-2`, `h-inc`, `h-dec`         |
+| `num-` | Numbering related | `num`, `num-tag-first`          |
+| `+`    | Target inclusion  | `+cursor`, `+all`               |
+| `!`    | Target exclusion  | `!windsurf`, `!claude-code`     |
 
 ### 2. Value Specification Patterns
 
-| Pattern          | Format                 | Example                              | Use Case                                                   |
-|------------------|------------------------|--------------------------------------|----------------------------------------------------------|
-| Simple Flag      | `option-name`          | `tag-omit`                           | Boolean operations                                         |
-| Enumerated Value | `option-value`         | `h-2`, `code-js`                     | Fixed value choices                                        |
-| Named Value      | `option(value)`        | `name(rules)`, `name(Custom Title)`  | String values with special chars/spaces                    |
-| List Value       | `option(+item1 !item2)` | `(+track-one !track-two target:+option)`           | Collections or inclusion/exclusion lists (space-delimited) |
-| Target-scoped    | `target:option`        | `target:option(value)`              | Target-specific options (scope:option pattern)             |
+| Pattern          | Format                  | Example                                  | Use Case                                                   |
+| ---------------- | ----------------------- | ---------------------------------------- | ---------------------------------------------------------- |
+| Simple Flag      | `option-name`           | `tag-omit`                               | Boolean operations                                         |
+| Enumerated Value | `option-value`          | `h-2`, `code-js`                         | Fixed value choices                                        |
+| Named Value      | `option(value)`         | `name(rules)`, `name(Custom Title)`      | String values with special chars/spaces                    |
+| List Value       | `option(+item1 !item2)` | `(+track-one !track-two target:+option)` | Collections or inclusion/exclusion lists (space-delimited) |
+| Target-scoped    | `target:option`         | `target:option(value)`                   | Target-specific options (scope:option pattern)             |
 
 ### 3. Option Categories & Examples
 
 #### Display Options
 
-| Option                | Description                | Example                              |
-|-----------------------|----------------------------|--------------------------------------|
-| `tag-omit`            | Remove XML tags            | `{{rules tag-omit}}`          |
-| `inline`              | Render content inline      | `{{rules inline}}`                    |
-| `inline-with-tags`    | Inline with XML tags       | `{{rules inline-with-tags}}`         |
-| `raw-all`             | Preserve Mixdown notation  | `{{rules raw-all}}`                |
-| `raw-content`         | Preserve content notation  | `{{rules raw-content}}`               |
-| `raw-tags`            | Preserve tag notation      | `{{rules raw-tags}}`                 |
+| Option             | Description               | Example                      |
+| ------------------ | ------------------------- | ---------------------------- |
+| `tag-omit`         | Remove XML tags           | `{{rules tag-omit}}`         |
+| `inline`           | Render content inline     | `{{rules inline}}`           |
+| `inline-with-tags` | Inline with XML tags      | `{{rules inline-with-tags}}` |
+| `raw-all`          | Preserve Mixdown notation | `{{rules raw-all}}`          |
+| `raw-content`      | Preserve content notation | `{{rules raw-content}}`      |
+| `raw-tags`         | Preserve tag notation     | `{{rules raw-tags}}`         |
 
 #### Code Block Options
 
-| Option                | Description                | Example                              |
-|-----------------------|----------------------------|--------------------------------------|
-| `code-auto`           | Auto-detect language       | `{{rules code}}`                 |
-| `code-<language>`             | Language-specified code block      | `{{rules code-js}}` |
+| Option            | Description                   | Example             |
+| ----------------- | ----------------------------- | ------------------- |
+| `code-auto`       | Auto-detect language          | `{{rules code}}`    |
+| `code-<language>` | Language-specified code block | `{{rules code-js}}` |
 
-#### Heading Options (h-* family)
+#### Heading Options (h-\* family)
 
-| Option                | Description                | Example                              |
-|-----------------------|----------------------------|--------------------------------------|
-| `h-1` to `h-6`        | Heading levels 1-6         | `{{rules h-2}}`                    |
-| `h-inc`               | Increment heading level    | `{{rules h-inc}}`                  |
-| `h-dec`               | Decrement heading level    | `{{rules h-dec}}`                  |
-| `h-same`              | Same heading level         | `{{rules h-same}}`                 |
-| `h-initial`           | Replace first heading      | `{{rules h-initial}}`              |
-| `heading`             | Add heading (shortcut)     | `{{rules heading}}`                |
+| Option         | Description             | Example               |
+| -------------- | ----------------------- | --------------------- |
+| `h-1` to `h-6` | Heading levels 1-6      | `{{rules h-2}}`       |
+| `h-inc`        | Increment heading level | `{{rules h-inc}}`     |
+| `h-dec`        | Decrement heading level | `{{rules h-dec}}`     |
+| `h-same`       | Same heading level      | `{{rules h-same}}`    |
+| `h-initial`    | Replace first heading   | `{{rules h-initial}}` |
+| `heading`      | Add heading (shortcut)  | `{{rules heading}}`   |
 
 #### Heading Shortcut
 
@@ -221,33 +228,32 @@ Section content goes here.
 
 This is equivalent to specifying the heading within the content but provides a more visible and consolidated way to name sections.
 
-#### Numbering Options (num-* family)
+#### Numbering Options (num-\* family)
 
-| Option                | Description                | Example                              |
-|-----------------------|----------------------------|--------------------------------------|
-| `num`                 | Enable default numbering   | `{{chapter num}}`                    |
-| `num-heading-first`  | Number first heading      | `{{rules num-heading-first}}`     |
-| `num-heading-last`   | Number last heading       | `{{rules num-heading-last}}`      |
-| `num-tag-first`      | Number first tag          | `{{rules num-tag-first}}`         |
-| `num-tag-last`       | Number last tag           | `{{rules num-tag-last}}`          |
-
+| Option              | Description              | Example                       |
+| ------------------- | ------------------------ | ----------------------------- |
+| `num`               | Enable default numbering | `{{chapter num}}`             |
+| `num-heading-first` | Number first heading     | `{{rules num-heading-first}}` |
+| `num-heading-last`  | Number last heading      | `{{rules num-heading-last}}`  |
+| `num-tag-first`     | Number first tag         | `{{rules num-tag-first}}`     |
+| `num-tag-last`      | Number last tag          | `{{rules num-tag-last}}`      |
 
 #### Target Management
 
-| Option      | Description                                              | Example                  |
-|-------------|----------------------------------------------------------|--------------------------| 
-| `+target`   | Include only for target                                  | `{{rules +target}}`      |
-| `!target`   | Exclude only for target                                  | `{{rules !target}}`      |
-| `+all`      | Include for all targets                                  | `{{rules +all}}`         |
-| `+group`    | Include for IDE group, exclude specific member of group  | `{{rules +group !member}}`|
+| Option    | Description                                             | Example                    |
+| --------- | ------------------------------------------------------- | -------------------------- |
+| `+target` | Include only for target                                 | `{{rules +target}}`        |
+| `!target` | Exclude only for target                                 | `{{rules !target}}`        |
+| `+all`    | Include for all targets                                 | `{{rules +all}}`           |
+| `+group`  | Include for IDE group, exclude specific member of group | `{{rules +group !member}}` |
 
 #### Named Values, Lists, and Target Groups
 
-| Option                         | Description                 | Example                                     |
-|-------------------------------|-----------------------------|---------------------------------------------|
-| `name(important-rules)`      | Rename the track (useful for imports)              | `{{> rules name(important-rules)}}`          |
-| `{{> imported-rules(+item1 !item2)}}`               | Filter imported tracks (import markers) | `{{> my-rules(+included cursor:+also !excluded)}}`        |
-| `+cursor[name(Custom Title)]`| Target-scoped override      | `{{rules +cursor[name(Custom Title)]}}`  |
+| Option                                | Description                             | Example                                            |
+| ------------------------------------- | --------------------------------------- | -------------------------------------------------- |
+| `name(important-rules)`               | Rename the track (useful for imports)   | `{{> rules name(important-rules)}}`                |
+| `{{> imported-rules(+item1 !item2)}}` | Filter imported tracks (import markers) | `{{> my-rules(+included cursor:+also !excluded)}}` |
+| `+cursor[name(Custom Title)]`         | Target-scoped override                  | `{{rules +cursor[name(Custom Title)]}}`            |
 
 #### Custom XML Attributes
 
@@ -296,7 +302,7 @@ By default, options are space-delimited. You can optionally wrap a list of optio
 All options inside `[...]` behave exactly the same as if they were space-delimited:
 
 ```markdown
-{{rules [ tag-omit code-js name(rules) +cursor ]}}  # equivalent to {{rules tag-omit code-js name(rules) +cursor}}
+{{rules [ tag-omit code-js name(rules) +cursor ]}} # equivalent to {{rules tag-omit code-js name(rules) +cursor}}
 ```
 
 For target-scoped options, use a colon followed by multiple options in brackets to indicate scope:
@@ -339,8 +345,8 @@ If you need to specify multiple options for a target, use brackets after the col
 Important nesting rule: You cannot nest option groups within other option groups. Instead, keep them as separate groups:
 
 ```markdown
-{{rules [code-js tag-omit target:[option-a option-b]]}}  # ❌ Invalid, nested options groups
-{{rules [code-js tag-omit] target:[option-a option-b]}}  # ✅ Valid, separate option groups
+{{rules [code-js tag-omit target:[option-a option-b]]}} # ❌ Invalid, nested options groups
+{{rules [code-js tag-omit] target:[option-a option-b]}} # ✅ Valid, separate option groups
 ```
 
 ### Target Option Invocation Patterns
@@ -348,10 +354,11 @@ Important nesting rule: You cannot nest option groups within other option groups
 There are three primary ways to use targets as options:
 
 1. **Target-Scoped Options (No Inclusion/Exclusion)**
+
    - **Single Option:** `target:option` (no brackets required)
    - **Multiple Options:** `target:[option-1 option-2]` (brackets required after colon)
    - **Behavior:** The options apply only when building for the specified target, but the block is included for all valid targets.
-   - **Examples:**  
+   - **Examples:**
 
      ```markdown
      {{rules target:code-js}}
@@ -361,10 +368,11 @@ There are three primary ways to use targets as options:
      The first applies `code-js` only for the specified target. The second applies both `code-js` and `tag-omit` for the specified target.
 
 2. **Target Inclusion/Exclusion**
+
    - **Single Option:** `+target:option` or `!target:option`
    - **Multiple Options:** `+target:[option-1 option-2]` or `!target:[option-1 option-2]`
    - **Behavior:** The block is included or excluded for the specified target(s). Options in brackets or after the colon apply only for the included/excluded target.
-   - **Examples:**  
+   - **Examples:**
 
      ```markdown
      {{rules +cursor:code-js}}
@@ -374,9 +382,10 @@ There are three primary ways to use targets as options:
      The first includes the block only for the `cursor` target, applying `code-js` as an option. The second includes the block for `cursor` with both options.
 
 3. **Group Inclusion/Exclusion with Member Override**
+
    - **Syntax:** `+group:[options] !member`
    - **Behavior:** The block is included for all members of the group, with the specified options, but excluded for a specific member.
-   - **Example:**  
+   - **Example:**
 
      ```markdown
      {{rules +group:[code-js] !member}}
@@ -386,21 +395,21 @@ There are three primary ways to use targets as options:
 
 #### Summary Table
 
-| Pattern                  | Example                                 | Description                                 |
-|--------------------------|-----------------------------------------|---------------------------------------------|
-| Single target option     | `target:code-js`                        | One option for a target, no brackets needed |
-| Multiple target options  | `target:[code-js tag-omit]`             | Multiple options, brackets after colon      |
-| Single inclusion option  | `+cursor:code-js`                       | Include for target only, one option         |
-| Multiple inclusion opts  | `+cursor:[code-js tag-omit]`            | Include for target only, multiple options   |
+| Pattern                 | Example                      | Description                                 |
+| ----------------------- | ---------------------------- | ------------------------------------------- |
+| Single target option    | `target:code-js`             | One option for a target, no brackets needed |
+| Multiple target options | `target:[code-js tag-omit]`  | Multiple options, brackets after colon      |
+| Single inclusion option | `+cursor:code-js`            | Include for target only, one option         |
+| Multiple inclusion opts | `+cursor:[code-js tag-omit]` | Include for target only, multiple options   |
 
 ### Example Patterns
 
 ```markdown
-{{rules target:code-js}}                          # Single target option, included for all
-{{rules target:[code-js tag-omit]}}               # Multiple target options, included for all
-{{rules +cursor:code-js}}                         # Included for cursor only, with single option
-{{rules +cursor:[code-js tag-omit]}}              # Included for cursor only, with multiple options
-{{rules +group:[code-js] !member}}                # Included for group, excluded for member
+{{rules target:code-js}} # Single target option, included for all
+{{rules target:[code-js tag-omit]}} # Multiple target options, included for all
+{{rules +cursor:code-js}} # Included for cursor only, with single option
+{{rules +cursor:[code-js tag-omit]}} # Included for cursor only, with multiple options
+{{rules +group:[code-js] !member}} # Included for group, excluded for member
 ```
 
 ## Import Track Filtering
@@ -435,12 +444,15 @@ This pattern:
 
 ```markdown
 {{> style-guide(+track-one !track-two)}}
+
 <!-- Only include 'track-one' track from style-guide, exclude 'track-two' -->
 
-{{> project-setup(!track-two)}} 
+{{> project-setup(!track-two)}}
+
 <!-- Include all tracks from project-setup except 'track-two' -->
 
 {{> comprehensive-guide(+track-one +track-two !track-three)}}
+
 <!-- Include only 'track-one' and 'track-two' tracks, exclude 'track-three' -->
 ```
 
@@ -460,9 +472,11 @@ This advanced pattern:
 
 ```markdown
 {{> project-setup(+core-track ide:+ide-features cli:+cli-features)}}
+
 <!-- Include 'core-track' for all targets, plus target-specific tracks -->
 
 {{> style-guide(+common-track cursor:+cursor-specific !legacy-track windsurf:!beta-features)}}
+
 <!-- Complex filtering with both global and target-specific inclusions/exclusions -->
 ```
 

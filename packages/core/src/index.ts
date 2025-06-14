@@ -27,7 +27,7 @@ export { destinations, CursorPlugin, WindsurfPlugin } from './destinations';
  * async function main() {
  *   const logger = new ConsoleLogger();
  *   try {
- *     await runRulesetsV0('./my-rules.mix.md', logger);
+ *     await runRulesetsV0('./my-rules.ruleset.md', logger);
  *     logger.info('Rulesets v0.1.0 process completed.');
  *   } catch (error) {
  *     logger.error('Rulesets v0.1.0 process failed:', error);
@@ -37,7 +37,7 @@ export { destinations, CursorPlugin, WindsurfPlugin } from './destinations';
  * main();
  * ```
  *
- * @param sourceFilePath - The path to the source Rulesets file (e.g., my-rules.mix.md).
+ * @param sourceFilePath - The path to the source Rulesets file (e.g., my-rules.ruleset.md).
  * @param logger - An instance of the Logger interface.
  * @param projectConfig - Optional: The root Rulesets project configuration.
  * @returns A promise that resolves when the process is complete, or rejects on error.
@@ -54,7 +54,7 @@ export async function runRulesetsV0(
   // Step 1: Read the source file
   let content: string;
   try {
-    content = await fs.readFile(sourceFilePath, 'utf-8');
+    content = await fs.readFile(sourceFilePath, 'utf8');
     logger.debug(`Read ${content.length} characters from ${sourceFilePath}`);
   } catch (error) {
     logger.error(`Failed to read source file: ${sourceFilePath}`, error);
@@ -67,7 +67,7 @@ export async function runRulesetsV0(
   try {
     parsedDoc = await parse(content);
     parsedDoc.source.path = sourceFilePath;
-    
+
     if (parsedDoc.errors && parsedDoc.errors.length > 0) {
       logger.warn(`Parser found ${parsedDoc.errors.length} error(s)`);
     }
@@ -90,7 +90,7 @@ export async function runRulesetsV0(
     for (const result of lintResults) {
       const location = result.line ? ` (line ${result.line})` : '';
       const message = `${result.message}${location}`;
-      
+
       switch (result.severity) {
         case 'error':
           logger.error(message);
@@ -116,7 +116,7 @@ export async function runRulesetsV0(
 
   // Step 4: Determine which destinations to compile for
   const frontmatter = parsedDoc.source.frontmatter || {};
-  const destinationIds = frontmatter.destinations 
+  const destinationIds = frontmatter.destinations
     ? Object.keys(frontmatter.destinations)
     : Array.from(destinations.keys());
 
@@ -142,9 +142,17 @@ export async function runRulesetsV0(
     }
 
     // Determine output path
-    const destConfig = frontmatter.destinations?.[destinationId] || {};
-    const defaultPath = `.rulesets/dist/${destinationId}/my-rules.md`;
-    const destPath = destConfig.outputPath || destConfig.path || defaultPath;
+    const destConfig: Record<string, unknown> =
+      frontmatter.destinations &&
+      typeof frontmatter.destinations === 'object' &&
+      !Array.isArray(frontmatter.destinations)
+        ? ((frontmatter.destinations as Record<string, unknown>)[destinationId] as Record<string, unknown>) || {}
+        : {};
+    const defaultPath = `.ruleset/dist/${destinationId}/my-rules.md`;
+    const destPath =
+      (typeof destConfig.outputPath === 'string' ? destConfig.outputPath : undefined) ||
+      (typeof destConfig.path === 'string' ? destConfig.path : undefined) ||
+      defaultPath;
 
     // Write using the plugin
     try {
@@ -169,8 +177,8 @@ export async function runRulesetsV0(
 // :M: todo(v0.2.0): Replace with proper CLI using commander or yargs
 if (require.main === module) {
   const logger = new ConsoleLogger();
-  const sourceFile = process.argv[2] || './my-rules.mix.md';
-  
+  const sourceFile = process.argv[2] || './my-rules.ruleset.md';
+
   runRulesetsV0(sourceFile, logger)
     .then(() => {
       logger.info('Done!');

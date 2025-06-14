@@ -1,16 +1,18 @@
 ### Added
-- Added `.mix.md` file extension for source rules files to improve discoverability, search capabilities, and IDE support
+
+- Added `.ruleset.md` file extension for source rules files to improve discoverability, search capabilities, and IDE support
 
 ### Changed
+
 - Updated terminology throughout the documentation:
   - "Mix files" → "Source rules"
   - "Target" → "Destination"
   - "Output" → "Compiled rules"
-  - "Track" → "Stem"
+  - "Track" → "Block"
   - "Option" → "Property"
-  - "Snippet" → "Mixin"
+  - "Snippet" → "Partial"
   - `property(value)` → `property-*` and `name-("value")`
 - Updated directory structure:
-  - `.mixdown/mixes/` → `.mixdown/src/`
-  - `.mixdown/mixes/_snippets/` → `.mixdown/src/_mixins/`
-  - `.mixdown/output/` → `.mixdown/dist/`
+  - `.ruleset/src/` (source rules location)
+  - `.ruleset/src/_partials/` (reusable content)
+  - `.ruleset/dist/` (compiled output location)

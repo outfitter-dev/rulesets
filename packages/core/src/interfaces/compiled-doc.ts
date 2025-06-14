@@ -2,10 +2,10 @@
 // :M: v0.1.0: Minimal interface structure without marker processing
 
 /**
- * Represents the structure of a parsed Rulesets stem.
- * For v0.1.0, this will be minimal as stems are not processed from the body.
+ * Represents the structure of a parsed Rulesets block.
+ * For v0.1.0, this will be minimal as blocks are not processed from the body.
  */
-export interface Stem {
+export interface Block {
   name: string;
   // properties: Record<string, any>; // To be detailed in v0.1+
   // content: string; // To be detailed in v0.1+
@@ -36,11 +36,10 @@ export interface Variable {
  * For v0.1.0, this will be minimal.
  */
 export interface Marker {
-  type: 'stem' | 'import' | 'variable' | 'unknown';
+  type: 'block' | 'import' | 'variable' | 'unknown';
   // rawMarker: string; // To be detailed in v0.1+
   // position: { line: number, column: number }; // To be detailed in v0.1+
 }
-
 
 /**
  * Represents a document that has been parsed by the Rulesets parser.
@@ -52,8 +51,9 @@ export interface ParsedDoc {
     content: string; // Raw source content
     frontmatter?: Record<string, unknown>; // Parsed frontmatter data
   };
-  ast: { // Abstract Syntax Tree - minimal for v0
-    stems: Stem[];
+  ast: {
+    // Abstract Syntax Tree - minimal for v0
+    blocks: Block[];
     imports: Import[];
     variables: Variable[];
     markers: Marker[]; // All markers found - empty for v0 body processing
@@ -68,27 +68,27 @@ export interface ParsedDoc {
 export interface CompiledDoc {
   /** Original source content and metadata */
   source: {
-    path?: string;          // Original source file path, if applicable
-    content: string;       // Raw source content
-    frontmatter?: Record<string, unknown>;     // Parsed frontmatter data
+    path?: string; // Original source file path, if applicable
+    content: string; // Raw source content
+    frontmatter?: Record<string, unknown>; // Parsed frontmatter data
   };
 
   /**
    * Parsed representation of the source document.
-   * For v0.1.0, `stems`, `imports`, `variables`, and `markers` will be empty
+   * For v0.1.0, `blocks`, `imports`, `variables`, and `markers` will be empty
    * or reflect only what might be in frontmatter if we decide to parse that deep.
    * The primary focus for v0.1.0 body content is that it's not processed for markers.
    */
   ast: {
-    stems: Stem[];         // Array of parsed stems (empty for v0 body)
-    imports: Import[];     // Array of parsed imports (empty for v0 body)
+    blocks: Block[]; // Array of parsed blocks (empty for v0 body)
+    imports: Import[]; // Array of parsed imports (empty for v0 body)
     variables: Variable[]; // Array of parsed variables (empty for v0 body)
-    markers: Marker[];     // All markers found in the document (empty for v0 body)
+    markers: Marker[]; // All markers found in the document (empty for v0 body)
   };
 
   /** Destination-specific output */
   output: {
-    content: string;       // Transformed content for the destination (raw body for v0)
+    content: string; // Transformed content for the destination (raw body for v0)
     metadata?: Record<string, unknown>; // Any metadata needed by the destination (e.g., derived from frontmatter)
   };
 

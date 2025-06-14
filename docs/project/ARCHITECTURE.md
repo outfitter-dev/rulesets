@@ -1,4 +1,4 @@
-# Mixdown Architecture
+# Rulesets Architecture
 
 > A CommonMark-compliant rules compiler for AI assistants
 
@@ -6,13 +6,13 @@
 
 ## Overview
 
-Mixdown is a compiler that transforms *source rules* files into destination-specific rules files for various AI tools & coding agents. It follows the "write once, compile for many destinations" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
+Rulesets is a compiler that transforms _source rules_ files into destination-specific rules files for various AI tools & coding agents. It follows the "write once, compile for many destinations" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
 
 The compiler processes multiple source files simultaneously and can output to multiple destinations in a single compilation run, ensuring that all source rules files are consistently applied across all enabled destinations.
 
 ```text
 +-----------------+      +----------------+      +----------------------+
-| Source rules    | ---> | Mixdown Core   | ---> | Destination-specific |
+| Source rules    | ---> | Rulesets Core  | ---> | Destination-specific |
 | (.md files)     |      | Compiler       |      | rules files          |
 +-----------------+      +----------------+      +----------------------+
                               ^
@@ -25,10 +25,10 @@ The compiler processes multiple source files simultaneously and can output to mu
 
 ## Project Structure
 
-The Mixdown project is organized as a monorepo using pnpm workspaces:
+The Rulesets project is organized as a monorepo using pnpm workspaces:
 
 ```text
-mixdown/
+rulesets/
 ├── packages/
 │   ├── core/                 # Core compiler engine
 │   ├── cli/                  # Command-line interface
@@ -51,16 +51,16 @@ mixdown/
 
 - [packages/core/src/parser.ts](placeholder)
 - Responsible for parsing source rules files into an AST (Abstract Syntax Tree)
-- Uses a hybrid approach with specialized nodes for different Mixdown constructs
+- Uses a hybrid approach with specialized nodes for different Rulesets constructs
 - Preserves necessary source positions for error reporting while avoiding excessive metadata
-- Handles Mixdown notation markers, stems, imports, and variables
+- Handles Ruleset syntax markers, blocks, imports, and variables
 
 ### Compiler
 
 - [packages/core/src/compiler.ts](placeholder)
 - Processes the AST and transforms it for target-specific output
 - Resolves imports and variables
-- Applies stem filtering and other transformations
+- Applies block filtering and other transformations
 - Collects errors during processing to report them all at once
 
 ### Renderer
@@ -81,7 +81,7 @@ mixdown/
 ### Configuration
 
 - [packages/core/src/config.ts](placeholder)
-- Loads and validates configuration from mixdown.config.json
+- Loads and validates configuration from ruleset.config.json
 - Uses both JSON Schema validation and TypeScript types
 - Manages project-level settings
 - Provides runtime validation for dynamic configurations
@@ -119,7 +119,7 @@ mixdown/
                          |
                          v
 +------------+  +-------------+  +------------+
-|  Imports   |->| Compile AST |<-|   Stems    |
+|  Imports   |->| Compile AST |<-|   Blocks   |
 +------------+  +------+------+  +------------+
                          |
                          v
@@ -140,7 +140,7 @@ mixdown/
 The compiler uses a hybrid AST structure that:
 
 - Provides necessary detail for error reporting and context preservation
-- Contains specialized nodes for different Mixdown constructs (stems, imports, etc.)
+- Contains specialized nodes for different Ruleset constructs (blocks, imports, etc.)
 - Balances detail and performance by avoiding excessive metadata
 - Maintains source positions for accurate error reporting
 
@@ -151,9 +151,9 @@ The compiler uses a hybrid AST structure that:
 - Prevention of circular dependencies
 - Tracking files for incremental rebuilding when dependencies change
 
-### Stem Filtering
+### Block Filtering
 
-- Implementing destination-specific stem inclusion/exclusion
+- Implementing destination-specific block inclusion/exclusion
 - Processing of destination groups (e.g., `+ide`)
 - Explicit destination declarations take precedence over group-based ones
 
@@ -162,7 +162,7 @@ The compiler uses a hybrid AST structure that:
 Different AI assistants use different terminology and mechanisms for when rules should be applied:
 
 ```text
-Mixdown "Activation" Abstraction
+Rulesets "Activation" Abstraction
            +
            |
            v
@@ -172,6 +172,7 @@ v          v          v          v          v
 Cursor   Windsurf  Claude     Roo      GitHub
 (types)  (trigger) (imports) (folders) (scopes)
 ```
+
 <!-- TODO: If GitHub is a planned destination, consider adding it to the destination tables in README.md and spec/OVERVIEW.md for consistency. -->
 
 - Creates an abstraction layer for activation mechanisms
@@ -180,7 +181,7 @@ Cursor   Windsurf  Claude     Roo      GitHub
 
 ### Target Output Generation
 
-- Converting Mixdown notation into tool-specific formats
+- Converting Ruleset syntax into tool-specific formats
 - Handling front-matter requirements
 - Output file naming conventions and paths
 - Destination-specific strategies for handling character/token limits
@@ -234,25 +235,25 @@ Cursor   Windsurf  Claude     Roo      GitHub
 
 ## Template System
 
-The architecture supports a system for content reusability (Mixins). Internally, this system is designed to be flexible, potentially allowing for future enhancements like template inheritance where mixins could extend and override others. Currently, user-facing features for content reuse are primarily documented as Imports and Mixins in `spec/OVERVIEW.md`.
+The architecture supports a system for content reusability (Partials). Internally, this system is designed to be flexible, potentially allowing for future enhancements like template inheritance where partials could extend and override others. Currently, user-facing features for content reuse are primarily documented as Imports and Partials in `spec/OVERVIEW.md`.
 
 ## Standard Project Structure
 
-A typical project using Mixdown would have this structure:
+A typical project using Rulesets would have this structure:
 
 ```text
 project/
-├── .mixdown/
+├── .ruleset/
 │   ├── dist/
 │   │   └── latest/         # compiled rules
 │   ├── src/                # source rules files (*.md)
-│   │   └── _mixins/        # reusable content modules
-│   └── mixdown.config.json # compiler config
+│   │   └── _partials/      # reusable content modules
+│   └── ruleset.config.json # compiler config
 ```
 
 ## Configuration Format
 
-A stub for `mixdown.config.json`:
+A stub for `ruleset.config.json`:
 
 ```json
 {
@@ -260,17 +261,17 @@ A stub for `mixdown.config.json`:
   "projects": {
     "default": {
       "sources": {
-        "sourceRules": ".mixdown/src",
-        "mixins": ".mixdown/src/_mixins"
+        "sourceRules": ".ruleset/src",
+        "partials": ".ruleset/src/_partials"
       },
-      "dist": ".mixdown/dist",
+      "dist": ".ruleset/dist",
       "allow-bare-xml-tags": false,
       "destinations": {
         "include": ["cursor", "claude-code", "windsurf"],
         "exclude": []
       },
       "aliases": {
-        "project": "Mixdown",
+        "project": "Rulesets",
         "author": "Maybe Good"
       },
       "destinationOptions": {
@@ -297,7 +298,8 @@ A stub for `mixdown.config.json`:
   }
 }
 ```
-Note: Paths in `sources` (like `sourceRules` and `mixins`) and `dist` are typically relative to the project root directory (i.e., the directory containing the `.mixdown` folder itself).
+
+Note: Paths in `sources` (like `sourceRules` and `partials`) and `dist` are typically relative to the project root directory (i.e., the directory containing the `.ruleset` folder itself).
 
 ## Extension Points
 
