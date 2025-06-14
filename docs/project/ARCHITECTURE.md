@@ -81,7 +81,7 @@ rulesets/
 ### Configuration
 
 - [packages/core/src/config.ts](placeholder)
-- Loads and validates configuration from rulesets.config.json
+- Loads and validates configuration from ruleset.config.json
 - Uses both JSON Schema validation and TypeScript types
 - Manages project-level settings
 - Provides runtime validation for dynamic configurations
