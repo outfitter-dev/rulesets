@@ -10,7 +10,7 @@ This document outlines the complete removal of all music-related terminology fro
 
 ## Core Principle
 
-**This is a complete break from the past.** No migration paths, no backwards compatibility, no preservation of old terminology. The project should read as if it was always called Rulesets and never had any music-related naming.
+**This is a complete break from the past.** No migration paths, no backwards compatibility, no preservation of old terminology. The project should read as if it had always been called Rulesets and never had any music-related naming.
 
 ## Terminology Changes
 
@@ -74,7 +74,7 @@ This document outlines the complete removal of all music-related terminology fro
 
 - [ ] Rename `.mixdown/` → `.ruleset/`
 - [ ] Rename `_mixins/` → `_partials/`
-- [ ] Update all file extensions from `.mix.md` → `.ruleset.md`
+- [ ] Update all file extensions from `.mix.md` and `.mixdown.md` → `.ruleset.md`
 - [ ] Update configuration file names
 
 ### Phase 3: Documentation Cleanup
@@ -150,11 +150,12 @@ grep -r "💽" . --include="*.md"  # Old emoji
 - ❌ No transition period
 - ❌ No preservation of old names
 
-The project should appear as if it was always called Rulesets and always used the new terminology.
+The project should appear as if it had always been called Rulesets and had always used the new terminology.
 
 ## Example Transformations
 
 ### Before
+
 ```markdown
 {{stem name="instructions"}}
 - This is a stem in a mix file
@@ -163,6 +164,7 @@ The project should appear as if it was always called Rulesets and always used th
 ```
 
 ### After
+
 ```markdown
 {{block name="instructions"}}
 - This is a block in a ruleset
@@ -171,7 +173,8 @@ The project should appear as if it was always called Rulesets and always used th
 ```
 
 ### Before (Directory Structure)
-```
+
+```bash
 .mixdown/
 ├── src/
 │   ├── _mixins/
@@ -180,7 +183,8 @@ The project should appear as if it was always called Rulesets and always used th
 ```
 
 ### After (Directory Structure)
-```
+
+```bash
 .ruleset/
 ├── src/
 │   ├── _partials/
