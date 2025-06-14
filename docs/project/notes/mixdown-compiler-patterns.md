@@ -1,11 +1,11 @@
-# Mixdown Compiler Implementation Patterns
+# Rulesets Compiler Implementation Patterns
 
-TLDR: Essential patterns and structures needed for the mixdown compiler implementation
+TLDR: Essential patterns and structures needed for the rulesets compiler implementation
 TLDR: Guidelines for transforming Source Rules files into destination-specific rules files
 
-This document outlines key implementation patterns that the Mixdown compiler needs to handle based on analysis of various destination systems. These patterns represent the diverse ways AI assistants manage rules across different tools.
+This document outlines key implementation patterns that the Rulesets compiler needs to handle based on analysis of various destination systems. These patterns represent the diverse ways AI assistants manage rules across different tools.
 
-The Mixdown compiler needs to convert a single source format (Source Rules files) into tool-specific rules files for different AI assistant platforms. Each destination has unique requirements for file location, format, activation mechanisms, and content organization that must be handled appropriately.
+The Rulesets compiler needs to convert a single source format (source rules files) into tool-specific rules files for different AI assistant platforms. Each destination has unique requirements for file location, format, activation mechanisms, and content organization that must be handled appropriately.
 
 ## File Location and Loading Patterns
 
@@ -300,7 +300,7 @@ The compiler must handle:
 
 The compiler must support:
 
-- Converting Mixdown notation to destination-specific formats
+- Converting Ruleset Syntax to destination-specific formats
 - Generating appropriate YAML front-matter for destinations that require it
 - Preserving plain markdown content for most destinations
 
@@ -313,13 +313,13 @@ Each destination needs configuration for:
 - Character or token limitations
 - Activation mechanism support
 
-### Stem Handling
+### Block Handling
 
-Stems must be appropriately processed for:
+Blocks must be appropriately processed for:
 
 - Tools that use XML-like formats (wrapping with appropriate tags)
 - Tools that use heading-based organization (converting to headings)
-- Tools that require specific activation modes (adding appropriate attributes)
+- Tools that require specific activation modes (adding appropriate properties)
 
 ### Variable Substitution
 
@@ -334,7 +334,7 @@ Variables need to handle:
 The compiler must process imports:
 
 - Resolving paths correctly
-- Filtering stems as specified
+- Filtering blocks as specified
 - Handling nested imports
 - Managing circular references
 

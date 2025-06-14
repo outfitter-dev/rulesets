@@ -1,6 +1,6 @@
 # Terminology Consolidation
 
-**Goal:** Consolidate the terminology used across the Mixdown project to ensure consistency and clarity.
+**Goal:** Consolidate the terminology used across the Rulesets project to ensure consistency and clarity.
 
 ## Source Content
 
@@ -22,7 +22,7 @@
      - Example: "Create Mixdown Definitions that compile to multiple destinations"
 - **Decision:**
   - We should use **Source Rules** as the primary term for all documentation and code comments.
-  - We should rename the `.mixdown/mixes` directory to `.mixdown/src/` to align with standard software development conventions.
+  - We should rename the `.mixdown/mixes` directory to `.ruleset/src/` to align with standard software development conventions.
   - This creates a clean, intuitive flow: Source Rules → Compilation → Compiled Rules.
 
 ## Target Terminology
@@ -32,8 +32,8 @@
 - **Description:** The AI assistant platform
 - **Current:** "Target", "Tool", "Target provider", "Target platform", "Target tool"
 - **Recommendation**: Distinguish between the tool itself and its configuration.
-- **Decision:** Use "Target tool" when referring to the actual AI assistant platform and "Target" when referring to its configuration.
-- \*\*Proposed:
+- **Decision:** Use "Destination" when referring to the actual AI assistant platform.
+- **Proposed:
   1. ✴️ "Target tool" ← "Target", "Tool", "Target provider" (when referring to the actual tool)
      - Reasoning: "Target tool" clearly distinguishes the actual AI assistant platform from the configuration.
      - Example: "Cursor is a supported target tool"
@@ -42,7 +42,7 @@
      - Example: "Each target defines specific criteria for compiling mixes"
   3. "Target platform" ← "Target", "Tool" (when emphasizing the platform aspect)
      - Reasoning: Emphasizes the platform nature of the target tool, useful when discussing technical integration aspects.
-     - Example: "Mixdown supports multiple target platforms like Claude Code and Cursor"
+     - Example: "Rulesets supports multiple target platforms like Claude Code and Cursor"
 - **Decision:**
   - We should consolidate around "Destination" as the base term for all things target-related.
     - "Target tool" will simply be "destination"
@@ -62,7 +62,7 @@
 - \*\*Proposed:
   1. ✴️ "Target-specific rules files" ← "Tool-specific rules files", "Target-specific rules files", "Per-tool rules files", "Output"
      - Reasoning: "Target-specific" directly ties the rules files to their intended target and maintains consistency with other target-related terminology.
-     - Example: "Mixdown compiles mix files into target-specific rules files"
+     - Example: "Rulesets compiles mix files into target-specific rules files"
   2. "Destination rules files" ← "Per-tool rules files", "Compiled rules files"
      - Reasoning: Emphasizes the destination aspect and creates a clear symmetry with "Source Rules".
      - Example: "The compiler produces compiled rules files for each destination"
@@ -104,24 +104,24 @@
 - **Description:** The directory where compiled files are stored
 - **Current:** ".mixdown/output/builds/", "Output location", "Output path", ".mixdown/output/", ".mixdown/outputs/" (outdated)
 - **Recommendation**: Consolidate language around specific use cases.
-- **Decision:** Use ".mixdown/output/ directory" when referring to the specific path and "Output directory" when referring to it generically.
+- **Decision:** Use ".ruleset/dist/ directory" when referring to the specific path and "Output directory" when referring to it generically.
 - \*\*Proposed:
   1. ✴️ ".mixdown/output/ directory" ← ".mixdown/output/builds/", ".mixdown/outputs/"
      - Reasoning: Using the full path with directory suffix provides clarity and precision when referring to the output location.
-     - Example: "Writes compiled rules files to the .mixdown/dist/ directory"
+     - Example: "Writes compiled rules files to the .ruleset/dist/ directory"
   2. ✴️ "Output directory" ← "Output location", "Output path"
      - Reasoning: A simpler alternative for contexts where the full path isn't necessary.
      - Example: "The output directory contains all target-specific rules files"
 - **Decision:**
-  - `.mixdown/dist` is better aligned with standard software development conventions and should be used.
+  - `.ruleset/dist` is better aligned with standard software development conventions and should be used.
   - We should call the specific contents of the dist directory `compilation artifacts`.
     - A compilation is a single run of the compiler.
   - We should therefore have:
-    - `.mixdown/dist/latest/` ← Symlink to the latest compilation
-    - `.mixdown/dist/runs/` ← Directory for all compilations and their artifacts
-    - `.mixdown/dist/runs/run-<timestamp>.json` ← Compilation metadata for each run
-    - `.mixdown/dist/logs/` ← Log files for all compilations
-    - `.mixdown/dist/logs/run-<timestamp>.log` ← Compilation log for each run
+    - `.ruleset/dist/latest/` ← Symlink to the latest compilation
+    - `.ruleset/dist/runs/` ← Directory for all compilations and their artifacts
+    - `.ruleset/dist/runs/run-<timestamp>.json` ← Compilation metadata for each run
+    - `.ruleset/dist/logs/` ← Log files for all compilations
+    - `.ruleset/dist/logs/run-<timestamp>.log` ← Compilation log for each run
 
 ## Process Terminology
 
@@ -134,7 +134,7 @@
 - \*\*Proposed:
   1. ✴️ "Compile" ← "Generate", "Transform", "Process", "Build", "Convert"
      - Reasoning: "Compile" best represents the transformation process and aligns with standard programming terminology for converting source code to output formats.
-     - Example: "Mixdown compiles mix files into target-specific rules files"
+     - Example: "Rulesets compiles mix files into target-specific rules files"
   2. "Render" ← "Generate", "Transform" (alternative for UI/visual contexts)
      - Reasoning: In some contexts, especially when discussing the visual representation aspect, "render" may be more intuitive.
      - Example: "Mixdown renders mix files into their appropriate target formats"
@@ -183,8 +183,8 @@
      - Reasoning: A shortened form that can be used once the concept has been established.
      - Example: "Track markers and import markers follow the same basic syntax."
 - **Decision:**
-  - "Mixdown Notation" should be used when referring to the overall syntax system.
-  - "Mixdown Marker" or simply "Marker" should be used when referring to the individual `{{...}}` syntax elements.
+  - "Ruleset Syntax" should be used when referring to the overall syntax system.
+  - "Ruleset Marker" or simply "Marker" should be used when referring to the individual `{{...}}` syntax elements.
     - Where it's helpful, we can clarify that "Marker" == an XML `<tag>`
 
 ### Tracks
@@ -204,14 +204,13 @@
      - Reasoning: Emphasizes the block-like nature of tracks when discussing structural aspects.
      - Example: "A mix file can contain multiple track blocks."
 - **Decision:**
-  - We should rename "Track" to "Stem" to better reflect the concept of a track as a single, distinct unit of content and maintain the music production theme.
-  - "Stem" keeps an alliterative association with "Section" which is already well-established.
-  - "Stem" also connects well with "Structure" so where it's useful we can put those two words together in a sentence for greater discriptiveness.
-  - "Stem" refers to the full construct of an opening and closing marker and the content between them.
-  - "Stem content" refers to the content between the opening and closing markers.
-  - "Stem name" refers to the leading kebab-case or snake_case identifier that follows the `{{` opening marker.
-  - Example: "The instructions stem contains guidance for AI assistants."
-  - Example: "Stems consist of opening and closing markers that surround content."
+  - We should rename "Track" to "Block" to better reflect the concept as a structural unit without music metaphors.
+  - "Block" is clear programming terminology that any developer will understand.
+  - "Block" refers to the full construct of an opening and closing marker and the content between them.
+  - "Block content" refers to the content between the opening and closing markers.
+  - "Block name" refers to the leading kebab-case or snake_case identifier that follows the `{{` opening marker.
+  - Example: "The instructions block contains guidance for AI assistants."
+  - Example: "Blocks consist of opening and closing markers that surround content."
 
 ## Configuration Terminology
 
@@ -369,10 +368,10 @@
      - Reasoning: Generic but clear term that emphasizes the modular nature.
      - Example: "Store common components in the \_components directory for reuse."
   3. "Sample" ← "Snippet", "Fragment"
-     - Reasoning: Continues the music production theme alongside "stem".
+     - Reasoning: Modular component that can be reused.
      - Example: "Import the header sample into multiple Source Rules files."
 - **Decision:**
   - We should use **Partial** as the standard term for reusable components that can be imported into Source Rules
-  - We should rename the `.mixdown/mixes/_snippets` directory to `.mixdown/src/_partials`
-  - A partial typically contains one or more stems that perform a specific function
+  - We should rename the `.mixdown/mixes/_snippets` directory to `.ruleset/src/_partials`
+  - A partial typically contains one or more blocks that perform a specific function
   - A partial can be imported into multiple Source Rules files using the import notation `{{> partial-name}}`

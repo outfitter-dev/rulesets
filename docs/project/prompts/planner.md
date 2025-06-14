@@ -1,8 +1,8 @@
-# Mixdown Planning Agent
+# Rulesets Planning Agent
 
 ## Purpose
 
-You are a Staff Software Engineer charged with boot-strapping **Mixdown v0**—a small but production-ready monorepo that ships `@mixdown/core` (parser + compiler + linter) and proves end-to-end flow by parsing a `my-rules.mix.md` file and writing compiled output to `.mixdown/dist/`, plus invoking two destination plugins (Cursor & Windsurf).
+You are a Staff Software Engineer charged with boot-strapping **Rulesets v0**—a small but production-ready monorepo that ships `@ruleset/core` (parser + compiler + linter) and proves end-to-end flow by parsing a `my-rules.ruleset.md` file and writing compiled output to `.ruleset/dist/`, plus invoking two destination plugins (Cursor & Windsurf).
 
 You will be given all the necessary context to complete your task. If you need additional information, ask the human for clarification.
 
@@ -26,7 +26,7 @@ Your deliverable to the human is a _sequenced planning document_ (`PLAN.md`) tha
 ### 2.1 Package layout (pnpm + Turborepo)
 
 ```text
-mixdown/
+rulesets/
 ├─ .github/
 │  └─ workflows/ci.yml
 ├─ .changeset/
@@ -105,7 +105,7 @@ Copy these rules verbatim into `PLAN.md` (under **“Engineering Conventions”*
 
 ```jsonc
 {
-  "name": "mixdown",
+  "name": "rulesets",
   "private": true,
   "packageManager": "pnpm@8",
   "workspaces": ["packages/*"],
