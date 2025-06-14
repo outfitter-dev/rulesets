@@ -49,10 +49,10 @@ Once these items are cleared, we can confidently mark the terminology migration 
 | **Source Content**            | Mix files, Rule Definition          | source rules                      | ✅ Decided |
 | **Target Terminology**        | Target, Target tool                 | Destination                       | ✅ Decided |
 | **Output Terminology**        | Output, Target-specific rules files | compiled rules                    | ✅ Decided |
-| **Directory Structure**       | `.mixdown/mixes/`                   | `.mixdown/src/`                   | ✅ Decided |
-| **Directory Structure**       | `.mixdown/mixes/_snippets/`         | `.mixdown/src/_partials/`           | ✅ Decided |
-| **Directory Structure**       | `.mixdown/output/`                  | `.mixdown/dist/`                  | ✅ Decided |
-| **Track Terminology**         | Track, Track markers                | Stem                              | ✅ Decided |
+| **Directory Structure**       | `.mixdown/mixes/`                   | `.ruleset/src/`                   | ✅ Decided |
+| **Directory Structure**       | `.mixdown/mixes/_snippets/`         | `.ruleset/src/_partials/`           | ✅ Decided |
+| **Directory Structure**       | `.mixdown/output/`                  | `.ruleset/dist/`                  | ✅ Decided |
+| **Track Terminology**         | Track, Track markers                | Block                              | ✅ Decided |
 | **Configuration Terminology** | Option, Attribute                   | Property                          | ✅ Decided |
 | **Property Format**           | `property(value)`                   | `property-*` and `name-("value")` | ✅ Decided |
 | **Reusable Components**       | Snippet                             | Partial                             | ✅ Decided |
@@ -63,15 +63,15 @@ Once these items are cleared, we can confidently mark the terminology migration 
 
 | New Path                                  | Old Path                    | Notes                                 |
 | ----------------------------------------- | --------------------------- | ------------------------------------- |
-| `.mixdown/src/`                           | `.mixdown/mixes/`           | Primary source directory              |
-| `.mixdown/src/_partials/`                   | `.mixdown/mixes/_snippets/` | Reusable components directory         |
-| `.mixdown/dist/`                          | `.mixdown/output/`          | Output directory                      |
-| `.mixdown/dist/latest/`                   | `.mixdown/output/builds/`   | Latest compiled rules                 |
-| `.mixdown/dist/runs/`                     | n/a                         | Directory for all compilations        |
-| `.mixdown/dist/runs/run-<timestamp>/`     | n/a                         | Directory for specific compiled rules |
-| `.mixdown/dist/runs/run-<timestamp>.json` | n/a                         | Compilation metadata                  |
-| `.mixdown/dist/logs/`                     | n/a                         | Log files directory                   |
-| `.mixdown/dist/logs/run-<timestamp>.log`  | n/a                         | Compilation log file                  |
+| `.ruleset/src/`                           | `.mixdown/mixes/`           | Primary source directory              |
+| `.ruleset/src/_partials/`                   | `.mixdown/mixes/_snippets/` | Reusable components directory         |
+| `.ruleset/dist/`                          | `.mixdown/output/`          | Output directory                      |
+| `.ruleset/dist/latest/`                   | `.mixdown/output/builds/`   | Latest compiled rules                 |
+| `.ruleset/dist/runs/`                     | n/a                         | Directory for all compilations        |
+| `.ruleset/dist/runs/run-<timestamp>/`     | n/a                         | Directory for specific compiled rules |
+| `.ruleset/dist/runs/run-<timestamp>.json` | n/a                         | Compilation metadata                  |
+| `.ruleset/dist/logs/`                     | n/a                         | Log files directory                   |
+| `.ruleset/dist/logs/run-<timestamp>.log`  | n/a                         | Compilation log file                  |
 
 ## Detailed Terminology Changes
 
@@ -98,7 +98,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 - **Old Terms**: "Target", "Tool", "Target provider", "Target platform", "Target tool"
 - **New Term**: "Destination"
 - **Reasoning**: Consolidate around "Destination" as the base term for all target-related concepts.
-- **Example**: "Mixdown supports multiple destinations like Claude Code and Cursor" (was "...multiple target platforms...")
+- **Example**: "Rulesets supports multiple destinations like Claude Code and Cursor" (was "...multiple target platforms...")
 
 #### Destination Implementation Guidelines
 
@@ -131,7 +131,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 - **Old Terms**: "Generate", "Transform", "Process", "Render", "Convert", "Build"
 - **New Term**: "Compile"
 - **Reasoning**: "Compile" best represents the transformation process and aligns with standard programming terminology.
-- **Example**: "Mixdown compiles source rules into compiled rules" (was "...transforms mix files into target-specific rules files")
+- **Example**: "Rulesets compiles source rules into compiled rules" (was "...transforms mix files into target-specific rules files")
 
 #### Compilation Process Implementation Guidelines
 
@@ -141,18 +141,18 @@ Once these items are cleared, we can confidently mark the terminology migration 
 
 ### 5. Track Terminology
 
-#### Track to Stem Renaming
+#### Track to Block Renaming
 
 - **Old Terms**: "Track", "Track markers", "Track notation markers", "Delimited content blocks", "Content blocks", "Section"
-- **New Term**: "Stem"
-- **Reasoning**: Better reflects the concept of a track as a single, distinct unit of content and maintains the music production theme.
-- **Example**: "The instructions stem contains guidance for AI assistants." (was "The instructions track...")
+- **New Term**: "Block"
+- **Reasoning**: Clear programming terminology that avoids music metaphors.
+- **Example**: "The instructions block contains guidance for AI assistants." (was "The instructions track...")
 
-#### Stem Terminology Implementation Guidelines
+#### Block Terminology Implementation Guidelines
 
-- Replace all instances of "track" with "stem"
-- Use "Stem content" for the content between opening and closing markers
-- Use "Stem name" for the kebab-case or snake_case identifier
+- Replace all instances of "track" with "block"
+- Use "Block content" for the content between opening and closing markers
+- Use "Block name" for the kebab-case or snake_case identifier
 
 ### 6. Configuration Terminology
 
@@ -183,7 +183,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 - **Reasoning**: Using a hyphen as a delimiter improves readability and follows common conventions in programming. Parentheses with quotes are only used for string values.
 - **Examples**:
   - `{{instructions code-javascript}}` (was `{{instructions code(js)}}`)
-  - `{{stem name-("My Stem")}}` (was `{{stem name("My Stem")}}`)
+  - `{{block name-("My Block")}}` (was `{{block name("My Block")}}`)
 
 #### Property Format Guidelines
 
@@ -194,12 +194,12 @@ Once these items are cleared, we can confidently mark the terminology migration 
 
 #### Updated Import Selection Syntax
 
-- **Old Format**: `{{> rules#[stem-1 stem-2]}}` (using square brackets)
-- **New Format**: `{{> rules#(stem-1 !stem-2)}}` (using parentheses)
+- **Old Format**: `{{> rules#[block-1 block-2]}}` (using square brackets)
+- **New Format**: `{{> rules#(block-1 !block-2)}}` (using parentheses)
 - **Reasoning**: This allows for more complex expressions including destination-scoped stems
 - **Examples**:
-  - `{{> rules#(stem-1 !stem-2)}}` - Include stem-1, exclude stem-2
-  - `{{> rules#(stem-1 cursor:[stem-cursor])}}` - Include stem-1 and stem-cursor (only for cursor destination)
+  - `{{> rules#(block-1 !block-2)}}` - Include block-1, exclude block-2
+  - `{{> rules#(block-1 cursor:[block-cursor])}}` - Include block-1 and block-cursor (only for cursor destination)
 
 #### Special Notes on Syntax Patterns
 
@@ -210,9 +210,9 @@ Once these items are cleared, we can confidently mark the terminology migration 
 
 #### Import Syntax Implementation Guidelines
 
-- Update all import stem selection syntax to use parentheses instead of square brackets
-- Use `!` prefix to indicate exclusion of a stem
-- Destination-scoped stem selections should follow the format: `destination:[stem-name]`
+- Update all import block selection syntax to use parentheses instead of square brackets
+- Use `!` prefix to indicate exclusion of a block
+- Destination-scoped block selections should follow the format: `destination:[block-name]`
 
 ### 7. Import Terminology
 
@@ -244,7 +244,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 #### Partial Implementation Guidelines
 
 - Replace all instances of "snippet" with "partial"
-- Update directory name from `.mixdown/mixes/_snippets/` to `.mixdown/src/_partials/`
+- Update directory name from `.mixdown/mixes/_snippets/` to `.ruleset/src/_partials/`
 - Use consistent terminology when discussing importing partials
 
 ### 9. Code Formatting Terminology
@@ -271,14 +271,14 @@ Once these items are cleared, we can confidently mark the terminology migration 
    - Update "Mix" to "Source Rules" in the introductory paragraph
    - Update "Track" to "Stem" in Core Concepts
    - Update "Snippet" to "Partial" in Core Concepts
-   - Update directory references to use `.mixdown/src/` and `.mixdown/dist/`
+   - Update directory references to use `.ruleset/src/` and `.ruleset/dist/`
    - Update the directory structure example
 
 2. **spec/OVERVIEW.md**
 
    - Update all terminology according to the changes above
-   - Ensure consistent use of "Source Rules", "Destination", "Stem", etc.
-   - Update directory references to use `.mixdown/src/` and `.mixdown/dist/`
+   - Ensure consistent use of "Source Rules", "Destination", "Block", etc.
+   - Update directory references to use `.ruleset/src/` and `.ruleset/dist/`
 
 3. **docs/project/LANGUAGE.md**
    - Comprehensive update of all terminology
@@ -301,11 +301,11 @@ Once these items are cleared, we can confidently mark the terminology migration 
 
    - Update "target" to "destination" in all target-specific documentation
    - Update "mix" to "Source Rules" throughout
-   - Update "track" to "stem" in all examples
+   - Update "track" to "block" in all examples
 
 4. **notes/\*.md** (except .archive)
    - Update all relevant terminology in note files
-   - Pay special attention to `mixdown-compiler-patterns.md` and `ai-rules-guide.md`
+   - Pay special attention to `rulesets-compiler-patterns.md` and `ai-rules-guide.md`
 
 ## Special Cases and Exceptions
 
@@ -324,8 +324,8 @@ Once these items are cleared, we can confidently mark the terminology migration 
 ### Brand Identity Guidelines
 
 3. **Brand References**
-   - When referring to the product name "Mixdown" itself, keep as is (do not change to "Source Rules Compiler")
-   - The musical term "mixdown" in explanations of the name should remain
+   - When referring to the product name "Rulesets" itself, keep as is
+   - Remove all musical terminology references
 
 ## Implementation Plan
 
@@ -345,7 +345,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 After updating, search for old terminology to ensure all instances have been replaced:
 
 1. Search for "mix file", "mix", "track", "snippet", etc.
-2. Search for old directory references: `.mixdown/mixes/`, `.mixdown/output/`
+2. Search for old directory references: `.mixdown/mixes/`, `.mixdown/output/`, `.mixdown/src/`, `.mixdown/dist/`
 3. Review documentation for consistency in terminology use
 4. Ensure examples use the new terminology
 
@@ -358,12 +358,12 @@ After updating, search for old terminology to ensure all instances have been rep
   - "Mix files" → "Source Rules"
   - "Target" → "Destination"
   - "Output" → "Compiled Rules"
-  - "Track" → "Stem"
+  - "Track" → "Block"
   - "Option" → "Property"
   - "Snippet" → "Partial"
   - `property(value)` → `property-*` and `name-("value")`
 - Updated directory structure:
-  - `.mixdown/mixes/` → `.mixdown/src/`
-  - `.mixdown/mixes/_snippets/` → `.mixdown/src/_partials/`
-  - `.mixdown/output/` → `.mixdown/dist/`
+  - `.mixdown/mixes/` → `.ruleset/src/`
+  - `.mixdown/mixes/_snippets/` → `.ruleset/src/_partials/`
+  - `.mixdown/output/` → `.ruleset/dist/`
 ```

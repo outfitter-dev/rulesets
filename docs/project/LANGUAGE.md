@@ -179,9 +179,9 @@ When referring to compilation versions:
   - Renamed "output" to "compiled rules"
   - Renamed "option" to "property"
   - Standardized on "compile/compilation" for transformation process
-  - Updated directory naming: `.ruleset/src/` (formerly `.mixdown/src/`)
-  - Updated directory naming: `.ruleset/src/_partials/` (formerly `.mixdown/src/_mixins/`)
-  - Updated directory naming: `.ruleset/dist/` (formerly `.mixdown/dist/`)
+  - Updated directory naming: `.ruleset/src/` (formerly `.mixdown/mixes/`)
+  - Updated directory naming: `.ruleset/src/_partials/` (formerly `.mixdown/mixes/_snippets/`)
+  - Updated directory naming: `.ruleset/dist/` (formerly `.mixdown/output/`)
   - Renamed references to "output" to "compiled rules"
   - Refined property terminology with "Property Family", "Property Value", and "Property Group" concepts
   - Updated property syntax to use hyphenated format `property-("value")`

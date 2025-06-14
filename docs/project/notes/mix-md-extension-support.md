@@ -1,8 +1,8 @@
-# `.mix.md` File Extension Support
+# `.ruleset.md` File Extension Support
 
 ## Overview
 
-This document outlines the plan for implementing the `.mix.md` file extension for Mixdown source rules files. This extension will improve discoverability, enable better search capabilities, and support IDE integration.
+This document outlines the plan for implementing the `.ruleset.md` file extension for Rulesets source rules files. This extension will improve discoverability, enable better search capabilities, and support IDE integration.
 
 ## Implementation Proposal
 
@@ -10,13 +10,13 @@ This document outlines the plan for implementing the `.mix.md` file extension fo
 
 1. **Dual Extension Support**
 
-   - Both `.md` and `.mix.md` extensions should be recognized as valid source rules files
-   - `.mix.md` should be treated as the preferred extension
+   - Both `.md` and `.ruleset.md` extensions should be recognized as valid source rules files
+   - `.ruleset.md` should be treated as the preferred extension
 
 2. **Compiler Implementation**
 
-   - The compiler should scan for both `.md` and `.mix.md` files
-   - Add a configuration option to prefer one extension over the other (default to `.mix.md`)
+   - The compiler should scan for both `.md` and `.ruleset.md` files
+   - Add a configuration option to prefer one extension over the other (default to `.ruleset.md`)
 
 3. **Type Definitions**
 
@@ -33,12 +33,12 @@ The proposed implementation would involve these changes to the core package:
 
 ```typescript
 // In types.ts
-export const SUPPORTED_EXTENSIONS = ['.md', '.mix.md'] as const;
+export const SUPPORTED_EXTENSIONS = ['.md', '.ruleset.md'] as const;
 export type SupportedExtension = (typeof SUPPORTED_EXTENSIONS)[number];
 
 export interface CompilerConfig {
   // ...existing config
-  preferMixExtension?: boolean;
+  preferRulesetExtension?: boolean;
 }
 
 export interface SourceRulesFile {
@@ -47,20 +47,20 @@ export interface SourceRulesFile {
 }
 
 // In compiler.ts
-class MixdownCompiler {
+class RulesetsCompiler {
   constructor(config: CompilerConfig) {
     this.config = {
       ...config,
-      preferMixExtension: config.preferMixExtension ?? true, // Default to preferring .mix.md
+      preferRulesetExtension: config.preferRulesetExtension ?? true, // Default to preferring .ruleset.md
     };
   }
 
   findSourceRulesFiles(directory: string): SourceRulesFile[] {
-    // Implementation that checks for both .mix.md and .md extensions
+    // Implementation that checks for both .ruleset.md and .md extensions
   }
 
   getPreferredExtension(): string {
-    return this.config.preferMixExtension ? '.mix.md' : '.md';
+    return this.config.preferRulesetExtension ? '.ruleset.md' : '.md';
   }
 
   isSourceRulesFile(filePath: string): boolean {
@@ -73,17 +73,17 @@ class MixdownCompiler {
 
 1. **Discoverability**
 
-   - The `.mix.md` extension makes it clear these files are Mixdown source rules
+   - The `.ruleset.md` extension makes it clear these files are Rulesets source rules
    - Better distinction from regular Markdown files
 
 2. **IDE and Tooling Support**
 
-   - Enables IDE plugins to recognize Mixdown files specifically
+   - Enables IDE plugins to recognize Rulesets files specifically
    - Allows for custom syntax highlighting and validation
 
 3. **Search Improvements**
 
-   - Easier to find all Mixdown files with search tools
+   - Easier to find all Rulesets files with search tools
    - Clearer distinction in search results
 
 4. **Documentation**
@@ -95,8 +95,8 @@ class MixdownCompiler {
 For existing projects:
 
 - Continue supporting `.md` for backward compatibility
-- Encourage migration to `.mix.md` for new files
-- Provide documentation on the benefits of the `.mix.md` extension
+- Encourage migration to `.ruleset.md` for new files
+- Provide documentation on the benefits of the `.ruleset.md` extension
 
 ## Testing Strategy
 

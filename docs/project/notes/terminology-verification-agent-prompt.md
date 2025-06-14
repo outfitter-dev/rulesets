@@ -23,7 +23,7 @@ Follow the detailed checklist in `/notes/terminology-update-plan.md` and verify 
    - Code examples and syntax
    - Directory structure references
    - Property format changes (e.g., `property(value)` → `property-*` and `name-("value")`)
-   - Import stem selection syntax changes (e.g., `rules#[stem-1 stem-2]` → `rules#(stem-1 !stem-2)`)
+   - Import block selection syntax changes (e.g., `rules#[block-1 block-2]` → `rules#(block-1 !block-2)`)
 
 3. Use search tools to find any missed occurrences:
    - Old terminology: "mix file", "mix", "track", "snippet", "target", "output", etc.
