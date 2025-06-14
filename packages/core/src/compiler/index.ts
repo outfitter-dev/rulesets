@@ -70,7 +70,7 @@ export function compile(
         description: source.frontmatter?.description,
         version: source.frontmatter?.version,
         // Include destination-specific metadata if available
-        ...(source.frontmatter?.destinations && typeof source.frontmatter.destinations === 'object' && !Array.isArray(source.frontmatter.destinations) ? (source.frontmatter.destinations as Record<string, any>)[destinationId] || {} : {}),
+        ...(source.frontmatter?.destinations && typeof source.frontmatter.destinations === 'object' && !Array.isArray(source.frontmatter.destinations) ? (source.frontmatter.destinations as Record<string, unknown>)[destinationId] || {} : {}),
       },
     },
     context: {
@@ -78,7 +78,7 @@ export function compile(
       config: {
         ...projectConfig,
         // Merge destination-specific config from frontmatter
-        ...(source.frontmatter?.destinations && typeof source.frontmatter.destinations === 'object' && !Array.isArray(source.frontmatter.destinations) ? (source.frontmatter.destinations as Record<string, any>)[destinationId] || {} : {}),
+        ...(source.frontmatter?.destinations && typeof source.frontmatter.destinations === 'object' && !Array.isArray(source.frontmatter.destinations) ? (source.frontmatter.destinations as Record<string, unknown>)[destinationId] || {} : {}),
       },
     },
   };
