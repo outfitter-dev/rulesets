@@ -55,7 +55,7 @@ This is a test document with {{blocks}} and {{$variables}} that should pass thro
       await runRulesetsV0('./test.ruleset.md', mockLogger);
 
       // Verify file was read
-      expect(fs.readFile).toHaveBeenCalledWith('./test.ruleset.md', 'utf-8');
+      expect(fs.readFile).toHaveBeenCalledWith('./test.ruleset.md', 'utf8');
 
       // Verify directories were created
       expect(fs.mkdir).toHaveBeenCalledWith(
@@ -213,12 +213,12 @@ ruleset: { version: "0.1.0" }
       // Should use default paths
       expect(fs.writeFile).toHaveBeenCalledTimes(2);
       expect(fs.writeFile).toHaveBeenCalledWith(
-        path.resolve('.rulesets/dist/cursor/my-rules.md'),
+        path.resolve('.ruleset/dist/cursor/my-rules.md'),
         expect.any(String),
         { encoding: 'utf8' },
       );
       expect(fs.writeFile).toHaveBeenCalledWith(
-        path.resolve('.rulesets/dist/windsurf/my-rules.md'),
+        path.resolve('.ruleset/dist/windsurf/my-rules.md'),
         expect.any(String),
         { encoding: 'utf8' },
       );

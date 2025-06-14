@@ -54,7 +54,7 @@ export async function runRulesetsV0(
   // Step 1: Read the source file
   let content: string;
   try {
-    content = await fs.readFile(sourceFilePath, 'utf-8');
+    content = await fs.readFile(sourceFilePath, 'utf8');
     logger.debug(`Read ${content.length} characters from ${sourceFilePath}`);
   } catch (error) {
     logger.error(`Failed to read source file: ${sourceFilePath}`, error);
@@ -142,8 +142,8 @@ export async function runRulesetsV0(
     }
 
     // Determine output path
-    const destConfig = (frontmatter.destinations && typeof frontmatter.destinations === 'object' && !Array.isArray(frontmatter.destinations)) ? (frontmatter.destinations as Record<string, any>)[destinationId] || {} : {};
-    const defaultPath = `.rulesets/dist/${destinationId}/my-rules.md`;
+    const destConfig = (frontmatter.destinations && typeof frontmatter.destinations === 'object' && !Array.isArray(frontmatter.destinations)) ? (frontmatter.destinations as Record<string, unknown>)[destinationId] || {} : {};
+    const defaultPath = `.ruleset/dist/${destinationId}/my-rules.md`;
     const destPath = (typeof destConfig.outputPath === 'string' ? destConfig.outputPath : undefined) || (typeof destConfig.path === 'string' ? destConfig.path : undefined) || defaultPath;
 
     // Write using the plugin
