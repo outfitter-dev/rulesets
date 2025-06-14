@@ -98,9 +98,9 @@ Available markers:
 
 **A:** A target tool/IDE like Cursor, Claude Code, or Windsurf that has specific formatting requirements.
 
-### Q: What are "stems"?
+### Q: What are "blocks"?
 
-**A:** Content blocks marked with `{{stem-name}}...{{/stem-name}}` - NOT processed in v0.
+**A:** Content blocks marked with `{{block-name}}...{{/block-name}}` - NOT processed in v0.
 
 ## Implementation Patterns
 

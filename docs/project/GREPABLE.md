@@ -83,7 +83,7 @@ Use TODO comments to indicate planned enhancements:
 
 ```typescript
 // TLDR: Basic frontmatter parser (mixd-v0)
-// TODO (mixd-v0.1): Add support for stem parsing
+// TODO (mixd-v0.1): Add support for block parsing
 // TODO (mixd-v0.2): Add variable substitution
 function parseContent(content: string) {
   // Current implementation

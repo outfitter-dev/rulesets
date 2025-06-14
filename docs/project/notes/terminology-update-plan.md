@@ -50,12 +50,12 @@ Once these items are cleared, we can confidently mark the terminology migration 
 | **Target Terminology**        | Target, Target tool                 | Destination                       | ✅ Decided |
 | **Output Terminology**        | Output, Target-specific rules files | compiled rules                    | ✅ Decided |
 | **Directory Structure**       | `.mixdown/mixes/`                   | `.mixdown/src/`                   | ✅ Decided |
-| **Directory Structure**       | `.mixdown/mixes/_snippets/`         | `.mixdown/src/_mixins/`           | ✅ Decided |
+| **Directory Structure**       | `.mixdown/mixes/_snippets/`         | `.mixdown/src/_partials/`           | ✅ Decided |
 | **Directory Structure**       | `.mixdown/output/`                  | `.mixdown/dist/`                  | ✅ Decided |
 | **Track Terminology**         | Track, Track markers                | Stem                              | ✅ Decided |
 | **Configuration Terminology** | Option, Attribute                   | Property                          | ✅ Decided |
 | **Property Format**           | `property(value)`                   | `property-*` and `name-("value")` | ✅ Decided |
-| **Reusable Components**       | Snippet                             | Mixin                             | ✅ Decided |
+| **Reusable Components**       | Snippet                             | Partial                             | ✅ Decided |
 | **Import Terminology**        | Track filtering                     | Import scope                      | ✅ Decided |
 | **Code Formatting**           | code-js, code-block                 | code-lang                         | ✅ Decided |
 
@@ -64,7 +64,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 | New Path                                  | Old Path                    | Notes                                 |
 | ----------------------------------------- | --------------------------- | ------------------------------------- |
 | `.mixdown/src/`                           | `.mixdown/mixes/`           | Primary source directory              |
-| `.mixdown/src/_mixins/`                   | `.mixdown/mixes/_snippets/` | Reusable components directory         |
+| `.mixdown/src/_partials/`                   | `.mixdown/mixes/_snippets/` | Reusable components directory         |
 | `.mixdown/dist/`                          | `.mixdown/output/`          | Output directory                      |
 | `.mixdown/dist/latest/`                   | `.mixdown/output/builds/`   | Latest compiled rules                 |
 | `.mixdown/dist/runs/`                     | n/a                         | Directory for all compilations        |
@@ -234,18 +234,18 @@ Once these items are cleared, we can confidently mark the terminology migration 
 
 ### 8. Reusable Components
 
-#### Snippet to Mixin Transition
+#### Snippet to Partial Transition
 
 - **Old Terms**: "Snippet", "Reusable component", "Partial", "Include", "Fragment"
-- **New Term**: "Mixin"
-- **Reasoning**: In programming, mixins are reusable pieces of code that can be incorporated into different classes or components.
-- **Example**: "Import authentication mixins to add user authentication to your Source Rules" (was "...authentication snippets...")
+- **New Term**: "Partial"
+- **Reasoning**: In programming, partials are reusable pieces of code that can be incorporated into different classes or components.
+- **Example**: "Import authentication partials to add user authentication to your Source Rules" (was "...authentication snippets...")
 
-#### Mixin Implementation Guidelines
+#### Partial Implementation Guidelines
 
-- Replace all instances of "snippet" with "mixin"
-- Update directory name from `.mixdown/mixes/_snippets/` to `.mixdown/src/_mixins/`
-- Use consistent terminology when discussing importing mixins
+- Replace all instances of "snippet" with "partial"
+- Update directory name from `.mixdown/mixes/_snippets/` to `.mixdown/src/_partials/`
+- Use consistent terminology when discussing importing partials
 
 ### 9. Code Formatting Terminology
 
@@ -270,7 +270,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 
    - Update "Mix" to "Source Rules" in the introductory paragraph
    - Update "Track" to "Stem" in Core Concepts
-   - Update "Snippet" to "Mixin" in Core Concepts
+   - Update "Snippet" to "Partial" in Core Concepts
    - Update directory references to use `.mixdown/src/` and `.mixdown/dist/`
    - Update the directory structure example
 
@@ -360,10 +360,10 @@ After updating, search for old terminology to ensure all instances have been rep
   - "Output" → "Compiled Rules"
   - "Track" → "Stem"
   - "Option" → "Property"
-  - "Snippet" → "Mixin"
+  - "Snippet" → "Partial"
   - `property(value)` → `property-*` and `name-("value")`
 - Updated directory structure:
   - `.mixdown/mixes/` → `.mixdown/src/`
-  - `.mixdown/mixes/_snippets/` → `.mixdown/src/_mixins/`
+  - `.mixdown/mixes/_snippets/` → `.mixdown/src/_partials/`
   - `.mixdown/output/` → `.mixdown/dist/`
 ```

@@ -768,7 +768,7 @@ graph TB
 4. Token and character limits vary by tool but all emphasize conciseness
 5. Three main activation patterns exist: always-on, pattern-based, and model-decision
 6. Several tools provide file referencing mechanisms to modularize rule content
-7. Consider tools like Mixdown to manage rules across multiple AI assistants
+7. Consider using Rulesets to write rules once and compile to tool-specific outputs
 8. Update rules as your project evolves to keep AI assistance relevant
 9. Most recent tools include UI integrations for easier rule management
 10. Versioning your rules files is important for team consistency
