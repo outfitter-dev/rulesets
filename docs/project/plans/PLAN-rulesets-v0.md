@@ -2,15 +2,16 @@
 
 > [!NOTE]
 > When implementing code based on this plan, include version marker comments to identify code with limited implementation that will be expanded in future versions. For example:
+>
 > ```typescript
->: Simple pass-through implementation that doesn't process markers
+> : Simple pass-through implementation that doesn't process markers
 > // TODO (ruleset-v0.1): Add support for block parsing
 > function parseContent(content: string) {
 >   // Simple implementation for v0
 >   return { body: content };
 > }
 > ```
-> 
+>
 > This makes version-specific code easily greppable and helps future developers (both human and AI) identify components scheduled for enhancement.
 
 ## Overview
@@ -73,6 +74,7 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
   - **Acceptance Criteria**: Interfaces are defined and exported.
   - **Dependencies**: Phase 1/Task 2.
 - [ ] **Task 2: Implement v0 Parser Module**
+
   - Create `packages/core/src/parser/index.ts`.
   - Implement `parse(content: string): Promise<ParsedDoc>` function.
     - For v0, `ParsedDoc` will be a simplified version of `CompiledDoc.source` and `CompiledDoc.ast` (primarily frontmatter and raw body).
@@ -91,7 +93,9 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
 
   - **Acceptance Criteria**: Parser correctly extracts frontmatter and raw body. All unit tests pass.
   - **Dependencies**: Phase 2/Task 1.
+
 - [ ] **Task 3: Implement v0 Linter Module**
+
   - Create `packages/core/src/linter/index.ts`.
   - Implement `lint(parsedDoc: ParsedDoc, config?: LinterConfig): Promise<LintResult[]>`.
     - For v0, it validates the parsed frontmatter against a basic schema (e.g., presence of a `ruleset` key or specific expected fields).
@@ -108,7 +112,9 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
 
   - **Acceptance Criteria**: Linter correctly validates frontmatter based on a predefined schema. All unit tests pass.
   - **Dependencies**: Phase 2/Task 2.
+
 - [ ] **Task 4: Implement v0 Compiler Module**
+
   - Create `packages/core/src/compiler/index.ts`.
   - Implement `compile(parsedDoc: ParsedDoc, destinationId: string, projectConfig?: any): Promise<CompiledDoc>`.
     - For v0, this function will be a pass-through for the body content.
@@ -129,7 +135,9 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
 
   - **Acceptance Criteria**: Compiler correctly populates `CompiledDoc` with raw body content in `output.content`. All unit tests pass.
   - **Dependencies**: Phase 2/Task 2.
+
 - [ ] **Task 5: Implement Stub Destination Plugins (Cursor & Windsurf)**
+
   - Create `packages/core/src/destinations/cursor-plugin.ts` and `packages/core/src/destinations/windsurf-plugin.ts`.
   - Implement the `DestinationPlugin` interface for each.
     - `name`: "cursor" or "windsurf".
@@ -156,17 +164,11 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
 
 - [ ] **Task 1: Create Main CLI Orchestration Logic (within `@rulesets/core`)**
   - Create `packages/core/src/index.ts` (if not already the main entry) or a `cli.ts`.
-  - This will be a simple function/script that:
-        1. Reads a sample `my-rules.ruleset.md` file from a predefined location (e.g., project root or a `./test-data/` directory).
-        2. Instantiates a basic logger.
-        3. Invokes the `Parser` with the file content.
-        4. Invokes the `Linter` with the parsed document. Logs linting results.
-        5. If linting passes (or only warnings), invokes the `Compiler` for "cursor" and "windsurf" destinations.
-        6. For each compiled document, instantiates the respective destination plugin.
-        7. Calls the `write()` method of each plugin, providing necessary context (e.g., output path like `.ruleset/dist/cursor/my-rules.md` and `.ruleset/dist/windsurf/my-rules.md`).
+  - This will be a simple function/script that: 1. Reads a sample `my-rules.ruleset.md` file from a predefined location (e.g., project root or a `./test-data/` directory). 2. Instantiates a basic logger. 3. Invokes the `Parser` with the file content. 4. Invokes the `Linter` with the parsed document. Logs linting results. 5. If linting passes (or only warnings), invokes the `Compiler` for "cursor" and "windsurf" destinations. 6. For each compiled document, instantiates the respective destination plugin. 7. Calls the `write()` method of each plugin, providing necessary context (e.g., output path like `.ruleset/dist/cursor/my-rules.md` and `.ruleset/dist/windsurf/my-rules.md`).
   - **Acceptance Criteria**: A Node.js script can execute the parse -> lint -> compile -> write (stubbed) flow. Compiled rules (raw body) are written to the specified output directory.
   - **Dependencies**: Phase 2 (all tasks).
 - [ ] **Task 2: Create Sample `my-rules.ruleset.md`**
+
   - Create a file named `my-rules.ruleset.md` in the project root or a test directory.
   - Content:
 
@@ -177,9 +179,9 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
   description: A simple rule for testing v0.
   destinations:
     cursor:
-      outputPath: ".cursor/rules/my-first-rule.mdc"
+      outputPath: '.cursor/rules/my-first-rule.mdc'
     windsurf:
-      outputPath: ".windsurf/rules/my-first-rule.md"
+      outputPath: '.windsurf/rules/my-first-rule.md'
   ---
 
   # This is the main content
@@ -190,6 +192,7 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
 
   - **Acceptance Criteria**: Sample file is created and available for testing.
   - **Dependencies**: None.
+
 - [ ] **Task 3: Basic Integration Testing**
   - Write an integration test in `packages/core/tests/integration/e2e.spec.ts` that runs the CLI orchestration logic from Phase 3/Task 1.
   - Verify that the output files are created in `.ruleset/dist/` with the expected raw content.
@@ -328,7 +331,7 @@ rulesets/
     "lint": "turbo lint",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo build --filter=@rulesets/core && changeset publish"
+    "release": "turbo build --filter=@rulesets/core && changeset publish",
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1", // Example version, use latest
@@ -336,8 +339,8 @@ rulesets/
     "typescript": "^5.4.5", // Example version, use latest 5.x
     "eslint": "^8.57.0", // Example version, use latest
     "prettier": "^3.2.5", // Example version, use latest
-    "markdownlint-cli": "^0.41.0" // Example version, use latest
-  }
+    "markdownlint-cli": "^0.41.0", // Example version, use latest
+  },
 }
 ```
 
@@ -393,9 +396,9 @@ packages:
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true, // Base config should not emit, individual packages will.
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "vitest/globals"],
   },
-  "exclude": ["node_modules", "**/dist", "**/coverage"]
+  "exclude": ["node_modules", "**/dist", "**/coverage"],
 }
 ```
 
@@ -543,11 +546,7 @@ import { Logger } from './logger';
 export interface DestinationPlugin {
   name: string;
   configSchema(): any; // JSON Schema for validation
-  write(
-    compiled: CompiledDoc,
-    destPath: string,
-    logger: Logger
-  ): Promise<void>;
+  write(compiled: CompiledDoc, destPath: string, logger: Logger): Promise<void>;
 }
 ```
 
@@ -588,7 +587,7 @@ export interface ParsedDoc {
 // TLDR: Parse source rules file into structured document
 export async function parse(content: string): Promise<ParsedDoc> {
   const { data: frontmatter, content: body } = matter(content);
-  
+
   return {
     frontmatter,
     body,
@@ -623,7 +622,7 @@ title: Test Rule
 This is the body.`;
 
     const result = await parse(content);
-    
+
     expect(result.frontmatter).toEqual({
       ruleset: 'v0',
       title: 'Test Rule',
@@ -634,9 +633,9 @@ This is the body.`;
 
   it('should handle missing frontmatter', async () => {
     const content = '# No Frontmatter\n\nJust content.';
-    
+
     const result = await parse(content);
-    
+
     expect(result.frontmatter).toEqual({});
     expect(result.body).toBe('# No Frontmatter\n\nJust content.');
   });

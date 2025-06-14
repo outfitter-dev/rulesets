@@ -67,7 +67,7 @@ export async function runRulesetsV0(
   try {
     parsedDoc = await parse(content);
     parsedDoc.source.path = sourceFilePath;
-    
+
     if (parsedDoc.errors && parsedDoc.errors.length > 0) {
       logger.warn(`Parser found ${parsedDoc.errors.length} error(s)`);
     }
@@ -90,7 +90,7 @@ export async function runRulesetsV0(
     for (const result of lintResults) {
       const location = result.line ? ` (line ${result.line})` : '';
       const message = `${result.message}${location}`;
-      
+
       switch (result.severity) {
         case 'error':
           logger.error(message);
@@ -116,7 +116,7 @@ export async function runRulesetsV0(
 
   // Step 4: Determine which destinations to compile for
   const frontmatter = parsedDoc.source.frontmatter || {};
-  const destinationIds = frontmatter.destinations 
+  const destinationIds = frontmatter.destinations
     ? Object.keys(frontmatter.destinations)
     : Array.from(destinations.keys());
 
@@ -142,9 +142,17 @@ export async function runRulesetsV0(
     }
 
     // Determine output path
-    const destConfig = (frontmatter.destinations && typeof frontmatter.destinations === 'object' && !Array.isArray(frontmatter.destinations)) ? (frontmatter.destinations as Record<string, unknown>)[destinationId] || {} : {};
+    const destConfig =
+      frontmatter.destinations &&
+      typeof frontmatter.destinations === 'object' &&
+      !Array.isArray(frontmatter.destinations)
+        ? (frontmatter.destinations as Record<string, unknown>)[destinationId] || {}
+        : {};
     const defaultPath = `.ruleset/dist/${destinationId}/my-rules.md`;
-    const destPath = (typeof destConfig.outputPath === 'string' ? destConfig.outputPath : undefined) || (typeof destConfig.path === 'string' ? destConfig.path : undefined) || defaultPath;
+    const destPath =
+      (typeof destConfig.outputPath === 'string' ? destConfig.outputPath : undefined) ||
+      (typeof destConfig.path === 'string' ? destConfig.path : undefined) ||
+      defaultPath;
 
     // Write using the plugin
     try {
@@ -170,7 +178,7 @@ export async function runRulesetsV0(
 if (require.main === module) {
   const logger = new ConsoleLogger();
   const sourceFile = process.argv[2] || './my-rules.ruleset.md';
-  
+
   runRulesetsV0(sourceFile, logger)
     .then(() => {
       logger.info('Done!');

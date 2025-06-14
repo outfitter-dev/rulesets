@@ -44,7 +44,7 @@ describe('WindsurfPlugin', () => {
       expect(schema.properties).toBeDefined();
       expect(schema.properties!.outputPath).toBeDefined();
       expect(schema.properties!.format).toBeDefined();
-      
+
       const formatProp = schema.properties!.format as { enum: string[]; default: string };
       expect(formatProp.enum).toContain('markdown');
       expect(formatProp.enum).toContain('xml');
@@ -89,13 +89,13 @@ describe('WindsurfPlugin', () => {
       const dir = path.dirname(resolvedPath);
 
       expect(fs.mkdir).toHaveBeenCalledWith(dir, { recursive: true });
-      expect(fs.writeFile).toHaveBeenCalledWith(
-        resolvedPath,
-        mockCompiledDoc.output.content,
-        { encoding: 'utf8' },
-      );
+      expect(fs.writeFile).toHaveBeenCalledWith(resolvedPath, mockCompiledDoc.output.content, {
+        encoding: 'utf8',
+      });
       expect(mockLogger.info).toHaveBeenCalledWith(`Writing Windsurf rules to: ${resolvedPath}`);
-      expect(mockLogger.info).toHaveBeenCalledWith(`Successfully wrote Windsurf rules to: ${resolvedPath}`);
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        `Successfully wrote Windsurf rules to: ${resolvedPath}`,
+      );
     });
 
     it('should use outputPath from config if provided', async () => {
@@ -110,11 +110,9 @@ describe('WindsurfPlugin', () => {
       });
 
       const resolvedPath = path.resolve(config.outputPath);
-      expect(fs.writeFile).toHaveBeenCalledWith(
-        resolvedPath,
-        mockCompiledDoc.output.content,
-        { encoding: 'utf8' },
-      );
+      expect(fs.writeFile).toHaveBeenCalledWith(resolvedPath, mockCompiledDoc.output.content, {
+        encoding: 'utf8',
+      });
     });
 
     it('should log format information', async () => {

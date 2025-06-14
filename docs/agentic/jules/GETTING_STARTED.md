@@ -31,6 +31,7 @@ export function parse(content: string): ParsedDoc {
 ## Critical Documentation
 
 Always reference these when implementing:
+
 - `docs/project/GREPABLE.md` - Marker system guide
 - `docs/project/LANGUAGE.md` - Terminology specifications
 - `docs/project/plans/PLAN-rulesets-v0.md` - Implementation requirements
@@ -43,6 +44,7 @@ Every function must have corresponding tests. Follow existing patterns in `__tes
 ## Marker Usage in Code
 
 Use markers to indicate implementation level and future plans:
+
 - Current work: `(mixd-v0)`
 - Future enhancements: `TODO (mixd-v0.1):`
 - Security concerns: `(mixd-sec)`

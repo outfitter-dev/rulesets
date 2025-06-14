@@ -12,21 +12,21 @@ I propose adding a new `heading` output format with optional level specification
 
 Add the following output value within a block:
 
-| Value | Description |
-|-------|-------------|
-| `heading` | Render block as a Markdown heading instead of XML tags |
-| `heading="3"` | Specify exact heading level |
-| `heading="inc"` | Increment heading level by 1 from parent/default level |
-| `heading="dec"` | Decrement heading level by 1 from parent/default level (never below h1) |
-| `heading="same"` | Keep the same heading level as parent/previous block |
-| `heading="replace"` | Replace the first heading in the content with a block name heading |
-| `h-1` to `h-6` | Shorthand for exact heading levels (h-1, h-2, h-3, h-4, h-5, h-6) |
-| `h-inc` | Shorthand for incrementing heading level |
-| `h-dec` | Shorthand for decrementing heading level |
-| `h-same` | Shorthand for keeping the same heading level |
-| `numbering` | Enable sequential numbering of blocks based on position and hierarchy |
-| `numbering="heading:before tag:after"` | Control where numbering appears in output formats |
-| `"Example $n"` | Use `$n` variable in quoted strings for automatic sequential numbering |
+| Value                                  | Description                                                             |
+| -------------------------------------- | ----------------------------------------------------------------------- |
+| `heading`                              | Render block as a Markdown heading instead of XML tags                  |
+| `heading="3"`                          | Specify exact heading level                                             |
+| `heading="inc"`                        | Increment heading level by 1 from parent/default level                  |
+| `heading="dec"`                        | Decrement heading level by 1 from parent/default level (never below h1) |
+| `heading="same"`                       | Keep the same heading level as parent/previous block                    |
+| `heading="replace"`                    | Replace the first heading in the content with a block name heading      |
+| `h-1` to `h-6`                         | Shorthand for exact heading levels (h-1, h-2, h-3, h-4, h-5, h-6)       |
+| `h-inc`                                | Shorthand for incrementing heading level                                |
+| `h-dec`                                | Shorthand for decrementing heading level                                |
+| `h-same`                               | Shorthand for keeping the same heading level                            |
+| `numbering`                            | Enable sequential numbering of blocks based on position and hierarchy   |
+| `numbering="heading:before tag:after"` | Control where numbering appears in output formats                       |
+| `"Example $n"`                         | Use `$n` variable in quoted strings for automatic sequential numbering  |
 
 ## Implementation Details
 
@@ -56,6 +56,7 @@ This content will use an h3 heading regardless of nesting
 {{/block-name}}
 
 <!-- Or using the shorthand notation -->
+
 {{block-name h-3}}
 This content will also use an h3 heading
 {{/block-name}}
@@ -127,12 +128,12 @@ In frontmatter or config file:
 ruleset:
   heading:
     level:
-      min: 2      # Minimum heading level to start at (default: 2)
-      max: 5      # Maximum heading level (default: 5, capped at 6)
-    case: "title" # Optional: block name case transformation
+      min: 2 # Minimum heading level to start at (default: 2)
+      max: 5 # Maximum heading level (default: 5, capped at 6)
+    case: 'title' # Optional: block name case transformation
     line_breaks:
       before: true # Insert blank line before heading (default: true)
-      after: true   # Insert blank line after heading (default: true)
+      after: true # Insert blank line after heading (default: true)
 ---
 ```
 
@@ -236,18 +237,18 @@ Third inner section with shorthand heading notation
 ruleset:
   heading:
     level:
-      min: 2             # Minimum heading level to start at (default: 2)
-      max: 5             # Maximum heading level (default: 5, capped at 6)
-    case: "title"        # Optional: block name case transformation
+      min: 2 # Minimum heading level to start at (default: 2)
+      max: 5 # Maximum heading level (default: 5, capped at 6)
+    case: 'title' # Optional: block name case transformation
     line_breaks:
-      before: true       # Insert blank line before heading (default: true)
-      after: true        # Insert blank line after heading (default: true)
+      before: true # Insert blank line before heading (default: true)
+      after: true # Insert blank line after heading (default: true)
   block:
     numbering:
-      heading: "before"     # before, after, or none
-      tag: "after"          # before, after, or none
-      children: 3           # max depth for hierarchical numbering
-      separator: "."        # separator between numbers (e.g., 1.[2.3])
+      heading: 'before' # before, after, or none
+      tag: 'after' # before, after, or none
+      children: 3 # max depth for hierarchical numbering
+      separator: '.' # separator between numbers (e.g., 1.[2.3])
 ---
 ```
 
@@ -272,6 +273,7 @@ ruleset:
 
    ```markdown
    {{block-name heading="replace"}}
+
    # Existing Heading
 
    This content has an existing heading that will be replaced with the block name
@@ -300,7 +302,7 @@ ruleset:
 
    ```markdown
    ## Block Name
-   
+
    Content
    ```
 
@@ -339,14 +341,14 @@ Section content
 {{/section}}
 ```
 
-| Property | Description |
-|--------|-------------|
+| Property         | Description                                     |
+| ---------------- | ----------------------------------------------- |
 | `heading:before` | Place number before heading text ("1. Section") |
-| `heading:after` | Place number after heading text ("Section 1") |
-| `heading:none` | No numbering in headings |
-| `tag:before` | Place number before tag string (`<1_section>`) |
-| `tag:after` | Place number after tag string (`<section_1>`) |
-| `tag:none` | No numbering in tags |
+| `heading:after`  | Place number after heading text ("Section 1")   |
+| `heading:none`   | No numbering in headings                        |
+| `tag:before`     | Place number before tag string (`<1_section>`)  |
+| `tag:after`      | Place number after tag string (`<section_1>`)   |
+| `tag:none`       | No numbering in tags                            |
 
 ### 3. Hierarchical Numbering
 
@@ -418,10 +420,10 @@ Control numbering globally or per-ruleset:
 ruleset:
   block:
     numbering:
-      heading: "before"      # before, after, or none
-      tag: "after"           # before, after, or none
-      children: 3            # max depth for hierarchical numbering
-      separator: "."         # separator between numbers (e.g., 1.[2.3])
+      heading: 'before' # before, after, or none
+      tag: 'after' # before, after, or none
+      children: 3 # max depth for hierarchical numbering
+      separator: '.' # separator between numbers (e.g., 1.[2.3])
 ```
 
 ## Implementation Considerations
@@ -450,9 +452,10 @@ ruleset:
 
 ```markdown
 {{instructions heading}}
+
 - Follow these guidelines
 - Use consistent formatting
-{{/instructions}}
+  {{/instructions}}
 ```
 
 Renders as:
@@ -468,6 +471,7 @@ Renders as:
 
 ```markdown
 {{implementation-details heading="replace"}}
+
 # Implementation
 
 This section covers details about how to implement the feature.
@@ -488,19 +492,22 @@ The implementation should follow these principles...
 
 ```markdown
 {{project-details heading="1"}}
+
 ## Project Overview
 
 {{key-features}}
 The project includes the following features:
+
 - Feature 1
 - Feature 2
-{{/key-features}}
+  {{/key-features}}
 
 {{requirements heading}}
 System requirements:
+
 - Requirement 1
 - Requirement 2
-{{/requirements}}
+  {{/requirements}}
 
 {{/project-details}}
 ```
@@ -514,28 +521,33 @@ Renders as:
 
 <key_features>
 The project includes the following features:
+
 - Feature 1
 - Feature 2
-</key_features>
+  </key_features>
 
 ## Requirements
 
 System requirements:
+
 - Requirement 1
 - Requirement 2
 ```
 
 ### Simplified Heading Syntax
 
-```markdown
+````markdown
 {{"Getting Started"}}
 This section explains how to get started with the project.
 
 {{"Installation"}}
 First, install the dependencies:
+
 ```bash
 npm install
 ```
+````
+
 {{/"Installation"}}
 
 {{"Configuration"}}
@@ -543,7 +555,8 @@ Next, configure your environment...
 {{/"Configuration"}}
 
 {{/"Getting Started"}}
-```
+
+````
 
 Renders as:
 
@@ -557,9 +570,12 @@ This section explains how to get started with the project.
 First, install the dependencies:
 ```bash
 npm install
-```
+````
 
 ### Configuration
 
 Next, configure your environment...
+
+```
+
 ```

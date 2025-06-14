@@ -1,6 +1,6 @@
 # 📏 Rulesets – v0.1.0 Overview
 
-> *Write rules once, compile destination-specific rules, zero drift.*
+> _Write rules once, compile destination-specific rules, zero drift._
 
 ## Table of Contents
 
@@ -83,7 +83,7 @@ Rulesets introduces a single source-of-truth rules notation written in pure Mark
 
 The complete logical flow is: source rules → Compilation → Compilation Artifacts → compiled rules
 
-Result: *Write rules once, compile destination-specific rules, zero drift.*
+Result: _Write rules once, compile destination-specific rules, zero drift._
 
 ## Core Concepts
 
@@ -142,15 +142,15 @@ Result: *Write rules once, compile destination-specific rules, zero drift.*
 
 ## Destination Provider
 
-| ID | Tool | Type |
-|----|------|------|
-| `cursor` | Cursor | IDE |
-| `windsurf` | Windsurf | IDE |
-| `claude-code` | Claude Code | CLI |
-| `roo-code` | Roo Code | VS Code Extension |
-| `cline` | Cline | VS Code Extension |
-| `codex-cli` | OpenAI Codex CLI | CLI |
-| `codex-agent` | OpenAI Codex Agent | Web agent |
+| ID            | Tool               | Type              |
+| ------------- | ------------------ | ----------------- |
+| `cursor`      | Cursor             | IDE               |
+| `windsurf`    | Windsurf           | IDE               |
+| `claude-code` | Claude Code        | CLI               |
+| `roo-code`    | Roo Code           | VS Code Extension |
+| `cline`       | Cline              | VS Code Extension |
+| `codex-cli`   | OpenAI Codex CLI   | CLI               |
+| `codex-agent` | OpenAI Codex Agent | Web agent         |
 
 ## Getting Started
 
@@ -178,25 +178,25 @@ rulesets build     # writes compiled rules to .rulesets/dist/
 
 ### Design Goals
 
-| Goal | Description |
-|------|-------------|
-| ✨ **Simplicity** | Reduce bespoke format/structure for each tool to just one. |
-| 🧹 **Lintability** | Files must pass standard markdown-lint without hacks. |
-| 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc. |
-| 🧩 **Extensibility** | Advanced behaviors declared via attributes instead of new notation. |
+| Goal                  | Description                                                         |
+| --------------------- | ------------------------------------------------------------------- |
+| ✨ **Simplicity**     | Reduce bespoke format/structure for each tool to just one.          |
+| 🧹 **Lintability**    | Files must pass standard markdown-lint without hacks.               |
+| 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc.                   |
+| 🧩 **Extensibility**  | Advanced behaviors declared via attributes instead of new notation. |
 
 ### Delimiter Roles
 
 Rulesets' syntax follows strict delimiter rules to maintain consistency and clarity. Each character serves a specific purpose:
 
-| Delimiter | Role | Example | Purpose |
-|-----------|------|---------|---------|
-| `:` | Scope indicator | `destination:code-javascript` | Indicates that properties are scoped to a specific destination |
-| `()` | Value container | `name-("value")` | Contains values for a specific property |
-| `[]` | Property grouping | `destination:[property-1 property-2]` | Groups multiple properties within a scope |
-| `+` | Inclusion | `+destination`, `+block-one` | Indicates inclusion of a destination or block |
-| `!` | Exclusion | `!destination`, `!block-two` | Indicates exclusion of a destination or block |
-| `#` | Block reference | `#block-name`, `#(block1 block2)` | References blocks in imports for selective filtering with import scope |
+| Delimiter | Role              | Example                               | Purpose                                                                |
+| --------- | ----------------- | ------------------------------------- | ---------------------------------------------------------------------- |
+| `:`       | Scope indicator   | `destination:code-javascript`         | Indicates that properties are scoped to a specific destination         |
+| `()`      | Value container   | `name-("value")`                      | Contains values for a specific property                                |
+| `[]`      | Property grouping | `destination:[property-1 property-2]` | Groups multiple properties within a scope                              |
+| `+`       | Inclusion         | `+destination`, `+block-one`          | Indicates inclusion of a destination or block                          |
+| `!`       | Exclusion         | `!destination`, `!block-two`          | Indicates exclusion of a destination or block                          |
+| `#`       | Block reference   | `#block-name`, `#(block1 block2)`     | References blocks in imports for selective filtering with import scope |
 
 These delimiters always maintain their role throughout the syntax, making the language more intuitive and easier to learn.
 
@@ -206,8 +206,9 @@ Blocks are the core building block of Rulesets and are a direct stand in for XML
 
 ```markdown
 {{instructions +cursor !claude-code}}
+
 - IMPORTANT: You must follow these coding standards...
-{{/instructions}}
+  {{/instructions}}
 ```
 
 #### Block Notation Markers
@@ -219,6 +220,7 @@ Blocks are the core building block of Rulesets and are a direct stand in for XML
 
 ```markdown
 <!-- Rulesets input -->
+
 {{block-one}}
 Content A
 {{/block-one}}
@@ -229,23 +231,25 @@ Content B
 
 ---
 
-  Output for all configured tools (except `claude-code` in this example):
+Output for all configured tools (except `claude-code` in this example):
+
   <!-- XML output -->
-  <block_one>
-  Content A
-  </block_one>
-  <block_two>
-  Content B
-  </block_two>
-  ```
 
-  While Claude Code output will be:
+<block_one>
+Content A
+</block_one>
+<block_two>
+Content B
+</block_two>
+```
 
-  ```markdown
-  <block_one>
-  Content A
-  </block_one>
-  ```
+While Claude Code output will be:
+
+```markdown
+<block_one>
+Content A
+</block_one>
+```
 
 #### Destination-scoped Property Overrides
 
@@ -257,9 +261,9 @@ Any property can be given a per-destination override by suffixing the destinatio
 {{/instructions}}
 ```
 
-In this example the stem will use the name "cursor-instructions" when compiled for the *cursor* destination. The same pattern works with groups once they arrive (e.g. `ide:name-("ide-instructions")`).
+In this example the stem will use the name "cursor-instructions" when compiled for the _cursor_ destination. The same pattern works with groups once they arrive (e.g. `ide:name-("ide-instructions")`).
 
-Note: You can also use the `+destination` notation to both include the stem for specific destinations *and* apply destination-specific overrides.
+Note: You can also use the `+destination` notation to both include the stem for specific destinations _and_ apply destination-specific overrides.
 
 #### Destination-scoped Multiple Properties
 
@@ -319,13 +323,13 @@ The stem would use heading level 3 because `h-3` appears last and overrides `h-2
 
 Destination filtering properties control which destinations receive content. These provide powerful ways to include or exclude content for specific destinations or groups of destinations:
 
-| Property | Description | Example |
-|--------|-------------|--------|
-| `+destination` | Include for a specific destination | `{{stem +cursor}}` |
-| `!destination` | Exclude for a specific destination | `{{stem !windsurf}}` |
-| `+all` | Include for all configured destinations | `{{stem +all}}` |
-| `+group` | Include for all destinations in a group | `{{stem +ide}}` |
-| `!group` | Exclude for all destinations in a group | `{{stem !cli}}` |
+| Property       | Description                             | Example              |
+| -------------- | --------------------------------------- | -------------------- |
+| `+destination` | Include for a specific destination      | `{{stem +cursor}}`   |
+| `!destination` | Exclude for a specific destination      | `{{stem !windsurf}}` |
+| `+all`         | Include for all configured destinations | `{{stem +all}}`      |
+| `+group`       | Include for all destinations in a group | `{{stem +ide}}`      |
+| `!group`       | Exclude for all destinations in a group | `{{stem !cli}}`      |
 
 The `+all` property is particularly useful for explicitly indicating that content should be included for all destinations. This is helpful when you want to be explicit about inclusion, even though the default behavior is already to include content for all destinations.
 
@@ -357,6 +361,7 @@ For stems with no content, you can use a self-closing tag format:
 {{empty-stem /}}
 
 <!-- Which is equivalent to: -->
+
 {{empty-stem}}{{/empty-stem}}
 ```
 
@@ -370,7 +375,7 @@ Self-closing tags render as empty XML tags in the output:
 
 - **Destination-specific property (block included for all destinations unless otherwise specified):**
   `{{instructions cursor:name-("cursor-specific-rules")}}`
-  *(Applies `name-("cursor-specific-rules")` only for the `cursor` destination. The block itself is included for all destinations by default.)*
+  _(Applies `name-("cursor-specific-rules")` only for the `cursor` destination. The block itself is included for all destinations by default.)_
 
 - **Inclusion for a destination with a specific property:**
   `{{instructions +cursor:name-("only-for-cursor")}}`
@@ -382,17 +387,17 @@ Self-closing tags render as empty XML tags in the output:
 
 - **Exclusion for a destination, even if a scoped property is present:**
   `{{instructions !cursor:name-("ignored-for-cursor")}}`
-  *(Excludes this stem for the `cursor` destination. The `name-("ignored-for-cursor")` property would not apply as the stem is excluded for `cursor`.)*
+  _(Excludes this stem for the `cursor` destination. The `name-("ignored-for-cursor")` property would not apply as the stem is excluded for `cursor`.)_
 
 - **Group inclusion with member exclusion and scoped properties for the group:**
   `{{instructions +ide:[code-javascript] !cursor}}`
-  *(Includes this stem for all destinations in the `ide` group, applying the `code-javascript` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `rulesets.config.json`.)*
+  _(Includes this stem for all destinations in the `ide` group, applying the `code-javascript` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `rulesets.config.json`.)_
 
 > [!IMPORTANT]
 > Differentiating Scoped Properties from Scoped Inclusion:
 >
 > - `destination:[my-property]` means "If this stem is rendered for `destination`, apply `my-property`." The stem's general inclusion is determined elsewhere (e.g. by default, or by a `+destination` on its own).
-> - `+destination:[my-property]` means "Render this stem *only* for `destination`, and when doing so, apply `my-property`." This controls both inclusion and destination-specific properties simultaneously.
+> - `+destination:[my-property]` means "Render this stem _only_ for `destination`, and when doing so, apply `my-property`." This controls both inclusion and destination-specific properties simultaneously.
 
 #### Multi-line Markers for Readability
 
@@ -407,7 +412,7 @@ Properties can be split across lines for readability. The parser preserves this 
 This is the content of the instructions section.
 {{/instructions}}
 
-<!-- Note: Using the name-("value") syntax specifically sets the 'name' attribute 
+<!-- Note: Using the name-("value") syntax specifically sets the 'name' attribute
   (e.g., name="important-rules") in the rendered XML output. The value provided in name-("...") is used as-is and is not transformed to snake_case (unlike stem names themselves). -->
 
 ---
@@ -415,22 +420,22 @@ This is the content of the instructions section.
 Output:
 <instructions
   name="important-rules">
-  This is the content of the instructions section.
+This is the content of the instructions section.
 </instructions>
 ```
 
 #### Stem Properties
 
-| Property | Type | Purpose |
-|--------|------|---------|
-| `+/!destination` | flag | Include/exclude for specific destinations (e.g., `+cursor !windsurf`). |
-| `name-("value")` | value | Sets a name with a specified value for the stem (e.g., `name-("my-section")` becomes `name="my-section"`). |
-| `id-("value")` | value | Sets a unique XML `id` attribute for the stem (e.g., `id-("unique-identifier")` becomes `id="unique-identifier"`), useful for linking or specific referencing. |
-| `unwrap`, `inline`, etc. | flag | Controls how content is processed (see [Output Format](#output-format) below). |
-| `code-`, `h-`, `num-` | flag | Family-specific properties for code blocks, headings, and numbering. |
-| `[property1 property2]` | group | Groups multiple properties together for readability. |
-| `destination:[properties]` | scoped | Destination-specific property group. |
-| *Custom* `key="value"` | attribute | Any key-value pair is passed through as-is to the compiled artifact. |
+| Property                   | Type      | Purpose                                                                                                                                                        |
+| -------------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `+/!destination`           | flag      | Include/exclude for specific destinations (e.g., `+cursor !windsurf`).                                                                                         |
+| `name-("value")`           | value     | Sets a name with a specified value for the stem (e.g., `name-("my-section")` becomes `name="my-section"`).                                                     |
+| `id-("value")`             | value     | Sets a unique XML `id` attribute for the stem (e.g., `id-("unique-identifier")` becomes `id="unique-identifier"`), useful for linking or specific referencing. |
+| `unwrap`, `inline`, etc.   | flag      | Controls how content is processed (see [Output Format](#output-format) below).                                                                                 |
+| `code-`, `h-`, `num-`      | flag      | Family-specific properties for code blocks, headings, and numbering.                                                                                           |
+| `[property1 property2]`    | group     | Groups multiple properties together for readability.                                                                                                           |
+| `destination:[properties]` | scoped    | Destination-specific property group.                                                                                                                           |
+| _Custom_ `key="value"`     | attribute | Any key-value pair is passed through as-is to the compiled artifact.                                                                                           |
 
 #### Output Format
 
@@ -448,15 +453,15 @@ Content without surrounding XML tags
 
 **Output Property Values:**
 
-| Value | Description |
-|-------|-------------|
-| (default) | Normal rendering with XML tags in standard format (default behavior) |
-| `inline` | Content rendered inline without XML tags (simple, concise format) |
-| `inline-with-tags` | Content rendered inline with XML tags preserved (all on a single line) |
-| `unwrap` | Remove XML tags from compiled artifacts but maintain block formatting |
-| `code` | Auto-detect and render as a Markdown code block with appropriate language |
-| `code-language` | Render content as a code block in specified language (see Code Block Properties below) |
-| `process-content` | Compile content within markers, use within `{{{...}}}` |
+| Value              | Description                                                                            |
+| ------------------ | -------------------------------------------------------------------------------------- |
+| (default)          | Normal rendering with XML tags in standard format (default behavior)                   |
+| `inline`           | Content rendered inline without XML tags (simple, concise format)                      |
+| `inline-with-tags` | Content rendered inline with XML tags preserved (all on a single line)                 |
+| `unwrap`           | Remove XML tags from compiled artifacts but maintain block formatting                  |
+| `code`             | Auto-detect and render as a Markdown code block with appropriate language              |
+| `code-language`    | Render content as a code block in specified language (see Code Block Properties below) |
+| `process-content`  | Compile content within markers, use within `{{{...}}}`                                 |
 
 Multiple properties can be applied together (space-separated):
 
@@ -473,7 +478,7 @@ The `code-<language>` property family renders content as a code block in the spe
 ```markdown
 {{section code-javascript}}
 function hello() {
-  console.log("Hello, world!");
+console.log("Hello, world!");
 }
 {{/section}}
 ```
@@ -483,24 +488,24 @@ This compiles to the equivalent of standard Markdown fenced code blocks:
 ````markdown
 ```javascript
 function hello() {
-  console.log("Hello, world!");
+  console.log('Hello, world!');
 }
 ```
 ````
 
 Common language shortcuts include `code-javascript`, `code-typescript`, etc.
 
-**Heading Properties (h-* family):**
+**Heading Properties (h-\* family):**
 
 Heading properties control how headings are processed:
 
-| Property | Description | Example |
-|--------|-------------|--------|
-| `h-1` to `h-6` | Set specific heading level | `{{section h-2}}` |
-| `h-inc` | Increment heading level | `{{section h-inc}}` |
-| `h-dec` | Decrement heading level | `{{section h-dec}}` |
-| `h-same` | Keep same heading level | `{{section h-same}}` |
-| `h-initial` | Replace first heading | `{{section h-initial}}` |
+| Property       | Description                | Example                 |
+| -------------- | -------------------------- | ----------------------- |
+| `h-1` to `h-6` | Set specific heading level | `{{section h-2}}`       |
+| `h-inc`        | Increment heading level    | `{{section h-inc}}`     |
+| `h-dec`        | Decrement heading level    | `{{section h-dec}}`     |
+| `h-same`       | Keep same heading level    | `{{section h-same}}`    |
+| `h-initial`    | Replace first heading      | `{{section h-initial}}` |
 
 **Heading Shortcut:**
 
@@ -516,21 +521,21 @@ This is equivalent to specifying the heading within the content but provides a m
 
 The heading shortcut will automatically:
 
-- Set the heading level (via h-* properties)
+- Set the heading level (via h-\* properties)
 - Use the provided text as the heading
 - Apply the heading to the beginning of the stem content
 
-**Numbering Properties (num-* family):**
+**Numbering Properties (num-\* family):**
 
 Numbering properties control how content is numbered:
 
-| Property | Description | Example |
-|--------|-------------|--------|
-| `num` | Enable default numbering | `{{chapter num}}` |
-| `num-heading-first` | Number first heading | `{{chapter num-heading-first}}` |
-| `num-heading-last` | Number last heading | `{{chapter num-heading-last}}` |
-| `num-tag-first` | Number first tag | `{{chapter num-tag-first}}` |
-| `num-tag-last` | Number last tag | `{{chapter num-tag-last}}` |
+| Property            | Description              | Example                         |
+| ------------------- | ------------------------ | ------------------------------- |
+| `num`               | Enable default numbering | `{{chapter num}}`               |
+| `num-heading-first` | Number first heading     | `{{chapter num-heading-first}}` |
+| `num-heading-last`  | Number last heading      | `{{chapter num-heading-last}}`  |
+| `num-tag-first`     | Number first tag         | `{{chapter num-tag-first}}`     |
+| `num-tag-last`      | Number last tag          | `{{chapter num-tag-last}}`      |
 
 #### Property Grouping
 
@@ -575,8 +580,8 @@ For destination-scoped properties with multiple properties, use square brackets 
 Important: You cannot nest property groups within other property groups:
 
 ```markdown
-{{rules [code-javascript unwrap destination:[property-a property-b]]}}  # ❌ Invalid, nested properties groups
-{{rules [code-javascript unwrap] destination:[property-a property-b]}}  # ✅ Valid, separate property groups
+{{rules [code-javascript unwrap destination:[property-a property-b]]}} # ❌ Invalid, nested properties groups
+{{rules [code-javascript unwrap] destination:[property-a property-b]}} # ✅ Valid, separate property groups
 ```
 
 Leading and trailing whitespace within the property group brackets `[]` is optional and will be ignored by the parser. Spaces between properties within the brackets are necessary delimiters. For example, `[ property1  property2 ]` is equivalent to `[property1 property2]`.
@@ -585,34 +590,37 @@ Leading and trailing whitespace within the property group brackets `[]` is optio
 
 The following table provides a quick reference to common invocation patterns for property grouping and destination scoping:
 
-| Pattern                                     | Example                                         | Description                                                                 |
-|---------------------------------------------|-------------------------------------------------|-----------------------------------------------------------------------------|
-| Basic Grouping                              | `{{stem [opt1 opt2 opt3]}}`                    | Visually groups space-delimited properties.                                    |
-| Multi-line Grouping                         | `{{stem [\n opt1 \n opt2 \n]}}`                     | Improves readability for many properties.                                      |
-| Destination-Scoped Single Property (no group)      | `{{stem destination:opt1}}`                         | Applies `opt1` only when compiling for `destination`. The stem itself is included for all destinations by default, unless other inclusion/exclusion properties (e.g., `+destination`, `!anotherDest`) are present that alter its general visibility. |
-| Destination-Scoped Multiple Properties (via group)  | `{{stem destination:[opt1 opt2]}}`                  | Applies `opt1` and `opt2` only for `destination`. Block included for all.        |
-| Inclusion for Destination + Scoped Single Opt  | `{{stem +destination:opt1}}`                        | Includes block only for `destination`, applying `opt1`.                          |
-| Inclusion for Destination + Scoped Multi Opts  | `{{stem +destination:[opt1 opt2]}}`                 | Includes block only for `destination`, applying `opt1` and `opt2`.               |
-| Exclusion for Destination (scoped opts moot)     | `{{stem !destination:opt1}}` or `!destination:[opt1]`  | Excludes block for `destination`.                                                |
-| Group Inclusion + Member Exclusion          | `{{stem +group:[opt1] !member}}`               | Includes for `group` with `opt1`, but excludes for `member`.                |
-| All Destinations Inclusion                      | `{{stem +all}}`                                | Explicitly includes content for all configured destinations.                     |
+| Pattern                                            | Example                                               | Description                                                                                                                                                                                                                                          |
+| -------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Basic Grouping                                     | `{{stem [opt1 opt2 opt3]}}`                           | Visually groups space-delimited properties.                                                                                                                                                                                                          |
+| Multi-line Grouping                                | `{{stem [\n opt1 \n opt2 \n]}}`                       | Improves readability for many properties.                                                                                                                                                                                                            |
+| Destination-Scoped Single Property (no group)      | `{{stem destination:opt1}}`                           | Applies `opt1` only when compiling for `destination`. The stem itself is included for all destinations by default, unless other inclusion/exclusion properties (e.g., `+destination`, `!anotherDest`) are present that alter its general visibility. |
+| Destination-Scoped Multiple Properties (via group) | `{{stem destination:[opt1 opt2]}}`                    | Applies `opt1` and `opt2` only for `destination`. Block included for all.                                                                                                                                                                            |
+| Inclusion for Destination + Scoped Single Opt      | `{{stem +destination:opt1}}`                          | Includes block only for `destination`, applying `opt1`.                                                                                                                                                                                              |
+| Inclusion for Destination + Scoped Multi Opts      | `{{stem +destination:[opt1 opt2]}}`                   | Includes block only for `destination`, applying `opt1` and `opt2`.                                                                                                                                                                                   |
+| Exclusion for Destination (scoped opts moot)       | `{{stem !destination:opt1}}` or `!destination:[opt1]` | Excludes block for `destination`.                                                                                                                                                                                                                    |
+| Group Inclusion + Member Exclusion                 | `{{stem +group:[opt1] !member}}`                      | Includes for `group` with `opt1`, but excludes for `member`.                                                                                                                                                                                         |
+| All Destinations Inclusion                         | `{{stem +all}}`                                       | Explicitly includes content for all configured destinations.                                                                                                                                                                                         |
 
 The standalone `code` property (without a language suffix) automatically determines the appropriate language based on context. When used with partials, it detects the language based on the partial file's extension:
 
-```markdown
+````markdown
 {{> @my-script.js code}}
+
 <!-- When compiled, will be written as a JavaScript code block (```javascript) -->
 
 {{> @styles.css code}}
+
 <!-- When compiled, will be written as a CSS code block (```css) -->
-```
+````
 
 If the file extension is not recognized (and isn't a `.md` file), it will default to `txt`. Explicitly specifying a language will always override the automatic detection:
 
-```markdown
+````markdown
 {{> @config.json code-yaml}}
+
 <!-- When compiled, will be written as a YAML code block (```yaml) despite being a JSON file -->
-```
+````
 
 This extension-to-language mapping follows the same conventions used by most Markdown editors and syntax highlighters, ensuring consistent behavior between your source rules and compiled artifacts.
 
@@ -625,14 +633,15 @@ When `allow-bare-xml-tags` is set to `true` in frontmatter or `.rulesets.config.
 
 ```markdown
 <!-- XML tags with `allow-bare-xml-tags` set to `true` -->
+
 <stem_name>
-  ...
+...
 </stem_name>
 
 Renders as:
 
 <stem_name>
-  ...
+...
 </stem_name>
 ```
 
@@ -643,18 +652,18 @@ Renders as:
 # .rulesets/src/my-rule.md
 rulesets:
   version: 0.1.0 # optional, version number for the Rulesets format used
-description: "Rules for this project" # optional, may be useful for tools that use descriptions, such as Cursor, Windsurf, etc.
-globs: ["**/*.{txt,md,mdc}"] # optional, globs re-written based on destination-specific needs
+description: 'Rules for this project' # optional, may be useful for tools that use descriptions, such as Cursor, Windsurf, etc.
+globs: ['**/*.{txt,md,mdc}'] # optional, globs re-written based on destination-specific needs
 # Destination filter examples using standard keys:
 destination:
-  include: ["cursor", "windsurf"]
-  exclude: ["claude-code"]
-  path: "./custom/compile/path"
+  include: ['cursor', 'windsurf']
+  exclude: ['claude-code']
+  path: './custom/compile/path'
 # Provide destination-specific frontmatter which is included in their respective compiled artifacts:
 cursor:
   alwaysApply: false
   destination:
-    path: "./custom/.cursor/rules"
+    path: './custom/.cursor/rules'
 windsurf:
   trigger: globs
 # Add additional metadata to the mix:
@@ -662,7 +671,7 @@ name: my-rule # optional, defaults to filename
 version: 2.0 # optional, version number for this file
 created: 2025-05-13 # optional, date of creation, automatically included by default
 updated: 2025-05-14 # optional, date of last update, automatically included by default
-labels: ["core", "security"] # optional, categorization tags for the mix, available for future use
+labels: ['core', 'security'] # optional, categorization tags for the mix, available for future use
 allow-bare-xml-tags: false # optional, defaults to false. Set to true to allow bare XML tags in this file.
 ---
 ```
@@ -720,13 +729,14 @@ Here's an aliased link to a file: [Alternative Title](@path/to/file.txt)
 
 Variables are dynamic values using the `{{$...}}` notation. They are replaced inline during compilation through variable substitution.
 The syntax for variables depends on the context:
+
 - `{{$key}}` is used when the variable is standalone in the content. For example: `Welcome, {{$userName}}!`
 - `$key` is used when the variable is within another Rulesets `{{...}}` marker. For example: `{{stem class-($userTheme)}}`
 
-| Type | Notation | Notes |
-|------|--------|-------|
-| **Alias** | `{{$alias}}` | Alias lookup in `.rulesets.config.json` under `aliases` key. |
-| **Frontmatter value** | `{{$.key}}` | Access values from the current file's frontmatter. |
+| Type                     | Notation                      | Notes                                                                                                                                                                                                                                    |
+| ------------------------ | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Alias**                | `{{$alias}}`                  | Alias lookup in `.rulesets.config.json` under `aliases` key.                                                                                                                                                                             |
+| **Frontmatter value**    | `{{$.key}}`                   | Access values from the current file's frontmatter.                                                                                                                                                                                       |
 | **Destination variable** | `{{$dest}}` or `{{$dest.id}}` | Built-in variables provided by the compiler. Display name from the provider manifest (e.g. `Cursor`, `Claude Code`). The current destination ID in kebab-case can be accessed by adding `.id` to the end (`cursor`, `claude-code`, etc.) |
 
 **Built-in Destination Variables**:
@@ -740,15 +750,19 @@ Imports allow you to reuse content across multiple source rules files by embeddi
 
 ```markdown
 <!-- Embeds `/_partials/legal.md` -->
+
 {{> @legal }}
 
 <!-- Embed a specific stem from the `conventions.md` source rules file -->
+
 {{> conventions#stem-name }}
 
 <!-- Embed a stem from within the existing file -->
+
 {{> #stem-name }}
 
 <!-- Import a source rules with multiple specific stems, with exclusion -->
+
 {{> my-rules#(stem-one stem-two !stem-three) }}
 ```
 
@@ -758,6 +772,7 @@ Let's say that we have a source rules file called `conventions.md` that contains
 
 ```markdown
 <!-- my-rules.md -->
+
 Important: Be sure to follow the style guide:
 
 {{> conventions#style-guide }}
@@ -769,7 +784,7 @@ The above will render as:
 Important: Be sure to follow the style guide:
 
 <style_guide>
-  ( contents of #conventions.md#style-guide )
+( contents of #conventions.md#style-guide )
 </style_guide>
 ```
 
@@ -837,7 +852,7 @@ Import scope provides a powerful way to control exactly which stems are included
 
 It's important to distinguish between imports (`{{> ...}}`) and variable substitution (`{{$...}}`), as they serve different purposes:
 
-- **Imports** (`{{> ...}}`) are used to embed content structures. When an import like `{{> mySnippet }}` is processed, it typically renders the content of `mySnippet` *including its own structure*, which might result in output like `<mySnippet>...</mySnippet>` (unless properties like `unwrap` are used).
+- **Imports** (`{{> ...}}`) are used to embed content structures. When an import like `{{> mySnippet }}` is processed, it typically renders the content of `mySnippet` _including its own structure_, which might result in output like `<mySnippet>...</mySnippet>` (unless properties like `unwrap` are used).
 - **Variable Substitution** (`{{$...}}`) replaces a placeholder with its string value. It does not render any surrounding tags itself. For example, if `{{$userName}}` has the value "John", then `Hello, {{$userName}}!` would render as `Hello, John!`. The variable is directly replaced by its value.
 
 ### Partials
@@ -852,6 +867,7 @@ Example:
 
 ```markdown
 <!-- Mixin: `/_mixins/remember.md` -->
+
 1. Always follow the code conventions.
 2. Never commit directly to `main`
 3. Use conventional commit messages.
@@ -859,6 +875,7 @@ Example:
 ---
 
 <!-- Source Rules: `my-rules.md` -->
+
 # My Rules
 
 ...rest of source rules content...
@@ -895,27 +912,30 @@ Rulesets notation can be compiled as raw notation using the `{{{...}}}` syntax. 
 > Adding `+cursor` will only include the section for the `cursor` destination.
 
 {{{examples unwrap +cursor}}}
-  {{example}}
-  - Instructions
-  - Rules
+{{example}}
+
+- Instructions
+- Rules
   {{/example}}
-{{{/examples}}}
+  {{{/examples}}}
 
 The above will render (for Cursor only) as:
 
 {{example}}
+
 - Instructions
 - Rules
-{{/example}}
+  {{/example}}
 
 Without the `unwrap` property, it would render as:
 
 {{examples}}
-  {{example}}
-  - Instructions
-  - Rules
+{{example}}
+
+- Instructions
+- Rules
   {{/example}}
-{{/examples}}
+  {{/examples}}
 ```
 
 ### Instruction Placeholders
@@ -1045,57 +1065,57 @@ This section provides a complete reference for all properties supported in Rules
 
 Rulesets uses consistent naming patterns to make properties discoverable and intuitive:
 
-| Pattern | Description | Examples |
-|---------|-------------|----------|
-| `prefix-*` | Family of related properties | `code-javascript`, `h-2` |
-| `name-("value")` | Property with parameter value | `name-("important-rules")` |
-| `+/-prefix` | Inclusion/exclusion modifiers | `+cursor`, `!windsurf` |
-| `destination:property` | Destination-scoped single property | `cursor:unwrap` |
-| `destination:[opts]` | Destination-scoped property group | `cursor:[unwrap code-javascript]` |
-| `custom="value"` | Custom XML attribute | `priority="high"` |
+| Pattern                | Description                        | Examples                          |
+| ---------------------- | ---------------------------------- | --------------------------------- |
+| `prefix-*`             | Family of related properties       | `code-javascript`, `h-2`          |
+| `name-("value")`       | Property with parameter value      | `name-("important-rules")`        |
+| `+/-prefix`            | Inclusion/exclusion modifiers      | `+cursor`, `!windsurf`            |
+| `destination:property` | Destination-scoped single property | `cursor:unwrap`                   |
+| `destination:[opts]`   | Destination-scoped property group  | `cursor:[unwrap code-javascript]` |
+| `custom="value"`       | Custom XML attribute               | `priority="high"`                 |
 
 #### Property Categories and Usage
 
 The table below organizes properties by their categories with comprehensive information about where they can be used.
 
-| Property | Format | Example | Stem | Import | Frontmatter | Description |
-|--------|--------|---------|-------|--------|-------------|-------------|
-| **Destination Selection Properties** |||||||
-| `+destination` | Flag | `+cursor` | ✅ | ✅ | ❌ | Include content for specific destination |
-| `!destination` | Flag | `!windsurf` | ✅ | ✅ | ❌ | Exclude content for specific destination |
-| `+group` | Flag | `+ide` | ✅ | ✅ | ❌ | Include for all destinations in a group |
-| `+all` | Flag | `+all` | ✅ | ✅ | ❌ | Include content for all configured destinations |
-| `!group` | Flag | `!cli` | ✅ | ✅ | ❌ | Exclude for all destinations in a group |
-| **Destination-Scoped Properties** |||||||
-| `destination:property` | Scoped | `cursor:unwrap` | ✅ | ✅ | ❌ | Apply property only for specified destination |
-| `destination:[properties]` | Scoped group | `cursor:[code-javascript name-("rules")]` | ✅ | ✅ | ❌ | Apply multiple properties only for specified destination |
-| `+destination:property` | Combined | `+cursor:unwrap` | ✅ | ✅ | ❌ | Include for destination and apply property to that destination |
-| `!destination:property` | Combined | `!windsurf:code-javascript` | ✅ | ✅ | ❌ | Exclude for destination (property has no effect) |
-| **Metadata Properties** |||||||
-| `name-("value")` | Parameter | `name-("important-rules")` | ✅ | ✅ | ✅ | Set XML name attribute; identifier in frontmatter |
-| `id-("value")` | Parameter | `id-("section-1")` | ✅ | ✅ | ❌ | Set id attribute for linking and references |
-| `custom="value"` | XML attribute | `priority="high"` | ✅ | ✅ | ❌ | Set custom XML attributes passed to output |
-| **Display Properties** |||||||
-| `unwrap` | Flag | `unwrap` | ✅ | ✅ | ❌ | Remove XML tags from output, preserve formatting |
-| `inline` | Flag | `inline` | ✅ | ✅ | ❌ | Remove XML tags and render content inline |
-| `inline-with-tags` | Flag | `inline-with-tags` | ✅ | ✅ | ❌ | Keep XML tags but render content inline |
-| **Code Formatting Properties** |||||||
-| `code` | Flag | `code` | ✅ | ✅ | ❌ | Auto-detect language from file extension |
-| `code-language` | Flag | `code-javascript`, `code-python`, etc. | ✅ | ✅ | ❌ | Format as code block in specified language |
-| **Heading Properties** |||||||
-| `h-[1-6]` | Flag | `h-1` through `h-6` | ✅ | ✅ | ❌ | Format as heading of specified level |
-| `h-inc` | Flag | `h-inc` | ✅ | ✅ | ❌ | Increment heading level (demote) |
-| `h-dec` | Flag | `h-dec` | ✅ | ✅ | ❌ | Decrement heading level (promote) |
-| `h-same` | Flag | `h-same` | ✅ | ✅ | ❌ | Keep same heading level |
-| `h-initial` | Flag | `h-initial` | ✅ | ✅ | ❌ | Replace first heading |
-| **Numbering Properties** |||||||
-| `num` | Flag | `num` | ✅ | ✅ | ❌ | Enable default numbering |
-| `num-heading-first` | Flag | `num-heading-first` | ✅ | ✅ | ❌ | Number first heading only |
-| `num-heading-last` | Flag | `num-heading-last` | ✅ | ✅ | ❌ | Number last heading only |
-| `num-tag-first` | Flag | `num-tag-first` | ✅ | ✅ | ❌ | Number first tag only |
-| `num-tag-last` | Flag | `num-tag-last` | ✅ | ✅ | ❌ | Number last tag only |
-| **Raw Notation Properties** |||||||
-| `process-content` | Flag | `process-content` | ✅ | ✅ | ❌ | Used within `{{{...}}}` (raw notation) stems. When `process-content` is applied to such a stem, the content *inside* the raw block is compiled by Rulesets as if it were regular Rulesets content, while the outer `{{{stemName}}}` and `{{{/stemName}}}` are still rendered as raw. This is useful for selectively processing parts of a raw block, for example, to demonstrate a Rulesets feature that itself involves further compilation. |
+| Property                             | Format        | Example                                   | Stem | Import | Frontmatter | Description                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------ | ------------- | ----------------------------------------- | ---- | ------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Destination Selection Properties** |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `+destination`                       | Flag          | `+cursor`                                 | ✅   | ✅     | ❌          | Include content for specific destination                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `!destination`                       | Flag          | `!windsurf`                               | ✅   | ✅     | ❌          | Exclude content for specific destination                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `+group`                             | Flag          | `+ide`                                    | ✅   | ✅     | ❌          | Include for all destinations in a group                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `+all`                               | Flag          | `+all`                                    | ✅   | ✅     | ❌          | Include content for all configured destinations                                                                                                                                                                                                                                                                                                                                                                                               |
+| `!group`                             | Flag          | `!cli`                                    | ✅   | ✅     | ❌          | Exclude for all destinations in a group                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Destination-Scoped Properties**    |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `destination:property`               | Scoped        | `cursor:unwrap`                           | ✅   | ✅     | ❌          | Apply property only for specified destination                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `destination:[properties]`           | Scoped group  | `cursor:[code-javascript name-("rules")]` | ✅   | ✅     | ❌          | Apply multiple properties only for specified destination                                                                                                                                                                                                                                                                                                                                                                                      |
+| `+destination:property`              | Combined      | `+cursor:unwrap`                          | ✅   | ✅     | ❌          | Include for destination and apply property to that destination                                                                                                                                                                                                                                                                                                                                                                                |
+| `!destination:property`              | Combined      | `!windsurf:code-javascript`               | ✅   | ✅     | ❌          | Exclude for destination (property has no effect)                                                                                                                                                                                                                                                                                                                                                                                              |
+| **Metadata Properties**              |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `name-("value")`                     | Parameter     | `name-("important-rules")`                | ✅   | ✅     | ✅          | Set XML name attribute; identifier in frontmatter                                                                                                                                                                                                                                                                                                                                                                                             |
+| `id-("value")`                       | Parameter     | `id-("section-1")`                        | ✅   | ✅     | ❌          | Set id attribute for linking and references                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `custom="value"`                     | XML attribute | `priority="high"`                         | ✅   | ✅     | ❌          | Set custom XML attributes passed to output                                                                                                                                                                                                                                                                                                                                                                                                    |
+| **Display Properties**               |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `unwrap`                             | Flag          | `unwrap`                                  | ✅   | ✅     | ❌          | Remove XML tags from output, preserve formatting                                                                                                                                                                                                                                                                                                                                                                                              |
+| `inline`                             | Flag          | `inline`                                  | ✅   | ✅     | ❌          | Remove XML tags and render content inline                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `inline-with-tags`                   | Flag          | `inline-with-tags`                        | ✅   | ✅     | ❌          | Keep XML tags but render content inline                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Code Formatting Properties**       |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `code`                               | Flag          | `code`                                    | ✅   | ✅     | ❌          | Auto-detect language from file extension                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `code-language`                      | Flag          | `code-javascript`, `code-python`, etc.    | ✅   | ✅     | ❌          | Format as code block in specified language                                                                                                                                                                                                                                                                                                                                                                                                    |
+| **Heading Properties**               |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `h-[1-6]`                            | Flag          | `h-1` through `h-6`                       | ✅   | ✅     | ❌          | Format as heading of specified level                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `h-inc`                              | Flag          | `h-inc`                                   | ✅   | ✅     | ❌          | Increment heading level (demote)                                                                                                                                                                                                                                                                                                                                                                                                              |
+| `h-dec`                              | Flag          | `h-dec`                                   | ✅   | ✅     | ❌          | Decrement heading level (promote)                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `h-same`                             | Flag          | `h-same`                                  | ✅   | ✅     | ❌          | Keep same heading level                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `h-initial`                          | Flag          | `h-initial`                               | ✅   | ✅     | ❌          | Replace first heading                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| **Numbering Properties**             |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `num`                                | Flag          | `num`                                     | ✅   | ✅     | ❌          | Enable default numbering                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `num-heading-first`                  | Flag          | `num-heading-first`                       | ✅   | ✅     | ❌          | Number first heading only                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `num-heading-last`                   | Flag          | `num-heading-last`                        | ✅   | ✅     | ❌          | Number last heading only                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| `num-tag-first`                      | Flag          | `num-tag-first`                           | ✅   | ✅     | ❌          | Number first tag only                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `num-tag-last`                       | Flag          | `num-tag-last`                            | ✅   | ✅     | ❌          | Number last tag only                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| **Raw Notation Properties**          |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `process-content`                    | Flag          | `process-content`                         | ✅   | ✅     | ❌          | Used within `{{{...}}}` (raw notation) stems. When `process-content` is applied to such a stem, the content _inside_ the raw block is compiled by Rulesets as if it were regular Rulesets content, while the outer `{{{stemName}}}` and `{{{/stemName}}}` are still rendered as raw. This is useful for selectively processing parts of a raw block, for example, to demonstrate a Rulesets feature that itself involves further compilation. |
 
 **Note:** These properties are exclusively used within the import syntax, e.g., `{{> fileName#stem }}`.
 
@@ -1126,19 +1146,22 @@ Most common programming languages are supported using the `code-language` patter
 
 ```markdown
 <!-- Basic formatting properties -->
-{{stem unwrap}}                    <!-- Remove XML tags, keep block formatting -->
-{{stem inline}}                      <!-- Render inline without tags -->
-{{stem code-javascript unwrap}}           <!-- JavaScript code block without XML wrapper -->
+
+{{stem unwrap}} <!-- Remove XML tags, keep block formatting -->
+{{stem inline}} <!-- Render inline without tags -->
+{{stem code-javascript unwrap}} <!-- JavaScript code block without XML wrapper -->
 
 <!-- Destination scoping properties -->
-{{stem +cursor !windsurf}}          <!-- Include for Cursor, exclude for Windsurf -->
-{{stem +ide:[code-javascript]}}             <!-- Include for all IDE destinations with code-javascript formatting -->
-{{stem cursor:unwrap}}            <!-- Apply unwrap only for Cursor -->
+
+{{stem +cursor !windsurf}} <!-- Include for Cursor, exclude for Windsurf -->
+{{stem +ide:[code-javascript]}} <!-- Include for all IDE destinations with code-javascript formatting -->
+{{stem cursor:unwrap}} <!-- Apply unwrap only for Cursor -->
 
 <!-- Import properties -->
-{{> @mixin code-javascript}}               <!-- Import mixin as JavaScript code block -->
-{{> mix-file#(stem-a !stem-b)}}    <!-- Import only stem-a from file, exclude stem-b -->
-{{> rules#section cursor:[inline]}}  <!-- Import rules#section with cursor-specific inline formatting -->
+
+{{> @mixin code-javascript}} <!-- Import mixin as JavaScript code block -->
+{{> mix-file#(stem-a !stem-b)}} <!-- Import only stem-a from file, exclude stem-b -->
+{{> rules#section cursor:[inline]}} <!-- Import rules#section with cursor-specific inline formatting -->
 ```
 
 #### Property Extension Rules
@@ -1171,4 +1194,4 @@ Most common programming languages are supported using the `code-language` patter
 
 6. **Frontmatter to Destination**: Destination-specific frontmatter (e.g., `cursor: { ... }`) overrides global values for that destination.
 
-*© 2025 Rulesets contributors – MIT License.*
+_© 2025 Rulesets contributors – MIT License._

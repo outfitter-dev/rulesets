@@ -1,12 +1,12 @@
 ---
-ruleset: { version: "0.1.0" }
+ruleset: { version: '0.1.0' }
 title: My First Rulesets Rule
 description: A simple rule for testing Rulesets v0.1.0.
 destinations:
   cursor:
-    outputPath: ".cursor/rules/my-first-rule.mdc"
+    outputPath: '.cursor/rules/my-first-rule.mdc'
   windsurf:
-    outputPath: ".windsurf/rules/my-first-rule.md"
+    outputPath: '.windsurf/rules/my-first-rule.md'
 ---
 
 ## Main content

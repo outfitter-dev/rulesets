@@ -6,7 +6,7 @@
 
 ## Overview
 
-Rulesets is a compiler that transforms *source rules* files into destination-specific rules files for various AI tools & coding agents. It follows the "write once, compile for many destinations" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
+Rulesets is a compiler that transforms _source rules_ files into destination-specific rules files for various AI tools & coding agents. It follows the "write once, compile for many destinations" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
 
 The compiler processes multiple source files simultaneously and can output to multiple destinations in a single compilation run, ensuring that all source rules files are consistently applied across all enabled destinations.
 
@@ -172,6 +172,7 @@ v          v          v          v          v
 Cursor   Windsurf  Claude     Roo      GitHub
 (types)  (trigger) (imports) (folders) (scopes)
 ```
+
 <!-- TODO: If GitHub is a planned destination, consider adding it to the destination tables in README.md and spec/OVERVIEW.md for consistency. -->
 
 - Creates an abstraction layer for activation mechanisms
@@ -297,6 +298,7 @@ A stub for `ruleset.config.json`:
   }
 }
 ```
+
 Note: Paths in `sources` (like `sourceRules` and `partials`) and `dist` are typically relative to the project root directory (i.e., the directory containing the `.ruleset` folder itself).
 
 ## Extension Points

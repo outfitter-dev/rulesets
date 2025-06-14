@@ -11,6 +11,7 @@ Follow the detailed checklist in `/notes/terminology-update-plan.md` and verify 
 ## Verification Process
 
 1. For each file listed in the checklist:
+
    - Read the file thoroughly
    - Identify all instances of old terminology
    - Verify they have been updated to the new terminology
@@ -18,6 +19,7 @@ Follow the detailed checklist in `/notes/terminology-update-plan.md` and verify 
    - Update the checkbox in terminology-update-plan.md when verified
 
 2. Pay special attention to:
+
    - Code examples and syntax
    - Directory structure references
    - Property format changes (e.g., `property(value)` → `property-*` and `name-("value")`)
@@ -30,20 +32,20 @@ Follow the detailed checklist in `/notes/terminology-update-plan.md` and verify 
 
 ## Key Terminology Changes to Verify
 
-| Category | Old Term(s) | New Term(s) |
-|----------|-------------|-------------|
-| Source Content | Mix files, Rule Definition | Source Rules |
-| Target Terminology | Target, Target tool | Destination |
-| Output Terminology | Output, Target-specific rules files | Compiled Rules |
-| Directory Structure | `.mixdown/mixes/` | `.mixdown/src/` |
-| Directory Structure | `.mixdown/mixes/_snippets/` | `.mixdown/src/_mixins/` |
-| Directory Structure | `.mixdown/output/` | `.mixdown/dist/` |
-| Track Terminology | Track, Track markers | Stem |
-| Configuration Terminology | Option, Attribute | Property |
-| Property Format | `property(value)` | `property-*` and `name-("value")` |
-| Reusable Components | Snippet | Mixin |
-| Import Terminology | Track filtering | Import scope |
-| Code Formatting | code-js, code-block | code-lang |
+| Category                  | Old Term(s)                         | New Term(s)                       |
+| ------------------------- | ----------------------------------- | --------------------------------- |
+| Source Content            | Mix files, Rule Definition          | Source Rules                      |
+| Target Terminology        | Target, Target tool                 | Destination                       |
+| Output Terminology        | Output, Target-specific rules files | Compiled Rules                    |
+| Directory Structure       | `.mixdown/mixes/`                   | `.mixdown/src/`                   |
+| Directory Structure       | `.mixdown/mixes/_snippets/`         | `.mixdown/src/_mixins/`           |
+| Directory Structure       | `.mixdown/output/`                  | `.mixdown/dist/`                  |
+| Track Terminology         | Track, Track markers                | Stem                              |
+| Configuration Terminology | Option, Attribute                   | Property                          |
+| Property Format           | `property(value)`                   | `property-*` and `name-("value")` |
+| Reusable Components       | Snippet                             | Mixin                             |
+| Import Terminology        | Track filtering                     | Import scope                      |
+| Code Formatting           | code-js, code-block                 | code-lang                         |
 
 ## Special Cases
 
@@ -54,6 +56,7 @@ Follow the detailed checklist in `/notes/terminology-update-plan.md` and verify 
 ## Reporting
 
 1. For each file you verify, provide a concise report including:
+
    - File name
    - Verification status (Complete/Incomplete)
    - Number of occurrences changed
@@ -61,6 +64,7 @@ Follow the detailed checklist in `/notes/terminology-update-plan.md` and verify 
    - Recommended fixes for any issues
 
 2. For each section of the checklist you complete, update the checklist in terminology-update-plan.md by:
+
    - Changing `[ ]` to `[x]` for completed items
    - Adding any notes about issues found directly in the file
 

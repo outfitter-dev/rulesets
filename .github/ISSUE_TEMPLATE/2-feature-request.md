@@ -1,9 +1,9 @@
 ---
-name: "✨ Feature Request"
-about: "Suggest an idea for Mixdown"
-title: "[Feature]: "
-labels: ["triage"]
-type: "feature"
+name: '✨ Feature Request'
+about: 'Suggest an idea for Mixdown'
+title: '[Feature]: '
+labels: ['triage']
+type: 'feature'
 ---
 
 ## Current Problem

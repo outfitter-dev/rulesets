@@ -49,7 +49,9 @@ This is the body with {{blocks}} and {{$variables}}.`,
       expect(result.ast).toEqual(parsedDoc.ast);
 
       // Output should contain only the body
-      expect(result.output.content).toBe('# Test Content\n\nThis is the body with {{blocks}} and {{$variables}}.');
+      expect(result.output.content).toBe(
+        '# Test Content\n\nThis is the body with {{blocks}} and {{$variables}}.',
+      );
 
       // Metadata should include relevant fields
       expect(result.output.metadata).toEqual({

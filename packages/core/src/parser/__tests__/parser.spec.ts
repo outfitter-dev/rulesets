@@ -112,7 +112,8 @@ This has {{blocks}} and {{$variables}} and {{>imports}} that should be preserved
 
       const result = await parse(content);
 
-      const expectedBody = '\n# Test Content\n\nThis has {{blocks}} and {{$variables}} and {{>imports}} that should be preserved.';
+      const expectedBody =
+        '\n# Test Content\n\nThis has {{blocks}} and {{$variables}} and {{>imports}} that should be preserved.';
       expect(result.source.content).toContain(expectedBody);
     });
   });

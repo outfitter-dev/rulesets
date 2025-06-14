@@ -5,23 +5,23 @@ This document outlines all terminology changes from the terminology consolidatio
 ## Outstanding Terminology Cleanup Items (post-scan)
 
 The automated search performed after the first verification pass surfaced a handful of
-left-over usages of the *old* terminology or syntax that still need manual attention.
+left-over usages of the _old_ terminology or syntax that still need manual attention.
 Nothing below blocks the main rename effort, but each item should be resolved (or
 explicitly accepted) before the terminology update is considered **fully** finished.
 
-| Legacy Term / Pattern | Approx. Count | Representative Files & Lines |
-|-----------------------|--------------|--------------------------------|
-| **“Mix files / mix file”** | 2 | CHANGELOG.md:3  •  spec/ARCHITECTURE.md:281 |
-| Stand-alone word **“mix”** (context-dependent) | 24 | notes/stem-heading.md (several), spec/OVERVIEW.md (examples like `my-mix.md`), spec/ARCHITECTURE.md, etc. |
-| **“Track”** | 11 | notes/stem-heading.md:311 (`# TRACK NAME` example), docs/plugins/codex-cli/rules-use.md (progress tracking), many in spec/ARCHITECTURE.md ("track filtering") |
-| **Snippet / _snippets** | 6 | spec/ARCHITECTURE.md:178 (JSON comment), docs/project/LANGUAGE.md (historic note), CHANGELOG.md |
-| **“target platform”** | 1 | spec/ARCHITECTURE.md:385 |
-| **“target-specific”** | 13 | spec/ARCHITECTURE.md (multiple) |
-| Old directories `.mixdown/mixes/`, `.mixdown/output/` | 6 | docs/project/LANGUAGE.md, CHANGELOG.md |
-| Deprecated import syntax `rules#[…]` | 5 | spec/OVERVIEW.md:736–799 |
-| Deprecated property `code-block` | 1 (plus rule-name example) | spec/OVERVIEW.md:375–376 |
-| Phrase **“tool-specific”** | 19 | README.md, docs/rules-overview.md, ai-rules-guide.md, etc. |
-| **Capitalization of “Source Rules / Compiled Rules”** | many | Multiple docs (README, spec, CLAUDE.md, etc.) – should be lower-case except at sentence start |
+| Legacy Term / Pattern                                 | Approx. Count              | Representative Files & Lines                                                                                                                                  |
+| ----------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **“Mix files / mix file”**                            | 2                          | CHANGELOG.md:3 • spec/ARCHITECTURE.md:281                                                                                                                     |
+| Stand-alone word **“mix”** (context-dependent)        | 24                         | notes/stem-heading.md (several), spec/OVERVIEW.md (examples like `my-mix.md`), spec/ARCHITECTURE.md, etc.                                                     |
+| **“Track”**                                           | 11                         | notes/stem-heading.md:311 (`# TRACK NAME` example), docs/plugins/codex-cli/rules-use.md (progress tracking), many in spec/ARCHITECTURE.md ("track filtering") |
+| **Snippet / \_snippets**                              | 6                          | spec/ARCHITECTURE.md:178 (JSON comment), docs/project/LANGUAGE.md (historic note), CHANGELOG.md                                                               |
+| **“target platform”**                                 | 1                          | spec/ARCHITECTURE.md:385                                                                                                                                      |
+| **“target-specific”**                                 | 13                         | spec/ARCHITECTURE.md (multiple)                                                                                                                               |
+| Old directories `.mixdown/mixes/`, `.mixdown/output/` | 6                          | docs/project/LANGUAGE.md, CHANGELOG.md                                                                                                                        |
+| Deprecated import syntax `rules#[…]`                  | 5                          | spec/OVERVIEW.md:736–799                                                                                                                                      |
+| Deprecated property `code-block`                      | 1 (plus rule-name example) | spec/OVERVIEW.md:375–376                                                                                                                                      |
+| Phrase **“tool-specific”**                            | 19                         | README.md, docs/rules-overview.md, ai-rules-guide.md, etc.                                                                                                    |
+| **Capitalization of “Source Rules / Compiled Rules”** | many                       | Multiple docs (README, spec, CLAUDE.md, etc.) – should be lower-case except at sentence start                                                                 |
 
 ### Action Items
 
@@ -35,7 +35,7 @@ explicitly accepted) before the terminology update is considered **fully** finis
 4. **Normalize Capitalization**  
    Convert “Source Rules” → “source rules” and “Compiled Rules” → “compiled rules” everywhere,
    except when the term appears at the beginning of a sentence or in a heading where
-   Title Case is desired.  Ensure bullet labels (e.g., `**source rules**`) also use the
+   Title Case is desired. Ensure bullet labels (e.g., `**source rules**`) also use the
    new capitalization.
 
 Once these items are cleared, we can confidently mark the terminology migration as **100 % complete**.
@@ -44,34 +44,34 @@ Once these items are cleared, we can confidently mark the terminology migration 
 
 ## Summary of Key Terminology Changes
 
-| Category | Old Term(s) | New Term(s) | Status |
-|----------|-------------|-------------|--------|
-| **Source Content** | Mix files, Rule Definition | source rules | ✅ Decided |
-| **Target Terminology** | Target, Target tool | Destination | ✅ Decided |
-| **Output Terminology** | Output, Target-specific rules files | compiled rules | ✅ Decided |
-| **Directory Structure** | `.mixdown/mixes/` | `.mixdown/src/` | ✅ Decided |
-| **Directory Structure** | `.mixdown/mixes/_snippets/` | `.mixdown/src/_mixins/` | ✅ Decided |
-| **Directory Structure** | `.mixdown/output/` | `.mixdown/dist/` | ✅ Decided |
-| **Track Terminology** | Track, Track markers | Stem | ✅ Decided |
-| **Configuration Terminology** | Option, Attribute | Property | ✅ Decided |
-| **Property Format** | `property(value)` | `property-*` and `name-("value")` | ✅ Decided |
-| **Reusable Components** | Snippet | Mixin | ✅ Decided |
-| **Import Terminology** | Track filtering | Import scope | ✅ Decided |
-| **Code Formatting** | code-js, code-block | code-lang | ✅ Decided |
+| Category                      | Old Term(s)                         | New Term(s)                       | Status     |
+| ----------------------------- | ----------------------------------- | --------------------------------- | ---------- |
+| **Source Content**            | Mix files, Rule Definition          | source rules                      | ✅ Decided |
+| **Target Terminology**        | Target, Target tool                 | Destination                       | ✅ Decided |
+| **Output Terminology**        | Output, Target-specific rules files | compiled rules                    | ✅ Decided |
+| **Directory Structure**       | `.mixdown/mixes/`                   | `.mixdown/src/`                   | ✅ Decided |
+| **Directory Structure**       | `.mixdown/mixes/_snippets/`         | `.mixdown/src/_mixins/`           | ✅ Decided |
+| **Directory Structure**       | `.mixdown/output/`                  | `.mixdown/dist/`                  | ✅ Decided |
+| **Track Terminology**         | Track, Track markers                | Stem                              | ✅ Decided |
+| **Configuration Terminology** | Option, Attribute                   | Property                          | ✅ Decided |
+| **Property Format**           | `property(value)`                   | `property-*` and `name-("value")` | ✅ Decided |
+| **Reusable Components**       | Snippet                             | Mixin                             | ✅ Decided |
+| **Import Terminology**        | Track filtering                     | Import scope                      | ✅ Decided |
+| **Code Formatting**           | code-js, code-block                 | code-lang                         | ✅ Decided |
 
 ## Directory Structure Changes
 
-| New Path | Old Path | Notes |
-|----------|----------|-------|
-| `.mixdown/src/` | `.mixdown/mixes/` | Primary source directory |
-| `.mixdown/src/_mixins/` | `.mixdown/mixes/_snippets/` | Reusable components directory |
-| `.mixdown/dist/` | `.mixdown/output/` | Output directory |
-| `.mixdown/dist/latest/` | `.mixdown/output/builds/` | Latest compiled rules |
-| `.mixdown/dist/runs/` | n/a | Directory for all compilations |
-| `.mixdown/dist/runs/run-<timestamp>/` | n/a | Directory for specific compiled rules |
-| `.mixdown/dist/runs/run-<timestamp>.json` | n/a | Compilation metadata |
-| `.mixdown/dist/logs/` | n/a | Log files directory |
-| `.mixdown/dist/logs/run-<timestamp>.log` | n/a | Compilation log file |
+| New Path                                  | Old Path                    | Notes                                 |
+| ----------------------------------------- | --------------------------- | ------------------------------------- |
+| `.mixdown/src/`                           | `.mixdown/mixes/`           | Primary source directory              |
+| `.mixdown/src/_mixins/`                   | `.mixdown/mixes/_snippets/` | Reusable components directory         |
+| `.mixdown/dist/`                          | `.mixdown/output/`          | Output directory                      |
+| `.mixdown/dist/latest/`                   | `.mixdown/output/builds/`   | Latest compiled rules                 |
+| `.mixdown/dist/runs/`                     | n/a                         | Directory for all compilations        |
+| `.mixdown/dist/runs/run-<timestamp>/`     | n/a                         | Directory for specific compiled rules |
+| `.mixdown/dist/runs/run-<timestamp>.json` | n/a                         | Compilation metadata                  |
+| `.mixdown/dist/logs/`                     | n/a                         | Log files directory                   |
+| `.mixdown/dist/logs/run-<timestamp>.log`  | n/a                         | Compilation log file                  |
 
 ## Detailed Terminology Changes
 
@@ -200,7 +200,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 - **Examples**:
   - `{{> rules#(stem-1 !stem-2)}}` - Include stem-1, exclude stem-2
   - `{{> rules#(stem-1 cursor:[stem-cursor])}}` - Include stem-1 and stem-cursor (only for cursor destination)
-  
+
 #### Special Notes on Syntax Patterns
 
 - Parentheses `()` are used for grouping and selection (e.g., in import scope)
@@ -251,7 +251,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 
 #### Unified Code Property System
 
-- **Old Terms**: "code-*", "code-js", "code-python", "code-block"
+- **Old Terms**: "code-\*", "code-js", "code-python", "code-block"
 - **New Terms**: "code-lang", "code" (for auto-language)
 - **Reasoning**: Simplifies and standardizes the terminology for code properties.
 - **Example**: "Use code-lang when specifying language for code formatting" (was "Use code-js, code-python...")
@@ -267,6 +267,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 ### Core Documentation Files
 
 1. **README.md**
+
    - Update "Mix" to "Source Rules" in the introductory paragraph
    - Update "Track" to "Stem" in Core Concepts
    - Update "Snippet" to "Mixin" in Core Concepts
@@ -274,6 +275,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
    - Update the directory structure example
 
 2. **spec/OVERVIEW.md**
+
    - Update all terminology according to the changes above
    - Ensure consistent use of "Source Rules", "Destination", "Stem", etc.
    - Update directory references to use `.mixdown/src/` and `.mixdown/dist/`
@@ -286,14 +288,17 @@ Once these items are cleared, we can confidently mark the terminology migration 
 ### Secondary Documentation Sources
 
 1. **docs/project/index.md**
+
    - Update all instances of "mix" to "Source Rules"
    - Update "target" to "destination"
    - Update directory references
 
 2. **docs/rules-overview.md**
+
    - Update all terminology consistently
 
-3. **docs/plugins/*/rules-use.md**
+3. **docs/plugins/\*/rules-use.md**
+
    - Update "target" to "destination" in all target-specific documentation
    - Update "mix" to "Source Rules" throughout
    - Update "track" to "stem" in all examples
@@ -348,6 +353,7 @@ After updating, search for old terminology to ensure all instances have been rep
 
 ```md
 ### Changed
+
 - Updated terminology throughout the documentation:
   - "Mix files" → "Source Rules"
   - "Target" → "Destination"

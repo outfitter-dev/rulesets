@@ -1,9 +1,9 @@
 ---
-name: "🐞 Bug Report"
-about: "Report a bug or issue with Mixdown"
-title: "[Bug]: "
-labels: ["triage"]
-type: "bug"
+name: '🐞 Bug Report'
+about: 'Report a bug or issue with Mixdown'
+title: '[Bug]: '
+labels: ['triage']
+type: 'bug'
 ---
 
 ## Bug Description

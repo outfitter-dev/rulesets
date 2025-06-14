@@ -1,9 +1,9 @@
 ---
-name: "📝 Documentation Request"
-about: "Suggest improvements or report issues with Mixdown documentation"
-title: "[Docs]: "
-labels: ["triage"]
-type: "documentation"
+name: '📝 Documentation Request'
+about: 'Suggest improvements or report issues with Mixdown documentation'
+title: '[Docs]: '
+labels: ['triage']
+type: 'documentation'
 ---
 
 ## Documentation Area
