@@ -21,7 +21,7 @@ This document outlines the complete removal of all music-related terminology fro
 | Mixdown | Rulesets | The project name |
 | mixdown | ruleset | CLI command, package names |
 | .mixdown/ | .ruleset/ | Configuration directory |
-| mixdown.config.json | rulesets.config.json | Configuration file |
+| mixdown.config.json | ruleset.config.json | Configuration file |
 | @mixdown/* | @ruleset/* | Package namespace |
 
 ### 2. Core Concepts
