@@ -4,7 +4,7 @@
 > When implementing code based on this plan, include version marker comments to identify code with limited implementation that will be expanded in future versions. For example:
 > ```typescript
 >: Simple pass-through implementation that doesn't process markers
-> // TODO (mixd-v0.1): Add support for block parsing
+> // TODO (ruleset-v0.1): Add support for block parsing
 > function parseContent(content: string) {
 >   // Simple implementation for v0
 >   return { body: content };
@@ -15,7 +15,7 @@
 
 ## Overview
 
-Rulesets is a Markdown-previewable rules compiler that allows authoring a single source rules file (source rules) in Markdown and compiling it into compiled rules for various destinations (e.g., AI assistants, IDEs). Rulesets v0 aims to establish a production-ready monorepo, ship the initial `@rulesets/core` package (including a basic parser, a pass-through compiler, and a frontmatter linter), and prove the end-to-end flow by processing a `my-rules.ruleset.md` file, writing compiled rules to `.rulesets/dist/`, and invoking stubbed destination plugins for Cursor and Windsurf.
+Rulesets is a Markdown-previewable rules compiler that allows authoring a single source rules file (source rules) in Markdown and compiling it into compiled rules for various destinations (e.g., AI assistants, IDEs). Rulesets v0 aims to establish a production-ready monorepo, ship the initial `@rulesets/core` package (including a basic parser, a pass-through compiler, and a frontmatter linter), and prove the end-to-end flow by processing a `my-rules.ruleset.md` file, writing compiled rules to `.ruleset/dist/`, and invoking stubbed destination plugins for Cursor and Windsurf.
 
 While v0 will not process Rulesets notation markers (`{{...}}`) within the content body, the architecture will be laid to easily incorporate this functionality in subsequent v0.x releases (e.g., v0.1 for `{{block}}` parsing, v0.2 for variables, etc.).
 
@@ -163,7 +163,7 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
         4. Invokes the `Linter` with the parsed document. Logs linting results.
         5. If linting passes (or only warnings), invokes the `Compiler` for "cursor" and "windsurf" destinations.
         6. For each compiled document, instantiates the respective destination plugin.
-        7. Calls the `write()` method of each plugin, providing necessary context (e.g., output path like `.rulesets/dist/cursor/my-rules.md` and `.rulesets/dist/windsurf/my-rules.md`).
+        7. Calls the `write()` method of each plugin, providing necessary context (e.g., output path like `.ruleset/dist/cursor/my-rules.md` and `.ruleset/dist/windsurf/my-rules.md`).
   - **Acceptance Criteria**: A Node.js script can execute the parse -> lint -> compile -> write (stubbed) flow. Compiled rules (raw body) are written to the specified output directory.
   - **Dependencies**: Phase 2 (all tasks).
 - [ ] **Task 2: Create Sample `my-rules.ruleset.md`**
@@ -192,7 +192,7 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
   - **Dependencies**: None.
 - [ ] **Task 3: Basic Integration Testing**
   - Write an integration test in `packages/core/tests/integration/e2e.spec.ts` that runs the CLI orchestration logic from Phase 3/Task 1.
-  - Verify that the output files are created in `.rulesets/dist/` with the expected raw content.
+  - Verify that the output files are created in `.ruleset/dist/` with the expected raw content.
   - Verify that plugin `write` methods are called.
   - **Acceptance Criteria**: End-to-end flow is verified by an automated test.
   - **Dependencies**: Phase 3/Task 1, Phase 3/Task 2.
@@ -468,7 +468,7 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  splitting: false, // Keep it simple for now (mixd-v0)
+  splitting: false, // Keep it simple for now (ruleset-v0)
 });
 ```
 
@@ -568,9 +568,9 @@ export interface Logger {
 #### `packages/core/src/parser/index.ts`
 
 ```typescript
-// TLDR: Simple parser implementation that extracts frontmatter and body (mixd-v0)
-// TODO (mixd-v0.1): Add support for block parsing
-// TODO (mixd-v0.2): Add variable substitution
+// TLDR: Simple parser implementation that extracts frontmatter and body (ruleset-v0)
+// TODO (ruleset-v0.1): Add support for block parsing
+// TODO (ruleset-v0.2): Add variable substitution
 
 import matter from 'gray-matter';
 
@@ -656,4 +656,4 @@ This is the body.`;
 
 - This plan establishes the foundation for Rulesets while keeping v0 scope minimal and achievable.
 - The architecture is designed to easily accommodate v0.x enhancements (block parsing, variables, imports).
-- All code includes `mixd-v*` markers for tracking implementation maturity.
+- All code includes `ruleset-v*` markers for tracking implementation maturity.

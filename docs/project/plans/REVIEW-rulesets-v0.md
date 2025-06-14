@@ -1,7 +1,7 @@
 # Rulesets v0 Implementation Review
 
 > [!NOTE]
-> This review confirms that all v0 implementation requirements have been met. Version markers (mixd-v0) have been used throughout the codebase for easy identification of v0-specific implementations.
+> This review confirms that all v0 implementation requirements have been met. Version markers (ruleset-v0) have been used throughout the codebase for easy identification of v0-specific implementations.
 
 ## Purpose
 
@@ -26,7 +26,7 @@ The following end-to-end scenarios must be manually tested and verified:
   - **Command**: Execute the main Rulesets v0 script/function pointing to `test.ruleset.md`.
   - **Expected Result**:
     - No errors from parser, linter, or compiler.
-    - Output files (`.rulesets/dist/cursor/test.md` and `.rulesets/dist/windsurf/test.md`) are created.
+    - Output files (`.ruleset/dist/cursor/test.md` and `.ruleset/dist/windsurf/test.md`) are created.
     - The content of the output files exactly matches the raw Markdown body of `test.ruleset.md`.
     - Stubbed plugin `write` methods log expected messages.
 - [ ] **Test 2: Source Rules File with No Frontmatter**
@@ -78,7 +78,7 @@ The following code quality standards must be verified:
 - [ ] **TLDR Comments**
   - Every file starts with a TLDR comment describing its purpose.
   - Every function has a TLDR comment describing what it does.
-  - Version markers (mixd-v0) are present for all v0-specific implementations.
+  - Version markers (ruleset-v0) are present for all v0-specific implementations.
 - [ ] **Documentation Quality**
   - README files are comprehensive and accurate.
   - API documentation is complete.
