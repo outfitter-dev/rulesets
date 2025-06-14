@@ -172,7 +172,7 @@ These advanced features are planned for v0.x releases leading to v1.0.
 
 ```text
 project/
-├── .rulesets/
+├── .ruleset/
 │   ├── dist/              # Compiled rules output
 │   │   ├── cursor/        # Cursor-specific rules
 │   │   └── windsurf/      # Windsurf-specific rules

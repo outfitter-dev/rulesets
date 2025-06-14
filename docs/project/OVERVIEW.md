@@ -91,7 +91,7 @@ Result: _Write rules once, compile destination-specific rules, zero drift._
   - Rules files that serve as the compilation source, written in 100 % previewable Markdown.
   - Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
   - Compiled into destination-specific rules files:
-    - `./rulesets/src/my-rule.md` → `.cursor/rules/my-rule.mdc`
+    - `./.ruleset/src/my-rule.md` → `.cursor/rules/my-rule.mdc`
 - **Destination**
   - A supported tool, such as `cursor`, `windsurf`, or `claude-code`.
   - Defines destination-specific criteria for compiling source rules to compiled rules.
@@ -629,7 +629,7 @@ This extension-to-language mapping follows the same conventions used by most Mar
 > [!WARNING]
 > Bare XML tags are not valid Markdown, so Markdown previewers may be likely to render them differently or not at all.
 
-When `allow-bare-xml-tags` is set to `true` in frontmatter or `.rulesets.config.json`, you can use bare XML tags for stem names. The tags will be compiled as-is, but note:
+When `allow-bare-xml-tags` is set to `true` in frontmatter or `.ruleset.config.json`, you can use bare XML tags for block names. The tags will be compiled as-is, but note:
 
 ```markdown
 <!-- XML tags with `allow-bare-xml-tags` set to `true` -->
@@ -649,8 +649,8 @@ Renders as:
 
 ```yaml
 ---
-# .rulesets/src/my-rule.md
-rulesets:
+# .ruleset/src/my-rule.md
+ruleset:
   version: 0.1.0 # optional, version number for the Rulesets format used
 description: 'Rules for this project' # optional, may be useful for tools that use descriptions, such as Cursor, Windsurf, etc.
 globs: ['**/*.{txt,md,mdc}'] # optional, globs re-written based on destination-specific needs
@@ -678,21 +678,21 @@ allow-bare-xml-tags: false # optional, defaults to false. Set to true to allow b
 
 Frontmatter is used to provide metadata about the source rules file and control how it's compiled. Basic frontmatter includes:
 
-- `rulesets.version`: Metadata about the Rulesets format used.
+- `ruleset.version`: Metadata about the Rulesets format used.
 - `name`: Unique identifier for the source rules (optional, defaults to filename).
 - `description`: Optional description of the mix, rendered for tools that use them (e.g. Cursor, Windsurf, etc.).
 - `globs`: Optional globs to be rewritten based on destination-specific needs.
 - `destination`: Control how this source rules is processed for destinations:
-  - `include`/`exclude`: Control which destinations receive this mix.
+  - `include`/`exclude`: Control which destinations receive this source rules.
   - `path`: Specify a custom path for destination artifacts.
-  - Properties include any destination providers registered in `.rulesets.config.json`.
+  - Properties include any destination providers registered in `.ruleset.config.json`.
 - `version`: Version information for this file.
 - `labels`: Categorization tags for this file.
-- `allow-bare-xml-tags: (boolean)` - Optional. When set to `true` in this file's frontmatter, it allows the use of bare XML tags (e.g., `<my_tag>...</my_tag>`) directly within this specific Rulesets file instead of the standard `{{my-tag}}...{{/my-tag}}` notation. This setting overrides any global `allow-bare-xml-tags` setting in `.rulesets.config.json` for this file. Defaults to `false` if not specified. See the 'Using bare XML tags' section for more details.
+- `allow-bare-xml-tags: (boolean)` - Optional. When set to `true` in this file's frontmatter, it allows the use of bare XML tags (e.g., `<my_tag>...</my_tag>`) directly within this specific Rulesets file instead of the standard `{{my-tag}}...{{/my-tag}}` notation. This setting overrides any global `allow-bare-xml-tags` setting in `.ruleset.config.json` for this file. Defaults to `false` if not specified. See the 'Using bare XML tags' section for more details.
 - `[cursor|windsurf|claude-code|...]`: Destination-specific key/value pairs can be provided.
   - These can include `destination.path` to override the global path for specific destinations.
 
-For more details on the structure and capabilities of the `rulesets.config.json` file, including global settings (like `allow-bare-xml-tags`), aliases, and destination provider configurations, please refer to the project's architecture or configuration documentation.
+For more details on the structure and capabilities of the `ruleset.config.json` file, including global settings (like `allow-bare-xml-tags`), aliases, and destination provider configurations, please refer to the project's architecture or configuration documentation.
 
 ### Links
 
@@ -704,7 +704,7 @@ Standard Markdown links work as expected external links, and links to other sour
 - Links to other source rules files: `[Text](other-mix.md)`
 
 > [!NOTE]
-> Standard Markdown links will work in previews as expected within the `.rulesets/src` directory, but `{{link ...}}` will not, as it requires compilation by Rulesets to resolve paths relative to the final compiled rules directory and apply any destination-specific link transformations.
+> Standard Markdown links will work in previews as expected within the `.ruleset/src` directory, but `{{link ...}}` will not, as it requires compilation by Rulesets to resolve paths relative to the final compiled rules directory and apply any destination-specific link transformations.
 
 #### Linking to Project Files
 
@@ -735,7 +735,7 @@ The syntax for variables depends on the context:
 
 | Type                     | Notation                      | Notes                                                                                                                                                                                                                                    |
 | ------------------------ | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Alias**                | `{{$alias}}`                  | Alias lookup in `.rulesets.config.json` under `aliases` key.                                                                                                                                                                             |
+| **Alias**                | `{{$alias}}`                  | Alias lookup in `.ruleset.config.json` under `aliases` key.                                                                                                                                                                             |
 | **Frontmatter value**    | `{{$.key}}`                   | Access values from the current file's frontmatter.                                                                                                                                                                                       |
 | **Destination variable** | `{{$dest}}` or `{{$dest.id}}` | Built-in variables provided by the compiler. Display name from the provider manifest (e.g. `Cursor`, `Claude Code`). The current destination ID in kebab-case can be accessed by adding `.id` to the end (`cursor`, `claude-code`, etc.) |
 
@@ -753,22 +753,22 @@ Imports allow you to reuse content across multiple source rules files by embeddi
 
 {{> @legal }}
 
-<!-- Embed a specific stem from the `conventions.md` source rules file -->
+<!-- Embed a specific block from the `conventions.md` source rules file -->
 
-{{> conventions#stem-name }}
+{{> conventions#block-name }}
 
-<!-- Embed a stem from within the existing file -->
+<!-- Embed a block from within the existing file -->
 
-{{> #stem-name }}
+{{> #block-name }}
 
-<!-- Import a source rules with multiple specific stems, with exclusion -->
+<!-- Import a source rules with multiple specific blocks, with exclusion -->
 
-{{> my-rules#(stem-one stem-two !stem-three) }}
+{{> my-rules#(block-one block-two !block-three) }}
 ```
 
 Example:
 
-Let's say that we have a source rules file called `conventions.md` that contains a stem called `style-guide`. We can import it into another source rules file called `my-rules.md` and include only the `style-guide` stem:
+Let's say that we have a source rules file called `conventions.md` that contains a block called `style-guide`. We can import it into another source rules file called `my-rules.md` and include only the `style-guide` block:
 
 ```markdown
 <!-- my-rules.md -->
@@ -790,16 +790,16 @@ Important: Be sure to follow the style guide:
 
 #### Import Attributes
 
-All [stem properties](#stem-properties) can be applied to imports. Additionally, imports support filtering of stems using `#(...)` parentheses syntax for import scope:
+All [block properties](#block-properties) can be applied to imports. Additionally, imports support filtering of blocks using `#(...)` parentheses syntax for import scope:
 
 ```markdown
-{{> my-rules#(stem-one !stem-two) }}
+{{> my-rules#(block-one !block-two) }}
 ```
 
-This allows you to filter which stems from the source rules are included/excluded on render:
+This allows you to filter which blocks from the source rules are included/excluded on render:
 
-- For included stems, use the stem name without any prefix
-- For excluded stems, prefix the stem name with `!` e.g. `!stem-two`
+- For included blocks, use the block name without any prefix
+- For excluded blocks, prefix the block name with `!` e.g. `!block-two`
 
 For formatting properties:
 
@@ -813,13 +813,13 @@ Examples:
 ```markdown
 {{> my-rules#(!less-important-considerations)}}
 
-<!-- 👆 This would include all stems from `my-rules.md`
+<!-- 👆 This would include all blocks from `my-rules.md`
      except for `less-important-considerations`. -->
 
-{{> my-rules#(stem-one stem-two)}}
+{{> my-rules#(block-one block-two)}}
 
-<!-- 👆 This would include only the `stem-one` and `stem-two`
-     stems from `my-rules.md`. -->
+<!-- 👆 This would include only the `block-one` and `block-two`
+     blocks from `my-rules.md`. -->
 ```
 
 #### Destination-Specific Stem Filtering
@@ -857,7 +857,7 @@ It's important to distinguish between imports (`{{> ...}}`) and variable substit
 
 ### Partials
 
-Partials are modular, reusable components, stored in the `.rulesets/src/_partials/` directory. Like programming partials that can be incorporated into different classes or components, Rulesets partials provide isolated content blocks that can be imported into multiple source rules files.
+Partials are modular, reusable components, stored in the `.ruleset/src/_partials/` directory. Like programming partials that can be incorporated into different classes or components, Rulesets partials provide isolated content blocks that can be imported into multiple source rules files.
 
 - A partial typically contains one or more blocks that perform a specific function
 - Mixins are imported using the `{{> @mixin-name}}` notation
@@ -866,7 +866,7 @@ Partials are modular, reusable components, stored in the `.rulesets/src/_partial
 Example:
 
 ```markdown
-<!-- Mixin: `/_mixins/remember.md` -->
+<!-- Partial: `/_partials/remember.md` -->
 
 1. Always follow the code conventions.
 2. Never commit directly to `main`
@@ -1026,12 +1026,12 @@ To include a section in Rulesets use: {{section-name}}
 
 ```text
 project/
-├── .rulesets/
+├── .ruleset/
 │   ├── dist/
 │   │   └── latest/         # compiled rules
 │   ├── src/                # source rules files (*.md)
-│   │   └── _mixins/        # reusable content modules
-│   └── rulesets.config.json # Rulesets config file
+│   │   └── _partials/      # reusable content modules
+│   └── ruleset.config.json # Rulesets config file
 ```
 
 ## XML Generation
@@ -1125,7 +1125,7 @@ The table below organizes properties by their categories with comprehensive info
 | `#(stem1 !stem2)` | Multiple stems | `#(section-a section-b)` | ❌ | ✅ | ❌ | Include/exclude multiple specific stems. |
 | `#(destination:[stem])` | Scoped stem | `#(cursor:[section-a])` | ❌ | ✅ | ❌ | Destination-specific stem inclusion. |
 | **Frontmatter Configuration** |||||||
-| `rulesets.version` | YAML | `rulesets.version: 0.1.0` | ❌ | ❌ | ✅ | Rulesets format version for the file |
+| `ruleset.version` | YAML | `ruleset.version: 0.1.0` | ❌ | ❌ | ✅ | Rulesets format version for the file |
 | `description` | YAML | `description: "Project rules"` | ❌ | ❌ | ✅ | Short description of the source rules |
 | `name` | YAML | `name: my-rules` | ❌ | ❌ | ✅ | Unique identifier for the source rules (defaults to filename) |
 | `version` | YAML | `version: 2.0` | ❌ | ❌ | ✅ | Version number for this source rules file |
@@ -1159,8 +1159,8 @@ Most common programming languages are supported using the `code-language` patter
 
 <!-- Import properties -->
 
-{{> @mixin code-javascript}} <!-- Import mixin as JavaScript code block -->
-{{> mix-file#(stem-a !stem-b)}} <!-- Import only stem-a from file, exclude stem-b -->
+{{> @partial code-javascript}} <!-- Import partial as JavaScript code block -->
+{{> source-file#(block-a !block-b)}} <!-- Import only block-a from file, exclude block-b -->
 {{> rules#section cursor:[inline]}} <!-- Import rules#section with cursor-specific inline formatting -->
 ```
 

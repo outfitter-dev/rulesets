@@ -112,7 +112,7 @@ Rulesets provides a simplified interface to common markdown style concerns, whil
 
 1. **Block-level properties**: Properties specified directly in block notation
 2. **Source rules-level properties**: Frontmatter settings for the specific Source Rules file
-3. **Global properties**: Project-wide settings in rulesets.config.json
+3. **Global properties**: Project-wide settings in ruleset.config.json
 4. **Defaults**: Built-in defaults designed to follow common markdown conventions
 
 ## Implementation Considerations

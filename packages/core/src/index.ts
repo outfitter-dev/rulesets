@@ -142,11 +142,11 @@ export async function runRulesetsV0(
     }
 
     // Determine output path
-    const destConfig =
+    const destConfig: Record<string, unknown> =
       frontmatter.destinations &&
       typeof frontmatter.destinations === 'object' &&
       !Array.isArray(frontmatter.destinations)
-        ? (frontmatter.destinations as Record<string, unknown>)[destinationId] || {}
+        ? ((frontmatter.destinations as Record<string, unknown>)[destinationId] as Record<string, unknown>) || {}
         : {};
     const defaultPath = `.ruleset/dist/${destinationId}/my-rules.md`;
     const destPath =
