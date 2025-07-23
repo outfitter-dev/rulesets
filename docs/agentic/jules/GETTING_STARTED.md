@@ -4,7 +4,7 @@
 
 **You are implementing Rulesets v0** - a CommonMark-compliant rules compiler. Focus on the core functionality in `/packages/core/`.
 
-## Implementation Scope (mixd-v0)
+## Implementation Scope
 
 - **Parser:** Handle frontmatter and raw body only (no marker processing yet)
 - **Compiler:** Pass-through implementation (no `{{...}}` notation processing)
@@ -14,8 +14,8 @@
 ## Required Code Patterns
 
 ```typescript
-// TLDR: Simple parser implementation that extracts frontmatter (mixd-v0)
-// TODO (mixd-v0.1): Add support for block parsing
+// TLDR: Simple parser implementation that extracts frontmatter
+// TODO: Add support for block parsing
 export function parse(content: string): ParsedDoc {
   // Implementation...
 }
@@ -23,16 +23,15 @@ export function parse(content: string): ParsedDoc {
 
 ## Monorepo Commands
 
-- **Test:** `pnpm turbo test`
-- **Lint:** `pnpm turbo lint`
-- **Build:** `pnpm turbo build`
-- **Type check:** `pnpm turbo typecheck`
+- **Test:** `bun turbo test`
+- **Lint:** `bun turbo lint`
+- **Build:** `bun turbo build`
+- **Type check:** `bun turbo typecheck`
 
 ## Critical Documentation
 
 Always reference these when implementing:
 
-- `docs/project/GREPABLE.md` - Marker system guide
 - `docs/project/LANGUAGE.md` - Terminology specifications
 - `docs/project/plans/PLAN-rulesets-v0.md` - Implementation requirements
 - `AGENTS.md` - AI agent conventions
@@ -41,11 +40,11 @@ Always reference these when implementing:
 
 Every function must have corresponding tests. Follow existing patterns in `__tests__/` directories.
 
-## Marker Usage in Code
+## Code Documentation
 
-Use markers to indicate implementation level and future plans:
+Document your code clearly:
 
-- Current work: `(mixd-v0)`
-- Future enhancements: `TODO (mixd-v0.1):`
-- Security concerns: `(mixd-sec)`
-- Performance notes: `(mixd-perf)`
+- Current implementation scope
+- Future enhancement plans
+- Security considerations
+- Performance-critical sections
