@@ -25,7 +25,7 @@ The compiler processes multiple source files simultaneously and can output to mu
 
 ## Project Structure
 
-The Rulesets project is organized as a monorepo using pnpm workspaces:
+The Rulesets project is organized as a monorepo using bun workspaces:
 
 ```text
 rulesets/

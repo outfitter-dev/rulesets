@@ -102,8 +102,8 @@ npx @rulesets/cli init              # quick project bootstrap
 # Using npm
 npm install @rulesets/core
 
-# Using pnpm (recommended)
-pnpm add @rulesets/core
+# Using bun (recommended)
+bun add @rulesets/core
 
 # Using yarn
 yarn add @rulesets/core
@@ -208,7 +208,7 @@ This project uses [Changesets](https://github.com/changesets/changesets) for ver
 When making changes that should be reflected in the version number and changelog, create a changeset:
 
 ```bash
-pnpm changeset add
+bun changeset add
 ```
 
 Follow the prompts to:
@@ -222,8 +222,8 @@ Please refer to our general contributing guidelines for information on how to co
 
 ## Contributing & Community
 
-1. **Fork → `pnpm i` → `pnpm dev`**.
-2. Follow conventional commits; run `pnpm changeset add` for version bumps.
+1. **Fork → `bun i` → `bun dev`**.
+2. Follow conventional commits; run `bun changeset add` for version bumps.
 3. Add unit & contract tests for new features.
 4. Submit PR—CI must pass snapshot tests.
 

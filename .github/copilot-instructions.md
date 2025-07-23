@@ -6,44 +6,15 @@ Rulesets is a CommonMark-compliant rules compiler that lets you author a single 
 
 ## Essential Navigation Strategy
 
-**Use grep extensively for code discovery instead of browsing files.** This codebase uses a comprehensive `mixd-*` marker system for rapid navigation:
-
-```bash
-# Find version-specific code
-grep -r "mixd-v0" . --include="*.ts"
-
-# Find security-sensitive areas
-grep -r "mixd-sec" . --include="*.ts"
-
-# Find performance bottlenecks
-grep -r "mixd-perf" . --include="*.ts"
-
-# Find temporary code needing cleanup
-grep -r "mixd-temp" . --include="*.ts"
-```
-
-Consult `docs/project/GREPABLE.md` for the complete marker system and navigation guide.
+**Use grep extensively for code discovery instead of browsing files.** Search for specific functionality, function names, or keywords to navigate the codebase efficiently.
 
 ## Code Standards
 
 ### Comment Format
 
-- Start all files with: `// TLDR: File purpose description (mixd-v0)`
-- Add function comments: `// TLDR: Function purpose (mixd-v0)`
-- Use TODO format: `// TODO (mixd-v0.1): Future enhancement description`
-
-### Markers to Use
-
-- `mixd-v{version}` - Version-specific implementations
-- `mixd-sec` - Security-sensitive code
-- `mixd-perf` - Performance-critical paths
-- `mixd-unsafe` - Potentially dangerous operations
-- `mixd-api` - API changes or deprecations
-- `mixd-config` - Environment-dependent behavior
-- `mixd-external` - External service dependencies
-- `mixd-debug` - Debugging/troubleshooting points
-- `mixd-test` - Testing-related annotations
-- `mixd-temp` - Temporary code needing cleanup
+- Start all files with: `// TLDR: File purpose description`
+- Add clear function comments explaining purpose
+- Use descriptive TODO comments for future enhancements
 
 ### TypeScript Conventions
 

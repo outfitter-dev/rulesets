@@ -7,7 +7,7 @@ Core library for Rulesets - a CommonMark-compliant rules compiler that lets you 
 ```bash
 npm install @rulesets/core
 # or
-pnpm add @rulesets/core
+bun add @rulesets/core
 # or
 yarn add @rulesets/core
 ```

@@ -11,22 +11,22 @@
 - Linter: Basic frontmatter schema validation only
 - Plugins: Stub implementations that log output
 
-### Q: Which markers should I use in code comments?
+### Q: How should I document my code?
 
-**A:** Always use these patterns:
+**A:** Always use clear and descriptive comments:
 
 ```typescript
-// TLDR: Function description and scope (mixd-v0)
-// TODO (mixd-v0.1): Future enhancement description
+// TLDR: Function description and scope
+// TODO: Future enhancement description
 ```
 
-Available markers:
+Include:
 
-- `mixd-v0` - Current implementation level
-- `mixd-v0.1` - Planned for next version
-- `mixd-sec` - Security-sensitive code
-- `mixd-perf` - Performance bottlenecks
-- `mixd-temp` - Temporary code needing cleanup
+- Clear function descriptions
+- Future enhancement plans
+- Security considerations where relevant
+- Performance notes for critical paths
+- Notes about temporary implementations
 
 ### Q: What testing is required?
 
@@ -34,7 +34,7 @@ Available markers:
 
 - Unit tests in `__tests__/` directories
 - Tests must follow existing patterns
-- All tests must pass: `pnpm turbo test`
+- All tests must pass: `bun turbo test`
 - Include edge cases and error scenarios
 
 ### Q: Where should I focus implementation work?
@@ -55,22 +55,21 @@ Available markers:
 - Use strict TypeScript settings
 - Follow SOLID, DRY, and KISS principles
 - Add comprehensive type annotations
-- Include JSDoc comments with version markers
+- Include JSDoc comments for documentation
 
 ### Q: What are the monorepo commands?
 
 **A:** Essential commands you should use:
 
-- Test: `pnpm turbo test`
-- Lint: `pnpm turbo lint`
-- Build: `pnpm turbo build`
-- Type check: `pnpm turbo typecheck`
+- Test: `bun turbo test`
+- Lint: `bun turbo lint`
+- Build: `bun turbo build`
+- Type check: `bun turbo typecheck`
 
 ### Q: Which documentation should I reference?
 
 **A:** Critical references:
 
-- `docs/project/GREPABLE.md` - Marker system guide
 - `docs/project/LANGUAGE.md` - Terminology specifications
 - `docs/project/plans/PLAN-rulesets-v0.md` - Implementation requirements
 - `AGENTS.md` - AI agent conventions
@@ -81,7 +80,7 @@ Available markers:
 
 - Add try/catch blocks for file operations
 - Create descriptive error messages with context
-- Mark security-sensitive error handling with `(mixd-sec)`
+- Document security-sensitive error handling clearly
 - Test error scenarios in unit tests
 
 ## Project Terminology
@@ -109,14 +108,14 @@ Available markers:
 **A:** Follow this pattern:
 
 ```typescript
-// TLDR: Module purpose description (mixd-v0)
-// TODO (mixd-v0.1): Future enhancement plans
+// TLDR: Module purpose description
+// TODO: Future enhancement plans
 
 export interface ModuleInterface {
   // Interface definition
 }
 
-// TLDR: Function purpose (mixd-v0)
+// TLDR: Function purpose
 export function mainFunction(): ReturnType {
   // Implementation
 }
@@ -139,18 +138,18 @@ Always include descriptive commit messages that explain the "why" not just the "
 
 **A:**
 
-- Includes proper TLDR comments with version markers
+- Includes proper TLDR comments for clarity
 - Has comprehensive unit tests
 - Follows TypeScript strict mode
 - Uses descriptive variable/function names
-- Includes TODO markers for future enhancements
+- Includes TODO comments for future enhancements
 - Passes all linting and type checking
 
 ### Q: How do I ensure my code is discoverable?
 
-**A:** Use the grepable marker system consistently:
+**A:** Write clear and searchable code:
 
-- Current work gets `(mixd-v0)` markers
-- Future plans get `TODO (mixd-v0.1):` comments
-- Security code gets `(mixd-sec)` markers
-- Performance code gets `(mixd-perf)` markers
+- Use descriptive function and variable names
+- Write clear TODO comments for future work
+- Document security-sensitive code clearly
+- Add comments for performance-critical sections

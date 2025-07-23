@@ -11,12 +11,10 @@ Rulesets is a CommonMark-compliant rules compiler that lets you author a single 
 ## Critical Instructions
 
 ✅ Always follow the language spec @docs/project/LANGUAGE.md
-✅ Use the grepable marker system @docs/project/GREPABLE.md for efficient code navigation and version tracking
 ✅ Always ensure the `.gitignore` file is updated to exclude potentially sensitive information  
 ✅ Always work from a feature branch off of `main` or a `fix/` branch off of a target feature branch
 ✅ Commit regularly, group commits logically, and use conventional commit messages. When committing, always check to see if there are unstaged changes.
 ✅ When writing code, follow the SOLID principles, DRY principles, KISS principle, and include descriptive inline comments for future developers
-✅ Use `mixd-*` markers in code comments (e.g., `// TLDR: Simple implementation (mixd-v0)`) for version tracking and rapid grep-based discovery
 ❌ Never automatically create a PR for a feature branch without explicit user direction
 ✅ When creating PRs follow the instructions in `.claude/commands/create-pr.md`
 
@@ -214,7 +212,7 @@ When contributing to this project:
 
 ## Package Management
 
-- As a monorepo, we use pnpm for everything
+- As a monorepo, we use bun for everything
 
 ## Workflow Guidance
 

@@ -1,4 +1,4 @@
-// TLDR: Unit tests for the Rulesets parser module (mixd-v0)
+// TLDR: Unit tests for the Rulesets parser module
 import { describe, it, expect } from 'vitest';
 import { parse } from '../index';
 

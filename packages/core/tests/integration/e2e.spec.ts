@@ -1,4 +1,4 @@
-// TLDR: End-to-end integration tests for Rulesets v0 (mixd-v0)
+// TLDR: End-to-end integration tests for Rulesets v0
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';

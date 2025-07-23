@@ -1,4 +1,4 @@
-# TLDR: GitHub Actions workflow for Continuous Integration. Runs on push/PR, installs, lints, tests, builds, and handles releases (mixd-v0)
+# TLDR: GitHub Actions workflow for Continuous Integration. Runs on push/PR, installs, lints, tests, builds, and handles releases
 name: CI
 
 on:
@@ -21,28 +21,22 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 9
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18.x
-          cache: 'pnpm'
+          bun-version: latest
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Lint
-        run: pnpm turbo lint
+        run: bun turbo lint
 
       - name: Test
-        run: pnpm turbo test
+        run: bun turbo test
 
       - name: Build
-        run: pnpm turbo build
+        run: bun turbo build
 
   release:
     name: Release
@@ -55,32 +49,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 9
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18.x
-          cache: 'pnpm'
+          bun-version: latest
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Lint
-        run: pnpm turbo lint
+        run: bun turbo lint
       - name: Test
-        run: pnpm turbo test
+        run: bun turbo test
       - name: Build
-        run: pnpm turbo build
+        run: bun turbo build
 
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
         with:
-          publish: pnpm run release
+          publish: bun run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

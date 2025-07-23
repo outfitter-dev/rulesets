@@ -1,4 +1,4 @@
-// TLDR: Unit tests for the Windsurf destination plugin (mixd-v0)
+// TLDR: Unit tests for the Windsurf destination plugin
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
 import path from 'path';
