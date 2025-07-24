@@ -2,7 +2,7 @@
 // :M: v0.1.0: Stub implementation that writes raw content to .cursor/rules/
 import { promises as fs } from 'fs';
 import path from 'path';
-import type { DestinationPlugin, CompiledDoc, Logger, JSONSchema7 } from '../interfaces';
+import type { DestinationPlugin, CompiledDoc, Logger, JSONSchema7 } from '@rulesets/types';
 
 export class CursorPlugin implements DestinationPlugin {
   // :M: tldr: Returns the canonical name for Cursor destination

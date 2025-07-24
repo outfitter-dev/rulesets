@@ -1,0 +1,18 @@
+# lefthook.yml - Git hooks configuration
+# https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: "*.{js,ts,tsx}"
+      run: bun run lint
+    
+    typecheck:
+      glob: "*.{ts,tsx}"
+      run: bun run typecheck
+
+commit-msg:
+  commands:
+    commitlint:
+      run: bunx commitlint --edit {1}

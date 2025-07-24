@@ -47,8 +47,8 @@ This document outlines the complete removal of all music-related terminology fro
 
 | Old Extension | New Extension |
 | ------------- | ------------- |
-| .mix.md       | .ruleset.md   |
-| .mixdown.md   | .ruleset.md   |
+| .mix.md       | .rule.md      |
+| .mixdown.md   | .rule.md      |
 
 ### 5. Syntax Updates
 
@@ -74,7 +74,7 @@ This document outlines the complete removal of all music-related terminology fro
 
 - [ ] Rename `.mixdown/` → `.ruleset/`
 - [ ] Rename `_mixins/` → `_partials/`
-- [ ] Update all file extensions from `.mix.md` and `.mixdown.md` → `.ruleset.md`
+- [ ] Update all file extensions from `.mix.md` and `.mixdown.md` → `.rule.md`
 - [ ] Update configuration file names
 
 ### Phase 3: Documentation Cleanup
@@ -190,7 +190,7 @@ The project should appear as if it had always been called Rulesets and had alway
 .ruleset/
 ├── src/
 │   ├── _partials/
-│   └── my-rules.ruleset.md
+│   └── my-rules.rule.md
 └── dist/
 ```
 

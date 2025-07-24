@@ -2,7 +2,7 @@
 
 ## Purpose
 
-You are a Staff Software Engineer charged with boot-strapping **Rulesets v0**—a small but production-ready monorepo that ships `@ruleset/core` (parser + compiler + linter) and proves end-to-end flow by parsing a `my-rules.ruleset.md` file and writing compiled rules to `.ruleset/dist/`, plus invoking two destination plugins (Cursor & Windsurf).
+You are a Staff Software Engineer charged with boot-strapping **Rulesets v0**—a small but production-ready monorepo that ships `@ruleset/core` (parser + compiler + linter) and proves end-to-end flow by parsing a `my-rules.rule.md` file and writing compiled rules to `.ruleset/dist/`, plus invoking two destination plugins (Cursor & Windsurf).
 
 You will be given all the necessary context to complete your task. If you need additional information, ask the human for clarification.
 
@@ -126,12 +126,12 @@ Copy these rules verbatim into `PLAN-ruleset-v0.md` (under **"Engineering Conven
     "build": "turbo build",
     "test": "turbo test",
     "lint": "turbo lint",
-    "release": "changeset publish",
+    "release": "changeset publish"
   },
   "devDependencies": {
     "turbo": "^2",
-    "changesets": "^2",
-  },
+    "changesets": "^2"
+  }
 }
 ```
 
@@ -160,9 +160,9 @@ Copy these rules verbatim into `PLAN-ruleset-v0.md` (under **"Engineering Conven
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"],
+    "types": ["node"]
   },
-  "include": ["packages/**/*"],
+  "include": ["packages/**/*"]
 }
 ```
 
@@ -241,17 +241,17 @@ jobs:
 
 When drafting the plan, use the following key terminology from the Language spec consistently:
 
-| Term               | Definition                                                        | Usage                                                                 |
-| ------------------ | ----------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Term               | Definition                                                      | Usage                                                                 |
+| ------------------ | --------------------------------------------------------------- | --------------------------------------------------------------------- |
 | **Source rules**   | Source files defining rules for AI assistants in Ruleset Syntax | "The parser processes source rules into an AST"                       |
-| **Compiled rules** | Rules files generated from source rules for each destination      | "The compiler outputs compiled rules for each configured destination" |
-| **Destination**    | A supported tool (e.g., Cursor, Claude Code)                      | "Each destination has specific formatting requirements"               |
-| **Marker**         | Element using `{{...}}` notation                                  | "The parser identifies markers in the source rules"                   |
-| **Block**           | Delimited blocks marked with `{{block}}...{{/block}}`               | "The compiler processes each block in the source rules"                |
-| **Block Content**   | Content between opening and closing block markers                  | "Block content is processed according to destination requirements"     |
-| **Import**         | A reference to another source rules file or block                  | "The compiler resolves imports before processing blocks"               |
-| **Variable**       | Dynamic values replaced during compilation                        | "Variables in the source rules are resolved at compile time"          |
-| **Property**       | A configuration applied to blocks or imports                       | "Properties control how blocks are processed for each destination"     |
+| **Compiled rules** | Rules files generated from source rules for each destination    | "The compiler outputs compiled rules for each configured destination" |
+| **Destination**    | A supported tool (e.g., Cursor, Claude Code)                    | "Each destination has specific formatting requirements"               |
+| **Marker**         | Element using `{{...}}` notation                                | "The parser identifies markers in the source rules"                   |
+| **Block**          | Delimited blocks marked with `{{block}}...{{/block}}`           | "The compiler processes each block in the source rules"               |
+| **Block Content**  | Content between opening and closing block markers               | "Block content is processed according to destination requirements"    |
+| **Import**         | A reference to another source rules file or block               | "The compiler resolves imports before processing blocks"              |
+| **Variable**       | Dynamic values replaced during compilation                      | "Variables in the source rules are resolved at compile time"          |
+| **Property**       | A configuration applied to blocks or imports                    | "Properties control how blocks are processed for each destination"    |
 
 ---
 
@@ -281,7 +281,7 @@ The following components will need to be implemented for Rulesets v0. This is a 
 
 When creating the `PLAN-ruleset-v0.md` document, use this structure:
 
-````markdown
+`````markdown
 # Rulesets v0 Implementation Plan
 
 ## Overview
@@ -430,6 +430,7 @@ All public APIs should be documented using this format:
  * @returns [Description of return value]
  */
 ````
+`````
 
 ## Follow-up Actions
 
@@ -437,6 +438,7 @@ All public APIs should be documented using this format:
   - [Additional context and details]
 - [Action 2]
   - [Additional context and details]
+
 ````
 
 ### Review Document
@@ -471,3 +473,4 @@ This file should be placed at `docs/project/testing/v0-implementation-review.md`
 
 **You now have your mandate.**
 Ask your first clarifying question and proceed.
+````

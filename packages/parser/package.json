@@ -1,0 +1,41 @@
+{
+  "name": "@rulesets/parser",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Parser for Rulesets markdown syntax",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "lint": "biome check --write .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rulesets/types": "workspace:*",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^18.19.31",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0",
+    "@biomejs/biome": "^1.9.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
+}

@@ -2,7 +2,7 @@
   "name": "@rulesets/core",
   "version": "0.1.0",
   "private": false,
-  "description": "Core library for Rulesets: parser, compiler, linter, and plugins.",
+  "description": "Core orchestration for Rulesets compiler",
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -17,15 +17,18 @@
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist && tsup && tsc --emitDeclarationOnly",
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "biome check --write .",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "js-yaml": "^4.1.0"
+    "@rulesets/types": "workspace:*",
+    "@rulesets/parser": "workspace:*",
+    "@rulesets/linter": "workspace:*",
+    "@rulesets/compiler": "workspace:*"
   },
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
@@ -34,7 +37,7 @@
     "tsup": "^8.0.2",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0",
-    "eslint": "^8.57.0"
+    "@biomejs/biome": "^1.9.4"
   },
   "publishConfig": {
     "access": "public"

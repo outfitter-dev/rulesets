@@ -1,0 +1,34 @@
+# Ignore all files handled by Biome
+*.js
+*.jsx
+*.ts
+*.tsx
+*.mjs
+*.cjs
+*.json
+*.jsonc
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.turbo/
+
+# Dependencies
+node_modules/
+bun.lockb
+
+# Version control
+.git/
+.changeset/
+
+# IDE
+.vscode/
+.idea/
+
+# Misc
+coverage/
+*.log
+.DS_Store
+.env*

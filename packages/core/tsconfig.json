@@ -1,12 +1,53 @@
 {
-  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "noEmit": false,
-    "declarationMap": true,
-    "composite": true
+    // Type checking
+    "strict": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    
+    // Module resolution
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    
+    // JavaScript support
+    "allowJs": true,
+    "checkJs": false,
+    
+    // Interop
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    
+    // Language and environment
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    
+    // Bun-specific optimizations
+    "types": ["bun-types"],
+    "skipLibCheck": true,
+    
+    // Path mapping
+    "baseUrl": ".",
+    "paths": {
+      "@rulesets/types": ["../types/src"],
+      "@rulesets/parser": ["../parser/src"],
+      "@rulesets/linter": ["../linter/src"],
+      "@rulesets/compiler": ["../compiler/src"]
+    }
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "src/**/*.spec.ts", "src/**/__tests__"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/*.spec.ts",
+    "src/**/__tests__"
+  ]
 }

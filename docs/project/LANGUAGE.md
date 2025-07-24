@@ -91,13 +91,13 @@ This document provides terminology guidance for consistent language in Rulesets 
 
 ## File and Directory Structure
 
-| Entity Type                | Naming Convention        | Example                       |
-| -------------------------- | ------------------------ | ----------------------------- |
-| Source Rules files         | `kebab-case.ruleset.md`  | `coding-standards.ruleset.md` |
-| Directory                  | `kebab-case`             | `_partials`                   |
-| Config files               | `kebab-case.config.json` | `ruleset.config.json`         |
-| Block markers              | `kebab-case`             | `{{user-instructions}}`       |
-| XML Tags in compiled rules | `snake_case`             | `<user_instructions>`         |
+| Entity Type                | Naming Convention        | Example                    |
+| -------------------------- | ------------------------ | -------------------------- |
+| Source Rules files         | `kebab-case.rule.md`     | `coding-standards.rule.md` |
+| Directory                  | `kebab-case`             | `_partials`                |
+| Config files               | `kebab-case.config.json` | `ruleset.config.json`      |
+| Block markers              | `kebab-case`             | `{{user-instructions}}`    |
+| XML Tags in compiled rules | `snake_case`             | `<user_instructions>`      |
 
 ### Distribution Directory Structure
 

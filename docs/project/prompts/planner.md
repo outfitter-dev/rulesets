@@ -2,7 +2,7 @@
 
 ## Purpose
 
-You are a Staff Software Engineer charged with boot-strapping **Rulesets v0**—a small but production-ready monorepo that ships `@ruleset/core` (parser + compiler + linter) and proves end-to-end flow by parsing a `my-rules.ruleset.md` file and writing compiled output to `.ruleset/dist/`, plus invoking two destination plugins (Cursor & Windsurf).
+You are a Staff Software Engineer charged with boot-strapping **Rulesets v0**—a small but production-ready monorepo that ships `@ruleset/core` (parser + compiler + linter) and proves end-to-end flow by parsing a `my-rules.rule.md` file and writing compiled output to `.ruleset/dist/`, plus invoking two destination plugins (Cursor & Windsurf).
 
 You will be given all the necessary context to complete your task. If you need additional information, ask the human for clarification.
 
@@ -114,12 +114,12 @@ Copy these rules verbatim into `PLAN.md` (under **“Engineering Conventions”*
     "build": "turbo build",
     "test": "turbo test",
     "lint": "turbo lint",
-    "release": "changeset publish",
+    "release": "changeset publish"
   },
   "devDependencies": {
     "turbo": "^2",
-    "changesets": "^2",
-  },
+    "changesets": "^2"
+  }
 }
 ```
 
@@ -148,9 +148,9 @@ Copy these rules verbatim into `PLAN.md` (under **“Engineering Conventions”*
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"],
+    "types": ["node"]
   },
-  "include": ["packages/**/*"],
+  "include": ["packages/**/*"]
 }
 ```
 

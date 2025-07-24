@@ -1,6 +1,6 @@
 ### Added
 
-- Added `.ruleset.md` file extension for source rules files to improve discoverability, search capabilities, and IDE support
+- Added `.rule.md` file extension for source rules files to improve discoverability, search capabilities, and IDE support
 
 ### Changed
 
