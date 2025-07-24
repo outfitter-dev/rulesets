@@ -22,29 +22,29 @@ The Rulesets v0 implementation has been completed with the following components:
 The following end-to-end scenarios must be manually tested and verified:
 
 - [ ] **Test 1: Basic Source Rules Parsing and Compilation**
-  - **Action**: Create a minimal `test.ruleset.md` file with valid frontmatter and a simple Markdown body.
-  - **Command**: Execute the main Rulesets v0 script/function pointing to `test.ruleset.md`.
+  - **Action**: Create a minimal `test.rule.md` file with valid frontmatter and a simple Markdown body.
+  - **Command**: Execute the main Rulesets v0 script/function pointing to `test.rule.md`.
   - **Expected Result**:
     - No errors from parser, linter, or compiler.
     - Output files (`.ruleset/dist/cursor/test.md` and `.ruleset/dist/windsurf/test.md`) are created.
-    - The content of the output files exactly matches the raw Markdown body of `test.ruleset.md`.
+    - The content of the output files exactly matches the raw Markdown body of `test.rule.md`.
     - Stubbed plugin `write` methods log expected messages.
 - [ ] **Test 2: Source Rules File with No Frontmatter**
-  - **Action**: Create `no-fm.ruleset.md` with only a Markdown body (no `---` frontmatter block).
+  - **Action**: Create `no-fm.rule.md` with only a Markdown body (no `---` frontmatter block).
   - **Command**: Execute the main Rulesets v0 script/function.
   - **Expected Result**:
     - Parser should handle this gracefully (e.g., `frontmatter` field is empty or undefined).
     - Linter may report a warning/error if frontmatter is considered mandatory by its v0 schema.
     - Compiler should still pass through the raw body to output files.
 - [ ] **Test 3: Source Rules File with Invalid Frontmatter**
-  - **Action**: Create `invalid-fm.ruleset.md` with syntactically incorrect YAML frontmatter or frontmatter that violates the Linter's v0 schema.
+  - **Action**: Create `invalid-fm.rule.md` with syntactically incorrect YAML frontmatter or frontmatter that violates the Linter's v0 schema.
   - **Command**: Execute the main Rulesets v0 script/function.
   - **Expected Result**:
     - Parser might return errors or an empty frontmatter object.
     - Linter should report errors detailing the schema violations or syntax issues.
     - Compilation might be skipped or proceed with warnings, depending on error severity. No output files should be generated if critical linting errors occur.
 - [ ] **Test 4: Invocation of Destination Plugins**
-  - **Action**: Use a valid `my-rules.ruleset.md` (as defined in `PLAN-rulesets-v0.md`).
+  - **Action**: Use a valid `my-rules.rule.md` (as defined in `PLAN-rulesets-v0.md`).
   - **Command**: Execute the main Rulesets v0 script/function.
   - **Expected Result**:
     - Logs or other indicators (e.g., mock file writes) confirm that both `CursorPlugin.write()` and `WindsurfPlugin.write()` were called with the correct `CompiledDoc.output.content` and `destPath`.

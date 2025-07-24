@@ -1,0 +1,57 @@
+{
+  "compilerOptions": {
+    // Type checking
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    
+    // Module resolution
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    
+    // JavaScript support
+    "allowJs": true,
+    "checkJs": false,
+    
+    // Interop
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    
+    // Language and environment
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "jsx": "react-jsx",
+    
+    // Bun-specific optimizations
+    "types": ["bun-types"],
+    "skipLibCheck": true,
+    
+    // Path mapping
+    "baseUrl": ".",
+    "paths": {
+      "@rulesets/*": ["./packages/*"],
+      "~/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "**/*.jsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".turbo",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

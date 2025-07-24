@@ -1,19 +1,25 @@
 // :M: tldr: Main entry point and CLI orchestration for Rulesets
 // :M: v0.1.0: Basic orchestration for single file processing with minimal features
 import { promises as fs } from 'fs';
-import { parse } from './parser';
-import { lint } from './linter';
-import { compile } from './compiler';
+import { parse } from '@rulesets/parser';
+import { lint } from '@rulesets/linter';
+import { compile } from '@rulesets/compiler';
+import type { Logger } from '@rulesets/types';
 import { destinations } from './destinations';
-import { ConsoleLogger } from './interfaces';
-import type { Logger } from './interfaces';
+import { ConsoleLogger } from './logger';
 
-// Export all public APIs
-export * from './interfaces';
-export { parse } from './parser';
-export { lint, type LinterConfig, type LintResult } from './linter';
-export { compile } from './compiler';
+// Re-export from types for backward compatibility
+export type { Logger, ParsedDoc, CompiledDoc } from '@rulesets/types';
+
+// Export local APIs
 export { destinations, CursorPlugin, WindsurfPlugin } from './destinations';
+export { ConsoleLogger } from './logger';
+
+// Re-export from other packages
+export { parse } from '@rulesets/parser';
+export { lint } from '@rulesets/linter';
+export type { LinterConfig, LintResult } from '@rulesets/linter';
+export { compile } from '@rulesets/compiler';
 
 /**
  * Orchestrates the Rulesets v0.1.0 build process for a single file.
@@ -116,8 +122,10 @@ export async function runRulesetsV0(
 
   // Step 4: Determine which destinations to compile for
   const frontmatter = parsedDoc.source.frontmatter || {};
-  const destinationIds = frontmatter.destinations
-    ? Object.keys(frontmatter.destinations)
+  const destinationIds = frontmatter.destinations &&
+                         typeof frontmatter.destinations === 'object' &&
+                         !Array.isArray(frontmatter.destinations)
+    ? Object.keys(frontmatter.destinations as Record<string, unknown>)
     : Array.from(destinations.keys());
 
   logger.info(`Compiling for destinations: ${destinationIds.join(', ')}`);
@@ -142,11 +150,13 @@ export async function runRulesetsV0(
     }
 
     // Determine output path
+    const frontmatterDestinations = frontmatter.destinations;
     const destConfig: Record<string, unknown> =
-      frontmatter.destinations &&
-      typeof frontmatter.destinations === 'object' &&
-      !Array.isArray(frontmatter.destinations)
-        ? ((frontmatter.destinations as Record<string, unknown>)[destinationId] as Record<string, unknown>) || {}
+      frontmatterDestinations &&
+      typeof frontmatterDestinations === 'object' &&
+      !Array.isArray(frontmatterDestinations) &&
+      typeof (frontmatterDestinations as Record<string, unknown>)[destinationId] === 'object'
+        ? ((frontmatterDestinations as Record<string, unknown>)[destinationId] as Record<string, unknown>) || {}
         : {};
     const defaultPath = `.ruleset/dist/${destinationId}/my-rules.md`;
     const destPath =

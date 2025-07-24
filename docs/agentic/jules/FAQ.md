@@ -87,7 +87,7 @@ Include:
 
 ### Q: What are "source rules"?
 
-**A:** Markdown files with Ruleset syntax (`.ruleset.md` extension) that get compiled into destination-specific rules files.
+**A:** Markdown files with Ruleset syntax (`.rule.md` extension) that get compiled into destination-specific rules files.
 
 ### Q: What are "compiled rules"?
 

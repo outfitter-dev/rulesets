@@ -1,0 +1,23 @@
+{
+  "semi": true,
+  "trailingComma": "es5",
+  "singleQuote": true,
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
+  "endOfLine": "lf",
+  "overrides": [
+    {
+      "files": ["*.md", "*.mdx", "*.mdc"],
+      "options": {
+        "proseWrap": "preserve"
+      }
+    },
+    {
+      "files": ["*.yml", "*.yaml"],
+      "options": {
+        "singleQuote": false
+      }
+    }
+  ]
+}

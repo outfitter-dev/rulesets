@@ -1,8 +1,8 @@
-# `.ruleset.md` File Extension Support
+# `.rule.md` File Extension Support
 
 ## Overview
 
-This document outlines the plan for implementing the `.ruleset.md` file extension for Rulesets source rules files. This extension will improve discoverability, enable better search capabilities, and support IDE integration.
+This document outlines the plan for implementing the `.rule.md` file extension for Rulesets source rules files. This extension will improve discoverability, enable better search capabilities, and support IDE integration.
 
 ## Implementation Proposal
 
@@ -10,13 +10,13 @@ This document outlines the plan for implementing the `.ruleset.md` file extensio
 
 1. **Dual Extension Support**
 
-   - Both `.md` and `.ruleset.md` extensions should be recognized as valid source rules files
-   - `.ruleset.md` should be treated as the preferred extension
+   - Both `.md` and `.rule.md` extensions should be recognized as valid source rules files
+   - `.rule.md` should be treated as the preferred extension
 
 2. **Compiler Implementation**
 
-   - The compiler should scan for both `.md` and `.ruleset.md` files
-   - Add a configuration option to prefer one extension over the other (default to `.ruleset.md`)
+   - The compiler should scan for both `.md` and `.rule.md` files
+   - Add a configuration option to prefer one extension over the other (default to `.rule.md`)
 
 3. **Type Definitions**
 
@@ -33,7 +33,7 @@ The proposed implementation would involve these changes to the core package:
 
 ```typescript
 // In types.ts
-export const SUPPORTED_EXTENSIONS = ['.md', '.ruleset.md'] as const;
+export const SUPPORTED_EXTENSIONS = ['.md', '.rule.md'] as const;
 export type SupportedExtension = (typeof SUPPORTED_EXTENSIONS)[number];
 
 export interface CompilerConfig {
@@ -51,16 +51,16 @@ class RulesetsCompiler {
   constructor(config: CompilerConfig) {
     this.config = {
       ...config,
-      preferRulesetExtension: config.preferRulesetExtension ?? true, // Default to preferring .ruleset.md
+      preferRulesetExtension: config.preferRulesetExtension ?? true, // Default to preferring .rule.md
     };
   }
 
   findSourceRulesFiles(directory: string): SourceRulesFile[] {
-    // Implementation that checks for both .ruleset.md and .md extensions
+    // Implementation that checks for both .rule.md and .md extensions
   }
 
   getPreferredExtension(): string {
-    return this.config.preferRulesetExtension ? '.ruleset.md' : '.md';
+    return this.config.preferRulesetExtension ? '.rule.md' : '.md';
   }
 
   isSourceRulesFile(filePath: string): boolean {
@@ -73,7 +73,7 @@ class RulesetsCompiler {
 
 1. **Discoverability**
 
-   - The `.ruleset.md` extension makes it clear these files are Rulesets source rules
+   - The `.rule.md` extension makes it clear these files are Rulesets source rules
    - Better distinction from regular Markdown files
 
 2. **IDE and Tooling Support**
@@ -95,8 +95,8 @@ class RulesetsCompiler {
 For existing projects:
 
 - Continue supporting `.md` for backward compatibility
-- Encourage migration to `.ruleset.md` for new files
-- Provide documentation on the benefits of the `.ruleset.md` extension
+- Encourage migration to `.rule.md` for new files
+- Provide documentation on the benefits of the `.rule.md` extension
 
 ## Testing Strategy
 

@@ -1,0 +1,36 @@
+{
+  "name": "rulesets-cli",
+  "version": "0.1.0",
+  "private": false,
+  "description": "CLI for Rulesets compiler",
+  "bin": {
+    "rulesets": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "lint": "eslint . --ext .ts,.tsx",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@rulesets/core": "workspace:*",
+    "@rulesets/parser": "workspace:*",
+    "@rulesets/compiler": "workspace:*",
+    "@rulesets/linter": "workspace:*",
+    "commander": "^12.0.0",
+    "chalk": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.31",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.5",
+    "vitest": "^1.6.0",
+    "eslint": "^8.57.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
+}

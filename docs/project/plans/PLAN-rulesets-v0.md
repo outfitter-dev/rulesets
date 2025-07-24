@@ -16,7 +16,7 @@
 
 ## Overview
 
-Rulesets is a Markdown-previewable rules compiler that allows authoring a single source rules file (source rules) in Markdown and compiling it into compiled rules for various destinations (e.g., AI assistants, IDEs). Rulesets v0 aims to establish a production-ready monorepo, ship the initial `@rulesets/core` package (including a basic parser, a pass-through compiler, and a frontmatter linter), and prove the end-to-end flow by processing a `my-rules.ruleset.md` file, writing compiled rules to `.ruleset/dist/`, and invoking stubbed destination plugins for Cursor and Windsurf.
+Rulesets is a Markdown-previewable rules compiler that allows authoring a single source rules file (source rules) in Markdown and compiling it into compiled rules for various destinations (e.g., AI assistants, IDEs). Rulesets v0 aims to establish a production-ready monorepo, ship the initial `@rulesets/core` package (including a basic parser, a pass-through compiler, and a frontmatter linter), and prove the end-to-end flow by processing a `my-rules.rule.md` file, writing compiled rules to `.ruleset/dist/`, and invoking stubbed destination plugins for Cursor and Windsurf.
 
 While v0 will not process Rulesets notation markers (`{{...}}`) within the content body, the architecture will be laid to easily incorporate this functionality in subsequent v0.x releases (e.g., v0.1 for `{{block}}` parsing, v0.2 for variables, etc.).
 
@@ -164,12 +164,12 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
 
 - [ ] **Task 1: Create Main CLI Orchestration Logic (within `@rulesets/core`)**
   - Create `packages/core/src/index.ts` (if not already the main entry) or a `cli.ts`.
-  - This will be a simple function/script that: 1. Reads a sample `my-rules.ruleset.md` file from a predefined location (e.g., project root or a `./test-data/` directory). 2. Instantiates a basic logger. 3. Invokes the `Parser` with the file content. 4. Invokes the `Linter` with the parsed document. Logs linting results. 5. If linting passes (or only warnings), invokes the `Compiler` for "cursor" and "windsurf" destinations. 6. For each compiled document, instantiates the respective destination plugin. 7. Calls the `write()` method of each plugin, providing necessary context (e.g., output path like `.ruleset/dist/cursor/my-rules.md` and `.ruleset/dist/windsurf/my-rules.md`).
+  - This will be a simple function/script that: 1. Reads a sample `my-rules.rule.md` file from a predefined location (e.g., project root or a `./test-data/` directory). 2. Instantiates a basic logger. 3. Invokes the `Parser` with the file content. 4. Invokes the `Linter` with the parsed document. Logs linting results. 5. If linting passes (or only warnings), invokes the `Compiler` for "cursor" and "windsurf" destinations. 6. For each compiled document, instantiates the respective destination plugin. 7. Calls the `write()` method of each plugin, providing necessary context (e.g., output path like `.ruleset/dist/cursor/my-rules.md` and `.ruleset/dist/windsurf/my-rules.md`).
   - **Acceptance Criteria**: A Node.js script can execute the parse -> lint -> compile -> write (stubbed) flow. Compiled rules (raw body) are written to the specified output directory.
   - **Dependencies**: Phase 2 (all tasks).
-- [ ] **Task 2: Create Sample `my-rules.ruleset.md`**
+- [ ] **Task 2: Create Sample `my-rules.rule.md`**
 
-  - Create a file named `my-rules.ruleset.md` in the project root or a test directory.
+  - Create a file named `my-rules.rule.md` in the project root or a test directory.
   - Content:
 
   ```markdown
@@ -307,7 +307,7 @@ rulesets/
 │     ├─ tsconfig.json
 │     ├─ tsup.config.ts
 │     └─ vitest.config.ts
-├─ my-rules.ruleset.md             # Sample source rules file for v0 testing
+├─ my-rules.rule.md             # Sample source rules file for v0 testing
 ├─ package.json
 ├─ pnpm-workspace.yaml
 ├─ tsconfig.base.json
@@ -331,7 +331,7 @@ rulesets/
     "lint": "turbo lint",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo build --filter=@rulesets/core && changeset publish",
+    "release": "turbo build --filter=@rulesets/core && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1", // Example version, use latest
@@ -339,8 +339,8 @@ rulesets/
     "typescript": "^5.4.5", // Example version, use latest 5.x
     "eslint": "^8.57.0", // Example version, use latest
     "prettier": "^3.2.5", // Example version, use latest
-    "markdownlint-cli": "^0.41.0", // Example version, use latest
-  },
+    "markdownlint-cli": "^0.41.0" // Example version, use latest
+  }
 }
 ```
 
@@ -396,9 +396,9 @@ packages:
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true, // Base config should not emit, individual packages will.
-    "types": ["node", "vitest/globals"],
+    "types": ["node", "vitest/globals"]
   },
-  "exclude": ["node_modules", "**/dist", "**/coverage"],
+  "exclude": ["node_modules", "**/dist", "**/coverage"]
 }
 ```
 

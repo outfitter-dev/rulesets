@@ -20,7 +20,7 @@ The problem is, they all have different formats, behavior, and capabilities, whi
 
 Rulesets is "Terraform for AI rules": declare your ideal rules once, compile for dozens of coding agents, and guarantee every teammate (human or bot) runs with the same authoritative rules—no copy‑paste, no drift, just high‑quality, version-controlled context.
 
-With Rulesets, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single source rules file (`.ruleset.md`). This source rules file is the "gold master" for your instructions, from which individual compiled rules are created for each destination and sent to the right places.
+With Rulesets, you can apply the "Don't Repeat Yourself" principle to your agentic coding tools. Instead of writing slightly different versions of the same instructions for each tool, you create a single source rules file (`.rule.md`). This source rules file is the "gold master" for your instructions, from which individual compiled rules are created for each destination and sent to the right places.
 
 The app consists of:
 
@@ -36,7 +36,7 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 ## Core Concepts
 
 **source rules**
-: source rules files, written in 100% previewable Markdown with `.ruleset.md` extension. Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
+: source rules files, written in 100% previewable Markdown with `.rule.md` extension. Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
 
 **compiled rules**
 : Destination-specific compiled files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their destination directories, these are referred to as "tool-ready rules".
@@ -74,11 +74,11 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 | `openai-codex` | [OpenAI Codex](https://github.com/openai/codex)                                         | CLI         | 🔵 Planned     |
 | `windsurf`     | [Windsurf](https://windsurf.dev/)                                                       | IDE         | 🟡 In Progress |
 
-_Want a new destination? Implement `toolProvider` and publish `@ruleset/plugin-<your-tool>`. See existing plugin examples and general development guidelines._
+_Want a new destination? Implement `toolProvider` and publish `@rulesets/plugin-<your-tool>`. See existing plugin examples and general development guidelines._
 
 ## Key Features
 
-### Ruleset Syntax
+### Rulesets Syntax
 
 - **100% Preview-able Markdown** – Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
 - **Granular Blocks** – Filter blocks within a single source rules file for per-destination inclusion/exclusion.
@@ -111,7 +111,7 @@ yarn add @rulesets/core
 
 ## Quick Start
 
-### 1. Create a source rules file (`my-rules.ruleset.md`)
+### 1. Create a source rules file (`my-rules.rule.md`)
 
 ```markdown
 ---
@@ -141,7 +141,7 @@ async function main() {
   const logger = new ConsoleLogger();
 
   try {
-    await runRulesetsV0('./my-rules.ruleset.md', logger);
+    await runRulesetsV0('./my-rules.rule.md', logger);
     console.log('Rules compiled successfully!');
   } catch (error) {
     console.error('Error:', error);
@@ -163,7 +163,7 @@ The current v0 release provides foundational functionality:
 - ✅ Frontmatter parsing and validation
 - ✅ Basic file compilation and writing
 - ✅ Destination plugin architecture
-- ❌ Ruleset syntax markers (`{{...}}`) are not processed (passed through as-is)
+- ❌ Rulesets syntax markers (`{{...}}`) are not processed (passed through as-is)
 - ❌ No block/import/variable support yet
 
 These advanced features are planned for v0.x releases leading to v1.0.
@@ -176,9 +176,9 @@ project/
 │   ├── dist/              # Compiled rules output
 │   │   ├── cursor/        # Cursor-specific rules
 │   │   └── windsurf/      # Windsurf-specific rules
-│   └── src/               # Source rules files (*.ruleset.md, *.md)
+│   └── src/               # Source rules files (*.rule.md, *.md)
 │       └── _partials/     # Reusable content modules (future)
-├── my-rules.ruleset.md      # Your source rules file
+├── my-rules.rule.md      # Your source rules file
 └── package.json
 ```
 
@@ -197,7 +197,7 @@ project/
 | **Destination Variable**    | `{{$destination}}` / `{{$destination.id}}`                 | Injects current destination name/ID.              |
 | **Instruction Placeholder** | `[fill this in]`                                           | Marker for LLM to complete.                       |
 
-The full Ruleset syntax specification can be found in `docs/project/OVERVIEW.md`.
+The full Rulesets syntax specification can be found in `docs/project/OVERVIEW.md`.
 
 ## Versioning and Changelog
 
@@ -231,5 +231,5 @@ Please see our general contributing guidelines for more details.
 
 ## References
 
-- `docs/project/OVERVIEW.md` – Full Ruleset syntax specification.
+- `docs/project/OVERVIEW.md` – Full Rulesets syntax specification.
 - `docs/architecture/DECISIONS.md` – Design rationale & deep-dive.
