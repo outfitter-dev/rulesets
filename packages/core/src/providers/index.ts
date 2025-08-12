@@ -5,17 +5,20 @@ import type { DestinationPlugin, Provider } from '@rulesets/types';
 import { CursorProvider } from './cursor-provider';
 import { WindsurfProvider } from './windsurf-provider';
 import { ClaudeCodeProvider } from './claude-code-provider';
+import { CodexProvider } from './codex-provider';
 
 // Create singleton instances of modern providers
 export const cursorProvider = new CursorProvider();
 export const windsurfProvider = new WindsurfProvider();
 export const claudeCodeProvider = new ClaudeCodeProvider();
+export const codexProvider = new CodexProvider();
 
 // Modern provider registry - primary export for new code
 export const providers: ReadonlyMap<string, Provider> = new Map<string, Provider>([
   ['cursor', cursorProvider],
   ['windsurf', windsurfProvider],
   ['claude-code', claudeCodeProvider],
+  ['codex-cli', codexProvider],
 ]);
 
 // Provider lookup utilities for modern code
@@ -40,6 +43,7 @@ export const destinations: ReadonlyMap<string, DestinationPlugin> = new Map<
   ['cursor', cursorProvider as unknown as DestinationPlugin],
   ['windsurf', windsurfProvider as unknown as DestinationPlugin],
   ['claude-code', claudeCodeProvider as unknown as DestinationPlugin],
+  ['codex-cli', codexProvider as unknown as DestinationPlugin],
 ]);
 
 // Legacy aliases for backwards compatibility
@@ -47,9 +51,10 @@ export const destinations: ReadonlyMap<string, DestinationPlugin> = new Map<
 export const cursorPlugin = cursorProvider;
 export const windsurfPlugin = windsurfProvider;
 export const claudeCodePlugin = claudeCodeProvider;
+export const codexPlugin = codexProvider;
 
 // Export classes for testing and extension
-export { CursorProvider, WindsurfProvider, ClaudeCodeProvider };
+export { CursorProvider, WindsurfProvider, ClaudeCodeProvider, CodexProvider };
 
 // Export types for modern usage
 export type { Provider } from '@rulesets/types';
