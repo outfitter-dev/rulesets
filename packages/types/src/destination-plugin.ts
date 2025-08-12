@@ -6,6 +6,20 @@ import type { Logger } from './logger';
 
 export type { JSONSchema7 }; // Re-export for convenience
 
+/**
+ * Result of a write operation, optionally including generated file paths
+ */
+export interface WriteResult {
+  /** File paths that were generated during the write operation */
+  readonly generatedPaths?: readonly string[];
+  /** Additional metadata about the write operation */
+  readonly metadata?: Record<string, unknown>;
+}
+
+/**
+ * Enhanced destination plugin interface with optional write result support
+ * Maintains backward compatibility while enabling gitignore management
+ */
 export interface DestinationPlugin {
   /**
    * Canonical ID for the destination plugin.
@@ -29,6 +43,7 @@ export interface DestinationPlugin {
    * specific to the destination's format or requirements.
    * // :M: tldr: Writes the compiled document to the target destination
    * // :M: v0.1.0: Basic file writing without destination-specific transformations
+   * // :M: v0.2.0: Added optional WriteResult return for gitignore management
    *
    * @param ctx - The context object for the write operation.
    * @param ctx.compiled - The compiled document to write.
@@ -37,11 +52,19 @@ export interface DestinationPlugin {
    * @param ctx.config - The validated plugin-specific configuration.
    * @param ctx.logger - A logger instance for outputting messages.
    * @returns A promise that resolves when the write operation is complete.
+   *          Can optionally return WriteResult with generated file paths.
    */
   write(ctx: {
     compiled: CompiledDoc;
     destPath: string;
     config: Record<string, unknown>; // Validated via schema from configSchema()
     logger: Logger;
-  }): Promise<void>;
+  }): Promise<void | WriteResult>;
+}
+
+/**
+ * Type guard to check if a write result contains generated paths
+ */
+export function hasGeneratedPaths(result: void | WriteResult): result is WriteResult {
+  return result !== undefined && 'generatedPaths' in result;
 }

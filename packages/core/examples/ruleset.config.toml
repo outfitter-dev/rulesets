@@ -1,0 +1,65 @@
+# Rulesets Configuration File (TOML format)
+# This file demonstrates the complete configuration schema
+
+# Global Settings
+strict = true
+defaultProviders = ["cursor", "claude-code"]
+outputDirectory = ".ruleset/dist"
+
+# Gitignore Management Configuration
+[gitignore]
+enabled = true
+keep = [
+  "docs/manual-rules.md",
+  "legacy-rules.md"
+]
+ignore = [
+  "*.backup", 
+  "*.tmp", 
+  "*.log"
+]
+
+[gitignore.options]
+comment = "Rulesets Generated Files - Do Not Edit Manually"
+sort = true
+
+# Provider Configurations
+
+# Cursor IDE configuration
+[providers.cursor]
+enabled = true
+outputPath = ".cursor/rules/"
+
+[providers.cursor.options]
+alwaysApply = false
+priority = "high"
+
+# Claude Code CLI configuration
+[providers."claude-code"]
+enabled = true
+outputPath = "CLAUDE.md"
+
+[providers."claude-code".options]
+format = "markdown"
+includeMetadata = true
+
+# Windsurf IDE configuration
+[providers.windsurf]
+enabled = false
+outputPath = ".windsurf/rules/"
+
+[providers.windsurf.options]
+theme = "dark"
+
+# Roo Code VS Code Extension
+[providers."roo-code"]
+enabled = false
+outputPath = ".roo/rules.md"
+
+# Global options for extensibility
+[options.experimental]
+enableParallelCompilation = false
+useAdvancedCaching = true
+
+[options.performance]
+maxConcurrentDestinations = 4

@@ -8,19 +8,11 @@ import type {
   OutputPath,
   DestinationId,
   DestPath,
-  BlockName,
-  PropertyName,
 } from './brands';
 import type {
-  Provider,
   ProviderConfig,
-  ProviderCapabilities,
-  ProviderError,
-  ProviderWarning,
 } from './provider';
 import type {
-  BaseCompilationContext,
-  ProviderConfiguration,
   LinterConfig,
   Property,
 } from './ruleset-context';
@@ -91,7 +83,7 @@ export interface MigrationMetadata {
  */
 export function migrateDestinationConfig(
   legacyConfig: LegacyDestinationConfig
-): MigrationResult<ProviderConfig> {
+): MigrationResult<ProviderConfig | undefined> {
   const errors: MigrationError[] = [];
   const warnings: MigrationWarning[] = [];
   const fieldsProcessed: string[] = [];
@@ -107,7 +99,7 @@ export function migrateDestinationConfig(
         message: 'Legacy config must be an object',
         code: 'INVALID_LEGACY_CONFIG',
       });
-      return createMigrationResult(false, undefined, errors, warnings, {
+      return createMigrationResult<ProviderConfig>(false, undefined, errors, warnings, {
         fieldsProcessed,
         fieldsMigrated,
         fieldsSkipped,
@@ -238,7 +230,7 @@ export function migrateDestinationConfig(
       code: 'MIGRATION_ERROR',
     });
 
-    return createMigrationResult(false, undefined, errors, warnings, {
+    return createMigrationResult<ProviderConfig>(false, undefined, errors, warnings, {
       fieldsProcessed,
       fieldsMigrated,
       fieldsSkipped,
@@ -250,7 +242,7 @@ export function migrateDestinationConfig(
 /**
  * Migrate legacy property with destination scope to provider scope
  */
-export function migratePropertyScope(legacyProperty: Property): MigrationResult<Property> {
+export function migratePropertyScope(legacyProperty: Property): MigrationResult<Property | undefined> {
   const errors: MigrationError[] = [];
   const warnings: MigrationWarning[] = [];
 
@@ -296,7 +288,7 @@ export function migratePropertyScope(legacyProperty: Property): MigrationResult<
       code: 'PROPERTY_SCOPE_MIGRATION_ERROR',
     });
 
-    return createMigrationResult(false, undefined, errors, warnings, {
+    return createMigrationResult<Property>(false, undefined, errors, warnings, {
       fieldsProcessed: ['scope'],
       fieldsMigrated: [],
       fieldsSkipped: [],
@@ -308,7 +300,7 @@ export function migratePropertyScope(legacyProperty: Property): MigrationResult<
 /**
  * Migrate legacy linter configuration
  */
-export function migrateLinterConfig(legacyConfig: LinterConfig): MigrationResult<LinterConfig> {
+export function migrateLinterConfig(legacyConfig: LinterConfig): MigrationResult<LinterConfig | undefined> {
   const errors: MigrationError[] = [];
   const warnings: MigrationWarning[] = [];
   const fieldsProcessed: string[] = [];
@@ -351,7 +343,7 @@ export function migrateLinterConfig(legacyConfig: LinterConfig): MigrationResult
       code: 'LINTER_CONFIG_MIGRATION_ERROR',
     });
 
-    return createMigrationResult(false, undefined, errors, warnings, {
+    return createMigrationResult<LinterConfig>(false, undefined, errors, warnings, {
       fieldsProcessed,
       fieldsMigrated,
       fieldsSkipped: [],

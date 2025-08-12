@@ -7,7 +7,7 @@ export * from './logger';
 export * from './brands';
 export * from './ruleset-context';
 
-// Markers exports (selective to avoid conflicts)
+// Markers exports (selective to avoid conflicts) - renamed Marker to avoid conflict
 export type {
   MarkerType,
   BaseMarker,
@@ -19,7 +19,7 @@ export type {
   RawOpenMarker,
   RawCloseMarker,
   PlaceholderMarker,
-  Marker,
+  Marker as DetailedMarker, // Renamed to avoid conflict with ruleset-context Marker
   MarkerProperty,
   MarkerModifier,
   BlockFilter,
@@ -47,6 +47,11 @@ export type {
 // Modern provider-based architecture
 export * from './provider';
 export * from './migration';
+
+// Legacy exports for backwards compatibility (selective exports to avoid conflicts)
+export type { CompiledDoc, ParsedDoc } from './compiled-doc';
+export type { DestinationPlugin, JSONSchema7 } from './destination-plugin';
+// Skip provider-registry and provider-types exports to avoid conflicts
 
 // Legacy module re-exports (with namespace to avoid conflicts)
 export * as LegacyTypes from './compiled-doc';

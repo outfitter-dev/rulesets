@@ -1,0 +1,76 @@
+{
+  // Rulesets Configuration File (JSONC format with comments)
+  // This file demonstrates the complete configuration schema
+  
+  // Global Settings
+  "strict": true,
+  "defaultProviders": ["cursor", "claude-code"],
+  "outputDirectory": ".ruleset/dist",
+  
+  // Provider Configurations
+  "providers": {
+    // Cursor IDE configuration
+    "cursor": {
+      "enabled": true,
+      "outputPath": ".cursor/rules/",
+      "options": {
+        "alwaysApply": false,
+        "priority": "high"
+      }
+    },
+    
+    // Claude Code CLI configuration
+    "claude-code": {
+      "enabled": true,
+      "outputPath": "CLAUDE.md",
+      "options": {
+        "format": "markdown",
+        "includeMetadata": true
+      }
+    },
+    
+    // Windsurf IDE configuration
+    "windsurf": {
+      "enabled": false,
+      "outputPath": ".windsurf/rules/",
+      "options": {
+        "theme": "dark"
+      }
+    },
+    
+    // Roo Code VS Code Extension
+    "roo-code": {
+      "enabled": false,
+      "outputPath": ".roo/rules.md"
+    }
+  },
+  
+  // Gitignore Management Configuration
+  "gitignore": {
+    "enabled": true,
+    "keep": [
+      "docs/manual-rules.md",
+      "legacy-rules.md"
+    ],
+    "ignore": [
+      "*.backup",
+      "*.tmp",
+      "*.log"
+    ],
+    "options": {
+      "comment": "Rulesets Generated Files - Do Not Edit Manually",
+      "sort": true
+    }
+  },
+  
+  // Global options for extensibility
+  "options": {
+    "experimental": {
+      "enableParallelCompilation": false,
+      "useAdvancedCaching": true
+    },
+    "performance": {
+      "maxConcurrentDestinations": 4
+    }
+  }
+}

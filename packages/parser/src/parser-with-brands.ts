@@ -20,7 +20,8 @@ import {
   type Import,
   type Variable,
   type Marker,
-} from '@outfitter/types';
+  type PropertyName,
+} from '@rulesets/types';
 
 /**
  * Enhanced parser with branded types
@@ -124,8 +125,9 @@ export class BrandedParser {
     let match;
     
     while ((match = blockRegex.exec(content)) !== null) {
-      const fullMatch = match[0];
-      const innerContent = match[1];
+      const innerContent = match[1]; // Guaranteed by regex pattern [^}]+
+      if (!innerContent) continue; // Extra safety check
+      
       const line = this.getLineNumber(content, match.index);
       const column = this.getColumnNumber(content, match.index);
       
@@ -133,6 +135,12 @@ export class BrandedParser {
       if (this.isBlockMarker(innerContent)) {
         try {
           const { name, properties, isClosing } = this.parseBlockMarker(innerContent);
+          
+          // Validate inputs before branding
+          if (!name) {
+            this.addError('Block marker missing name', line, column, 'error', 'MISSING_BLOCK_NAME');
+            continue;
+          }
           
           // Validate and brand the block name
           const validName = createBlockName(name);
@@ -172,7 +180,11 @@ export class BrandedParser {
     let match;
     
     while ((match = importRegex.exec(content)) !== null) {
-      const innerContent = match[1].trim();
+      const innerContent = match[1]?.trim();
+      if (!innerContent) {
+        continue; // Skip empty imports
+      }
+      
       const line = this.getLineNumber(content, match.index);
       const column = this.getColumnNumber(content, match.index);
       
@@ -211,12 +223,20 @@ export class BrandedParser {
     let match;
     
     while ((match = varRegex.exec(content)) !== null) {
-      const varContent = match[1].trim();
+      const varContent = match[1]?.trim();
+      if (!varContent) {
+        continue; // Skip empty variables
+      }
+      
       const line = this.getLineNumber(content, match.index);
       const column = this.getColumnNumber(content, match.index);
       
       try {
         const { name, fallback, isSystem } = this.parseVariable(varContent);
+        if (!name) {
+          this.addError('Variable missing name', line, column, 'error', 'MISSING_VARIABLE_NAME');
+          continue;
+        }
         const validName = createVariableName(name);
         
         variables.push({
@@ -252,6 +272,10 @@ export class BrandedParser {
     
     while ((match = markerRegex.exec(content)) !== null) {
       const innerContent = match[1];
+      if (!innerContent) {
+        continue; // Skip empty markers
+      }
+      
       const line = this.getLineNumber(content, match.index);
       const column = this.getColumnNumber(content, match.index);
       
@@ -286,22 +310,26 @@ export class BrandedParser {
   } {
     const isClosing = content.startsWith('/');
     const cleanContent = isClosing ? content.slice(1) : content;
-    const parts = cleanContent.split(/\s+/);
-    const name = parts[0];
+    const parts = cleanContent.split(/\s+/).filter(part => part.length > 0);
+    const name = parts[0] || '';
     
     // Parse properties
     const properties: Array<{ name: PropertyName; value?: string }> = [];
     for (let i = 1; i < parts.length; i++) {
       const prop = parts[i];
+      if (!prop) continue;
+      
       if (prop.includes('=')) {
         const [propName, propValue] = prop.split('=');
-        try {
-          properties.push({
-            name: createPropertyName(propName),
-            value: propValue,
-          });
-        } catch {
-          // Skip invalid properties
+        if (propName) {
+          try {
+            properties.push({
+              name: createPropertyName(propName),
+              value: propValue,
+            });
+          } catch {
+            // Skip invalid properties
+          }
         }
       } else {
         try {
@@ -325,14 +353,14 @@ export class BrandedParser {
     blockName?: string;
     properties: Array<{ name: PropertyName; value?: string }>;
   } {
-    const parts = content.split(/\s+/);
-    let path = parts[0];
+    const parts = content.split(/\s+/).filter(part => part.length > 0);
+    let path = parts[0] || '';
     let blockName: string | undefined;
     
     // Check for block selector
-    if (path.includes('#')) {
+    if (path && path.includes('#')) {
       const [basePath, selector] = path.split('#');
-      path = basePath;
+      path = basePath || '';
       blockName = selector;
     }
     
@@ -340,15 +368,19 @@ export class BrandedParser {
     const properties: Array<{ name: PropertyName; value?: string }> = [];
     for (let i = 1; i < parts.length; i++) {
       const prop = parts[i];
+      if (!prop) continue;
+      
       if (prop.includes('=')) {
         const [propName, propValue] = prop.split('=');
-        try {
-          properties.push({
-            name: createPropertyName(propName),
-            value: propValue,
-          });
-        } catch {
-          // Skip invalid properties
+        if (propName) {
+          try {
+            properties.push({
+              name: createPropertyName(propName),
+              value: propValue,
+            });
+          } catch {
+            // Skip invalid properties
+          }
         }
       }
     }
@@ -369,9 +401,15 @@ export class BrandedParser {
     let fallback: string | undefined;
     
     if (content.includes('||')) {
-      const [varName, defaultValue] = content.split('||').map(s => s.trim());
-      name = varName;
-      fallback = defaultValue.replace(/^["']|["']$/g, ''); // Remove quotes
+      const parts = content.split('||').map(s => s.trim());
+      const varName = parts[0];
+      const defaultValue = parts[1];
+      if (varName) {
+        name = varName;
+        if (defaultValue) {
+          fallback = defaultValue.replace(/^["']|["']$/g, ''); // Remove quotes
+        }
+      }
     }
     
     // Add $ prefix if not present (for the branded type)
@@ -401,6 +439,10 @@ export class BrandedParser {
       // In real implementation, use a YAML parser
       // This is simplified for demonstration
       const yamlContent = match[1];
+      if (!yamlContent) {
+        return undefined;
+      }
+      
       const frontmatter: Record<string, unknown> = {};
       
       // Basic parsing (replace with proper YAML parser)
@@ -408,8 +450,11 @@ export class BrandedParser {
       for (const line of lines) {
         if (line.includes(':')) {
           const [key, ...valueParts] = line.split(':');
-          const value = valueParts.join(':').trim();
-          frontmatter[key.trim()] = value;
+          const trimmedKey = key?.trim();
+          if (trimmedKey) {
+            const value = valueParts.join(':').trim();
+            frontmatter[trimmedKey] = value;
+          }
         }
       }
       
@@ -421,12 +466,11 @@ export class BrandedParser {
   }
   
   /**
-   * Detect marker type
+   * Detect marker type - aligns with ruleset-context.ts Marker type
    */
-  private detectMarkerType(content: string): 'block' | 'import' | 'variable' | 'raw' {
+  private detectMarkerType(content: string): Marker['type'] {
     if (content.startsWith('>')) return 'import';
     if (content.startsWith('$')) return 'variable';
-    if (content.startsWith('/')) return 'block';
     if (content.includes('{') || content.includes('}')) return 'raw';
     return 'block';
   }
@@ -461,7 +505,7 @@ export class BrandedParser {
   private getColumnNumber(content: string, index: number): number {
     const lines = content.substring(0, index).split('\n');
     const lastLine = lines[lines.length - 1];
-    return lastLine.length + 1;
+    return (lastLine?.length ?? 0) + 1;
   }
   
   /**
