@@ -2,9 +2,9 @@
 // This file demonstrates how to use the new type-safe APIs
 
 import {
-  createDestinationId,
+  createProviderId,
   createSourcePath,
-  createDestPath,
+  // createOutputPath, // Unused in examples
   createBlockName,
   createVariableName,
   createMarkerContent,
@@ -13,15 +13,16 @@ import {
   createVersion,
   
   // Type guards
+  // isProviderId, // Unused in examples
+  
+  // Legacy compatibility
+  createDestinationId,
+  createDestPath,
   isDestinationId,
   
-  // Validation utilities
-  validators,
-  DestinationIdValidator,
-  MarkerValidationUtil,
-  
   // Types
-  type DestinationId,
+  // type ProviderId, // Unused in examples
+  // type DestinationId, // Used in function
   type CompilationContext,
 } from './index';
 
@@ -162,18 +163,18 @@ Follow TypeScript best practices and write comprehensive tests.
  */
 function exampleValidatorRegistry() {
   // Direct validator usage
-  const destinationValidator = new DestinationIdValidator();
-  const result = destinationValidator.validate('cursor');
-  
-  if (result.valid) {
-    console.log('Validation passed:', result.data);
+  // Validator utilities are no longer exported - using type guards instead
+  const testId = 'cursor';
+  if (isDestinationId(testId)) {
+    console.log('Validation passed:', testId);
   } else {
-    console.error('Validation failed:', result.errors);
+    console.error('Validation failed: Invalid destination ID');
   }
   
-  // Using the validator registry
-  const registryResult = validators.validate<DestinationId>('destinationId', 'windsurf');
-  console.log('Registry validation result:', registryResult);
+  // Direct validation using type guards
+  const testId2 = 'windsurf';
+  const isValid = isDestinationId(testId2);
+  console.log('Registry validation result:', isValid);
 }
 
 /**
@@ -185,17 +186,17 @@ function exampleMarkerValidation() {
     const blockMarker = createMarkerContent('{{instructions}}');
     const importMarker = createMarkerContent('{{> @legal}}');
     
-    // Validate marker syntax
-    const blockResult = MarkerValidationUtil.validateMarkerSyntax(blockMarker);
-    console.log('Block marker validation:', blockResult);
+    // MarkerValidationUtil no longer exported - validation happens during creation
+    console.log('Block marker created successfully:', blockMarker);
+    console.log('Import marker created successfully:', importMarker);
     
-    const importResult = MarkerValidationUtil.validateMarkerSyntax(importMarker);
-    console.log('Import marker validation:', importResult);
-    
-    // ❌ Invalid marker syntax
-    const invalidMarker = createMarkerContent('{{invalid marker syntax');
-    const invalidResult = MarkerValidationUtil.validateMarkerSyntax(invalidMarker);
-    console.log('Invalid marker validation:', invalidResult);
+    // ❌ Invalid marker syntax - would throw during creation
+    try {
+      createMarkerContent('{{invalid marker syntax');
+      console.log('Should not reach here - validation failed');
+    } catch (error) {
+      console.log('Invalid marker validation caught error:', error);
+    }
   } catch (error) {
     console.error('Marker validation error:', error);
   }
@@ -206,9 +207,10 @@ function exampleMarkerValidation() {
  */
 function exampleCompilationContext(): CompilationContext {
   return {
-    source: {
-      path: createSourcePath('./src/project-rules.rule.md'),
-      content: createRawContent(`
+    stage: 'parse' as const,
+    sourcePath: createSourcePath('./src/project-rules.rule.md'),
+    providerId: createProviderId('cursor'),
+    rawContent: createRawContent(`
 ---
 ruleset:
   version: "0.1.0"
@@ -223,91 +225,20 @@ destination:
 Follow these coding standards for consistency.
 {{/instructions}}
       `),
-      frontmatter: {
-        ruleset: { version: createVersion('0.1.0') },
-        description: 'Project coding standards',
-        destination: {
-          include: [createDestinationId('cursor'), createDestinationId('windsurf')],
-        },
+    frontmatter: {
+      ruleset: { version: createVersion('0.1.0') },
+      description: 'Project coding standards',
+      destination: {
+        include: [createDestinationId('cursor'), createDestinationId('windsurf')],
       },
     },
-    
-    destination: {
-      id: createDestinationId('cursor'),
-      outputPath: createDestPath('./.cursor/rules/project-rules.mdc'),
-      config: {
-        enabled: true,
-        output: {
-          createDirectory: true,
-        },
-        plugin: {
-          options: {},
-        },
-        transform: {
-          enabled: true,
-          rules: [],
-        },
-        validation: {
-          enabled: true,
-        },
-      },
+    environment: {
+      workspaceRoot: process.cwd(),
+      outputDir: './.ruleset/dist',
+      rulesetsVersion: createVersion('1.0.0'),
+      debug: false,
+      strict: true,
     },
-    
-    config: {
-      global: {
-        source: {
-          directory: './src',
-          include: ['**/*.rule.md', '**/*.md'],
-          exclude: ['node_modules/**', '.git/**'],
-        },
-        output: {
-          directory: './.ruleset/dist',
-          createLatestSymlink: true,
-          retention: {
-            maxRuns: 10,
-            maxAge: '30d',
-          },
-        },
-        validation: {
-          strict: true,
-          rules: [],
-        },
-        logging: {
-          level: 'info',
-          format: 'text',
-          output: 'console',
-        },
-      },
-      project: {
-        project: {
-          name: 'My Project',
-          version: createVersion('1.0.0'),
-        },
-        destinations: new Map(),
-        variables: new Map(),
-        properties: new Map(),
-      },
-      runtime: {
-        performance: {
-          timeout: 30000,
-          maxMemory: 512 * 1024 * 1024, // 512MB
-          monitoring: false,
-        },
-        security: {
-          sandbox: false,
-          allowedOperations: ['read', 'write'],
-          limits: {
-            maxFileSize: 10 * 1024 * 1024, // 10MB
-            maxTotalSize: 100 * 1024 * 1024, // 100MB
-          },
-        },
-        debug: {
-          enabled: false,
-          include: [],
-        },
-      },
-    },
-    
     metadata: {
       timestamp: new Date(),
       runId: 'run-' + Date.now(),
@@ -410,5 +341,5 @@ export function runAllExamples() {
   
   console.log('\n=== Compilation Context ===');
   const context = exampleCompilationContext();
-  console.log('Created compilation context for:', context.source.path);
+  console.log('Created compilation context for:', context.sourcePath);
 }

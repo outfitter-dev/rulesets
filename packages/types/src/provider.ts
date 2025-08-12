@@ -220,6 +220,28 @@ export interface CompilationStats {
 }
 
 /**
+ * Result of a provider write operation
+ * Used for gitignore management and tracking generated files
+ */
+export interface WriteResult {
+  readonly generatedPaths: string[];
+  readonly metadata: Record<string, unknown>;
+}
+
+/**
+ * Type guard to check if a write result has generated paths
+ * Used for backwards compatibility with providers that return void
+ */
+export function hasGeneratedPaths(result: unknown): result is WriteResult {
+  return (
+    typeof result === 'object' &&
+    result !== null &&
+    'generatedPaths' in result &&
+    Array.isArray((result as any).generatedPaths)
+  );
+}
+
+/**
  * Built-in provider definitions
  */
 export const BUILT_IN_PROVIDERS: Record<string, Provider> = {

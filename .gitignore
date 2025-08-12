@@ -10,11 +10,6 @@ dist/
 build/
 *.tsbuildinfo
 
-# Lock files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-
 # Testing
 coverage/
 
@@ -41,3 +36,7 @@ bun-debug.log*
 /.turbo
 
 docs_archive/
+
+# .agent
+!.agent/**
+.agent/research

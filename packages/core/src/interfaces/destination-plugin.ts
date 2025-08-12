@@ -37,11 +37,12 @@ export interface DestinationPlugin {
    * @param ctx.config - The validated plugin-specific configuration.
    * @param ctx.logger - A logger instance for outputting messages.
    * @returns A promise that resolves when the write operation is complete.
+   *          Modern providers may return WriteResult with generated paths for gitignore management.
    */
   write(ctx: {
     compiled: CompiledDoc;
     destPath: string;
     config: Record<string, unknown>; // Validated via schema from configSchema()
     logger: Logger;
-  }): Promise<void>;
+  }): Promise<void | { generatedPaths: string[]; metadata: Record<string, unknown> }>;
 }
