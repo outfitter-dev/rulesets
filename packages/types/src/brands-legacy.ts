@@ -1,5 +1,5 @@
 /**
- * Branded types for Rulesets - Provider-based terminology
+ * Branded types for Rulesets - Inspired by Grapple's security-first approach
  * Provides compile-time safety and runtime validation for core domain values
  */
 
@@ -8,9 +8,9 @@ import type { Opaque } from 'type-fest';
 /**
  * Brand types for core Rulesets domain values
  */
-export type ProviderId = Opaque<string, 'ProviderId'>;
+export type DestinationId = Opaque<string, 'DestinationId'>;
 export type SourcePath = Opaque<string, 'SourcePath'>;
-export type OutputPath = Opaque<string, 'OutputPath'>;
+export type DestPath = Opaque<string, 'DestPath'>;
 export type BlockName = Opaque<string, 'BlockName'>;
 export type VariableName = Opaque<string, 'VariableName'>;
 export type PropertyName = Opaque<string, 'PropertyName'>;
@@ -35,10 +35,10 @@ export class BrandValidationError extends Error {
 }
 
 /**
- * Provider ID validation and creation
- * Must match a known provider
+ * Destination ID validation and creation
+ * Must match a known destination provider
  */
-const VALID_PROVIDERS = [
+const VALID_DESTINATIONS = [
   'cursor',
   'windsurf',
   'claude-code',
@@ -50,32 +50,27 @@ const VALID_PROVIDERS = [
   'v0',
   'replit',
   'github-copilot',
-  'jules',
-  'aider',
-  'continue',
 ] as const;
 
-export type ValidProviderId = typeof VALID_PROVIDERS[number];
-
-export function createProviderId(value: string): ProviderId {
+export function createDestinationId(value: string): DestinationId {
   if (!value || typeof value !== 'string') {
     throw new BrandValidationError(
-      'ProviderId',
+      'DestinationId',
       value,
       'must be a non-empty string'
     );
   }
 
-  if (!VALID_PROVIDERS.includes(value as any)) {
+  if (!VALID_DESTINATIONS.includes(value as any)) {
     throw new BrandValidationError(
-      'ProviderId',
+      'DestinationId',
       value,
-      `must be one of: ${VALID_PROVIDERS.join(', ')}`,
-      { validProviders: VALID_PROVIDERS }
+      `must be one of: ${VALID_DESTINATIONS.join(', ')}`,
+      { validDestinations: VALID_DESTINATIONS }
     );
   }
 
-  return value as ProviderId;
+  return value as DestinationId;
 }
 
 /**
@@ -145,22 +140,22 @@ export function createSourcePath(value: string): SourcePath {
 }
 
 /**
- * Output path validation - for compiled output
+ * Destination path validation - for compiled output
  */
-export function createOutputPath(value: string): OutputPath {
+export function createDestPath(value: string): DestPath {
   if (!value || typeof value !== 'string') {
-    throw new BrandValidationError('OutputPath', value, 'must be a non-empty string');
+    throw new BrandValidationError('DestPath', value, 'must be a non-empty string');
   }
 
   // Prevent path traversal
   if (value.includes('../') || value.includes('..\\')) {
-    throw new BrandValidationError('OutputPath', value, 'path traversal not allowed');
+    throw new BrandValidationError('DestPath', value, 'path traversal not allowed');
   }
 
   // Prevent absolute paths that might escape project
   if (value.startsWith('/') && !value.startsWith('/.')) {
     throw new BrandValidationError(
-      'OutputPath',
+      'DestPath',
       value,
       'absolute paths not recommended'
     );
@@ -169,7 +164,7 @@ export function createOutputPath(value: string): OutputPath {
   // Length limits
   if (value.length > 255) {
     throw new BrandValidationError(
-      'OutputPath',
+      'DestPath',
       value,
       'path too long (max 255 characters)'
     );
@@ -177,10 +172,10 @@ export function createOutputPath(value: string): OutputPath {
 
   // Prevent null bytes
   if (value.includes('\0')) {
-    throw new BrandValidationError('OutputPath', value, 'null bytes not allowed');
+    throw new BrandValidationError('DestPath', value, 'null bytes not allowed');
   }
 
-  return value as OutputPath;
+  return value as DestPath;
 }
 
 /**
@@ -433,10 +428,10 @@ export function createVersion(value: string): Version {
 /**
  * Type guards for branded types
  */
-export function isProviderId(value: unknown): value is ProviderId {
+export function isDestinationId(value: unknown): value is DestinationId {
   try {
     if (typeof value !== 'string') return false;
-    createProviderId(value);
+    createDestinationId(value);
     return true;
   } catch {
     return false;
@@ -453,10 +448,10 @@ export function isSourcePath(value: unknown): value is SourcePath {
   }
 }
 
-export function isOutputPath(value: unknown): value is OutputPath {
+export function isDestPath(value: unknown): value is DestPath {
   try {
     if (typeof value !== 'string') return false;
-    createOutputPath(value);
+    createDestPath(value);
     return true;
   } catch {
     return false;
@@ -518,9 +513,9 @@ export function isVersion(value: unknown): value is Version {
  * Use with extreme caution and only when validation has already occurred
  */
 export const UnsafeBrands = {
-  providerId: (value: string): ProviderId => value as ProviderId,
+  destinationId: (value: string): DestinationId => value as DestinationId,
   sourcePath: (value: string): SourcePath => value as SourcePath,
-  outputPath: (value: string): OutputPath => value as OutputPath,
+  destPath: (value: string): DestPath => value as DestPath,
   blockName: (value: string): BlockName => value as BlockName,
   variableName: (value: string): VariableName => value as VariableName,
   propertyName: (value: string): PropertyName => value as PropertyName,
@@ -529,27 +524,3 @@ export const UnsafeBrands = {
   compiledContent: (value: string): CompiledContent => value as CompiledContent,
   version: (value: string): Version => value as Version,
 } as const;
-
-/**
- * Backwards compatibility aliases
- * @deprecated These will be removed in v1.0
- */
-export type DestinationId = ProviderId;
-export type DestPath = OutputPath;
-
-export const createDestinationId = (value: string): ProviderId => {
-  if (process.env.NODE_ENV !== 'production') {
-    console.warn('createDestinationId is deprecated. Use createProviderId instead.');
-  }
-  return createProviderId(value);
-};
-
-export const createDestPath = (value: string): OutputPath => {
-  if (process.env.NODE_ENV !== 'production') {
-    console.warn('createDestPath is deprecated. Use createOutputPath instead.');
-  }
-  return createOutputPath(value);
-};
-
-export const isDestinationId = isProviderId;
-export const isDestPath = isOutputPath;
