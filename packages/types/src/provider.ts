@@ -219,27 +219,10 @@ export interface CompilationStats {
   readonly variablesSubstituted: number;
 }
 
-/**
- * Result of a provider write operation
- * Used for gitignore management and tracking generated files
- */
-export interface WriteResult {
-  readonly generatedPaths: string[];
-  readonly metadata: Record<string, unknown>;
-}
-
-/**
- * Type guard to check if a write result has generated paths
- * Used for backwards compatibility with providers that return void
- */
-export function hasGeneratedPaths(result: unknown): result is WriteResult {
-  return (
-    typeof result === 'object' &&
-    result !== null &&
-    'generatedPaths' in result &&
-    Array.isArray((result as any).generatedPaths)
-  );
-}
+// WriteResult is imported from destination-plugin.ts to avoid duplication
+// Export it here for convenience
+export type { WriteResult } from './destination-plugin';
+export { hasGeneratedPaths } from './destination-plugin';
 
 /**
  * Built-in provider definitions
@@ -297,6 +280,27 @@ export const BUILT_IN_PROVIDERS: Record<string, Provider> = {
       outputPath: '.windsurf/rules' as OutputPath,
       format: 'markdown',
       fileNaming: 'transform',
+    },
+    capabilities: {
+      supportsBlocks: true,
+      supportsImports: true,
+      supportsVariables: true,
+      supportsXml: false,
+      supportsMarkdown: true,
+      allowedFormats: ['markdown'],
+    },
+  },
+  'codex-cli': {
+    id: 'codex-cli' as ProviderId,
+    name: 'OpenAI Codex CLI',
+    version: '1.0.0' as Version,
+    description: 'OpenAI Codex CLI assistant',
+    website: 'https://github.com/openai/codex',
+    type: 'cli',
+    config: {
+      outputPath: 'AGENTS.md' as OutputPath,
+      format: 'markdown',
+      fileNaming: 'preserve',
     },
     capabilities: {
       supportsBlocks: true,
@@ -431,6 +435,11 @@ export const DEFAULT_PROVIDER_CONFIGS: Record<string, Partial<ProviderConfig>> =
     outputPath: '.windsurf/rules' as OutputPath,
     format: 'markdown',
     fileNaming: 'transform',
+  },
+  'codex-cli': {
+    outputPath: 'AGENTS.md' as OutputPath,
+    format: 'markdown',
+    fileNaming: 'preserve',
   },
   cline: {
     outputPath: '.cline/rules' as OutputPath,
