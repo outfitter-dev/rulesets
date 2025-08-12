@@ -7,13 +7,13 @@ import type { Logger } from './logger';
 export type { JSONSchema7 }; // Re-export for convenience
 
 /**
- * Result of a write operation, optionally including generated file paths
+ * Result of a write operation, including generated file paths for gitignore management
  */
 export interface WriteResult {
   /** File paths that were generated during the write operation */
-  readonly generatedPaths?: readonly string[];
+  readonly generatedPaths: readonly string[];
   /** Additional metadata about the write operation */
-  readonly metadata?: Record<string, unknown>;
+  readonly metadata: Record<string, unknown>;
 }
 
 /**
@@ -64,7 +64,13 @@ export interface DestinationPlugin {
 
 /**
  * Type guard to check if a write result contains generated paths
+ * Supports both the new WriteResult and legacy void returns
  */
-export function hasGeneratedPaths(result: void | WriteResult): result is WriteResult {
-  return result !== undefined && 'generatedPaths' in result;
+export function hasGeneratedPaths(result: unknown): result is WriteResult {
+  return (
+    typeof result === 'object' &&
+    result !== null &&
+    'generatedPaths' in result &&
+    Array.isArray((result as any).generatedPaths)
+  );
 }

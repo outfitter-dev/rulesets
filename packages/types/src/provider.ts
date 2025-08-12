@@ -311,6 +311,27 @@ export const BUILT_IN_PROVIDERS: Record<string, Provider> = {
       allowedFormats: ['markdown'],
     },
   },
+  amp: {
+    id: 'amp' as ProviderId,
+    name: 'Amp',
+    version: '1.0.0' as Version,
+    description: 'Amp AI assistant',
+    website: 'https://amp.dev',
+    type: 'agent',
+    config: {
+      outputPath: 'AGENT.md' as OutputPath,
+      format: 'markdown',
+      fileNaming: 'preserve',
+    },
+    capabilities: {
+      supportsBlocks: true,
+      supportsImports: true,
+      supportsVariables: true,
+      supportsXml: false,
+      supportsMarkdown: true,
+      allowedFormats: ['markdown'],
+    },
+  },
 } as const;
 
 /**
@@ -448,6 +469,11 @@ export const DEFAULT_PROVIDER_CONFIGS: Record<string, Partial<ProviderConfig>> =
   },
   'roo-code': {
     outputPath: '.roo/rules.md' as OutputPath,
+    format: 'markdown',
+    fileNaming: 'preserve',
+  },
+  amp: {
+    outputPath: 'AGENT.md' as OutputPath,
     format: 'markdown',
     fileNaming: 'preserve',
   },
