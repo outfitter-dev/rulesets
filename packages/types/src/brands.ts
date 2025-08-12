@@ -53,6 +53,7 @@ const VALID_PROVIDERS = [
   'jules',
   'aider',
   'continue',
+  'amp',
 ] as const;
 
 export type ValidProviderId = typeof VALID_PROVIDERS[number];
