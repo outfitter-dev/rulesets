@@ -1,81 +1,33 @@
-# bunfig.toml
 # Bun configuration for @outfitter/rulesets monorepo
-
-# Runtime configuration
-logLevel = "warn" # "debug" | "warn" | "error"
-
-# Performance optimization - reduce memory usage if needed
-# smol = false
-
-# Preload scripts/plugins before running files
-# preload = ["./setup.ts"]
-
-# Define global constants (replaced at runtime)
-[define]
-# Example: "process.env.NODE_ENV" = "'production'"
-
-# JSX configuration (can also be in tsconfig.json)
-jsx = "react"
-jsxFactory = "React.createElement"
-jsxFragment = "React.Fragment"
-jsxImportSource = "react"
+# https://bun.sh/docs/runtime/configuration
 
 [install]
-# Default registry
+# Match workspace behavior for monorepo packages
+linkWorkspacePackages = true
+
+# Use isolated linker for better monorepo workspace management
+linker = "isolated"
+
+# Use exact versions for lockfile stability
+exact = false
+frozenLockfile = true
+
+# Cache configuration
+cache = true
 registry = "https://registry.npmjs.org"
 
-# Dependency installation settings
-peer = true          # Auto-install peer dependencies
-optional = true      # Install optional dependencies
-dev = true          # Install devDependencies
-production = false   # Install all dependencies (not production-only)
+[install.scopes]
+# Optimize for our common scopes
+"@rulesets" = { registry = "https://registry.npmjs.org" }
+"@biomejs" = { registry = "https://registry.npmjs.org" }
+"@changesets" = { registry = "https://registry.npmjs.org" }
 
-# Behavior settings
-auto = "auto"       # Auto-install missing packages during runtime
-exact = false       # Use exact versions (like npm's --save-exact)
-frozenLockfile = false      # Equivalent to --frozen-lockfile
-dryRun = false      # Simulate installation without changes
-
-# Global installation directories
-globalDir = "~/.bun/install/global"
-globalBinDir = "~/.bun/bin"
-
-[install.lockfile]
-# Save exact versions in lockfile
-save = true
-# Also generate yarn.lock for compatibility
-print = "yarn"
-
-[install.cache]
-# Cache directory for downloaded packages
-dir = "~/.bun/install/cache"
-# Don't disable cache - it's a major performance benefit
-disable = false
-# Use cached manifest (faster, but might miss latest versions)
-disableManifest = false
-
-# Scoped registry configuration (if needed for private packages)
-# [install.scopes]
-# "@company" = "https://npm.company.com/"
-# "@outfitter" = { url = "https://npm.pkg.github.com", token = "$GITHUB_TOKEN" }
-
-# Test runner configuration
 [test]
-# Root directory for test discovery
-root = "./packages"
-# Preload setup files before tests
+# Default test configuration
 preload = ["./test/setup.ts"]
-# Coverage thresholds
-coverageThreshold = { lines = 0.8, functions = 0.8, statements = 0.8 }
-# Enable smol mode for tests (reduces memory usage)
-# smol = false
+coverage = true
+timeout = 10000
 
-# Run configuration
 [run]
-# Auto-alias node to bun (helpful during migration)
-# bun = true
-
-# Console output configuration
-[console]
-# Depth for object inspection in console.log
-depth = 3
+# Set NODE_ENV if not already set
+env = { NODE_ENV = "development" }

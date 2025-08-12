@@ -220,14 +220,47 @@ Follow the prompts to:
 
 Please refer to our general contributing guidelines for information on how to contribute to the project, including our commit conventions and testing requirements.
 
-## Contributing & Community
+## Development Setup
 
-1. **Fork → `bun i` → `bun dev`**.
-2. Follow conventional commits; run `bun changeset add` for version bumps.
-3. Add unit & contract tests for new features.
-4. Submit PR—CI must pass snapshot tests.
+### Prerequisites
 
-Please see our general contributing guidelines for more details.
+- **Bun** 1.2+ (recommended) or Node.js 18+
+- **Git** for version control
+
+### Quick Start
+
+1. **Clone and Install**:
+   ```bash
+   git clone https://github.com/your-org/rulesets.git
+   cd rulesets
+   bun install  # Installs all dependencies in ~300ms
+   ```
+
+2. **Development Commands**:
+   ```bash
+   bun run dev        # Start development mode (watch + rebuild)
+   bun run build      # Build all packages  
+   bun run test       # Run all tests (Bun test + Vitest hybrid)
+   bun run lint       # Lint with Biome + markdownlint
+   bun run typecheck  # TypeScript type checking
+   ```
+
+3. **Toolchain Overview**:
+   - **Package Manager**: Bun (with workspace support)
+   - **Code Linting/Formatting**: Biome 2.1.2 (JS/TS/JSON)
+   - **Prose Formatting**: Prettier (Markdown/YAML only)
+   - **Testing**: Bun test (simple) + Vitest (complex mocking)
+   - **Build System**: Bun build + TypeScript declarations
+
+### Contributing
+
+1. **Fork → `bun install` → `bun run dev`**
+2. **Follow conventional commits**; run `bun changeset add` for version bumps
+3. **Add tests** for new features (see hybrid testing strategy)
+4. **Lint before PR**: `bun run lint:fix` to auto-fix formatting
+5. **Submit PR** — CI must pass all checks
+
+For detailed contributing guidelines, see our development documentation.
 
 ## References
 

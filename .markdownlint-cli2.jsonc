@@ -25,11 +25,7 @@
   "customRules": [],
   "fix": false,
   "frontMatter": "---\\n.*\\n---\\n",
-  "globs": [
-    "**/*.md",
-    "**/*.mdx",
-    "**/*.mdc"
-  ],
+  "globs": ["**/*.md", "**/*.mdx", "**/*.mdc"],
   "markdownItPlugins": [],
   "noInlineConfig": false,
   "noProgress": false,

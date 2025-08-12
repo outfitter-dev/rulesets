@@ -22,11 +22,11 @@ export async function parse(content: string): Promise<ParsedDoc> {
   const errors: Array<{ message: string; line?: number; column?: number }> = [];
 
   // Check for frontmatter
-  if (lines[0].trim() === '---') {
+  if (lines[0]?.trim() === '---') {
     frontmatterStart = 0;
     // Find the closing frontmatter delimiter
     for (let i = 1; i < lines.length; i++) {
-      if (lines[i].trim() === '---') {
+      if (lines[i]?.trim() === '---') {
         frontmatterEnd = i;
         break;
       }
@@ -34,9 +34,12 @@ export async function parse(content: string): Promise<ParsedDoc> {
 
     if (frontmatterEnd > 0) {
       // Extract and parse frontmatter
-      const frontmatterContent = lines.slice(frontmatterStart + 1, frontmatterEnd).join('\n');
+      const frontmatterContent = lines
+        .slice(frontmatterStart + 1, frontmatterEnd)
+        .join('\n');
       try {
-        frontmatter = (yaml.load(frontmatterContent) as Record<string, unknown>) || {};
+        frontmatter =
+          (yaml.load(frontmatterContent) as Record<string, unknown>) || {};
       } catch (error) {
         let friendlyMessage = 'Invalid YAML syntax in frontmatter. ';
 
@@ -45,16 +48,19 @@ export async function parse(content: string): Promise<ParsedDoc> {
 
           // Add user-friendly context based on common YAML errors
           if (message.includes('unexpected end')) {
-            friendlyMessage += 'Make sure all strings are properly quoted and closed.';
+            friendlyMessage +=
+              'Make sure all strings are properly quoted and closed.';
           } else if (message.includes('bad indentation')) {
-            friendlyMessage += 'Check that your indentation is consistent (use spaces, not tabs).';
+            friendlyMessage +=
+              'Check that your indentation is consistent (use spaces, not tabs).';
           } else if (message.includes('duplicate key')) {
             friendlyMessage += 'You have duplicate keys in your frontmatter.';
           } else if (
             message.includes('unexpected token') ||
             message.includes('unexpected character')
           ) {
-            friendlyMessage += 'Check for special characters that need to be quoted or escaped.';
+            friendlyMessage +=
+              'Check for special characters that need to be quoted or escaped.';
           } else {
             friendlyMessage += `Details: ${error.message}`;
           }
@@ -84,7 +90,8 @@ export async function parse(content: string): Promise<ParsedDoc> {
   const parsedDoc: ParsedDoc = {
     source: {
       content,
-      frontmatter: Object.keys(frontmatter).length > 0 ? frontmatter : undefined,
+      frontmatter:
+        Object.keys(frontmatter).length > 0 ? frontmatter : undefined,
     },
     ast: {
       blocks: [], // Empty for v0 - no body processing

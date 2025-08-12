@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'bun:test';
+import type { ParsedDoc } from '@rulesets/types';
 import { compile } from '../index';
-import type { ParsedDoc } from '../../interfaces';
 
 describe('compiler', () => {
   describe('compile', () => {
@@ -50,7 +50,7 @@ This is the body with {{blocks}} and {{$variables}}.`,
 
       // Output should contain only the body
       expect(result.output.content).toBe(
-        '# Test Content\n\nThis is the body with {{blocks}} and {{$variables}}.',
+        '# Test Content\n\nThis is the body with {{blocks}} and {{$variables}}.'
       );
 
       // Metadata should include relevant fields
@@ -85,7 +85,9 @@ This is the body with {{blocks}} and {{$variables}}.`,
 
       const result = compile(parsedDoc, 'windsurf');
 
-      expect(result.output.content).toBe('# Just Content\n\nNo frontmatter here.');
+      expect(result.output.content).toBe(
+        '# Just Content\n\nNo frontmatter here.'
+      );
       expect(result.output.metadata).toEqual({
         title: undefined,
         description: undefined,

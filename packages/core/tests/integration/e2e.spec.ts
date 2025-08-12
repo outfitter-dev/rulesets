@@ -1,8 +1,9 @@
 // TLDR: End-to-end integration tests for Rulesets v0
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
 import { promises as fs } from 'fs';
 import path from 'path';
-import { runRulesetsV0, ConsoleLogger } from '../../src';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ConsoleLogger, runRulesetsV0 } from '../../src';
 
 // Mock fs to avoid actual file I/O in tests
 vi.mock('fs', () => ({
@@ -58,12 +59,18 @@ This is a test document with {{blocks}} and {{$variables}} that should pass thro
       expect(fs.readFile).toHaveBeenCalledWith('./test.ruleset.md', 'utf8');
 
       // Verify directories were created
-      expect(fs.mkdir).toHaveBeenCalledWith(path.dirname(path.resolve('.cursor/rules/test.mdc')), {
-        recursive: true,
-      });
-      expect(fs.mkdir).toHaveBeenCalledWith(path.dirname(path.resolve('.windsurf/rules/test.md')), {
-        recursive: true,
-      });
+      expect(fs.mkdir).toHaveBeenCalledWith(
+        path.dirname(path.resolve('.cursor/rules/test.mdc')),
+        {
+          recursive: true,
+        }
+      );
+      expect(fs.mkdir).toHaveBeenCalledWith(
+        path.dirname(path.resolve('.windsurf/rules/test.md')),
+        {
+          recursive: true,
+        }
+      );
 
       // Verify files were written with correct content
       const expectedContent =
@@ -72,29 +79,32 @@ This is a test document with {{blocks}} and {{$variables}} that should pass thro
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.resolve('.cursor/rules/test.mdc'),
         expectedContent,
-        { encoding: 'utf8' },
+        { encoding: 'utf8' }
       );
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.resolve('.windsurf/rules/test.md'),
         expectedContent,
-        { encoding: 'utf8' },
+        { encoding: 'utf8' }
       );
 
       // Verify logging
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!',
+        'Rulesets v0.1.0 processing completed successfully!'
       );
     });
 
     it('should handle missing frontmatter gracefully', async () => {
-      const contentWithoutFrontmatter = '# Just Content\n\nNo frontmatter here.';
+      const contentWithoutFrontmatter =
+        '# Just Content\n\nNo frontmatter here.';
       vi.mocked(fs.readFile).mockResolvedValueOnce(contentWithoutFrontmatter);
 
       await runRulesetsV0('./test.ruleset.md', mockLogger);
 
       // Should still process for all destinations
       expect(fs.writeFile).toHaveBeenCalledTimes(2); // cursor and windsurf
-      expect(mockLogger.warn).toHaveBeenCalledWith(expect.stringContaining('No frontmatter found'));
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('No frontmatter found')
+      );
     });
 
     it('should fail on lint errors', async () => {
@@ -105,12 +115,12 @@ title: Missing rulesets version
 # Content`;
       vi.mocked(fs.readFile).mockResolvedValueOnce(invalidContent);
 
-      await expect(runRulesetsV0('./test.ruleset.md', mockLogger)).rejects.toThrow(
-        'Linting failed with errors',
-      );
+      await expect(
+        runRulesetsV0('./test.ruleset.md', mockLogger)
+      ).rejects.toThrow('Linting failed with errors');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        expect.stringContaining('Missing required Rulesets version declaration'),
+        expect.stringContaining('Missing required Rulesets version declaration')
       );
       expect(fs.writeFile).not.toHaveBeenCalled();
     });
@@ -119,13 +129,13 @@ title: Missing rulesets version
       const error = new Error('File not found');
       vi.mocked(fs.readFile).mockRejectedValueOnce(error);
 
-      await expect(runRulesetsV0('./nonexistent.ruleset.md', mockLogger)).rejects.toThrow(
-        'File not found',
-      );
+      await expect(
+        runRulesetsV0('./nonexistent.ruleset.md', mockLogger)
+      ).rejects.toThrow('File not found');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Failed to read source file: ./nonexistent.ruleset.md',
-        error,
+        error
       );
     });
 
@@ -148,7 +158,7 @@ destinations:
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.resolve('.cursor/rules/single.mdc'),
         expect.any(String),
-        { encoding: 'utf8' },
+        { encoding: 'utf8' }
       );
     });
 
@@ -157,13 +167,13 @@ destinations:
       const writeError = new Error('Permission denied');
       vi.mocked(fs.writeFile).mockRejectedValueOnce(writeError);
 
-      await expect(runRulesetsV0('./test.ruleset.md', mockLogger)).rejects.toThrow(
-        'Permission denied',
-      );
+      await expect(
+        runRulesetsV0('./test.ruleset.md', mockLogger)
+      ).rejects.toThrow('Permission denied');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining('Failed to write cursor output'),
-        writeError,
+        writeError
       );
     });
 
@@ -192,9 +202,13 @@ These are instructions that should be preserved.
 
 Variable: {{$myVar}}`;
 
-      expect(fs.writeFile).toHaveBeenCalledWith(expect.any(String), expectedOutput, {
-        encoding: 'utf8',
-      });
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        expect.any(String),
+        expectedOutput,
+        {
+          encoding: 'utf8',
+        }
+      );
     });
 
     it('should use default paths when not specified', async () => {
@@ -212,12 +226,12 @@ ruleset: { version: "0.1.0" }
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.resolve('.ruleset/dist/cursor/my-rules.md'),
         expect.any(String),
-        { encoding: 'utf8' },
+        { encoding: 'utf8' }
       );
       expect(fs.writeFile).toHaveBeenCalledWith(
         path.resolve('.ruleset/dist/windsurf/my-rules.md'),
         expect.any(String),
-        { encoding: 'utf8' },
+        { encoding: 'utf8' }
       );
     });
   });

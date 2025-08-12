@@ -1,6 +1,8 @@
 // :M: tldr: Compiler implementation for Rulesets notation
 // :M: v0.1.0: Pass-through implementation without marker processing
-import type { ParsedDoc, CompiledDoc } from '../interfaces';
+import type { CompiledDoc, Logger, ParsedDoc } from '../interfaces';
+
+let logger: Logger | undefined;
 
 /**
  * Compiles a parsed Rulesets document for a specific destination.
@@ -18,13 +20,13 @@ import type { ParsedDoc, CompiledDoc } from '../interfaces';
 export function compile(
   parsedDoc: ParsedDoc,
   destinationId: string,
-  projectConfig: Record<string, unknown> = {},
+  projectConfig: Record<string, unknown> = {}
 ): CompiledDoc {
   const { source, ast } = parsedDoc;
 
   // Handle empty files consistently
-  if (!source.content.trim()) {
-    console.warn('Compiling empty source file');
+  if (!source.content.trim() && logger) {
+    logger.warn('Compiling empty source file');
   }
 
   // Extract the body content (everything after frontmatter)
@@ -76,7 +78,9 @@ export function compile(
         ...(source.frontmatter?.destinations &&
         typeof source.frontmatter.destinations === 'object' &&
         !Array.isArray(source.frontmatter.destinations)
-          ? (source.frontmatter.destinations as Record<string, unknown>)[destinationId] || {}
+          ? (source.frontmatter.destinations as Record<string, unknown>)[
+              destinationId
+            ] || {}
           : {}),
       },
     },
@@ -88,7 +92,9 @@ export function compile(
         ...(source.frontmatter?.destinations &&
         typeof source.frontmatter.destinations === 'object' &&
         !Array.isArray(source.frontmatter.destinations)
-          ? (source.frontmatter.destinations as Record<string, unknown>)[destinationId] || {}
+          ? (source.frontmatter.destinations as Record<string, unknown>)[
+              destinationId
+            ] || {}
           : {}),
       },
     },

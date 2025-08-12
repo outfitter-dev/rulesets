@@ -40,7 +40,10 @@ function getFieldName(path: string): string {
 // :M: v0.1.0: Validates presence and types of frontmatter fields
 // :M: todo(v0.2.0): Add validation for block properties
 // :M: todo(v0.3.0): Add validation for variables and imports
-export async function lint(parsedDoc: ParsedDoc, config: LinterConfig = {}): Promise<LintResult[]> {
+export async function lint(
+  parsedDoc: ParsedDoc,
+  config: LinterConfig = {}
+): Promise<LintResult[]> {
   const results: LintResult[] = [];
   const { frontmatter } = parsedDoc.source;
 
@@ -94,7 +97,10 @@ export async function lint(parsedDoc: ParsedDoc, config: LinterConfig = {}): Pro
 
   // Check destinations if specified
   if (frontmatter.destinations) {
-    if (typeof frontmatter.destinations !== 'object' || Array.isArray(frontmatter.destinations)) {
+    if (
+      typeof frontmatter.destinations !== 'object' ||
+      Array.isArray(frontmatter.destinations)
+    ) {
       results.push({
         message: `Invalid ${getFieldName('/destinations')}. Expected an object mapping destination IDs to configuration.`,
         line: 1,

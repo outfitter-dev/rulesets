@@ -1,9 +1,10 @@
 // TLDR: Unit tests for the Windsurf destination plugin
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
 import { promises as fs } from 'fs';
 import path from 'path';
-import { WindsurfPlugin } from '../windsurf-plugin';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CompiledDoc, Logger } from '../../interfaces';
+import { WindsurfPlugin } from '../windsurf-plugin';
 
 vi.mock('fs', () => ({
   promises: {
@@ -45,7 +46,10 @@ describe('WindsurfPlugin', () => {
       expect(schema.properties!.outputPath).toBeDefined();
       expect(schema.properties!.format).toBeDefined();
 
-      const formatProp = schema.properties!.format as { enum: string[]; default: string };
+      const formatProp = schema.properties!.format as {
+        enum: string[];
+        default: string;
+      };
       expect(formatProp.enum).toContain('markdown');
       expect(formatProp.enum).toContain('xml');
       expect(formatProp.default).toBe('markdown');
@@ -89,12 +93,18 @@ describe('WindsurfPlugin', () => {
       const dir = path.dirname(resolvedPath);
 
       expect(fs.mkdir).toHaveBeenCalledWith(dir, { recursive: true });
-      expect(fs.writeFile).toHaveBeenCalledWith(resolvedPath, mockCompiledDoc.output.content, {
-        encoding: 'utf8',
-      });
-      expect(mockLogger.info).toHaveBeenCalledWith(`Writing Windsurf rules to: ${resolvedPath}`);
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        resolvedPath,
+        mockCompiledDoc.output.content,
+        {
+          encoding: 'utf8',
+        }
+      );
       expect(mockLogger.info).toHaveBeenCalledWith(
-        `Successfully wrote Windsurf rules to: ${resolvedPath}`,
+        `Writing Windsurf rules to: ${resolvedPath}`
+      );
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        `Successfully wrote Windsurf rules to: ${resolvedPath}`
       );
     });
 
@@ -110,9 +120,13 @@ describe('WindsurfPlugin', () => {
       });
 
       const resolvedPath = path.resolve(config.outputPath);
-      expect(fs.writeFile).toHaveBeenCalledWith(resolvedPath, mockCompiledDoc.output.content, {
-        encoding: 'utf8',
-      });
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        resolvedPath,
+        mockCompiledDoc.output.content,
+        {
+          encoding: 'utf8',
+        }
+      );
     });
 
     it('should log format information', async () => {
@@ -127,7 +141,9 @@ describe('WindsurfPlugin', () => {
       });
 
       expect(mockLogger.debug).toHaveBeenCalledWith('Destination: windsurf');
-      expect(mockLogger.debug).toHaveBeenCalledWith(`Config: ${JSON.stringify(config)}`);
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        `Config: ${JSON.stringify(config)}`
+      );
       expect(mockLogger.debug).toHaveBeenCalledWith('Format: xml');
     });
 
@@ -156,12 +172,12 @@ describe('WindsurfPlugin', () => {
           destPath,
           config: {},
           logger: mockLogger,
-        }),
+        })
       ).rejects.toThrow('Permission denied');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining('Failed to create directory'),
-        error,
+        error
       );
     });
 
@@ -176,12 +192,12 @@ describe('WindsurfPlugin', () => {
           destPath,
           config: {},
           logger: mockLogger,
-        }),
+        })
       ).rejects.toThrow('Disk full');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining('Failed to write file'),
-        error,
+        error
       );
     });
   });

@@ -3,9 +3,9 @@ name: CI
 
 on:
   push:
-    branches: [main, next]
+    branches: [main, develop, release/*]
   pull_request:
-    branches: [main, next]
+    branches: [main, develop]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -24,13 +24,16 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.2.19
 
       - name: Install Dependencies
         run: bun install --frozen-lockfile
 
       - name: Lint
         run: bun turbo lint
+
+      - name: Type Check
+        run: bun turbo typecheck
 
       - name: Test
         run: bun turbo test
@@ -52,7 +55,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.2.19
 
       - name: Install Dependencies
         run: bun install --frozen-lockfile

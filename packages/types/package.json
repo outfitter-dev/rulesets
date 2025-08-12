@@ -16,16 +16,12 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm --dts --clean",
-    "dev": "tsup src/index.ts --format esm --dts --watch",
+    "build": "rm -rf dist && bun build src/index.ts --outdir dist --target node --minify && tsc --declaration --emitDeclarationOnly --outDir dist --skipLibCheck src/index.ts",
+    "dev": "bun build src/index.ts --outdir dist --target node --watch & tsc --declaration --emitDeclarationOnly --outDir dist --skipLibCheck --watch src/index.ts",
     "test": "echo 'No tests for types package'",
-    "lint": "biome check --write .",
-    "typecheck": "tsc --noEmit"
-  },
-  "devDependencies": {
-    "@types/node": "^18.19.120",
-    "@biomejs/biome": "^1.9.4",
-    "tsup": "^8.5.0",
-    "typescript": "^5.8.3"
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
   }
 }
