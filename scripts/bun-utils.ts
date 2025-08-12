@@ -3,20 +3,20 @@
  * Bun utility scripts demonstrating native capabilities
  */
 
-import { $ } from "bun";
-import { parseArgs } from "util";
+import { $ } from 'bun';
+import { parseArgs } from 'util';
 
 // Parse command line arguments
-const { values, positionals } = parseArgs({
+const { values } = parseArgs({
   args: Bun.argv,
   options: {
     command: {
-      type: "string",
-      short: "c",
+      type: 'string',
+      short: 'c',
     },
     help: {
-      type: "boolean",
-      short: "h",
+      type: 'boolean',
+      short: 'h',
     },
   },
   strict: true,
@@ -26,51 +26,51 @@ const { values, positionals } = parseArgs({
 // Command handlers
 const commands = {
   async clean() {
-    console.log("🧹 Cleaning build artifacts...");
+    console.log('🧹 Cleaning build artifacts...');
     await $`rm -rf dist .turbo node_modules bun.lockb`;
-    console.log("✅ Clean complete");
+    console.log('✅ Clean complete');
   },
 
   async typecheck() {
-    console.log("🔍 Type checking...");
+    console.log('🔍 Type checking...');
     const result = await $`bun x tsc --noEmit`.quiet();
     if (result.exitCode === 0) {
-      console.log("✅ Type check passed");
+      console.log('✅ Type check passed');
     } else {
-      console.error("❌ Type check failed");
+      console.error('❌ Type check failed');
       process.exit(1);
     }
   },
 
   async bundle() {
-    console.log("📦 Building with Bun bundler...");
+    console.log('📦 Building with Bun bundler...');
     const result = await Bun.build({
-      entrypoints: ["./packages/core/src/index.ts"],
-      outdir: "./dist",
-      target: "node",
+      entrypoints: ['./packages/core/src/index.ts'],
+      outdir: './dist',
+      target: 'node',
       minify: true,
-      sourcemap: "external",
-      external: ["react", "react-dom"],
+      sourcemap: 'external',
+      external: ['react', 'react-dom'],
     });
 
     if (result.success) {
-      console.log("✅ Bundle complete");
+      console.log('✅ Bundle complete');
     } else {
-      console.error("❌ Bundle failed:", result.logs);
+      console.error('❌ Bundle failed:', result.logs);
       process.exit(1);
     }
   },
 
   async serve() {
-    console.log("🚀 Starting development server...");
+    console.log('🚀 Starting development server...');
     Bun.serve({
       port: 3000,
       development: true,
-      fetch(req) {
-        return new Response("Bun development server running!");
+      fetch() {
+        return new Response('Bun development server running!');
       },
     });
-    console.log("Server running at http://localhost:3000");
+    console.log('Server running at http://localhost:3000');
   },
 
   help() {

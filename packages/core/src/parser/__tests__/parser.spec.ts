@@ -1,5 +1,5 @@
 // TLDR: Unit tests for the Rulesets parser module
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import { parse } from '../index';
 
 describe('parser', () => {
@@ -72,8 +72,8 @@ invalid: yaml: content
 
       expect(result.errors).toBeDefined();
       expect(result.errors).toHaveLength(1);
-      expect(result.errors![0].message).toContain('Invalid YAML syntax');
-      expect(result.errors![0].line).toBe(1);
+      expect(result.errors![0]?.message).toContain('Invalid YAML syntax');
+      expect(result.errors![0]?.line).toBe(1);
     });
 
     it('should report error for unclosed frontmatter', async () => {
@@ -87,8 +87,10 @@ description: Missing closing delimiter
 
       expect(result.errors).toBeDefined();
       expect(result.errors).toHaveLength(1);
-      expect(result.errors![0].message).toContain('Unclosed frontmatter block');
-      expect(result.errors![0].line).toBe(1);
+      expect(result.errors![0]?.message).toContain(
+        'Unclosed frontmatter block'
+      );
+      expect(result.errors![0]?.line).toBe(1);
     });
 
     it('should handle empty content', async () => {

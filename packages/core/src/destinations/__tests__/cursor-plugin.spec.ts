@@ -1,9 +1,10 @@
 // TLDR: Unit tests for the Cursor destination plugin (Rulesets v0)
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
 import { promises as fs } from 'fs';
 import path from 'path';
-import { CursorPlugin } from '../cursor-plugin';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CompiledDoc, Logger } from '../../interfaces';
+import { CursorPlugin } from '../cursor-plugin';
 
 vi.mock('fs', () => ({
   promises: {
@@ -48,7 +49,10 @@ describe('CursorPlugin', () => {
 
     it('should enforce priority enum values', () => {
       const schema = plugin.configSchema();
-      const priorityProp = schema.properties!.priority as { type: string; enum: string[] };
+      const priorityProp = schema.properties!.priority as {
+        type: string;
+        enum: string[];
+      };
       expect(priorityProp.type).toBe('string');
       expect(priorityProp.enum).toEqual(['low', 'medium', 'high']);
     });
@@ -91,12 +95,18 @@ describe('CursorPlugin', () => {
       const dir = path.dirname(resolvedPath);
 
       expect(fs.mkdir).toHaveBeenCalledWith(dir, { recursive: true });
-      expect(fs.writeFile).toHaveBeenCalledWith(resolvedPath, mockCompiledDoc.output.content, {
-        encoding: 'utf8',
-      });
-      expect(mockLogger.info).toHaveBeenCalledWith(`Writing Cursor rules to: ${destPath}`);
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        resolvedPath,
+        mockCompiledDoc.output.content,
+        {
+          encoding: 'utf8',
+        }
+      );
       expect(mockLogger.info).toHaveBeenCalledWith(
-        `Successfully wrote Cursor rules to: ${resolvedPath}`,
+        `Writing Cursor rules to: ${destPath}`
+      );
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        `Successfully wrote Cursor rules to: ${resolvedPath}`
       );
     });
 
@@ -112,9 +122,13 @@ describe('CursorPlugin', () => {
       });
 
       const resolvedPath = path.resolve(config.outputPath);
-      expect(fs.writeFile).toHaveBeenCalledWith(resolvedPath, mockCompiledDoc.output.content, {
-        encoding: 'utf8',
-      });
+      expect(fs.writeFile).toHaveBeenCalledWith(
+        resolvedPath,
+        mockCompiledDoc.output.content,
+        {
+          encoding: 'utf8',
+        }
+      );
     });
 
     it('should log debug information', async () => {
@@ -129,7 +143,9 @@ describe('CursorPlugin', () => {
       });
 
       expect(mockLogger.debug).toHaveBeenCalledWith('Destination: cursor');
-      expect(mockLogger.debug).toHaveBeenCalledWith(expect.stringContaining('Config:'));
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        expect.stringContaining('Config:')
+      );
       expect(mockLogger.debug).toHaveBeenCalledWith('Priority: high');
     });
 
@@ -144,12 +160,12 @@ describe('CursorPlugin', () => {
           destPath,
           config: {},
           logger: mockLogger,
-        }),
+        })
       ).rejects.toThrow('Permission denied');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining('Failed to create directory'),
-        error,
+        error
       );
     });
 
@@ -164,12 +180,12 @@ describe('CursorPlugin', () => {
           destPath,
           config: {},
           logger: mockLogger,
-        }),
+        })
       ).rejects.toThrow('Disk full');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining('Failed to write file'),
-        error,
+        error
       );
     });
   });

@@ -1,8 +1,14 @@
 // :M: tldr: Windsurf destination plugin implementation
 // :M: v0.1.0: Stub implementation that writes raw content to .windsurf/rules/
+
+import type {
+  CompiledDoc,
+  DestinationPlugin,
+  JSONSchema7,
+  Logger,
+} from '@rulesets/types';
 import { promises as fs } from 'fs';
-import path from 'path';
-import type { DestinationPlugin, CompiledDoc, Logger, JSONSchema7 } from '@rulesets/types';
+import * as path from 'path';
 
 export class WindsurfPlugin implements DestinationPlugin {
   // :M: tldr: Returns the canonical name for Windsurf destination
@@ -33,7 +39,7 @@ export class WindsurfPlugin implements DestinationPlugin {
   }
 
   // :M: tldr: Writes compiled document to Windsurf rules directory
-  // :M: v0.1.0: Basic file writing without Windsurf-specific transformations
+  // :M: v0.1.0: Basic file writing with security validation
   // :M: todo(v0.2.0): Add Windsurf-specific formatting and transformations
   async write(ctx: {
     compiled: CompiledDoc;
@@ -43,10 +49,13 @@ export class WindsurfPlugin implements DestinationPlugin {
   }): Promise<void> {
     const { compiled, destPath, config, logger } = ctx;
 
-    // Determine the output path
+    // Determine the output path with security validation
     const outputPath =
-      (typeof config.outputPath === 'string' ? config.outputPath : undefined) || destPath;
-    const resolvedPath = path.resolve(outputPath);
+      (typeof config.outputPath === 'string' ? config.outputPath : undefined) ||
+      destPath;
+
+    // Security: Validate and sanitize the path to prevent directory traversal
+    const resolvedPath = this.sanitizePath(outputPath, process.cwd());
 
     logger.info(`Writing Windsurf rules to: ${resolvedPath}`);
 
@@ -59,9 +68,18 @@ export class WindsurfPlugin implements DestinationPlugin {
       throw error;
     }
 
+    // Security: Check file size before writing
+    const content = compiled.output.content;
+    if (content.length > 10 * 1024 * 1024) {
+      // 10MB limit
+      throw new Error(`File too large: ${content.length} bytes (max 10MB)`);
+    }
+
     // For v0, write the raw content
     try {
-      await fs.writeFile(resolvedPath, compiled.output.content, { encoding: 'utf8' });
+      await fs.writeFile(resolvedPath, content, {
+        encoding: 'utf8',
+      });
       logger.info(`Successfully wrote Windsurf rules to: ${resolvedPath}`);
 
       // Log additional context for debugging
@@ -72,5 +90,29 @@ export class WindsurfPlugin implements DestinationPlugin {
       logger.error(`Failed to write file: ${resolvedPath}`, error);
       throw error;
     }
+  }
+
+  // Security: Sanitize file paths to prevent directory traversal attacks
+  private sanitizePath(userPath: string, baseDir: string): string {
+    // Resolve and normalize the path
+    const resolved = path.isAbsolute(userPath)
+      ? path.resolve(userPath)
+      : path.resolve(baseDir, userPath);
+
+    // Normalize to handle . and .. segments
+    const normalized = path.normalize(resolved);
+
+    // Ensure the resolved path is within the base directory or its subdirectories
+    const baseDirResolved = path.resolve(baseDir);
+    if (
+      !normalized.startsWith(baseDirResolved + path.sep) &&
+      normalized !== baseDirResolved
+    ) {
+      throw new Error(
+        `Path traversal detected: ${userPath} resolves outside base directory`
+      );
+    }
+
+    return normalized;
   }
 }

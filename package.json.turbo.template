@@ -1,0 +1,54 @@
+{
+  "name": "rulesets",
+  "version": "0.1.0", 
+  "description": "Rules compiler for AI tools",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "test:watch": "bun test --watch",
+    "test:coverage": "bun test --coverage",
+    "lint": "turbo run lint",
+    "lint:fix": "biome check --write . && markdownlint-cli2 --fix '**/*.md'",
+    "format": "biome check --write . && prettier --write '**/*.{md,yml,yaml}'",
+    "format:check": "biome format . && prettier --check '**/*.{md,yml,yaml}' --ignore-path .prettierignore",
+    "typecheck": "turbo run typecheck",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "bun run build && changeset publish",
+    "clean": "turbo run clean",
+    "clean:all": "bun run clean && rm -rf .turbo node_modules bun.lockb",
+    "prepare": "lefthook install"
+  },
+  "author": "Maybe Good Systems",
+  "license": "MIT",
+  "packageManager": "bun@1.2.19",
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.1.0"
+  },
+  "trustedDependencies": [
+    "@biomejs/biome",
+    "lefthook"
+  ],
+  "devDependencies": {
+    "@biomejs/biome": "2.1.2",
+    "@changesets/cli": "^2.29.5",
+    "@commitlint/cli": "^19.8.1",
+    "@types/bun": "^1.2.19",
+    "@types/node": "^18.19.120",
+    "lefthook": "^1.12.2",
+    "markdownlint-cli2": "^0.13.0",
+    "prettier": "^3.2.5",
+    "turbo": "^2.0.0",
+    "typescript": "^5.8.3",
+    "ultracite": "5.0.47",
+    "vitest": "^1.6.0"
+  }
+}

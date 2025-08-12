@@ -1,0 +1,74 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [
+    "bun.lock",
+    "biome.jsonc",
+    "turbo.json",
+    "bunfig.toml",
+    "tsconfig.json",
+    "config/tsconfig.base.json"
+  ],
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "*.tsbuildinfo", "**/*.d.ts"],
+      "inputs": [
+        "src/**/*.ts",
+        "src/**/*.tsx", 
+        "src/**/*.js",
+        "src/**/*.jsx",
+        "package.json",
+        "tsconfig.json"
+      ]
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"],
+      "inputs": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "src/**/*.js", 
+        "src/**/*.jsx",
+        "src/**/__tests__/**/*",
+        "src/**/*.test.*",
+        "src/**/*.spec.*",
+        "package.json"
+      ]
+    },
+    "lint": {
+      "outputs": [],
+      "inputs": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "src/**/*.js",
+        "src/**/*.jsx",
+        "src/**/*.json",
+        "src/**/*.jsonc",
+        "biome.jsonc",
+        "package.json"
+      ]
+    },
+    "typecheck": {
+      "outputs": ["*.tsbuildinfo"],
+      "inputs": [
+        "src/**/*.ts",
+        "src/**/*.tsx",
+        "tsconfig.json",
+        "config/tsconfig.base.json",
+        "package.json"
+      ]
+    },
+    "clean": {
+      "cache": false,
+      "outputs": []
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["^build"]
+    }
+  },
+  "remoteCache": {
+    "enabled": false
+  }
+}

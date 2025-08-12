@@ -3,18 +3,18 @@
  * This file is preloaded before running tests as configured in bunfig.toml
  */
 
-import { beforeAll, afterAll, beforeEach, afterEach } from "bun:test";
+import { afterAll, afterEach, beforeAll, beforeEach } from 'bun:test';
 
 // Global test setup
 beforeAll(() => {
   // Set up test environment variables
-  process.env.NODE_ENV = "test";
-  console.log("🧪 Starting test suite...");
+  process.env.NODE_ENV = 'test';
+  // console.log('🧪 Starting test suite...');
 });
 
 // Clean up after all tests
 afterAll(() => {
-  console.log("✅ Test suite completed");
+  // console.log('✅ Test suite completed');
 });
 
 // Reset mocks before each test

@@ -1,7 +1,7 @@
 // TLDR: Unit tests for the Rulesets linter module (Rulesets v0)
-import { describe, it, expect } from 'vitest';
-import { lint } from '../index';
+import { describe, expect, it } from 'vitest';
 import type { ParsedDoc } from '../../interfaces';
+import { lint } from '../index';
 
 describe('linter', () => {
   describe('lint', () => {
@@ -43,8 +43,8 @@ describe('linter', () => {
 
       const results = await lint(parsedDoc);
       expect(results).toHaveLength(1);
-      expect(results[0].severity).toBe('warning');
-      expect(results[0].message).toContain('No frontmatter found');
+      expect(results[0]?.severity).toBe('warning');
+      expect(results[0]?.message).toContain('No frontmatter found');
     });
 
     it('should error when rulesets version is missing', async () => {
@@ -64,7 +64,9 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const rulesetsError = results.find((r) => r.message.includes('Missing required'));
+      const rulesetsError = results.find((r) =>
+        r.message.includes('Missing required')
+      );
       expect(rulesetsError).toBeDefined();
       expect(rulesetsError!.severity).toBe('error');
     });
@@ -111,7 +113,7 @@ describe('linter', () => {
 
       const results = await lint(parsedDoc);
       const destError = results.find((r) =>
-        r.message.includes('Invalid Destination configurations'),
+        r.message.includes('Invalid Destination configurations')
       );
       expect(destError).toBeDefined();
       expect(destError!.severity).toBe('error');
@@ -141,7 +143,9 @@ describe('linter', () => {
         allowedDestinations: ['cursor', 'windsurf'],
       });
 
-      const destWarning = results.find((r) => r.message.includes('Unknown destination'));
+      const destWarning = results.find((r) =>
+        r.message.includes('Unknown destination')
+      );
       expect(destWarning).toBeDefined();
       expect(destWarning!.severity).toBe('warning');
     });
@@ -163,9 +167,11 @@ describe('linter', () => {
       };
 
       const results = await lint(parsedDoc);
-      const titleInfo = results.find((r) => r.message.includes('Consider adding a Document title'));
+      const titleInfo = results.find((r) =>
+        r.message.includes('Consider adding a Document title')
+      );
       const descInfo = results.find((r) =>
-        r.message.includes('Consider adding a Document description'),
+        r.message.includes('Consider adding a Document description')
       );
 
       expect(titleInfo).toBeDefined();
@@ -197,7 +203,7 @@ describe('linter', () => {
 
       const results = await lint(parsedDoc);
       const parseError = results.find((r) =>
-        r.message.includes('Failed to parse frontmatter YAML'),
+        r.message.includes('Failed to parse frontmatter YAML')
       );
       expect(parseError).toBeDefined();
       expect(parseError!.severity).toBe('error');

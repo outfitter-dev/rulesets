@@ -2,35 +2,31 @@
   "name": "rulesets-plugin-cursor",
   "version": "0.1.0",
   "private": false,
+  "type": "module",
   "description": "Cursor destination plugin for Rulesets",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "rm -rf dist && tsup && tsc --emitDeclarationOnly",
-    "dev": "tsup --watch",
-    "test": "vitest run",
-    "test:watch": "vitest watch",
-    "lint": "eslint . --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit"
+    "build": "rm -rf dist && bun build src/index.ts --outdir dist --target node --minify && tsc --declaration --emitDeclarationOnly --outDir dist --skipLibCheck src/index.ts",
+    "dev": "bun build src/index.ts --outdir dist --target node --watch & tsc --declaration --emitDeclarationOnly --outDir dist --skipLibCheck --watch src/index.ts",
+    "test": "echo 'No tests for plugin-cursor package'",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
   },
   "dependencies": {
     "@rulesets/compiler": "workspace:*"
-  },
-  "devDependencies": {
-    "@types/node": "^18.19.31",
-    "tsup": "^8.0.2",
-    "typescript": "^5.4.5",
-    "vitest": "^1.6.0",
-    "eslint": "^8.57.0"
   },
   "publishConfig": {
     "access": "public"
