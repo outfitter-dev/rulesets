@@ -1,6 +1,9 @@
 # Local Files
 *.local.*
 
+# Private journal
+.private-journal/
+
 # Dependency directories
 node_modules/
 .pnpm-store/
