@@ -3,8 +3,11 @@
  */
 
 import { describe, expect, it } from 'bun:test';
-import { HandlebarsRulesetCompiler } from '../handlebars-compiler';
 import type { ParsedDoc } from '../../interfaces';
+import { HandlebarsRulesetCompiler } from '../handlebars-compiler';
+
+// Top-level regex constants for performance
+const HANDLEBARS_COMPILATION_FAILED_REGEX = /Handlebars compilation failed/;
 
 describe('HandlebarsRulesetCompiler', () => {
   const compiler = new HandlebarsRulesetCompiler();
@@ -24,15 +27,15 @@ version: 1.0.0
 These are test rules.`,
           frontmatter: {
             name: 'test-rules',
-            version: '1.0.0'
-          }
+            version: '1.0.0',
+          },
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -49,14 +52,14 @@ These are test rules.`);
         source: {
           path: 'empty.md',
           content: '',
-          frontmatter: undefined
+          frontmatter: undefined,
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -78,15 +81,15 @@ Provider: {{provider.id}}
 Display: {{provider.name}}
 Type: {{provider.type}}`,
           frontmatter: {
-            name: 'provider-test'
-          }
+            name: 'provider-test',
+          },
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -109,15 +112,15 @@ File: {{file.name}}
 Version: {{file.version}}`,
           frontmatter: {
             name: 'file-test',
-            version: '2.0.0'
-          }
+            version: '2.0.0',
+          },
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -145,17 +148,17 @@ Custom: {{customVar}}`,
             name: 'custom-test',
             project: {
               name: 'MyProject',
-              language: 'TypeScript'
+              language: 'TypeScript',
             },
-            customVar: 'Hello World'
-          }
+            customVar: 'Hello World',
+          },
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -180,15 +183,15 @@ name: section-test
 - Write good code
 {{/instructions}}`,
           frontmatter: {
-            name: 'section-test'
-          }
+            name: 'section-test',
+          },
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -206,14 +209,14 @@ name: section-test
           content: `{{#user-instructions}}
 Content here
 {{/user-instructions}}`,
-          frontmatter: {}
+          frontmatter: {},
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -230,14 +233,14 @@ Content here
           content: `{{#instructions format="heading"}}
 These are the instructions.
 {{/instructions}}`,
-          frontmatter: {}
+          frontmatter: {},
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -254,19 +257,21 @@ These are the instructions.
           content: `{{#instructions format="raw"}}
 Raw content without wrappers.
 {{/instructions}}`,
-          frontmatter: {}
+          frontmatter: {},
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
 
-      expect(result.output.content.trim()).toBe('Raw content without wrappers.');
+      expect(result.output.content.trim()).toBe(
+        'Raw content without wrappers.'
+      );
       expect(result.output.content).not.toContain('<instructions>');
       expect(result.output.content).not.toContain('## Instructions');
     });
@@ -280,20 +285,22 @@ Raw content without wrappers.
           content: `{{#instructions include="cursor,windsurf"}}
 Content for cursor and windsurf
 {{/instructions}}`,
-          frontmatter: {}
+          frontmatter: {},
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
 
       expect(result.output.content).toContain('<instructions>');
-      expect(result.output.content).toContain('Content for cursor and windsurf');
+      expect(result.output.content).toContain(
+        'Content for cursor and windsurf'
+      );
     });
 
     it('should exclude content for non-matching providers', () => {
@@ -303,14 +310,14 @@ Content for cursor and windsurf
           content: `{{#instructions include="windsurf,claude-code"}}
 Content for windsurf and claude-code only
 {{/instructions}}`,
-          frontmatter: {}
+          frontmatter: {},
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -325,14 +332,14 @@ Content for windsurf and claude-code only
           content: `{{#instructions exclude="cursor"}}
 This should not appear for cursor
 {{/instructions}}`,
-          frontmatter: {}
+          frontmatter: {},
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -349,14 +356,14 @@ This should not appear for cursor
           content: `{{#if-provider "cursor,windsurf"}}
 Content for cursor or windsurf
 {{/if-provider}}`,
-          frontmatter: {}
+          frontmatter: {},
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -371,19 +378,21 @@ Content for cursor or windsurf
           content: `{{#unless-provider "claude-code"}}
 Content for anything except claude-code
 {{/unless-provider}}`,
-          frontmatter: {}
+          frontmatter: {},
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
 
-      expect(result.output.content).toContain('Content for anything except claude-code');
+      expect(result.output.content).toContain(
+        'Content for anything except claude-code'
+      );
     });
 
     it('should exclude content in unless-provider when provider matches', () => {
@@ -393,14 +402,14 @@ Content for anything except claude-code
           content: `{{#unless-provider "cursor"}}
 This should not appear for cursor
 {{/unless-provider}}`,
-          frontmatter: {}
+          frontmatter: {},
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -426,15 +435,15 @@ Debug mode is enabled
 Debug mode is disabled
 {{/unless}}`,
           frontmatter: {
-            debug: true
-          }
+            debug: true,
+          },
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -458,15 +467,15 @@ languages:
 - {{this}}
 {{/each}}`,
           frontmatter: {
-            languages: ['TypeScript', 'JavaScript', 'Python']
-          }
+            languages: ['TypeScript', 'JavaScript', 'Python'],
+          },
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       const result = compiler.compile(parsedDoc, 'cursor');
@@ -483,14 +492,14 @@ languages:
         source: {
           path: 'test.md',
           content: '{{nonExistentHelper}}',
-          frontmatter: {}
+          frontmatter: {},
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       expect(() => {
@@ -503,19 +512,19 @@ languages:
         source: {
           path: 'test.md',
           content: '{{#if unclosed',
-          frontmatter: {}
+          frontmatter: {},
         },
         ast: {
           blocks: [],
           imports: [],
           variables: [],
-          markers: []
-        }
+          markers: [],
+        },
       };
 
       expect(() => {
         compiler.compile(parsedDoc, 'cursor');
-      }).toThrow(/Handlebars compilation failed/);
+      }).toThrow(HANDLEBARS_COMPILATION_FAILED_REGEX);
     });
   });
 });

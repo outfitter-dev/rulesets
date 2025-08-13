@@ -1,8 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test';
+import * as path from 'node:path';
 import type { CompiledDoc, Logger } from '@rulesets/types';
-import { promises as fs } from 'fs';
-import * as os from 'os';
-import * as path from 'path';
 import { OpenCodeProvider } from '../opencode-provider';
 
 // Mock fs promises

@@ -8,16 +8,10 @@ import type {
   CompiledDoc,
   DestinationPlugin,
   Logger,
-  Provider,
   WriteResult,
 } from '@rulesets/types';
 
-import {
-  createCompiledContent,
-  createOutputPath,
-  createProviderId,
-  type ProviderId,
-} from '@rulesets/types';
+import { createCompiledContent } from '@rulesets/types';
 import {
   AmpProvider,
   ampPlugin,

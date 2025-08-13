@@ -68,7 +68,7 @@ describe('linter', () => {
         r.message.includes('Missing required')
       );
       expect(rulesetsError).toBeDefined();
-      expect(rulesetsError!.severity).toBe('error');
+      expect(rulesetsError?.severity).toBe('error');
     });
 
     it('should error when rulesets field is invalid', async () => {
@@ -90,7 +90,7 @@ describe('linter', () => {
       const results = await lint(parsedDoc);
       const typeError = results.find((r) => r.message.includes('Invalid'));
       expect(typeError).toBeDefined();
-      expect(typeError!.severity).toBe('error');
+      expect(typeError?.severity).toBe('error');
     });
 
     it('should validate destinations structure', async () => {
@@ -116,7 +116,7 @@ describe('linter', () => {
         r.message.includes('Invalid Destination configurations')
       );
       expect(destError).toBeDefined();
-      expect(destError!.severity).toBe('error');
+      expect(destError?.severity).toBe('error');
     });
 
     it('should warn about unknown destinations when configured', async () => {
@@ -147,7 +147,7 @@ describe('linter', () => {
         r.message.includes('Unknown destination')
       );
       expect(destWarning).toBeDefined();
-      expect(destWarning!.severity).toBe('warning');
+      expect(destWarning?.severity).toBe('warning');
     });
 
     it('should provide info suggestions for missing title and description', async () => {
@@ -175,9 +175,9 @@ describe('linter', () => {
       );
 
       expect(titleInfo).toBeDefined();
-      expect(titleInfo!.severity).toBe('info');
+      expect(titleInfo?.severity).toBe('info');
       expect(descInfo).toBeDefined();
-      expect(descInfo!.severity).toBe('info');
+      expect(descInfo?.severity).toBe('info');
     });
 
     it('should include parsing errors in lint results', async () => {
@@ -206,8 +206,8 @@ describe('linter', () => {
         r.message.includes('Failed to parse frontmatter YAML')
       );
       expect(parseError).toBeDefined();
-      expect(parseError!.severity).toBe('error');
-      expect(parseError!.line).toBe(2);
+      expect(parseError?.severity).toBe('error');
+      expect(parseError?.line).toBe(2);
     });
   });
 });

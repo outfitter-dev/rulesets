@@ -1,8 +1,8 @@
 // TLDR: Unit tests for the Cursor provider (Rulesets v0)
 
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import type { CompiledDoc, Logger } from '@rulesets/types';
-import { promises as fs } from 'fs';
-import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CursorProvider } from '../cursor-provider';
 
@@ -55,13 +55,13 @@ describe('CursorProvider', () => {
       const schema = provider.configSchema();
       expect(schema.type).toBe('object');
       expect(schema.properties).toBeDefined();
-      expect(schema.properties!.outputPath).toBeDefined();
-      expect(schema.properties!.priority).toBeDefined();
+      expect(schema.properties?.outputPath).toBeDefined();
+      expect(schema.properties?.priority).toBeDefined();
     });
 
     it('should enforce priority enum values', () => {
       const schema = provider.configSchema();
-      const priorityProp = schema.properties!.priority as {
+      const priorityProp = schema.properties?.priority as {
         type: string;
         enum: string[];
       };

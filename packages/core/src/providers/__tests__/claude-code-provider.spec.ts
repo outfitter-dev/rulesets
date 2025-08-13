@@ -1,12 +1,12 @@
 // TLDR: Unit tests for the Claude Code provider (Rulesets v1)
 
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import type {
   CompiledDoc,
   Logger,
   ProviderCompilationContext,
 } from '@rulesets/types';
-import { promises as fs } from 'fs';
-import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClaudeCodeProvider } from '../claude-code-provider';
 
@@ -119,7 +119,7 @@ describe('ClaudeCodeProvider', () => {
 
     it('should define outputPath property with CLAUDE.md default', () => {
       const schema = provider.configSchema();
-      const outputPathProp = schema.properties!.outputPath as any;
+      const outputPathProp = schema.properties?.outputPath as any;
       expect(outputPathProp.type).toBe('string');
       expect(outputPathProp.default).toBe('CLAUDE.md');
       expect(outputPathProp.description).toContain('CLAUDE.md');
@@ -127,7 +127,7 @@ describe('ClaudeCodeProvider', () => {
 
     it('should define MCP configuration schema', () => {
       const schema = provider.configSchema();
-      const mcpConfigProp = schema.properties!.mcpConfig as any;
+      const mcpConfigProp = schema.properties?.mcpConfig as any;
       expect(mcpConfigProp.type).toBe('object');
       expect(mcpConfigProp.properties.enabled).toBeDefined();
       expect(mcpConfigProp.properties.outputPath).toBeDefined();
@@ -136,15 +136,15 @@ describe('ClaudeCodeProvider', () => {
 
     it('should enforce priority enum values', () => {
       const schema = provider.configSchema();
-      const priorityProp = schema.properties!.priority as any;
+      const priorityProp = schema.properties?.priority as any;
       expect(priorityProp.type).toBe('string');
       expect(priorityProp.enum).toEqual(['low', 'medium', 'high']);
     });
 
     it('should include project context option', () => {
       const schema = provider.configSchema();
-      const includeProjectContextProp = schema.properties!
-        .includeProjectContext as any;
+      const includeProjectContextProp = schema.properties
+        ?.includeProjectContext as any;
       expect(includeProjectContextProp.type).toBe('boolean');
       expect(includeProjectContextProp.default).toBe(true);
     });

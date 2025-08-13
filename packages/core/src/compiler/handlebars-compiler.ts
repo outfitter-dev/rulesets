@@ -13,20 +13,20 @@ const pinoLogger = getChildLogger('handlebars-compiler');
 export interface RulesetContext {
   // Provider information (updated from "destination" terminology)
   provider: {
-    id: string;           // "cursor"
-    name: string;         // "Cursor"
-    type: string;         // "ide"
+    id: string; // "cursor"
+    name: string; // "Cursor"
+    type: string; // "ide"
     capabilities: string[]; // ["workspaces", "git"]
   };
-  
+
   // File metadata
   file: {
-    name: string;         // "coding-standards"
-    version: string;      // "1.0.0"
-    path: string;         // ".ruleset/src/coding-standards.md"
+    name: string; // "coding-standards"
+    version: string; // "1.0.0"
+    path: string; // ".ruleset/src/coding-standards.md"
     frontmatter: Record<string, unknown>; // Full frontmatter object
   };
-  
+
   // User-defined variables from frontmatter
   project?: {
     name?: string;
@@ -34,11 +34,11 @@ export interface RulesetContext {
     framework?: string;
     [key: string]: unknown;
   };
-  
+
   // System variables
   timestamp: string;
   rulesetVersion: string;
-  
+
   // Additional frontmatter variables
   [key: string]: unknown;
 }
@@ -48,8 +48,8 @@ export interface RulesetContext {
  */
 interface SectionOptions extends Handlebars.HelperOptions {
   hash: {
-    include?: string;   // "cursor,windsurf"
-    exclude?: string;   // "claude-code"
+    include?: string; // "cursor,windsurf"
+    exclude?: string; // "claude-code"
     format?: 'xml' | 'heading' | 'raw';
   };
 }
@@ -59,7 +59,14 @@ interface SectionOptions extends Handlebars.HelperOptions {
  */
 export class HandlebarsRulesetCompiler {
   private hbs: typeof Handlebars;
-  private reservedHelpers = new Set(['if', 'unless', 'each', 'with', 'lookup', 'log']);
+  private reservedHelpers = new Set([
+    'if',
+    'unless',
+    'each',
+    'with',
+    'lookup',
+    'log',
+  ]);
 
   constructor() {
     this.hbs = Handlebars.create();
@@ -83,7 +90,10 @@ export class HandlebarsRulesetCompiler {
     }
 
     // Extract body content (everything after frontmatter)
-    const bodyContent = this.extractBodyContent(source.content, source.frontmatter);
+    const bodyContent = this.extractBodyContent(
+      source.content,
+      source.frontmatter
+    );
 
     try {
       // Pre-register section helpers by scanning the template
@@ -95,7 +105,7 @@ export class HandlebarsRulesetCompiler {
       // Compile template with Handlebars
       const template = this.hbs.compile(bodyContent, {
         noEscape: true, // Preserve markdown formatting
-        strict: false   // Allow undefined variables for flexibility
+        strict: false, // Allow undefined variables for flexibility
       });
 
       const compiledContent = template(context);
@@ -133,15 +143,23 @@ export class HandlebarsRulesetCompiler {
 
       return compiledDoc;
     } catch (error) {
-      pinoLogger.error({ error, path: source.path }, 'Failed to compile template');
-      throw new Error(`Handlebars compilation failed: ${error instanceof Error ? error.message : String(error)}`);
+      pinoLogger.error(
+        { error, path: source.path },
+        'Failed to compile template'
+      );
+      throw new Error(
+        `Handlebars compilation failed: ${error instanceof Error ? error.message : String(error)}`
+      );
     }
   }
 
   /**
    * Extracts body content by removing frontmatter
    */
-  private extractBodyContent(content: string, frontmatter?: Record<string, unknown>): string {
+  private extractBodyContent(
+    content: string,
+    frontmatter?: Record<string, unknown>
+  ): string {
     if (!frontmatter) {
       return content;
     }
@@ -172,15 +190,25 @@ export class HandlebarsRulesetCompiler {
    * Builds the Handlebars context for template compilation
    */
   private buildContext(
-    source: { path?: string; content: string; frontmatter?: Record<string, unknown> },
+    source: {
+      path?: string;
+      content: string;
+      frontmatter?: Record<string, unknown>;
+    },
     providerId: string,
     projectConfig: Record<string, unknown>
   ): RulesetContext {
     const frontmatter = source.frontmatter || {};
-    
+
     // Extract file name from path or frontmatter
-    const fileName = (frontmatter.name as string) || 
-      (source.path ? source.path.split('/').pop()?.replace(/\.[^.]*$/, '') || 'unnamed' : 'unnamed');
+    const fileName =
+      (frontmatter.name as string) ||
+      (source.path
+        ? source.path
+            .split('/')
+            .pop()
+            ?.replace(/\.[^.]*$/, '') || 'unnamed'
+        : 'unnamed');
 
     return {
       provider: {
@@ -193,9 +221,9 @@ export class HandlebarsRulesetCompiler {
         name: fileName,
         version: (frontmatter.version as string) || '1.0.0',
         path: source.path || '',
-        frontmatter: frontmatter,
+        frontmatter,
       },
-      project: frontmatter.project as Record<string, unknown> || {},
+      project: (frontmatter.project as Record<string, unknown>) || {},
       timestamp: new Date().toISOString(),
       rulesetVersion: '0.2.0',
       ...frontmatter, // Spread all frontmatter variables
@@ -208,11 +236,11 @@ export class HandlebarsRulesetCompiler {
    */
   private getProviderDisplayName(providerId: string): string {
     const displayNames: Record<string, string> = {
-      'cursor': 'Cursor',
-      'windsurf': 'Windsurf',
+      cursor: 'Cursor',
+      windsurf: 'Windsurf',
       'claude-code': 'Claude Code',
       'roo-code': 'Roo Code',
-      'cline': 'Cline',
+      cline: 'Cline',
       'codex-cli': 'OpenAI Codex CLI',
     };
     return displayNames[providerId] || providerId;
@@ -223,11 +251,11 @@ export class HandlebarsRulesetCompiler {
    */
   private getProviderType(providerId: string): string {
     const types: Record<string, string> = {
-      'cursor': 'ide',
-      'windsurf': 'ide',
+      cursor: 'ide',
+      windsurf: 'ide',
       'claude-code': 'cli',
       'roo-code': 'extension',
-      'cline': 'extension',
+      cline: 'extension',
       'codex-cli': 'cli',
     };
     return types[providerId] || 'unknown';
@@ -238,11 +266,11 @@ export class HandlebarsRulesetCompiler {
    */
   private getProviderCapabilities(providerId: string): string[] {
     const capabilities: Record<string, string[]> = {
-      'cursor': ['workspaces', 'git', 'debugging'],
-      'windsurf': ['workspaces', 'git', 'debugging'],
+      cursor: ['workspaces', 'git', 'debugging'],
+      windsurf: ['workspaces', 'git', 'debugging'],
       'claude-code': ['cli', 'git', 'terminal'],
       'roo-code': ['workspaces'],
-      'cline': ['workspaces'],
+      cline: ['workspaces'],
       'codex-cli': ['cli'],
     };
     return capabilities[providerId] || [];
@@ -254,7 +282,10 @@ export class HandlebarsRulesetCompiler {
   private registerCoreHelpers(): void {
     // Provider conditional helpers
     this.hbs.registerHelper('if-provider', this.createIfProviderHelper());
-    this.hbs.registerHelper('unless-provider', this.createUnlessProviderHelper());
+    this.hbs.registerHelper(
+      'unless-provider',
+      this.createUnlessProviderHelper()
+    );
 
     // Setup missing helper handler for freeform sections
     this.hbs.registerHelper('helperMissing', this.createMissingHelperHandler());
@@ -264,7 +295,7 @@ export class HandlebarsRulesetCompiler {
    * Pre-registers a section helper for a given name
    */
   private registerSectionHelper(name: string): void {
-    if (!this.reservedHelpers.has(name) && !this.hbs.helpers[name]) {
+    if (!(this.reservedHelpers.has(name) || this.hbs.helpers[name])) {
       this.hbs.registerHelper(name, this.createSectionHelper(name));
     }
   }
@@ -287,13 +318,17 @@ export class HandlebarsRulesetCompiler {
    * Creates the if-provider helper
    */
   private createIfProviderHelper() {
-    return function(this: RulesetContext, providers: string, options: Handlebars.HelperOptions): string {
-      const allowedProviders = providers.split(',').map(p => p.trim());
-      
+    return function (
+      this: RulesetContext,
+      providers: string,
+      options: Handlebars.HelperOptions
+    ): string {
+      const allowedProviders = providers.split(',').map((p) => p.trim());
+
       if (allowedProviders.includes(this.provider.id)) {
         return options.fn(this);
       }
-      
+
       return options.inverse ? options.inverse(this) : '';
     };
   }
@@ -302,13 +337,17 @@ export class HandlebarsRulesetCompiler {
    * Creates the unless-provider helper
    */
   private createUnlessProviderHelper() {
-    return function(this: RulesetContext, providers: string, options: Handlebars.HelperOptions): string {
-      const excludedProviders = providers.split(',').map(p => p.trim());
-      
+    return function (
+      this: RulesetContext,
+      providers: string,
+      options: Handlebars.HelperOptions
+    ): string {
+      const excludedProviders = providers.split(',').map((p) => p.trim());
+
       if (!excludedProviders.includes(this.provider.id)) {
         return options.fn(this);
       }
-      
+
       return options.inverse ? options.inverse(this) : '';
     };
   }
@@ -320,9 +359,9 @@ export class HandlebarsRulesetCompiler {
     return (context: unknown, options: SectionOptions): string => {
       // The first argument is actually the helper name when used as helperMissing
       const name = context as string;
-      
+
       // Only handle block helpers ({{#name}}) that aren't reserved
-      if (!options || !options.fn || this.reservedHelpers.has(name)) {
+      if (!options?.fn || this.reservedHelpers.has(name)) {
         throw new Error(`Helper '${name}' is not defined`);
       }
 
@@ -336,34 +375,48 @@ export class HandlebarsRulesetCompiler {
    * Creates a section helper for freeform section names
    */
   private createSectionHelper(sectionName: string) {
-    return function(this: RulesetContext, options: SectionOptions): string {
+    return function (this: RulesetContext, options: SectionOptions): string {
       const { include, exclude, format = 'xml' } = options.hash || {};
-      
+
       // Provider filtering
-      if (include && !include.split(',').map(p => p.trim()).includes(this.provider.id)) {
+      if (
+        include &&
+        !include
+          .split(',')
+          .map((p) => p.trim())
+          .includes(this.provider.id)
+      ) {
         return '';
       }
-      if (exclude && exclude.split(',').map(p => p.trim()).includes(this.provider.id)) {
+      if (
+        exclude
+          ?.split(',')
+          .map((p) => p.trim())
+          .includes(this.provider.id)
+      ) {
         return '';
       }
-      
+
       const content = options.fn(this).trim();
-      
+
       // Format output based on provider preferences
       switch (format) {
-        case 'xml':
+        case 'xml': {
           const xmlTag = sectionName.replace(/-/g, '_');
           return `<${xmlTag}>\n${content}\n</${xmlTag}>`;
-        
-        case 'heading':
-          const title = sectionName.split('-').map(w => 
-            w.charAt(0).toUpperCase() + w.slice(1)
-          ).join(' ');
+        }
+
+        case 'heading': {
+          const title = sectionName
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ');
           return `## ${title}\n\n${content}`;
-        
+        }
+
         case 'raw':
           return content;
-        
+
         default:
           return content;
       }

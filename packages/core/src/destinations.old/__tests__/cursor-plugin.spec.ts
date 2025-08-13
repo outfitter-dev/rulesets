@@ -1,7 +1,7 @@
 // TLDR: Unit tests for the Cursor destination plugin (Rulesets v0)
 
-import { promises as fs } from 'fs';
-import path from 'path';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CompiledDoc, Logger } from '../../interfaces';
 import { CursorPlugin } from '../cursor-plugin';
@@ -43,13 +43,13 @@ describe('CursorPlugin', () => {
       const schema = plugin.configSchema();
       expect(schema.type).toBe('object');
       expect(schema.properties).toBeDefined();
-      expect(schema.properties!.outputPath).toBeDefined();
-      expect(schema.properties!.priority).toBeDefined();
+      expect(schema.properties?.outputPath).toBeDefined();
+      expect(schema.properties?.priority).toBeDefined();
     });
 
     it('should enforce priority enum values', () => {
       const schema = plugin.configSchema();
-      const priorityProp = schema.properties!.priority as {
+      const priorityProp = schema.properties?.priority as {
         type: string;
         enum: string[];
       };

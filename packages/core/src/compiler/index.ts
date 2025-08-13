@@ -1,8 +1,8 @@
 // TLDR: Compiler implementation for Rulesets notation (v0.2.0+)
 // TLDR: Handlebars-based implementation with full marker processing
 import type { CompiledDoc, ParsedDoc } from '../interfaces';
-import { HandlebarsRulesetCompiler } from './handlebars-compiler';
 import { getChildLogger } from '../utils/logger';
+import { HandlebarsRulesetCompiler } from './handlebars-compiler';
 
 const pinoLogger = getChildLogger('compiler');
 
