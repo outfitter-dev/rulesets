@@ -52,6 +52,8 @@ export interface RulesetConfig {
   outputDirectory?: string;
   /** Global configuration options */
   options?: Record<string, unknown>;
+  /** Index signature for dynamic property access */
+  [key: string]: unknown;
 }
 
 /**

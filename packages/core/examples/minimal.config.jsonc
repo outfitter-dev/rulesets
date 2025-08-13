@@ -1,7 +1,7 @@
 {
   // Minimal Rulesets Configuration
   // Only specify what you want to override from defaults
-  
+
   "providers": {
     "cursor": {
       "enabled": true

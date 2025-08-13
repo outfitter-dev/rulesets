@@ -10,7 +10,6 @@ import type {
   GitignoreConfig,
   GitignoreOverrides,
   GitignoreResult,
-  GitignoreState,
   ManagedBlockConfig,
 } from './types';
 import {
@@ -80,7 +79,7 @@ export class GitignoreManager implements IGitignoreManager {
 
     try {
       // Read current overrides
-      const overrides = await this.readOverrides();
+      await this.readOverrides();
       
       // Normalize and filter paths
       const normalizedPaths = generatedPaths.map(p => normalizeGitignorePath(p, this.basePath));
@@ -153,8 +152,8 @@ export class GitignoreManager implements IGitignoreManager {
     const config: string[] = [];
 
     try {
-      // Read .rulesekeep file
-      const keepContent = await this.readOverrideFile('.rulesekeep');
+      // Read .rulesetkeep file
+      const keepContent = await this.readOverrideFile('.rulesetkeep');
       if (keepContent) {
         keep.push(...parseOverrideFile(keepContent));
       }
@@ -245,7 +244,7 @@ export class GitignoreManager implements IGitignoreManager {
   }
 
   /**
-   * Read an override file (.rulesekeep or .rulesetignore)
+   * Read an override file (.rulesetkeep or .rulesetignore)
    */
   private async readOverrideFile(filename: string): Promise<string | null> {
     const filePath = path.join(this.basePath, filename);

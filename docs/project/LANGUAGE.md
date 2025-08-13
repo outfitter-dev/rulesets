@@ -7,8 +7,8 @@ This document provides terminology guidance for consistent language in Rulesets 
 | Term                      | Definition                                                                           | Usage Examples                                                                                   |
 | ------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
 | **Source rules**          | Source files defining rules for AI assistants, written in Ruleset Syntax             | "Write your code standards in a source rules file."                                              |
-| **Compiled rules**        | Rules files generated from source rules for each destination                         | "Compile your source rules into compiled rules for each destination."                            |
-| **Destination**           | A supported tool (e.g., Cursor, Claude Code)                                         | "Each destination has specific formatting requirements."                                         |
+| **Compiled rules**        | Rules files generated from source rules for each provider                            | "Compile your source rules into compiled rules for each provider."                               |
+| **Provider**              | A supported tool (e.g., Cursor, Claude Code)                                         | "Each provider has specific formatting requirements."                                            |
 | **Marker**                | Element using `{{...}}` notation                                                     | "Use markers to direct the compiler."                                                            |
 | **Block**                 | Delimited blocks marked with `{{block}}...{{/block}}`                                | "Define a block for agent instructions."                                                         |
 | **Block Content**         | The content between opening and closing block markers                                | "The block content contains the actual instructions for the AI assistant."                       |
@@ -16,16 +16,16 @@ This document provides terminology guidance for consistent language in Rulesets 
 | **Import**                | A reference to another source rules file or block                                    | "Import common guidelines into multiple files."                                                  |
 | **Import Scope**          | Selective filtering of blocks during import                                          | "Use import scope with `{{> my-rules#(my-block) }}` to import specific blocks."                  |
 | **Variable**              | Dynamic values replaced during compilation                                           | "Use variables to include dynamic data."                                                         |
-| **System Variable**       | Built-in variables provided by the compiler                                          | "The `$destination` system variable contains the current destination ID."                        |
+| **System Variable**       | Built-in variables provided by the compiler                                          | "The `$provider` system variable contains the current provider ID."                              |
 | **Variable Substitution** | The process of replacing variables with their values                                 | "Variable substitution happens automatically during compilation."                                |
 | **Partial**               | Reusable components stored in `.ruleset/src/_partials`                               | "Import commonly used components as partials."                                                   |
 | **Property**              | A configuration applied to blocks or imports                                         | "Apply the tag-omit property to remove XML tags in compiled rules."                              |
-| **Scope**                 | A destination-specific context for properties                                        | "Use destination:property to apply properties in a specific scope."                              |
-| **Scoped Value**          | A property value that applies only to specific destinations                          | "The destination:code-javascript is a destination-scoped value."                                 |
+| **Scope**                 | A provider-specific context for properties                                           | "Use provider:property to apply properties in a specific scope."                                 |
+| **Scoped Value**          | A property value that applies only to specific providers                             | "The provider:code-javascript is a provider-scoped value."                                       |
 | **Property Family**       | The prefix part before the hyphen in properties (e.g., `code-` in `code-javascript`) | "The code- family includes language-specific formatting properties."                             |
 | **Property Value**        | Value enclosed in parentheses after a property family                                | "The code-javascript defines JavaScript-specific formatting."                                    |
 | **Property Group**        | A collection of related properties that serve a common purpose, regardless of prefix | "The formatting property group includes properties like code-javascript, indent-4, and wrap-80." |
-| **Modifier**              | Special symbol that changes inclusion/exclusion                                      | "Use the + modifier to include content for a destination."                                       |
+| **Modifier**              | Special symbol that changes inclusion/exclusion                                      | "Use the + modifier to include content for a provider."                                          |
 
 ## Linguistic Conventions
 
@@ -40,7 +40,7 @@ This document provides terminology guidance for consistent language in Rulesets 
 #### Compilation Process
 
 - ✅ "Compile source rules into compiled rules"
-- ✅ "Generate destination-specific rules files"
+- ✅ "Generate provider-specific rules files"
 - ✅ "Transform source rules into compiled rules"
 - ❌ "Render artifacts" (outdated)
 
@@ -48,7 +48,7 @@ This document provides terminology guidance for consistent language in Rulesets 
 
 - ✅ "Compiled rules" (as a noun for the compilation result)
 - ✅ "Compiled rules are written to their respective locations"
-- ✅ "The source rules file is compiled into rules for each destination"
+- ✅ "The source rules file is compiled into rules for each provider"
 - ✅ "Compilation artifacts" (for referring to files generated during compilation)
 - ❌ "The rendered artifact" (outdated)
 
@@ -67,16 +67,16 @@ This document provides terminology guidance for consistent language in Rulesets 
 #### Properties Terminology
 
 - ✅ "Apply properties to" (when adding configuration to blocks)
-- ✅ "Scope properties to" (when applying properties to specific destinations)
+- ✅ "Scope properties to" (when applying properties to specific providers)
 - ✅ "Include with `+`" (when referring to inclusion)
 - ✅ "Exclude with `!`" (when referring to exclusion)
 - ✅ "Property family" (for the prefix part of properties, like `code-` or `h-`)
 - ✅ "Property group" (for collections of related properties serving a common purpose)
 - ✅ "Property pattern" (for consistent naming conventions like `prefix-*`)
-- ✅ "Destination-scoped properties" (for properties applied to specific destinations)
+- ✅ "Provider-scoped properties" (for properties applied to specific providers)
 - ✅ "Property value" (for values in parentheses like `name-("destination-rules")`)
 - ❌ "Property settings" (use "property values" instead)
-- ❌ "Destination-specific properties" (use "destination-scoped properties" instead)
+- ❌ "Destination-specific properties" (use "provider-scoped properties" instead)
 - ❌ "Attribute" (use "property" for Ruleset directives, "XML attribute" for compiled rules)
 
 #### XML Generation
@@ -112,13 +112,13 @@ The `.ruleset/dist/` directory stores compiled rules, compilation artifacts, and
 | `.ruleset/dist/logs/`                     | Log files for all compilations                             |
 | `.ruleset/dist/logs/run-<timestamp>.log`  | Compilation log for each run                               |
 
-### Destination Directories
+### Provider Directories
 
-"Destination Directory" refers to a specific rules directory for a particular destination. For example:
+"Provider Directory" refers to a specific rules directory for a particular provider. For example:
 
-- `.cursor/rules` is a destination directory for Cursor
-- `.claude/commands` is a destination directory for Claude Code slash commands
-- `CLAUDE.md` has no specific destination directory as it's placed at the project root
+- `.cursor/rules` is a provider directory for Cursor
+- `.claude/commands` is a provider directory for Claude Code slash commands
+- `CLAUDE.md` has no specific provider directory as it's placed at the project root
 
 ## Delimiter Usage
 
@@ -126,11 +126,11 @@ Rulesets uses specific delimiters consistently throughout the syntax:
 
 | Delimiter | Role                     | Example                               | Purpose                                                        |
 | --------- | ------------------------ | ------------------------------------- | -------------------------------------------------------------- |
-| `:`       | Scope indicator          | `destination:code-javascript`         | Indicates that properties are scoped to a specific destination |
-| `()`      | Property value container | `name-("destination-rules")`          | Contains value for a property family                           |
-| `[]`      | Property grouping        | `destination:[property-1 property-2]` | Groups multiple properties for readability                     |
-| `+`       | Inclusion modifier       | `+destination`                        | Indicates inclusion of a destination                           |
-| `!`       | Exclusion modifier       | `!destination`, `!block-two`          | Indicates exclusion of a destination or block on imports       |
+| `:`       | Scope indicator          | `provider:code-javascript`            | Indicates that properties are scoped to a specific provider    |
+| `()`      | Property value container | `name-("provider-rules")`             | Contains value for a property family                           |
+| `[]`      | Property grouping        | `provider:[property-1 property-2]`    | Groups multiple properties for readability                     |
+| `+`       | Inclusion modifier       | `+provider`                           | Indicates inclusion of a provider                              |
+| `!`       | Exclusion modifier       | `!provider`, `!block-two`             | Indicates exclusion of a provider or block on imports          |
 | `""`      | XML attribute value      | `priority="high"`                     | Contains custom XML attribute values                           |
 
 ## Markdown Formatting
@@ -169,13 +169,50 @@ When referring to compilation versions:
 - Use examples liberally to illustrate abstract concepts
 - Avoid using previous terminology (mix, track, snippet, target, output, etc.)
 
+## Terminology Migration
+
+> [!WARNING]  
+> **Breaking Change**: The "Destination" terminology has been migrated to "Provider" as of 2025-01-13.
+
+### Migration Summary
+
+The Rulesets project has completed a comprehensive refactoring from "Destination" to "Provider" terminology:
+
+- **Code**: All TypeScript interfaces, variables, and function names updated
+- **Configuration**: Frontmatter and config files now use `provider:` keys
+- **Variables**: System variables changed from `$destination` to `$provider`
+- **Documentation**: All references updated throughout project docs
+
+### Backwards Compatibility
+
+- **Frontmatter**: Old `destination:` keys still work but are deprecated
+- **Variables**: `$destination` is still available but will be removed in v1.0
+- **File paths**: Provider plugin files moved from `destinations/` to `providers/`
+
+### Migration Timeline
+
+- **v0.2+**: Provider terminology is standard
+- **v0.3+**: Deprecation warnings for old terminology
+- **v1.0**: Complete removal of destination terminology
+
+For detailed migration instructions, see the [Provider Migration Guide](../../packages/types/MIGRATION.md).
+
 ## Changelog
+
+- **2025-01-13:**
+  - **BREAKING**: Migrated from "Destination" to "Provider" terminology
+  - Updated all interfaces: `DestinationPlugin` → `RulesetProvider`
+  - Updated system variables: `$destination` → `$provider` 
+  - Updated configuration keys: `destination:` → `provider:`
+  - Updated file structure: `destinations/` → `providers/`
+  - Added backwards compatibility for frontmatter and variables
+  - Updated all documentation and examples
 
 - **2025-05-20:**
   - Renamed "mix" to "source rules"
   - Renamed "track" to "block"
   - Renamed "snippet" to "partial"
-  - Renamed "target" to "destination"
+  - Renamed "target" to "destination" (later updated to "provider")
   - Renamed "output" to "compiled rules"
   - Renamed "option" to "property"
   - Standardized on "compile/compilation" for transformation process

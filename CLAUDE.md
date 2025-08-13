@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Rulesets is a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as Terraform for AI rules: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
+Rulesets is a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into provider-specific rules files (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as Terraform for AI rules: write once, compile for many providers, your agents, no matter the tool, on the (literal) same page.
 
 ## Critical Instructions
 
@@ -27,10 +27,10 @@ Rulesets is a CommonMark-compliant rules compiler that lets you author a single 
 - Source files defining rules, written in 100% previewable Markdown.
 - Use `.rule.md` extension (preferred) or `.md` extension.
 - Written in Ruleset syntax and use `{{...}}` notation markers to direct the compiler.
-- Compiled into destination-specific rules files:
+- Compiled into provider-specific rules files:
   - `./ruleset/src/my-rule.rule.md` → `.cursor/rules/my-rule.mdc`
 
-### Destination
+### Provider
 
 - A supported tool, such as cursor, windsurf, or claude-code.
 - Defines tool-specific criteria for compiling source rules to compiled rules files.
@@ -38,7 +38,7 @@ Rulesets is a CommonMark-compliant rules compiler that lets you author a single 
 
 ### Compiled rules
 
-- Destination-specific (tool) rules files, rendered from the source rules.
+- Provider-specific (tool) rules files, rendered from the source rules.
 - Examples for a source rules file called `project-conventions.md`:
   - Cursor → `.cursor/rules/project-conventions.mdc`
   - Claude Code → `./CLAUDE.md#project-conventions`
@@ -71,7 +71,7 @@ Rulesets is a CommonMark-compliant rules compiler that lets you author a single 
 
 - Syntax: `{{$key}}` or `$key` if used within a `{{...}}` marker.
 - Dynamic values replaced inline at compile time.
-- Examples: `{{$destination}}`, `{{$.frontmatter.key}}`, `{{$alias}}`
+- Examples: `{{$provider}}`, `{{$.frontmatter.key}}`, `{{$alias}}`
 
 ## Project Structure
 
@@ -94,7 +94,7 @@ project/
 | 👀 **Previewability** | Render legibly in GitHub, VS Code, Obsidian, etc.                   |
 | 🧩 **Extensibility**  | Advanced behaviors declared via attributes instead of new notation. |
 
-## Destination Providers
+## Providers
 
 | ID            | Tool               | Type              |
 | ------------- | ------------------ | ----------------- |
@@ -130,11 +130,11 @@ project/
 ```markdown
 Alias: {{$alias}}
 Source rules file version: {{$file.version}}
-Current destination: {{$destination}}
-Destination ID: {{$destination.id}}
+Current provider: {{$provider}}
+Provider ID: {{$provider.id}}
 ```
 
-### Destination Scoped Properties
+### Provider Scoped Properties
 
 ```markdown
 {{instructions cursor?name="cursor_instructions"}}
@@ -179,16 +179,16 @@ Content without surrounding XML tags
 ruleset:
   version: 0.1.0 # version number for the Ruleset format used
 description: 'Rules for this project' # useful for tools that use descriptions
-globs: ['**/*.{txt,md,mdc}'] # globs re-written based on destination-specific needs
-# Destination filter examples:
-destination:
+globs: ['**/*.{txt,md,mdc}'] # globs re-written based on provider-specific needs
+# Provider filter examples:
+provider:
   include: ['cursor', 'windsurf']
   exclude: ['claude-code']
   path: './custom/output/path'
-# Destination-specific frontmatter:
+# Provider-specific frontmatter:
 cursor:
   alwaysApply: false
-  destination:
+  provider:
     path: './custom/.cursor/rules'
 # Additional metadata:
 name: my-rule # defaults to filename

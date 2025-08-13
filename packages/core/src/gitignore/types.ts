@@ -21,7 +21,7 @@ export interface GitignoreConfig {
  * Override configurations from various sources
  */
 export interface GitignoreOverrides {
-  /** Files to keep in git (from .rulesekeep) */
+  /** Files to keep in git (from .rulesetkeep) */
   readonly keep: readonly string[];
   /** Additional files to ignore (from .rulesetignore) */
   readonly ignore: readonly string[];

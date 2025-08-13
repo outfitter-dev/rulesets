@@ -7,6 +7,7 @@ import { WindsurfProvider } from './windsurf-provider';
 import { ClaudeCodeProvider } from './claude-code-provider';
 import { CodexProvider } from './codex-provider';
 import { AmpProvider } from './amp-provider';
+import { OpenCodeProvider } from './opencode-provider';
 
 // Create singleton instances of modern providers
 export const cursorProvider = new CursorProvider();
@@ -14,6 +15,7 @@ export const windsurfProvider = new WindsurfProvider();
 export const claudeCodeProvider = new ClaudeCodeProvider();
 export const codexProvider = new CodexProvider();
 export const ampProvider = new AmpProvider();
+export const openCodeProvider = new OpenCodeProvider();
 
 // Modern provider registry - primary export for new code
 export const providers: ReadonlyMap<string, Provider> = new Map<string, Provider>([
@@ -22,6 +24,7 @@ export const providers: ReadonlyMap<string, Provider> = new Map<string, Provider
   ['claude-code', claudeCodeProvider],
   ['codex-cli', codexProvider],
   ['amp', ampProvider],
+  ['opencode', openCodeProvider],
 ]);
 
 // Provider lookup utilities for modern code
@@ -48,6 +51,7 @@ export const destinations: ReadonlyMap<string, DestinationPlugin> = new Map<
   ['claude-code', claudeCodeProvider as unknown as DestinationPlugin],
   ['codex-cli', codexProvider as unknown as DestinationPlugin],
   ['amp', ampProvider as unknown as DestinationPlugin],
+  ['opencode', openCodeProvider as unknown as DestinationPlugin],
 ]);
 
 // Legacy aliases for backwards compatibility
@@ -57,9 +61,10 @@ export const windsurfPlugin = windsurfProvider;
 export const claudeCodePlugin = claudeCodeProvider;
 export const codexPlugin = codexProvider;
 export const ampPlugin = ampProvider;
+export const openCodePlugin = openCodeProvider;
 
 // Export classes for testing and extension
-export { CursorProvider, WindsurfProvider, ClaudeCodeProvider, CodexProvider, AmpProvider };
+export { CursorProvider, WindsurfProvider, ClaudeCodeProvider, CodexProvider, AmpProvider, OpenCodeProvider };
 
 // Export types for modern usage
 export type { Provider } from '@rulesets/types';

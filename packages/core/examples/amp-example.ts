@@ -1,8 +1,8 @@
 // Example demonstrating the Amp provider usage
 // This shows how to programmatically use the Amp provider
 
-import { AmpProvider } from '../src/providers/amp-provider';
 import type { CompiledDoc, Logger } from '@rulesets/types';
+import { AmpProvider } from '../src/providers/amp-provider';
 
 // Simple example of using the Amp provider
 async function exampleAmpUsage() {

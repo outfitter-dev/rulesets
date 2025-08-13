@@ -135,6 +135,7 @@ export interface ProviderFeatures {
   readonly syntaxHighlighting?: boolean;
   readonly codeCompletion?: boolean;
   readonly errorReporting?: boolean;
+  readonly webIntegration?: boolean;
   readonly customProperties?: PropertyName[];
 }
 
@@ -332,6 +333,27 @@ export const BUILT_IN_PROVIDERS: Record<string, Provider> = {
       allowedFormats: ['markdown'],
     },
   },
+  opencode: {
+    id: 'opencode' as ProviderId,
+    name: 'OpenCode',
+    version: '1.0.0' as Version,
+    description: 'OpenCode web agent/extension',
+    website: 'https://opencode.dev',
+    type: 'web',
+    config: {
+      outputPath: 'AGENTS.md' as OutputPath,
+      format: 'markdown',
+      fileNaming: 'preserve',
+    },
+    capabilities: {
+      supportsBlocks: true,
+      supportsImports: true,
+      supportsVariables: true,
+      supportsXml: false,
+      supportsMarkdown: true,
+      allowedFormats: ['markdown'],
+    },
+  },
 } as const;
 
 /**
@@ -474,6 +496,11 @@ export const DEFAULT_PROVIDER_CONFIGS: Record<string, Partial<ProviderConfig>> =
   },
   amp: {
     outputPath: 'AGENT.md' as OutputPath,
+    format: 'markdown',
+    fileNaming: 'preserve',
+  },
+  opencode: {
+    outputPath: 'AGENTS.md' as OutputPath,
     format: 'markdown',
     fileNaming: 'preserve',
   },

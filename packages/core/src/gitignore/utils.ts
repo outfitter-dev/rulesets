@@ -221,6 +221,6 @@ export function rebuildGitignoreContent(
  */
 export function sortAndDedupePaths(paths: readonly string[]): string[] {
   const normalizedPaths = paths.map(p => normalizeGitignorePath(p));
-  const uniquePaths = [...new Set(normalizedPaths)];
+  const uniquePaths = Array.from(new Set(normalizedPaths));
   return uniquePaths.sort();
 }

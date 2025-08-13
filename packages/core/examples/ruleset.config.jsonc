@@ -1,12 +1,12 @@
 {
   // Rulesets Configuration File (JSONC format with comments)
   // This file demonstrates the complete configuration schema
-  
+
   // Global Settings
   "strict": true,
   "defaultProviders": ["cursor", "claude-code"],
   "outputDirectory": ".ruleset/dist",
-  
+
   // Provider Configurations
   "providers": {
     // Cursor IDE configuration
@@ -18,7 +18,7 @@
         "priority": "high"
       }
     },
-    
+
     // Claude Code CLI configuration
     "claude-code": {
       "enabled": true,
@@ -28,7 +28,7 @@
         "includeMetadata": true
       }
     },
-    
+
     // Windsurf IDE configuration
     "windsurf": {
       "enabled": false,
@@ -37,32 +37,25 @@
         "theme": "dark"
       }
     },
-    
+
     // Roo Code VS Code Extension
     "roo-code": {
       "enabled": false,
       "outputPath": ".roo/rules.md"
     }
   },
-  
+
   // Gitignore Management Configuration
   "gitignore": {
     "enabled": true,
-    "keep": [
-      "docs/manual-rules.md",
-      "legacy-rules.md"
-    ],
-    "ignore": [
-      "*.backup",
-      "*.tmp",
-      "*.log"
-    ],
+    "keep": ["docs/manual-rules.md", "legacy-rules.md"],
+    "ignore": ["*.backup", "*.tmp", "*.log"],
     "options": {
       "comment": "Rulesets Generated Files - Do Not Edit Manually",
       "sort": true
     }
   },
-  
+
   // Global options for extensibility
   "options": {
     "experimental": {

@@ -62,7 +62,7 @@ describe('GitignoreManager', () => {
       mockFs.readFile
         .mockRejectedValueOnce({ code: 'ENOENT' })  // .gitignore doesn't exist
         .mockResolvedValueOnce('')                  // Return empty after creation
-        .mockResolvedValueOnce('')                  // .rulesekeep doesn't exist
+        .mockResolvedValueOnce('')                  // .rulesetkeep doesn't exist
         .mockResolvedValueOnce('');                 // .rulesetignore doesn't exist
 
       const manager = new GitignoreManager({}, testBasePath);
@@ -143,7 +143,7 @@ dist/`;
         if (filePath.endsWith('.gitignore')) {
           return 'node_modules/\n';
         }
-        if (filePath.endsWith('.rulesekeep')) {
+        if (filePath.endsWith('.rulesetkeep')) {
           return '.cursor/rules/important.mdc\n';
         }
         if (filePath.endsWith('.rulesetignore')) {
@@ -197,9 +197,9 @@ dist/`;
   });
 
   describe('readOverrides', () => {
-    it('should read .rulesekeep and .rulesetignore files', async () => {
+    it('should read .rulesetkeep and .rulesetignore files', async () => {
       mockFs.readFile.mockImplementation(async (filePath: string) => {
-        if (filePath.endsWith('.rulesekeep')) {
+        if (filePath.endsWith('.rulesetkeep')) {
           return '.cursor/rules/important.mdc\n# Comment\n.windsurf/rules/keep.md';
         }
         if (filePath.endsWith('.rulesetignore')) {
@@ -280,7 +280,7 @@ dist/`;
 
     it('should respect keep patterns', async () => {
       mockFs.readFile.mockImplementation(async (filePath: string) => {
-        if (filePath.endsWith('.rulesekeep')) {
+        if (filePath.endsWith('.rulesetkeep')) {
           return '.cursor/rules/important.mdc';
         }
         throw { code: 'ENOENT' };
