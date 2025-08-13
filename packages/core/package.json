@@ -27,15 +27,17 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@rulesets/types": "workspace:*",
-    "@rulesets/parser": "workspace:*",
-    "@rulesets/linter": "workspace:*",
-    "@rulesets/compiler": "workspace:*",
-    "jsonc-parser": "^3.3.1",
     "@iarna/toml": "^3.0.0",
-    "ajv": "^8.17.1"
+    "@rulesets/compiler": "workspace:*",
+    "@rulesets/linter": "workspace:*",
+    "@rulesets/parser": "workspace:*",
+    "@rulesets/types": "workspace:*",
+    "ajv": "^8.17.1",
+    "handlebars": "^4.7.8",
+    "jsonc-parser": "^3.3.1"
   },
   "devDependencies": {
+    "@types/handlebars": "^4.1.0",
     "@types/js-yaml": "^4.0.9",
     "@types/json-schema": "^7.0.15"
   },

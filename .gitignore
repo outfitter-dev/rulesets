@@ -38,8 +38,9 @@ bun-debug.log*
 # Turbo
 /.turbo
 
+# Docs archive
 docs_archive/
-.private-journal/
 
 # .agent
-.agent/
+!.agent/
+.agent/research

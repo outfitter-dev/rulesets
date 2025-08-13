@@ -3,7 +3,7 @@
 
 import type { CompiledDoc } from '@rulesets/types';
 import { AmpProvider } from '../src/providers/amp-provider';
-import { createLogger, toRulesetsLogger } from '../src/utils/logger';
+import { createLogger } from '../src/utils/logger';
 
 // Simple example of using the Amp provider
 function exampleAmpUsage() {

@@ -1,106 +1,35 @@
-// TLDR: Compiler implementation for Rulesets notation (mixd-v0)
-// TLDR: v0.1.0 Pass-through implementation without marker processing
+// TLDR: Compiler implementation for Rulesets notation (v0.2.0+)
+// TLDR: Handlebars-based implementation with full marker processing
 import type { CompiledDoc, ParsedDoc } from '../interfaces';
+import { HandlebarsRulesetCompiler } from './handlebars-compiler';
 import { getChildLogger } from '../utils/logger';
 
 const pinoLogger = getChildLogger('compiler');
 
+// Create global Handlebars compiler instance
+const handlebarsCompiler = new HandlebarsRulesetCompiler();
+
 /**
- * Compiles a parsed Rulesets document for a specific destination.
- * For v0.1.0, this is a pass-through implementation that doesn't process markers.
+ * Compiles a parsed Rulesets document for a specific provider.
+ * v0.2.0+ implementation with full Handlebars processing of markers.
  *
  * @param parsedDoc - The parsed document to compile
- * @param destinationId - The ID of the destination to compile for
+ * @param providerId - The ID of the provider to compile for (updated from destinationId)
  * @param projectConfig - Optional project configuration
- * @returns A promise that resolves to a CompiledDoc
+ * @returns A compiled document with processed Handlebars content
  */
-// TLDR: Compiles parsed document to destination format (mixd-v0)
-// TLDR: v0.1.0 Pass-through implementation without transformation
-// TODO(v0.2.0): Process block markers and convert to XML
-// TODO(v0.3.0): Process variables and perform substitution
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex compile function that will be refactored in v0.1-beta
 export function compile(
   parsedDoc: ParsedDoc,
-  destinationId: string,
+  providerId: string,
   projectConfig: Record<string, unknown> = {}
 ): CompiledDoc {
-  const { source, ast } = parsedDoc;
-
-  // Handle empty files consistently
-  if (!source.content.trim()) {
-    pinoLogger.warn({ path: source.path }, 'Compiling empty source file');
+  try {
+    return handlebarsCompiler.compile(parsedDoc, providerId, projectConfig);
+  } catch (error) {
+    pinoLogger.error(
+      { error, path: parsedDoc.source.path, providerId },
+      'Failed to compile document'
+    );
+    throw error;
   }
-
-  // Extract the body content (everything after frontmatter)
-  let bodyContent = source.content;
-
-  // If there's frontmatter, remove it from the body
-  if (source.frontmatter) {
-    const lines = source.content.split('\n');
-    let frontmatterEnd = -1;
-
-    if (lines[0] === '---') {
-      for (let i = 1; i < lines.length; i++) {
-        if (lines[i] === '---') {
-          frontmatterEnd = i;
-          break;
-        }
-      }
-
-      if (frontmatterEnd > 0) {
-        bodyContent = lines
-          .slice(frontmatterEnd + 1)
-          .join('\n')
-          .trim();
-      }
-    }
-  }
-
-  // Build the compiled document
-  const compiledDoc: CompiledDoc = {
-    source: {
-      path: source.path,
-      content: source.content,
-      frontmatter: source.frontmatter,
-    },
-    ast: {
-      blocks: ast.blocks, // Pass through from parser (empty for v0)
-      imports: ast.imports, // Pass through from parser (empty for v0)
-      variables: ast.variables, // Pass through from parser (empty for v0)
-      markers: ast.markers, // Pass through from parser (empty for v0)
-    },
-    output: {
-      content: bodyContent, // Raw body content for v0
-      metadata: {
-        // Include relevant frontmatter metadata
-        title: source.frontmatter?.title,
-        description: source.frontmatter?.description,
-        version: source.frontmatter?.version,
-        // Include destination-specific metadata if available
-        ...(source.frontmatter?.destinations &&
-        typeof source.frontmatter.destinations === 'object' &&
-        !Array.isArray(source.frontmatter.destinations)
-          ? (source.frontmatter.destinations as Record<string, unknown>)[
-              destinationId
-            ] || {}
-          : {}),
-      },
-    },
-    context: {
-      destinationId,
-      config: {
-        ...projectConfig,
-        // Merge destination-specific config from frontmatter
-        ...(source.frontmatter?.destinations &&
-        typeof source.frontmatter.destinations === 'object' &&
-        !Array.isArray(source.frontmatter.destinations)
-          ? (source.frontmatter.destinations as Record<string, unknown>)[
-              destinationId
-            ] || {}
-          : {}),
-      },
-    },
-  };
-
-  return compiledDoc;
 }
