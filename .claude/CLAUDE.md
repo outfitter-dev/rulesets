@@ -314,7 +314,8 @@ try {
   const result = await fetchData();
   return { success: true, data: result };
 } catch (error) {
-  console.error('API call failed:', error);
+  // Use your project's logger instead of console
+  logger.error('API call failed:', error as Error);
   return { success: false, error: error.message };
 }
 

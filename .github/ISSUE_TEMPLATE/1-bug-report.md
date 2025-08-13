@@ -1,6 +1,6 @@
 ---
 name: '🐞 Bug Report'
-about: 'Report a bug or issue with Mixdown'
+about: 'Report a bug or issue with Rulesets'
 title: '[Bug]: '
 labels: ['triage']
 type: 'bug'

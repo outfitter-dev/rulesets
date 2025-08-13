@@ -1,5 +1,5 @@
-// :M: tldr: Linter implementation for Rulesets notation
-// :M: v0.1.0: Basic frontmatter schema validation only
+// TLDR: Linter implementation for Rulesets notation (mixd-v0)
+// TLDR: v0.1.0 Basic frontmatter schema validation only
 import type { ParsedDoc } from '@rulesets/types';
 
 export interface LinterConfig {
@@ -36,10 +36,10 @@ function getFieldName(path: string): string {
  * @param config - Optional linter configuration
  * @returns A promise that resolves to an array of lint results
  */
-// :M: tldr: Validate frontmatter against basic schema requirements
-// :M: v0.1.0: Validates presence and types of frontmatter fields
-// :M: todo(v0.2.0): Add validation for block properties
-// :M: todo(v0.3.0): Add validation for variables and imports
+// TLDR: Validate frontmatter against basic schema requirements (mixd-v0)
+// TLDR: v0.1.0 Validates presence and types of frontmatter fields
+// TODO(v0.2.0): Add validation for block properties
+// TODO(v0.3.0): Add validation for variables and imports
 export async function lint(
   parsedDoc: ParsedDoc,
   config: LinterConfig = {}

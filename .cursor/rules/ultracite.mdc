@@ -147,7 +147,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't have unused variables.
 - Make sure void (self-closing) elements don't have children.
 - Don't return a value from a function with the return type 'void'
-- Use isNaN() when checking for NaN.
+- Use Number.isNaN() when checking for NaN.
 - Make sure "for" loop update clauses move the counter in the right direction.
 - Make sure typeof expressions are compared to valid values.
 - Make sure generator functions contain yield.
@@ -195,10 +195,8 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't use user-defined types.
 - Use `as const` instead of literal types and type annotations.
 - Use either `T[]` or `Array<T>` consistently.
-- Initialize each enum member value explicitly.
 - Use `export type` for types.
 - Use `import type` for types.
-- Make sure all enum members are literal values.
 - Don't use TypeScript const enum.
 - Don't declare empty interfaces.
 - Don't let variables evolve into any type through reassignments.
@@ -207,7 +205,6 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't use implicit any type on variable declarations.
 - Don't merge interfaces and classes unsafely.
 - Don't use overload signatures that aren't next to each other.
-- Use the namespace keyword instead of the module keyword to declare TypeScript namespaces.
 
 ### Style and Consistency
 - Don't use global `eval()`.
@@ -233,7 +230,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Put default function parameters and optional function parameters last.
 - Include a `default` clause in switch statements.
 - Use the `**` operator instead of `Math.pow`.
-- Use `for-of` loops when you need the index to extract an item from the iterated array.
+- Use `for...of` when you only need values; use `array.entries()` with `for...of` or a traditional `for` loop when you need indices.
 - Use `node:assert/strict` over `node:assert`.
 - Use the `node:` protocol for Node.js builtin modules.
 - Use Number properties instead of global ones.
@@ -267,7 +264,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't reassign function declarations.
 - Don't allow assignments to native objects and read-only global variables.
 - Use Number.isFinite instead of global isFinite.
-- Use Number.isNaN instead of global isNaN.
+- Use Number.isNaN() instead of global isNaN() for safe NaN checks.
 - Don't assign to imported bindings.
 - Don't use irregular whitespace characters.
 - Don't use labels that share a name with a variable.

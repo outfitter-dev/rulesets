@@ -1,9 +1,8 @@
 ---
 name: '📝 Documentation Request'
-about: 'Suggest improvements or report issues with Mixdown documentation'
+about: 'Suggest improvements or report issues with Rulesets documentation'
 title: '[Docs]: '
-labels: ['triage']
-type: 'documentation'
+labels: ['triage', 'documentation']
 ---
 
 ## Documentation Area
@@ -16,7 +15,7 @@ type: 'documentation'
 
 ## Impact on Usage
 
-[How this documentation issue affects your use of Mixdown.]
+[How this documentation issue affects your use of Rulesets.]
 
 ## Additional Context
 
