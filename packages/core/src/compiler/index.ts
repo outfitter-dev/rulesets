@@ -1,8 +1,9 @@
 // :M: tldr: Compiler implementation for Rulesets notation
 // :M: v0.1.0: Pass-through implementation without marker processing
-import type { CompiledDoc, Logger, ParsedDoc } from '../interfaces';
+import type { CompiledDoc, ParsedDoc } from '../interfaces';
+import { getChildLogger } from '../utils/logger';
 
-let logger: Logger | undefined;
+const pinoLogger = getChildLogger('compiler');
 
 /**
  * Compiles a parsed Rulesets document for a specific destination.
@@ -26,8 +27,8 @@ export function compile(
   const { source, ast } = parsedDoc;
 
   // Handle empty files consistently
-  if (!source.content.trim() && logger) {
-    logger.warn('Compiling empty source file');
+  if (!source.content.trim()) {
+    pinoLogger.warn({ path: source.path }, 'Compiling empty source file');
   }
 
   // Extract the body content (everything after frontmatter)

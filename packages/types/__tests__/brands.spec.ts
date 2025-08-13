@@ -3,7 +3,7 @@
  * Following TDD principles with security, validation, and backwards compatibility focus
  */
 
-import { beforeEach, describe, expect, test, vi } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'bun:test';
 import {
   type BlockName,
   // Error class
