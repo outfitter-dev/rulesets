@@ -1,8 +1,8 @@
 // TLDR: Unit tests for the Windsurf provider
 
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import type { CompiledDoc, Logger } from '@rulesets/types';
-import { promises as fs } from 'fs';
-import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { WindsurfProvider } from '../windsurf-provider';
 
@@ -43,10 +43,10 @@ describe('WindsurfProvider', () => {
       const schema = provider.configSchema();
       expect(schema.type).toBe('object');
       expect(schema.properties).toBeDefined();
-      expect(schema.properties!.outputPath).toBeDefined();
-      expect(schema.properties!.format).toBeDefined();
+      expect(schema.properties?.outputPath).toBeDefined();
+      expect(schema.properties?.format).toBeDefined();
 
-      const formatProp = schema.properties!.format as {
+      const formatProp = schema.properties?.format as {
         enum: string[];
         default: string;
       };

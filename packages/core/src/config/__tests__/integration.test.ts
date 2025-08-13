@@ -2,12 +2,11 @@
  * Integration tests for the complete configuration system
  */
 
-import { promises as fs } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
+import { promises as fs } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { loadConfig } from '../ConfigLoader';
-import type { RulesetConfig } from '../types';
 
 describe('Configuration System Integration', () => {
   let tempDir: string;
@@ -224,7 +223,7 @@ describe('Configuration System Integration', () => {
       };
 
       const result = await loadConfig(projectDir, {}, undefined);
-      const mockResult = await loadConfig(projectDir, {}, undefined);
+      const _mockResult = await loadConfig(projectDir, {}, undefined);
 
       // Manually apply env overrides for testing
       const { config: finalConfig } = result.config;
@@ -262,9 +261,9 @@ describe('Configuration System Integration', () => {
       const result = await loadConfig(projectDir);
 
       expect(result.errors).toBeTruthy();
-      expect(result.errors!.length).toBeGreaterThan(0);
+      expect(result.errors?.length).toBeGreaterThan(0);
       expect(result.warnings).toBeTruthy();
-      expect(result.warnings!.length).toBeGreaterThan(0);
+      expect(result.warnings?.length).toBeGreaterThan(0);
     });
 
     it('should warn about unknown providers', async () => {
@@ -284,10 +283,10 @@ describe('Configuration System Integration', () => {
       const result = await loadConfig(projectDir);
 
       expect(result.warnings).toBeTruthy();
-      expect(result.warnings!.some((w) => w.includes('unknown-provider'))).toBe(
+      expect(result.warnings?.some((w) => w.includes('unknown-provider'))).toBe(
         true
       );
-      expect(result.warnings!.some((w) => w.includes('another-unknown'))).toBe(
+      expect(result.warnings?.some((w) => w.includes('another-unknown'))).toBe(
         true
       );
     });

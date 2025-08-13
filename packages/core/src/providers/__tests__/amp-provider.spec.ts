@@ -12,11 +12,11 @@ import { AmpProvider } from '../amp-provider';
 
 describe('AmpProvider', () => {
   let provider: AmpProvider;
-  let mockLogger: Logger;
+  let _mockLogger: Logger;
 
   beforeEach(() => {
     provider = new AmpProvider();
-    mockLogger = {
+    _mockLogger = {
       info: () => {},
       error: () => {},
       warn: () => {},
@@ -60,17 +60,17 @@ describe('AmpProvider', () => {
 
       expect(schema.type).toBe('object');
       expect(schema.properties).toBeDefined();
-      expect(schema.properties!.outputPath).toBeDefined();
-      expect(schema.properties!.priority).toBeDefined();
-      expect(schema.properties!.includeProjectContext).toBeDefined();
+      expect(schema.properties?.outputPath).toBeDefined();
+      expect(schema.properties?.priority).toBeDefined();
+      expect(schema.properties?.includeProjectContext).toBeDefined();
       expect(schema.additionalProperties).toBe(true);
     });
 
     it('should have correct default values in schema', () => {
       const schema = provider.configSchema();
-      const outputPathProperty = schema.properties!.outputPath as any;
-      const includeProjectContextProperty = schema.properties!
-        .includeProjectContext as any;
+      const outputPathProperty = schema.properties?.outputPath as any;
+      const includeProjectContextProperty = schema.properties
+        ?.includeProjectContext as any;
 
       expect(outputPathProperty.default).toBe('AGENT.md');
       expect(includeProjectContextProperty.default).toBe(true);

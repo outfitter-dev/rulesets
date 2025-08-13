@@ -2,10 +2,10 @@
  * Tests for ConfigLoader class
  */
 
-import { promises as fs } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { promises as fs } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import {
   ConfigLoader,
   getConfigLoader,
@@ -267,7 +267,7 @@ describe('ConfigLoader', () => {
 
       expect(result.config.strict).toBe(true);
       expect(result.config.providers?.cursor?.enabled).toBe(true);
-      expect(result.envOverrides['RULESETS_STRICT']).toBe(true);
+      expect(result.envOverrides.RULESETS_STRICT).toBe(true);
     });
 
     it('should work without config file', async () => {

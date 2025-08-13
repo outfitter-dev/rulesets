@@ -2,8 +2,7 @@
  * Integration tests for GitignoreManager with runRulesetsV0
  */
 
-import { promises as fs } from 'fs';
-import * as path from 'path';
+import { promises as fs } from 'node:fs';
 import { runRulesetsV0 } from '../../index';
 import { ConsoleLogger } from '../../logger';
 import { GitignoreManager } from '../GitignoreManager';

@@ -44,8 +44,11 @@ export interface DestinationPlugin {
     destPath: string;
     config: Record<string, unknown>; // Validated via schema from configSchema()
     logger: Logger;
-  }): Promise<void | {
-    generatedPaths: string[];
-    metadata: Record<string, unknown>;
-  }>;
+  }): Promise<
+    | undefined
+    | {
+        generatedPaths: string[];
+        metadata: Record<string, unknown>;
+      }
+  >;
 }

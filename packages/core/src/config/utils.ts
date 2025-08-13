@@ -3,17 +3,17 @@
  * Supports both JSONC and TOML formats with robust error handling
  */
 
+import { constants, promises as fs } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { parse as parseToml } from '@iarna/toml';
-import { constants, promises as fs } from 'fs';
 import { type ParseError, parse as parseJsonc } from 'jsonc-parser';
-import { dirname, join, resolve } from 'path';
+import { getChildLogger } from '../utils/logger';
 import type {
   ConfigFileResult,
   ConfigLoadOptions,
   RulesetConfig,
 } from './types';
 import { CONFIG_FILE_NAMES, DEFAULT_LOAD_OPTIONS } from './types';
-import { getChildLogger } from '../utils/logger';
 
 const logger = getChildLogger('config');
 
@@ -144,14 +144,20 @@ export function mergeConfigs(
   const result: RulesetConfig = {};
 
   for (const config of configs) {
-    if (!config) continue;
+    if (!config) {
+      continue;
+    }
 
     // Merge scalar values
-    if (config.strict !== undefined) result.strict = config.strict;
-    if (config.outputDirectory !== undefined)
+    if (config.strict !== undefined) {
+      result.strict = config.strict;
+    }
+    if (config.outputDirectory !== undefined) {
       result.outputDirectory = config.outputDirectory;
-    if (config.defaultProviders !== undefined)
+    }
+    if (config.defaultProviders !== undefined) {
       result.defaultProviders = [...config.defaultProviders];
+    }
 
     // Deep merge providers
     if (config.providers) {
@@ -215,7 +221,9 @@ export function applyEnvOverrides(
   const applied: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(env)) {
-    if (!key.startsWith(`${prefix}_`)) continue;
+    if (!key.startsWith(`${prefix}_`)) {
+      continue;
+    }
 
     try {
       const override = parseEnvOverride(key, value, prefix);
@@ -242,7 +250,9 @@ export function parseEnvOverride(
   value: string,
   prefix = 'RULESETS'
 ): { path: string[]; value: unknown } | null {
-  if (!key.startsWith(`${prefix}_`)) return null;
+  if (!key.startsWith(`${prefix}_`)) {
+    return null;
+  }
 
   const keyParts = key
     .substring(prefix.length + 1)
@@ -324,12 +334,20 @@ export function parseEnvOverride(
  */
 export function parseEnvValue(value: string): unknown {
   // Boolean values
-  if (value === 'true') return true;
-  if (value === 'false') return false;
+  if (value === 'true') {
+    return true;
+  }
+  if (value === 'false') {
+    return false;
+  }
 
   // Numeric values
-  if (/^-?\d+$/.test(value)) return Number.parseInt(value, 10);
-  if (/^-?\d*\.\d+$/.test(value)) return Number.parseFloat(value);
+  if (/^-?\d+$/.test(value)) {
+    return Number.parseInt(value, 10);
+  }
+  if (/^-?\d*\.\d+$/.test(value)) {
+    return Number.parseFloat(value);
+  }
 
   // JSON values (arrays, objects)
   if (
@@ -371,7 +389,7 @@ export function setDeepValue(
     current = current[key] as Record<string, unknown>;
   }
 
-  current[path[path.length - 1]] = value;
+  current[path.at(-1)] = value;
 }
 
 /**
