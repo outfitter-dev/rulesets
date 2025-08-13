@@ -1,9 +1,14 @@
 // Tests for AmpProvider - Amp AI assistant provider implementation
 
-import { describe, it, expect, beforeEach } from 'bun:test';
-import { AmpProvider } from '../amp-provider';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import type { Logger, ProviderCompilationContext } from '@rulesets/types';
-import { createProviderId, createVersion, createOutputPath, createSourcePath } from '@rulesets/types';
+import {
+  createOutputPath,
+  createProviderId,
+  createSourcePath,
+  createVersion,
+} from '@rulesets/types';
+import { AmpProvider } from '../amp-provider';
 
 describe('AmpProvider', () => {
   let provider: AmpProvider;
@@ -52,7 +57,7 @@ describe('AmpProvider', () => {
   describe('Configuration Schema', () => {
     it('should provide valid JSON schema', () => {
       const schema = provider.configSchema();
-      
+
       expect(schema.type).toBe('object');
       expect(schema.properties).toBeDefined();
       expect(schema.properties!.outputPath).toBeDefined();
@@ -64,8 +69,9 @@ describe('AmpProvider', () => {
     it('should have correct default values in schema', () => {
       const schema = provider.configSchema();
       const outputPathProperty = schema.properties!.outputPath as any;
-      const includeProjectContextProperty = schema.properties!.includeProjectContext as any;
-      
+      const includeProjectContextProperty = schema.properties!
+        .includeProjectContext as any;
+
       expect(outputPathProperty.default).toBe('AGENT.md');
       expect(includeProjectContextProperty.default).toBe(true);
     });
@@ -74,7 +80,7 @@ describe('AmpProvider', () => {
   describe('Compilation', () => {
     it('should successfully compile content', async () => {
       const mockContext: ProviderCompilationContext = {
-        provider: provider,
+        provider,
         sourcePath: createSourcePath('test.rule.md'),
         outputPath: createOutputPath('AGENT.md'),
         variables: {},
@@ -106,7 +112,7 @@ describe('AmpProvider', () => {
       expect(provider.configSchema).toBeDefined();
       expect(provider.compile).toBeDefined();
       expect(provider.write).toBeDefined();
-      
+
       // Verify function types
       expect(typeof provider.configSchema).toBe('function');
       expect(typeof provider.compile).toBe('function');
@@ -123,7 +129,7 @@ describe('AmpProvider', () => {
       // Test that the provider can be used in a registry context
       const registry = new Map<string, any>();
       registry.set('amp', provider);
-      
+
       const retrieved = registry.get('amp');
       expect(retrieved).toBe(provider);
       expect(retrieved.id).toBe(createProviderId('amp'));

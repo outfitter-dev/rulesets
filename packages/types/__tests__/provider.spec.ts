@@ -3,65 +3,58 @@
  * Tests provider interfaces, built-in providers, validation, and type safety
  */
 
-import { describe, test, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, test } from 'bun:test';
 import {
-  // Core provider interfaces
-  type Provider,
-  type ProviderConfig,
-  type ProviderCapabilities,
-  type ProviderType,
-  type ProviderPlugin,
-  type ProviderHooks,
-  type ProviderCompilationContext,
-  type ProviderCompilationResult,
-  type ProviderError,
-  type ProviderWarning,
-  type CompilationStats,
-  
-  // Configuration types
-  type OutputFormat,
-  type FileNamingStrategy,
-  type TemplateConfig,
-  type ValidationConfig,
-  type ValidationRule,
-  type ProviderFeatures,
-  
+  type BlockName,
+  type CompiledContent,
+  createBlockName,
+  createCompiledContent,
+  createOutputPath,
+  createPropertyName,
+  createProviderId,
+  createVersion,
+  type OutputPath,
+  type PropertyName,
+  type ProviderId,
+  type Version,
+} from '../src/brands';
+import {
   // Built-in providers
   BUILT_IN_PROVIDERS,
-  
+  type CompilationStats,
+  // Default configs
+  DEFAULT_PROVIDER_CONFIGS,
+  type FileNamingStrategy,
+  getProviderById,
+  getProvidersByType,
+  hasGeneratedPaths,
+  isLegacyDestinationConfig,
   // Utility functions
   isProvider,
   isProviderPlugin,
-  getProviderById,
-  getProvidersByType,
-  validateProviderConfig,
-  
   // Migration helpers
   migrateDestinationToProvider,
-  isLegacyDestinationConfig,
-  
-  // Default configs
-  DEFAULT_PROVIDER_CONFIGS,
-  
+  // Configuration types
+  type OutputFormat,
+  // Core provider interfaces
+  type Provider,
+  type ProviderCapabilities,
+  type ProviderCompilationContext,
+  type ProviderCompilationResult,
+  type ProviderConfig,
+  type ProviderError,
+  type ProviderFeatures,
+  type ProviderHooks,
+  type ProviderPlugin,
+  type ProviderType,
+  type ProviderWarning,
+  type TemplateConfig,
+  type ValidationConfig,
+  type ValidationRule,
+  validateProviderConfig,
   // WriteResult (imported from destination-plugin)
   type WriteResult,
-  hasGeneratedPaths,
 } from '../src/provider';
-
-import {
-  createProviderId,
-  createOutputPath,
-  createVersion,
-  createBlockName,
-  createPropertyName,
-  createCompiledContent,
-  type ProviderId,
-  type OutputPath,
-  type Version,
-  type BlockName,
-  type PropertyName,
-  type CompiledContent,
-} from '../src/brands';
 
 describe('Provider System', () => {
   describe('Provider Interface', () => {
@@ -236,12 +229,14 @@ describe('Provider System', () => {
           forbiddenBlocks: [createBlockName('deprecated-block')],
           maxNestingDepth: 5,
           requireVersion: true,
-          customRules: [{
-            name: 'no-empty-blocks',
-            description: 'Blocks must have content',
-            severity: 'error',
-            pattern: /^{{[^}]+}}{{\/[^}]+}}$/,
-          }],
+          customRules: [
+            {
+              name: 'no-empty-blocks',
+              description: 'Blocks must have content',
+              severity: 'error',
+              pattern: /^{{[^}]+}}{{\/[^}]+}}$/,
+            },
+          ],
         },
         features: {
           autoFormat: true,
@@ -338,7 +333,8 @@ describe('Provider System', () => {
         name: 'content-length',
         description: 'Content must be reasonable length',
         severity: 'warning',
-        validator: (content: string) => content.length > 10 && content.length < 10000,
+        validator: (content: string) =>
+          content.length > 10 && content.length < 10_000,
       };
 
       expect(typeof rule.validator).toBe('function');
@@ -347,7 +343,11 @@ describe('Provider System', () => {
     });
 
     test('should support all severity levels', () => {
-      const severities: Array<'error' | 'warning' | 'info'> = ['error', 'warning', 'info'];
+      const severities: Array<'error' | 'warning' | 'info'> = [
+        'error',
+        'warning',
+        'info',
+      ];
 
       for (const severity of severities) {
         const rule: ValidationRule = {
@@ -367,7 +367,8 @@ describe('Provider System', () => {
         beforeParse: (content) => content.replace(/\r\n/g, '\n'),
         afterParse: (ast) => ({ ...ast, normalized: true }),
         beforeCompile: (ast) => ({ ...ast, preCompiled: true }),
-        afterCompile: (content) => createCompiledContent(content + '\n<!-- Compiled -->'),
+        afterCompile: (content) =>
+          createCompiledContent(content + '\n<!-- Compiled -->'),
         beforeWrite: (content, path) => {
           console.log(`Writing to ${path}`);
         },
@@ -562,13 +563,15 @@ describe('Provider System', () => {
         expect(provider.type).toBeDefined();
         expect(provider.config).toBeDefined();
         expect(provider.capabilities).toBeDefined();
-        
+
         // Ensure config is valid
         expect(provider.config.outputPath).toBeDefined();
         expect(provider.config.format).toBeDefined();
-        
+
         // Ensure capabilities make sense
-        expect(provider.capabilities.allowedFormats).toContain(provider.config.format);
+        expect(provider.capabilities.allowedFormats).toContain(
+          provider.config.format
+        );
       }
     });
   });
@@ -586,7 +589,7 @@ describe('Provider System', () => {
         expect(isProvider({})).toBe(false);
         expect(isProvider({ id: 'test' })).toBe(false);
         expect(isProvider({ id: 'test', name: 'Test' })).toBe(false);
-        
+
         const incomplete = {
           id: createProviderId('cursor'),
           name: 'Test',
@@ -633,7 +636,7 @@ describe('Provider System', () => {
         expect(isProviderPlugin(null)).toBe(false);
         expect(isProviderPlugin({})).toBe(false);
         expect(isProviderPlugin({ id: 'test' })).toBe(false);
-        
+
         const invalidPlugin = {
           id: 'test',
           provider: { invalid: 'provider' },
@@ -665,8 +668,8 @@ describe('Provider System', () => {
     describe('getProvidersByType', () => {
       test('should return IDE providers', () => {
         const ideProviders = getProvidersByType('ide');
-        const ideIds = ideProviders.map(p => p.id);
-        
+        const ideIds = ideProviders.map((p) => p.id);
+
         expect(ideIds).toContain('cursor');
         expect(ideIds).toContain('windsurf');
         expect(ideIds).not.toContain('claude-code'); // CLI
@@ -674,8 +677,8 @@ describe('Provider System', () => {
 
       test('should return CLI providers', () => {
         const cliProviders = getProvidersByType('cli');
-        const cliIds = cliProviders.map(p => p.id);
-        
+        const cliIds = cliProviders.map((p) => p.id);
+
         expect(cliIds).toContain('claude-code');
         expect(cliIds).toContain('codex-cli');
         expect(cliIds).not.toContain('cursor'); // IDE
@@ -707,8 +710,8 @@ describe('Provider System', () => {
 
         const errors = validateProviderConfig(invalidConfig);
         expect(errors.length).toBeGreaterThan(0);
-        
-        const errorCodes = errors.map(e => e.code);
+
+        const errorCodes = errors.map((e) => e.code);
         expect(errorCodes).toContain('MISSING_OUTPUT_PATH');
         expect(errorCodes).toContain('MISSING_FORMAT');
       });
@@ -811,7 +814,7 @@ describe('Provider System', () => {
 
       for (const providerId of expectedProviders) {
         expect(DEFAULT_PROVIDER_CONFIGS[providerId]).toBeDefined();
-        
+
         const config = DEFAULT_PROVIDER_CONFIGS[providerId];
         expect(config.outputPath).toBeDefined();
         expect(config.format).toBeDefined();
@@ -819,11 +822,15 @@ describe('Provider System', () => {
     });
 
     test('should have consistent default configurations', () => {
-      for (const [providerId, config] of Object.entries(DEFAULT_PROVIDER_CONFIGS)) {
+      for (const [providerId, config] of Object.entries(
+        DEFAULT_PROVIDER_CONFIGS
+      )) {
         expect(config.outputPath).toBeDefined();
         expect(config.format).toBeDefined();
-        expect(['preserve', 'transform', undefined]).toContain(config.fileNaming);
-        
+        expect(['preserve', 'transform', undefined]).toContain(
+          config.fileNaming
+        );
+
         // Validate the output path makes sense for the provider
         if (providerId === 'cursor') {
           expect(config.outputPath).toBe('.cursor/rules');
@@ -853,7 +860,9 @@ describe('Provider System', () => {
         expect(hasGeneratedPaths(undefined)).toBe(false);
         expect(hasGeneratedPaths(null)).toBe(false);
         expect(hasGeneratedPaths({})).toBe(false);
-        expect(hasGeneratedPaths({ generatedPaths: 'not an array' })).toBe(false);
+        expect(hasGeneratedPaths({ generatedPaths: 'not an array' })).toBe(
+          false
+        );
         expect(hasGeneratedPaths({ metadata: {} })).toBe(false);
       });
 
@@ -872,10 +881,10 @@ describe('Provider System', () => {
     test('should maintain type safety across interfaces', () => {
       // Test that providers work with different interfaces
       const provider = BUILT_IN_PROVIDERS.cursor;
-      
+
       // Should work as Provider
       expect(isProvider(provider)).toBe(true);
-      
+
       // Should work in compilation context
       const context: ProviderCompilationContext = {
         provider,
@@ -884,7 +893,7 @@ describe('Provider System', () => {
         variables: {},
         metadata: {},
       };
-      
+
       expect(context.provider).toBe(provider);
     });
 

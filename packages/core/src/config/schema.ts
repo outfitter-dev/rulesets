@@ -89,7 +89,11 @@ export const rulesetConfigSchema = {
           properties: {
             enabled: { type: 'boolean', nullable: true },
             outputPath: { type: 'string', nullable: true },
-            options: { type: 'object', nullable: true, additionalProperties: true },
+            options: {
+              type: 'object',
+              nullable: true,
+              additionalProperties: true,
+            },
           },
           additionalProperties: false,
         },
@@ -176,7 +180,11 @@ export const rulesetConfigSchemaEnhanced = {
           properties: {
             enabled: { type: 'boolean', nullable: true },
             outputPath: { type: 'string', nullable: true },
-            options: { type: 'object', nullable: true, additionalProperties: true },
+            options: {
+              type: 'object',
+              nullable: true,
+              additionalProperties: true,
+            },
           },
           additionalProperties: false,
         },
@@ -205,12 +213,20 @@ export const envOverridePatterns = [
   // Provider settings: RULESETS_PROVIDERS_<PROVIDER>_<SETTING>
   {
     pattern: /^RULESETS_PROVIDERS_([A-Z][A-Z0-9_]*)_ENABLED$/,
-    path: (match: RegExpMatchArray) => ['providers', match[1].toLowerCase().replace(/_/g, '-'), 'enabled'],
+    path: (match: RegExpMatchArray) => [
+      'providers',
+      match[1].toLowerCase().replace(/_/g, '-'),
+      'enabled',
+    ],
     type: 'boolean',
   },
   {
     pattern: /^RULESETS_PROVIDERS_([A-Z][A-Z0-9_]*)_OUTPUT_PATH$/,
-    path: (match: RegExpMatchArray) => ['providers', match[1].toLowerCase().replace(/_/g, '-'), 'outputPath'],
+    path: (match: RegExpMatchArray) => [
+      'providers',
+      match[1].toLowerCase().replace(/_/g, '-'),
+      'outputPath',
+    ],
     type: 'string',
   },
   // Gitignore settings: RULESETS_GITIGNORE_<SETTING>
@@ -236,8 +252,10 @@ export const envOverridePatterns = [
  * Validation error messages
  */
 export const ValidationMessages = {
-  INVALID_PROVIDER_ID: 'Provider ID must start with a letter and contain only letters, numbers, and hyphens',
-  UNKNOWN_PROVIDER: 'Unknown provider. Known providers are: cursor, claude-code, windsurf, roo-code, cline, codex-cli, codex-agent',
+  INVALID_PROVIDER_ID:
+    'Provider ID must start with a letter and contain only letters, numbers, and hyphens',
+  UNKNOWN_PROVIDER:
+    'Unknown provider. Known providers are: cursor, claude-code, windsurf, roo-code, cline, codex-cli, codex-agent',
   INVALID_OUTPUT_PATH: 'Output path cannot be empty',
   INVALID_GITIGNORE_PATTERN: 'Gitignore pattern must be a valid glob pattern',
   EMPTY_DEFAULT_PROVIDERS: 'Default providers array cannot be empty',

@@ -26,7 +26,10 @@ export interface ValidationError {
 /**
  * Validator function type
  */
-export type Validator<T> = (value: unknown, path?: string) => ValidationResult<T>;
+export type Validator<T> = (
+  value: unknown,
+  path?: string
+) => ValidationResult<T>;
 
 /**
  * Async validator function type
@@ -127,7 +130,7 @@ export function array<T>(itemValidator: Validator<T>): Validator<T[]> {
     for (let i = 0; i < value.length; i++) {
       const itemPath = `${path}[${i}]`;
       const result = itemValidator(value[i], itemPath);
-      
+
       if (result.success) {
         results.push(result.value);
       } else {
@@ -230,7 +233,7 @@ export function string(options?: {
     }
 
     if (options?.pattern && !options.pattern.test(value)) {
-      errors.push(error(path, `String does not match required pattern`));
+      errors.push(error(path, 'String does not match required pattern'));
     }
 
     if (options?.enum && !options.enum.includes(value)) {

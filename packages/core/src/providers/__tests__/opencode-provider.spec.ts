@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, afterEach, mock } from 'bun:test';
-import { promises as fs } from 'fs';
-import * as path from 'path';
-import * as os from 'os';
-import { OpenCodeProvider } from '../opencode-provider';
+import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test';
 import type { CompiledDoc, Logger } from '@rulesets/types';
+import { promises as fs } from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import { OpenCodeProvider } from '../opencode-provider';
 
 // Mock fs promises
 const mockWriteFile = mock(() => Promise.resolve());
@@ -112,7 +112,9 @@ describe('OpenCodeProvider', () => {
 
       expect(properties.outputPath.default).toBe('AGENTS.md');
       expect(properties.mcpConfig.properties.enabled.default).toBe(false);
-      expect(properties.mcpConfig.properties.outputPath.default).toBe('opencode.json');
+      expect(properties.mcpConfig.properties.outputPath.default).toBe(
+        'opencode.json'
+      );
       expect(properties.mcpConfig.properties.globalConfig.default).toBe(false);
       expect(properties.includeProjectContext.default).toBe(true);
       expect(properties.webOptimized.default).toBe(true);
@@ -266,7 +268,11 @@ describe('OpenCodeProvider', () => {
           mcpServers: {
             filesystem: {
               command: 'npx',
-              args: ['-y', '@modelcontextprotocol/server-filesystem', '/path/to/project'],
+              args: [
+                '-y',
+                '@modelcontextprotocol/server-filesystem',
+                '/path/to/project',
+              ],
             },
           },
         },
@@ -318,9 +324,9 @@ describe('OpenCodeProvider', () => {
       expect(mockWriteFile).toHaveBeenCalled();
       expect(result.generatedPaths.length).toBeGreaterThanOrEqual(2);
       expect(result.metadata.mcpEnabled).toBe(true);
-      
+
       // Check that MCP JSON content was written
-      const mcpCalls = mockWriteFile.mock.calls.filter((call: any) => 
+      const mcpCalls = mockWriteFile.mock.calls.filter((call: any) =>
         call[1].includes('"mcpServers"')
       );
       expect(mcpCalls.length).toBeGreaterThan(0);
@@ -422,19 +428,24 @@ describe('OpenCodeProvider', () => {
         logger: mockLogger,
       };
 
-      await expect(provider.write(ctx)).rejects.toThrow('Path traversal detected');
+      await expect(provider.write(ctx)).rejects.toThrow(
+        'Path traversal detected'
+      );
     });
 
     it('should sanitize paths correctly', () => {
       // Access the private method using bracket notation for testing
-      const sanitized = (provider as any).sanitizePath('./AGENTS.md', '/project');
+      const sanitized = (provider as any).sanitizePath(
+        './AGENTS.md',
+        '/project'
+      );
       expect(sanitized).toBe(path.resolve('/project/AGENTS.md'));
     });
 
     it('should allow absolute paths within base directory', () => {
       const baseDir = '/project';
       const userPath = '/project/subdir/AGENTS.md';
-      
+
       // Access the private method using bracket notation for testing
       const sanitized = (provider as any).sanitizePath(userPath, baseDir);
       expect(sanitized).toBe('/project/subdir/AGENTS.md');
@@ -443,7 +454,7 @@ describe('OpenCodeProvider', () => {
     it('should reject absolute paths outside base directory', () => {
       const baseDir = '/project';
       const userPath = '/other/AGENTS.md';
-      
+
       expect(() => {
         (provider as any).sanitizePath(userPath, baseDir);
       }).toThrow('Path traversal detected');

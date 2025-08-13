@@ -5,9 +5,9 @@ import type { CompiledDoc, Logger } from '@rulesets/types';
 import { AmpProvider } from '../src/providers/amp-provider';
 
 // Simple example of using the Amp provider
-async function exampleAmpUsage() {
+function exampleAmpUsage() {
   const provider = new AmpProvider();
-  
+
   // Mock logger for this example
   const logger: Logger = {
     info: (msg: string) => console.log(`[INFO] ${msg}`),
@@ -77,7 +77,7 @@ This is a modern TypeScript web application using:
 
   console.log('🚀 Amp Provider Example');
   console.log('========================');
-  
+
   // Display provider information
   console.log(`Provider ID: ${provider.id}`);
   console.log(`Provider Name: ${provider.name}`);
@@ -85,7 +85,7 @@ This is a modern TypeScript web application using:
   console.log(`Output Path: ${provider.config.outputPath}`);
   console.log(`Format: ${provider.config.format}`);
   console.log(`File Naming: ${provider.config.fileNaming}`);
-  
+
   console.log('\n📋 Provider Capabilities:');
   console.log(`Supports Blocks: ${provider.capabilities.supportsBlocks}`);
   console.log(`Supports Imports: ${provider.capabilities.supportsImports}`);
@@ -93,7 +93,9 @@ This is a modern TypeScript web application using:
   console.log(`Supports XML: ${provider.capabilities.supportsXml}`);
   console.log(`Supports Markdown: ${provider.capabilities.supportsMarkdown}`);
   console.log(`Max File Size: ${provider.capabilities.maxFileSize} bytes`);
-  console.log(`Allowed Formats: ${provider.capabilities.allowedFormats.join(', ')}`);
+  console.log(
+    `Allowed Formats: ${provider.capabilities.allowedFormats.join(', ')}`
+  );
 
   console.log('\n⚙️  Configuration Schema:');
   const schema = provider.configSchema();
@@ -103,13 +105,15 @@ This is a modern TypeScript web application using:
   // In a real scenario, you would use the write method like this:
   console.log('\n📝 Example Write Operation:');
   console.log('(Simulated - would write to AGENT.md)');
-  
+
   try {
     console.log('Content preview:');
     console.log('================');
     console.log(compiledDoc.output.content.substring(0, 200) + '...');
-    console.log(`\nTotal content length: ${compiledDoc.output.content.length} characters`);
-    
+    console.log(
+      `\nTotal content length: ${compiledDoc.output.content.length} characters`
+    );
+
     // Note: In real usage, this would actually write to disk
     // const result = await provider.write({
     //   compiled: compiledDoc,
@@ -117,10 +121,11 @@ This is a modern TypeScript web application using:
     //   config: { outputPath: 'AGENT.md' },
     //   logger,
     // });
-    
+
     console.log('\n✅ Example completed successfully!');
-    console.log('In real usage, this would create AGENT.md in your project root.');
-    
+    console.log(
+      'In real usage, this would create AGENT.md in your project root.'
+    );
   } catch (error) {
     console.error('\n❌ Error in example:', error);
   }
@@ -128,7 +133,7 @@ This is a modern TypeScript web application using:
 
 // Run the example if this file is executed directly
 if (import.meta.main) {
-  exampleAmpUsage().catch(console.error);
+  exampleAmpUsage();
 }
 
 export { exampleAmpUsage };

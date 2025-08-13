@@ -4,49 +4,51 @@
  */
 
 // Main classes and functions
-export { ConfigLoader, getConfigLoader, loadConfig, validateConfig } from './ConfigLoader';
-
+export {
+  ConfigLoader,
+  getConfigLoader,
+  loadConfig,
+  validateConfig,
+} from './ConfigLoader';
+// Schema definitions
+export {
+  gitignoreConfigSchema,
+  KNOWN_PROVIDERS,
+  providerConfigSchema,
+  rulesetConfigSchema,
+  rulesetConfigSchemaEnhanced,
+  ValidationMessages,
+} from './schema';
 // Types and interfaces
 export type {
-  RulesetConfig,
-  ProviderConfig,
-  GitignoreConfig,
   ConfigContext,
-  ConfigLoadOptions,
-  ConfigLoadResult,
   ConfigFileResult,
   ConfigLoader as IConfigLoader,
+  ConfigLoadOptions,
+  ConfigLoadResult,
+  GitignoreConfig,
+  ProviderConfig,
+  RulesetConfig,
 } from './types';
-
 // Constants and defaults
 export {
-  DEFAULT_CONFIG,
   CONFIG_FILE_NAMES,
+  DEFAULT_CONFIG,
   DEFAULT_LOAD_OPTIONS,
 } from './types';
 
-// Schema definitions
-export {
-  rulesetConfigSchema,
-  rulesetConfigSchemaEnhanced,
-  providerConfigSchema,
-  gitignoreConfigSchema,
-  KNOWN_PROVIDERS,
-  ValidationMessages,
-} from './schema';
-
 // Utility functions
 export {
+  applyEnvOverrides,
+  fileExists,
   findConfigFile,
   getConfigFormat,
-  parseConfigContent,
+  getGlobalConfigDir,
   mergeConfigs,
-  applyEnvOverrides,
+  normalizePath,
+  parseConfigContent,
   parseEnvOverride,
   parseEnvValue,
   setDeepValue,
-  getGlobalConfigDir,
-  normalizePath,
   validateConfigFileName,
-  fileExists,
 } from './utils';

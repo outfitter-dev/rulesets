@@ -2,23 +2,28 @@
 // Implements the new Provider interface with branded types and modern architecture
 
 import type {
+  CompilationStats,
   CompiledDoc,
+  DestinationPlugin,
   JSONSchema7,
   Logger,
-  ProviderId,
-  Version,
+  Provider,
+  ProviderCapabilities,
   ProviderCompilationContext,
   ProviderCompilationResult,
-  ProviderError,
-  ProviderWarning,
-  CompilationStats,
-  Provider,
   ProviderConfig,
-  ProviderCapabilities,
-  DestinationPlugin,
+  ProviderError,
+  ProviderId,
+  ProviderWarning,
+  Version,
   WriteResult,
 } from '@rulesets/types';
-import { createProviderId, createOutputPath, createVersion, createCompiledContent } from '@rulesets/types';
+import {
+  createCompiledContent,
+  createOutputPath,
+  createProviderId,
+  createVersion,
+} from '@rulesets/types';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
@@ -43,7 +48,7 @@ export class AmpProvider implements Provider, DestinationPlugin {
     supportsBlocks: true,
     supportsImports: true,
     supportsVariables: true,
-    supportsXml: false,        // Amp expects simple Markdown
+    supportsXml: false, // Amp expects simple Markdown
     supportsMarkdown: true,
     maxFileSize: 10 * 1024 * 1024, // 10MB
     allowedFormats: ['markdown'],
@@ -60,7 +65,8 @@ export class AmpProvider implements Provider, DestinationPlugin {
       properties: {
         outputPath: {
           type: 'string',
-          description: 'Path where the compiled rules file should be written (typically AGENT.md)',
+          description:
+            'Path where the compiled rules file should be written (typically AGENT.md)',
           default: 'AGENT.md',
         },
         priority: {
@@ -82,7 +88,9 @@ export class AmpProvider implements Provider, DestinationPlugin {
    * Compiles content for Amp provider
    * New Provider interface method for modern compilation pipeline
    */
-  async compile(_context: ProviderCompilationContext): Promise<ProviderCompilationResult> {
+  async compile(
+    _context: ProviderCompilationContext
+  ): Promise<ProviderCompilationResult> {
     const startTime = Date.now();
     const errors: ProviderError[] = [];
     const warnings: ProviderWarning[] = [];
@@ -117,7 +125,8 @@ export class AmpProvider implements Provider, DestinationPlugin {
     } catch (error) {
       errors.push({
         type: 'compilation',
-        message: error instanceof Error ? error.message : 'Unknown compilation error',
+        message:
+          error instanceof Error ? error.message : 'Unknown compilation error',
         context: { provider: this.id },
       });
 
@@ -151,10 +160,10 @@ export class AmpProvider implements Provider, DestinationPlugin {
   }): Promise<WriteResult> {
     const { compiled, config, logger } = ctx;
 
-    logger.info(`Writing Amp rules to: AGENT.md`);
+    logger.info('Writing Amp rules to: AGENT.md');
 
     // Amp always uses AGENT.md as filename - ignore destPath for naming
-    const outputPath = 
+    const outputPath =
       (typeof config.outputPath === 'string' ? config.outputPath : undefined) ||
       'AGENT.md';
 
@@ -163,7 +172,9 @@ export class AmpProvider implements Provider, DestinationPlugin {
 
     // Ensure the resolved path ends with AGENT.md for security and consistency
     if (!resolvedPath.endsWith('AGENT.md')) {
-      logger.warn(`Output path ${resolvedPath} should end with AGENT.md. Adjusting...`);
+      logger.warn(
+        `Output path ${resolvedPath} should end with AGENT.md. Adjusting...`
+      );
       const dir = path.dirname(resolvedPath);
       const adjustedPath = path.join(dir, 'AGENT.md');
       const sanitizedPath = this.sanitizePath(adjustedPath, process.cwd());
@@ -173,7 +184,9 @@ export class AmpProvider implements Provider, DestinationPlugin {
     // Security: Check file size before writing
     const content = compiled.output.content;
     if (content.length > (this.capabilities.maxFileSize || 10 * 1024 * 1024)) {
-      throw new Error(`File too large: ${content.length} bytes (max ${this.capabilities.maxFileSize} bytes)`);
+      throw new Error(
+        `File too large: ${content.length} bytes (max ${this.capabilities.maxFileSize} bytes)`
+      );
     }
 
     // Write the AGENT.md file

@@ -2,28 +2,26 @@
 // This file demonstrates how to use the new type-safe APIs
 
 import {
-  createProviderId,
-  createSourcePath,
-  // createOutputPath, // Unused in examples
-  createBlockName,
-  createVariableName,
-  createMarkerContent,
-  createRawContent,
-  createCompiledContent,
-  createVersion,
-  
-  // Type guards
-  // isProviderId, // Unused in examples
-  
-  // Legacy compatibility
-  createDestinationId,
-  createDestPath,
-  isDestinationId,
-  
   // Types
   // type ProviderId, // Unused in examples
   // type DestinationId, // Used in function
   type CompilationContext,
+  // createOutputPath, // Unused in examples
+  createBlockName,
+  createCompiledContent,
+  // Type guards
+  // isProviderId, // Unused in examples
+
+  // Legacy compatibility
+  createDestinationId,
+  createDestPath,
+  createMarkerContent,
+  createProviderId,
+  createRawContent,
+  createSourcePath,
+  createVariableName,
+  createVersion,
+  isDestinationId,
 } from './index';
 
 // ============================================================================
@@ -38,14 +36,14 @@ function exampleDestinationIds() {
     // ✅ Valid destination ID
     const cursorDest = createDestinationId('cursor');
     console.log('Created destination:', cursorDest);
-    
+
     // ✅ Type guard usage
     const unknownId: unknown = 'windsurf';
     if (isDestinationId(unknownId)) {
       // TypeScript now knows unknownId is DestinationId
       console.log('Valid destination ID:', unknownId);
     }
-    
+
     // ❌ This will throw a validation error
     // const invalidDest = createDestinationId('invalid-destination');
   } catch (error) {
@@ -61,11 +59,11 @@ function exampleFilePaths() {
     // ✅ Valid source path
     const sourcePath = createSourcePath('./src/my-rules.rule.md');
     console.log('Created source path:', sourcePath);
-    
-    // ✅ Valid destination path  
+
+    // ✅ Valid destination path
     const destPath = createDestPath('./.cursor/rules/my-rules.mdc');
     console.log('Created destination path:', destPath);
-    
+
     // ❌ These would throw validation errors:
     // const badSource = createSourcePath('./src/../../../etc/passwd'); // Path traversal
     // const badExt = createSourcePath('./src/rules.txt'); // Wrong extension
@@ -83,9 +81,13 @@ function exampleBlockNames() {
     const instructions = createBlockName('instructions');
     const userGuidelines = createBlockName('user-guidelines');
     const codeExamples = createBlockName('code-examples');
-    
-    console.log('Created block names:', { instructions, userGuidelines, codeExamples });
-    
+
+    console.log('Created block names:', {
+      instructions,
+      userGuidelines,
+      codeExamples,
+    });
+
     // ❌ These would throw validation errors:
     // const invalidCase = createBlockName('CamelCase'); // Not kebab-case
     // const reserved = createBlockName('function'); // Reserved word
@@ -105,9 +107,14 @@ function exampleVariableNames() {
     const userName = createVariableName('userName');
     const _private = createVariableName('_private');
     const $jquery = createVariableName('$jquery');
-    
-    console.log('Created variable names:', { destination, userName, _private, $jquery });
-    
+
+    console.log('Created variable names:', {
+      destination,
+      userName,
+      _private,
+      $jquery,
+    });
+
     // ❌ These would throw validation errors:
     // const invalidStart = createVariableName('123invalid'); // Starts with number
     // const reserved = createVariableName('class'); // Reserved word
@@ -134,18 +141,18 @@ These are the coding standards for our project.
 - Use meaningful variable names
 - Write comprehensive tests
     `);
-    
+
     const compiledContent = createCompiledContent(`
 <instructions>
 Follow TypeScript best practices and write comprehensive tests.
 </instructions>
     `);
-    
+
     console.log('Created content successfully', {
       rawLength: rawContent.length,
       compiledLength: compiledContent.length,
     });
-    
+
     // ❌ These would be rejected by security validation:
     // const malicious = createRawContent('<script>alert("xss")</script>');
     // const dangerous = createRawContent('Content with \0 null byte');
@@ -170,7 +177,7 @@ function exampleValidatorRegistry() {
   } else {
     console.error('Validation failed: Invalid destination ID');
   }
-  
+
   // Direct validation using type guards
   const testId2 = 'windsurf';
   const isValid = isDestinationId(testId2);
@@ -185,11 +192,11 @@ function exampleMarkerValidation() {
     // ✅ Valid markers
     const blockMarker = createMarkerContent('{{instructions}}');
     const importMarker = createMarkerContent('{{> @legal}}');
-    
+
     // MarkerValidationUtil no longer exported - validation happens during creation
     console.log('Block marker created successfully:', blockMarker);
     console.log('Import marker created successfully:', importMarker);
-    
+
     // ❌ Invalid marker syntax - would throw during creation
     try {
       createMarkerContent('{{invalid marker syntax');
@@ -229,7 +236,10 @@ Follow these coding standards for consistency.
       ruleset: { version: createVersion('0.1.0') },
       description: 'Project coding standards',
       destination: {
-        include: [createDestinationId('cursor'), createDestinationId('windsurf')],
+        include: [
+          createDestinationId('cursor'),
+          createDestinationId('windsurf'),
+        ],
       },
     },
     environment: {
@@ -259,7 +269,7 @@ function exampleErrorHandling() {
     if (error instanceof Error) {
       console.log('Error name:', error.name);
       console.log('Error message:', error.message);
-      
+
       // If it's a RulesetValidationError, we get structured information
       if ('code' in error && 'category' in error && 'toJSON' in error) {
         console.log('Error details:', (error as any).toJSON());
@@ -273,8 +283,8 @@ function exampleErrorHandling() {
  */
 function exampleBatchValidation() {
   const inputs = ['cursor', 'windsurf', 'invalid-dest', 'claude-code', ''];
-  
-  const results = inputs.map(input => {
+
+  const results = inputs.map((input) => {
     try {
       const validated = createDestinationId(input);
       return { input, success: true, result: validated };
@@ -282,9 +292,9 @@ function exampleBatchValidation() {
       return { input, success: false, error };
     }
   });
-  
+
   console.log('Batch validation results:');
-  results.forEach(result => {
+  results.forEach((result) => {
     if (result.success) {
       console.log(`✅ ${result.input} -> ${result.result}`);
     } else {
@@ -314,31 +324,31 @@ export {
 export function runAllExamples() {
   console.log('=== Destination IDs ===');
   exampleDestinationIds();
-  
+
   console.log('\n=== File Paths ===');
   exampleFilePaths();
-  
+
   console.log('\n=== Block Names ===');
   exampleBlockNames();
-  
+
   console.log('\n=== Variable Names ===');
   exampleVariableNames();
-  
+
   console.log('\n=== Content Validation ===');
   exampleContentValidation();
-  
+
   console.log('\n=== Validator Registry ===');
   exampleValidatorRegistry();
-  
+
   console.log('\n=== Marker Validation ===');
   exampleMarkerValidation();
-  
+
   console.log('\n=== Error Handling ===');
   exampleErrorHandling();
-  
+
   console.log('\n=== Batch Validation ===');
   exampleBatchValidation();
-  
+
   console.log('\n=== Compilation Context ===');
   const context = exampleCompilationContext();
   console.log('Created compilation context for:', context.sourcePath);

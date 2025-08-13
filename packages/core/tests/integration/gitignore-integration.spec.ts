@@ -1,24 +1,33 @@
 /**
  * Gitignore Integration Tests
- * 
+ *
  * Tests the comprehensive gitignore management system including automatic updates,
  * override files (.rulesetkeep, .rulesetignore), and configuration-driven behavior.
  */
 
 import { promises as fs } from 'fs';
+import { tmpdir } from 'os';
 import path from 'path';
-import { afterEach, beforeEach, describe, expect, it, vi, beforeAll, afterAll } from 'vitest';
-import { 
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
+import {
   ConsoleLogger,
-  runRulesetsV0,
   createGitignoreManager,
-  normalizeGitignorePath,
+  type GitignoreConfig,
   matchesAnyPattern,
+  normalizeGitignorePath,
   parseOverrideFile,
   type RulesetConfig,
-  type GitignoreConfig,
+  runRulesetsV0,
 } from '../../src';
-import { tmpdir } from 'os';
 
 // Create real temporary directory for integration tests
 const TEST_DIR = path.join(tmpdir(), `rulesets-gitignore-${Date.now()}`);
@@ -50,9 +59,12 @@ describe('Gitignore Integration Tests', () => {
     vi.spyOn(mockLogger, 'error').mockImplementation(() => {});
 
     // Create unique test project directory for each test
-    testProjectDir = path.join(TEST_DIR, `gitignore-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`);
+    testProjectDir = path.join(
+      TEST_DIR,
+      `gitignore-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`
+    );
     await fs.mkdir(testProjectDir, { recursive: true });
-    
+
     // Change to test directory for relative path operations
     process.chdir(testProjectDir);
   });
@@ -103,7 +115,7 @@ Testing automatic .gitignore creation.
 
       // Verify .gitignore was created
       await expect(fs.access(gitignorePath)).resolves.not.toThrow();
-      
+
       const gitignoreContent = await fs.readFile(gitignorePath, 'utf8');
       expect(gitignoreContent).toContain('# Test Generated Files');
       expect(gitignoreContent).toContain('.cursor/test.mdc');
@@ -111,7 +123,9 @@ Testing automatic .gitignore creation.
       expect(gitignoreContent).toContain('.claude/test.md');
 
       // Verify files are sorted (when sort is enabled)
-      const lines = gitignoreContent.split('\n').filter(line => line.startsWith('.'));
+      const lines = gitignoreContent
+        .split('\n')
+        .filter((line) => line.startsWith('.'));
       const sortedLines = [...lines].sort();
       expect(lines).toEqual(sortedLines);
     });
@@ -164,20 +178,22 @@ ruleset:
 
       // Verify .gitignore was updated
       const updatedGitignoreContent = await fs.readFile(gitignorePath, 'utf8');
-      
+
       // Should contain original content
       expect(updatedGitignoreContent).toContain('# Existing content');
       expect(updatedGitignoreContent).toContain('node_modules/');
       expect(updatedGitignoreContent).toContain('.custom/');
-      
+
       // Should contain new Rulesets section
       expect(updatedGitignoreContent).toContain('# Rulesets Generated Files');
       expect(updatedGitignoreContent).toContain('.cursor/new.mdc');
       expect(updatedGitignoreContent).toContain('.amp/new.md');
-      
+
       // Should not duplicate existing entries
       const lines = updatedGitignoreContent.split('\n');
-      const nodeModulesCount = lines.filter(line => line.trim() === 'node_modules/').length;
+      const nodeModulesCount = lines.filter(
+        (line) => line.trim() === 'node_modules/'
+      ).length;
       expect(nodeModulesCount).toBe(1);
     });
 
@@ -221,7 +237,8 @@ ruleset:
 
       // Count occurrences of each file
       const cursorCount = secondRunContent.split('.cursor/same.mdc').length - 1;
-      const windsurfCount = secondRunContent.split('.windsurf/same.md').length - 1;
+      const windsurfCount =
+        secondRunContent.split('.windsurf/same.md').length - 1;
       expect(cursorCount).toBe(1);
       expect(windsurfCount).toBe(1);
     });
@@ -274,14 +291,20 @@ ruleset:
 /specific/path.txt
 `;
 
-      await fs.writeFile(path.join(testProjectDir, '.rulesetkeep'), rulesetkeepContent);
+      await fs.writeFile(
+        path.join(testProjectDir, '.rulesetkeep'),
+        rulesetkeepContent
+      );
 
       const config: RulesetConfig = {
         rulesets: { version: '0.1.0' },
         providers: {
           cursor: { enabled: true, outputPath: '.cursor/keep.mdc' },
           windsurf: { enabled: true, outputPath: '.windsurf/ignore.md' },
-          'claude-code': { enabled: true, outputPath: '.claude/keep.special.md' },
+          'claude-code': {
+            enabled: true,
+            outputPath: '.claude/keep.special.md',
+          },
           amp: { enabled: true, outputPath: 'specific/path.txt' },
         },
         gitignore: { enabled: true },
@@ -298,7 +321,10 @@ ruleset:
 # Rulesekeep Test
 `;
 
-      const sourceFilePath = path.join(testProjectDir, 'rulesetkeep.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'rulesetkeep.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       // Execute
@@ -330,7 +356,10 @@ ruleset:
 /force/this/path.txt
 `;
 
-      await fs.writeFile(path.join(testProjectDir, '.rulesetignore'), rulesetignoreContent);
+      await fs.writeFile(
+        path.join(testProjectDir, '.rulesetignore'),
+        rulesetignoreContent
+      );
 
       const config: RulesetConfig = {
         rulesets: { version: '0.1.0' },
@@ -351,7 +380,10 @@ ruleset:
 # Rulesetignore Test
 `;
 
-      const sourceFilePath = path.join(testProjectDir, 'rulesetignore.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'rulesetignore.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       // Execute
@@ -382,15 +414,24 @@ ruleset:
 *.temp
 `;
 
-      await fs.writeFile(path.join(testProjectDir, '.rulesetkeep'), rulesetkeepContent);
-      await fs.writeFile(path.join(testProjectDir, '.rulesetignore'), rulesetignoreContent);
+      await fs.writeFile(
+        path.join(testProjectDir, '.rulesetkeep'),
+        rulesetkeepContent
+      );
+      await fs.writeFile(
+        path.join(testProjectDir, '.rulesetignore'),
+        rulesetignoreContent
+      );
 
       const config: RulesetConfig = {
         rulesets: { version: '0.1.0' },
         providers: {
           cursor: { enabled: true, outputPath: '.cursor/kept.mdc' },
           windsurf: { enabled: true, outputPath: '.windsurf/ignored.md' },
-          'claude-code': { enabled: true, outputPath: '.claude/kept.important' },
+          'claude-code': {
+            enabled: true,
+            outputPath: '.claude/kept.important',
+          },
           amp: { enabled: true, outputPath: '.amp/ignored.md' },
         },
         gitignore: { enabled: true },
@@ -509,7 +550,10 @@ ruleset:
 # Config Ignore Test
 `;
 
-      const sourceFilePath = path.join(testProjectDir, 'configignore.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'configignore.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       // Execute
@@ -530,7 +574,9 @@ ruleset:
       expect(gitignoreContent).toContain('# Config-driven Patterns');
 
       // Verify sorting when enabled
-      const lines = gitignoreContent.split('\n').filter(line => line.trim() && !line.startsWith('#'));
+      const lines = gitignoreContent
+        .split('\n')
+        .filter((line) => line.trim() && !line.startsWith('#'));
       const sortedLines = [...lines].sort();
       expect(lines).toEqual(sortedLines);
     });
@@ -600,12 +646,20 @@ ruleset:
       expect(gitignoreContent).toContain('*.ignore');
 
       // Verify order preservation (no sorting)
-      const rulesetsSection = gitignoreContent.split('# Complex Gitignore Configuration')[1];
-      const rulesetLines = rulesetsSection.split('\n').filter(line => line.trim() && !line.startsWith('#'));
-      
+      const rulesetsSection = gitignoreContent.split(
+        '# Complex Gitignore Configuration'
+      )[1];
+      const rulesetLines = rulesetsSection
+        .split('\n')
+        .filter((line) => line.trim() && !line.startsWith('#'));
+
       // Order should be: config ignore patterns first, then generated files
-      const firstConfigPattern = rulesetLines.findIndex(line => line.includes('.custom/**'));
-      const firstGeneratedFile = rulesetLines.findIndex(line => line.includes('.windsurf/complex.md'));
+      const firstConfigPattern = rulesetLines.findIndex((line) =>
+        line.includes('.custom/**')
+      );
+      const firstGeneratedFile = rulesetLines.findIndex((line) =>
+        line.includes('.windsurf/complex.md')
+      );
       expect(firstConfigPattern).toBeLessThan(firstGeneratedFile);
     });
   });

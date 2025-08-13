@@ -3,10 +3,10 @@
  * Provides automatic .gitignore management for Rulesets with override mechanisms
  */
 
-export { GitignoreManager, createGitignoreManager } from './GitignoreManager';
+export { createGitignoreManager, GitignoreManager } from './GitignoreManager';
 export type {
-  GitignoreManager as IGitignoreManager,
   GitignoreConfig,
+  GitignoreManager as IGitignoreManager,
   GitignoreOverrides,
   GitignoreResult,
   GitignoreState,
@@ -14,12 +14,12 @@ export type {
 } from './types';
 export {
   DEFAULT_MANAGED_BLOCK_CONFIG,
-  normalizeGitignorePath,
+  generateManagedBlock,
   matchesAnyPattern,
   matchesPattern,
-  parseOverrideFile,
+  normalizeGitignorePath,
   parseGitignoreContent,
-  generateManagedBlock,
+  parseOverrideFile,
   rebuildGitignoreContent,
   sortAndDedupePaths,
 } from './utils';

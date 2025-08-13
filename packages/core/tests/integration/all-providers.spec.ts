@@ -1,29 +1,38 @@
 /**
  * All Providers Integration Tests
- * 
+ *
  * Tests each provider individually and collectively to ensure proper functionality,
  * output format compliance, and provider-specific features work correctly.
  */
 
 import { promises as fs } from 'fs';
+import { tmpdir } from 'os';
 import path from 'path';
-import { afterEach, beforeEach, describe, expect, it, vi, beforeAll, afterAll } from 'vitest';
-import { 
-  ConsoleLogger,
-  runRulesetsV0,
-  providers,
-  getProvider,
-  getAllProviders,
-  getProviderIds,
-  CursorProvider,
-  WindsurfProvider,
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
+import {
+  AmpProvider,
   ClaudeCodeProvider,
   CodexProvider,
-  AmpProvider,
+  ConsoleLogger,
+  CursorProvider,
+  getAllProviders,
+  getProvider,
+  getProviderIds,
   OpenCodeProvider,
+  providers,
   type RulesetConfig,
+  runRulesetsV0,
+  WindsurfProvider,
 } from '../../src';
-import { tmpdir } from 'os';
 
 // Create real temporary directory for integration tests
 const TEST_DIR = path.join(tmpdir(), `rulesets-providers-${Date.now()}`);
@@ -55,9 +64,12 @@ describe('All Providers Integration Tests', () => {
     vi.spyOn(mockLogger, 'error').mockImplementation(() => {});
 
     // Create unique test project directory for each test
-    testProjectDir = path.join(TEST_DIR, `providers-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`);
+    testProjectDir = path.join(
+      TEST_DIR,
+      `providers-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`
+    );
     await fs.mkdir(testProjectDir, { recursive: true });
-    
+
     // Change to test directory for relative path operations
     process.chdir(testProjectDir);
   });
@@ -69,7 +81,7 @@ describe('All Providers Integration Tests', () => {
   describe('Provider Registry and Discovery', () => {
     it('should have all 6 expected providers registered', () => {
       const providerIds = getProviderIds();
-      
+
       expect(providerIds).toHaveLength(6);
       expect(providerIds).toContain('cursor');
       expect(providerIds).toContain('windsurf');
@@ -102,10 +114,10 @@ describe('All Providers Integration Tests', () => {
 
     it('should provide all providers through getAllProviders', () => {
       const allProviders = getAllProviders();
-      
+
       expect(allProviders).toHaveLength(6);
-      
-      const providerTypes = allProviders.map(p => p.constructor.name);
+
+      const providerTypes = allProviders.map((p) => p.constructor.name);
       expect(providerTypes).toContain('CursorProvider');
       expect(providerTypes).toContain('WindsurfProvider');
       expect(providerTypes).toContain('ClaudeCodeProvider');
@@ -189,29 +201,35 @@ All code must have:
 
     it('should process Cursor provider correctly', async () => {
       const sourceContent = createTestContent('cursor');
-      const sourceFilePath = path.join(testProjectDir, 'cursor-test.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'cursor-test.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       await runRulesetsV0(sourceFilePath, mockLogger);
 
-      const outputPath = path.join(testProjectDir, '.cursor/individual-test.mdc');
+      const outputPath = path.join(
+        testProjectDir,
+        '.cursor/individual-test.mdc'
+      );
       await expect(fs.access(outputPath)).resolves.not.toThrow();
 
       const outputContent = await fs.readFile(outputPath, 'utf8');
-      
+
       // Verify Rulesets syntax preservation
       expect(outputContent).toContain('{{instructions}}');
       expect(outputContent).toContain('{{/instructions}}');
       expect(outputContent).toContain('{{examples}}');
       expect(outputContent).toContain('{{$destination}}');
-      
+
       // Verify content integrity
       expect(outputContent).toContain('Cursor Provider Test');
       expect(outputContent).toContain('TypeScript exclusively');
       expect(outputContent).toContain('interface CursorConfig');
       expect(outputContent).toContain('Architecture Guidelines');
       expect(outputContent).toContain('Performance Guidelines');
-      
+
       // Verify proper code block handling
       expect(outputContent).toContain('```typescript');
       expect(outputContent).toContain('function configureCursor');
@@ -219,16 +237,22 @@ All code must have:
 
     it('should process Windsurf provider correctly', async () => {
       const sourceContent = createTestContent('windsurf');
-      const sourceFilePath = path.join(testProjectDir, 'windsurf-test.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'windsurf-test.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       await runRulesetsV0(sourceFilePath, mockLogger);
 
-      const outputPath = path.join(testProjectDir, '.windsurf/individual-test.md');
+      const outputPath = path.join(
+        testProjectDir,
+        '.windsurf/individual-test.md'
+      );
       await expect(fs.access(outputPath)).resolves.not.toThrow();
 
       const outputContent = await fs.readFile(outputPath, 'utf8');
-      
+
       expect(outputContent).toContain('Windsurf Provider Test');
       expect(outputContent).toContain('{{instructions}}');
       expect(outputContent).toContain('interface WindsurfConfig');
@@ -237,16 +261,22 @@ All code must have:
 
     it('should process Claude Code provider correctly', async () => {
       const sourceContent = createTestContent('claude-code');
-      const sourceFilePath = path.join(testProjectDir, 'claude-code-test.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'claude-code-test.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       await runRulesetsV0(sourceFilePath, mockLogger);
 
-      const outputPath = path.join(testProjectDir, '.claude-code/individual-test.md');
+      const outputPath = path.join(
+        testProjectDir,
+        '.claude-code/individual-test.md'
+      );
       await expect(fs.access(outputPath)).resolves.not.toThrow();
 
       const outputContent = await fs.readFile(outputPath, 'utf8');
-      
+
       expect(outputContent).toContain('Claude-code Provider Test');
       expect(outputContent).toContain('{{instructions}}');
       expect(outputContent).toContain('interface Claude-codeConfig');
@@ -260,11 +290,14 @@ All code must have:
 
       await runRulesetsV0(sourceFilePath, mockLogger);
 
-      const outputPath = path.join(testProjectDir, '.codex-cli/individual-test.md');
+      const outputPath = path.join(
+        testProjectDir,
+        '.codex-cli/individual-test.md'
+      );
       await expect(fs.access(outputPath)).resolves.not.toThrow();
 
       const outputContent = await fs.readFile(outputPath, 'utf8');
-      
+
       expect(outputContent).toContain('Codex-cli Provider Test');
       expect(outputContent).toContain('{{instructions}}');
       expect(outputContent).toContain('interface Codex-cliConfig');
@@ -281,7 +314,7 @@ All code must have:
       await expect(fs.access(outputPath)).resolves.not.toThrow();
 
       const outputContent = await fs.readFile(outputPath, 'utf8');
-      
+
       expect(outputContent).toContain('Amp Provider Test');
       expect(outputContent).toContain('{{instructions}}');
       expect(outputContent).toContain('interface AmpConfig');
@@ -289,16 +322,22 @@ All code must have:
 
     it('should process OpenCode provider correctly', async () => {
       const sourceContent = createTestContent('opencode');
-      const sourceFilePath = path.join(testProjectDir, 'opencode-test.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'opencode-test.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       await runRulesetsV0(sourceFilePath, mockLogger);
 
-      const outputPath = path.join(testProjectDir, '.opencode/individual-test.md');
+      const outputPath = path.join(
+        testProjectDir,
+        '.opencode/individual-test.md'
+      );
       await expect(fs.access(outputPath)).resolves.not.toThrow();
 
       const outputContent = await fs.readFile(outputPath, 'utf8');
-      
+
       expect(outputContent).toContain('Opencode Provider Test');
       expect(outputContent).toContain('{{instructions}}');
       expect(outputContent).toContain('interface OpencodeConfig');
@@ -341,7 +380,10 @@ console.log('Hello, world!');
 Variables: {{$destination}} and {{$file}}
 `;
 
-      const sourceFilePath = path.join(testProjectDir, 'format-test.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'format-test.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       await runRulesetsV0(sourceFilePath, mockLogger);
@@ -361,7 +403,7 @@ Variables: {{$destination}} and {{$file}}
       for (const outputPath of expectedOutputs) {
         const fullPath = path.join(testProjectDir, outputPath);
         await expect(fs.access(fullPath)).resolves.not.toThrow();
-        
+
         const content = await fs.readFile(fullPath, 'utf8');
         const providerName = outputPath.split('/')[2]; // Extract provider name
         outputs.push({ provider: providerName, content });
@@ -374,7 +416,7 @@ Variables: {{$destination}} and {{$file}}
         expect(output.content).toContain('{{/instructions}}');
         expect(output.content).toContain('{{examples}}');
         expect(output.content).toContain('{{$destination}}');
-        
+
         // Markdown content preservation
         expect(output.content).toContain('# Format Consistency Test');
         expect(output.content).toContain('**bold**');
@@ -429,25 +471,33 @@ Special chars in variables: {{$destination}} & {{$file}}
 {{/variables}}
 `;
 
-      const sourceFilePath = path.join(testProjectDir, 'special-chars.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'special-chars.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       await runRulesetsV0(sourceFilePath, mockLogger);
 
       // Test a subset of providers to ensure special character handling
       const testProviders = ['cursor', 'windsurf', 'claude-code'];
-      
+
       for (const providerId of testProviders) {
-        const outputPath = path.join(testProjectDir, `.ruleset/dist/${providerId}/my-rules.md`);
+        const outputPath = path.join(
+          testProjectDir,
+          `.ruleset/dist/${providerId}/my-rules.md`
+        );
         const content = await fs.readFile(outputPath, 'utf8');
-        
+
         // Verify special characters are preserved
-        expect(content).toContain('& < > " \' ` ~ @ # $ % ^ * ( ) [ ] { } | \\ / ? ! + = - _ . , ; :');
+        expect(content).toContain(
+          '& < > " \' ` ~ @ # $ % ^ * ( ) [ ] { } | \\ / ? ! + = - _ . , ; :'
+        );
         expect(content).toContain('🚀 ✨ 💯 🔥 ⚡ 🎯');
         expect(content).toContain('\\w\\-\\.');
         expect(content).toContain('${name}');
         expect(content).toContain('./src/**/*.{ts,tsx,js,jsx}');
-        
+
         // Verify edge cases
         expect(content).toContain('Empty line follows:');
         expect(content).toContain('Line with only spaces:');
@@ -499,7 +549,10 @@ ruleset:
 Testing provider-specific configurations.
 `;
 
-      const sourceFilePath = path.join(testProjectDir, 'provider-config.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'provider-config.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       await runRulesetsV0(sourceFilePath, mockLogger);
@@ -516,13 +569,16 @@ Testing provider-specific configurations.
       for (const outputPath of expectedOutputs) {
         const fullPath = path.join(testProjectDir, outputPath);
         await expect(fs.access(fullPath)).resolves.not.toThrow();
-        
+
         const content = await fs.readFile(fullPath, 'utf8');
         expect(content).toContain('Provider Configuration Test');
       }
 
       // Verify disabled provider did not create output
-      const disabledOutput = path.join(testProjectDir, '.ruleset/dist/codex-cli/my-rules.md');
+      const disabledOutput = path.join(
+        testProjectDir,
+        '.ruleset/dist/codex-cli/my-rules.md'
+      );
       await expect(fs.access(disabledOutput)).rejects.toThrow();
 
       // Verify logging shows only enabled providers
@@ -564,7 +620,10 @@ destinations:
 Frontmatter should override configuration.
 `;
 
-      const sourceFilePath = path.join(testProjectDir, 'mixed-config.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'mixed-config.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       await runRulesetsV0(sourceFilePath, mockLogger);
@@ -603,13 +662,13 @@ Frontmatter should override configuration.
       const config: RulesetConfig = {
         rulesets: { version: '0.1.0' },
         providers: {
-          cursor: { 
-            enabled: true, 
-            outputPath: '/invalid/readonly/path.mdc' // Will fail due to permissions
-          },
-          windsurf: { 
+          cursor: {
             enabled: true,
-            outputPath: '.windsurf/should-succeed.md' // Should succeed
+            outputPath: '/invalid/readonly/path.mdc', // Will fail due to permissions
+          },
+          windsurf: {
+            enabled: true,
+            outputPath: '.windsurf/should-succeed.md', // Should succeed
           },
         },
       };
@@ -660,7 +719,10 @@ ruleset:
 # Unknown Provider Test
 `;
 
-      const sourceFilePath = path.join(testProjectDir, 'unknown-provider.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'unknown-provider.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       // Should succeed for known providers
@@ -704,7 +766,12 @@ ${'## Large Section\n\nThis is a large section with lots of content. '.repeat(20
 \`\`\`typescript
 ${'// Large code example\n'.repeat(100)}
 interface LargeInterface {
-${'  property${i}: string;\n'.split('${i}').map((part, index, arr) => index === 0 ? part : `${index}${arr.slice(index + 1).join('${i}')}`).join('')}
+${'  property${i}: string;\n'
+  .split('${i}')
+  .map((part, index, arr) =>
+    index === 0 ? part : `${index}${arr.slice(index + 1).join('${i}')}`
+  )
+  .join('')}
 }
 \`\`\`
 {{/examples}}
@@ -712,13 +779,19 @@ ${'  property${i}: string;\n'.split('${i}').map((part, index, arr) => index === 
 ${'More content sections follow. '.repeat(300)}
 `;
 
-      const actualLargeContent = largeContent.replace(/\$\{i\}/g, (match, offset, string) => {
-        // Simple counter for property names
-        const lineNumber = string.substring(0, offset).split('\n').length;
-        return String(lineNumber);
-      });
+      const actualLargeContent = largeContent.replace(
+        /\$\{i\}/g,
+        (match, offset, string) => {
+          // Simple counter for property names
+          const lineNumber = string.substring(0, offset).split('\n').length;
+          return String(lineNumber);
+        }
+      );
 
-      const sourceFilePath = path.join(testProjectDir, 'large-content.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'large-content.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, actualLargeContent);
 
       // Measure execution time
@@ -727,7 +800,7 @@ ${'More content sections follow. '.repeat(300)}
       const executionTime = Date.now() - startTime;
 
       // Should complete in reasonable time (less than 30 seconds even for large content)
-      expect(executionTime).toBeLessThan(30000);
+      expect(executionTime).toBeLessThan(30_000);
 
       // Verify all providers created outputs
       const expectedOutputs = [
@@ -742,9 +815,9 @@ ${'More content sections follow. '.repeat(300)}
       for (const outputPath of expectedOutputs) {
         const fullPath = path.join(testProjectDir, outputPath);
         await expect(fs.access(fullPath)).resolves.not.toThrow();
-        
+
         const content = await fs.readFile(fullPath, 'utf8');
-        expect(content.length).toBeGreaterThan(10000); // Should contain the large content
+        expect(content.length).toBeGreaterThan(10_000); // Should contain the large content
         expect(content).toContain('Large Content Performance Test');
         expect(content).toContain('{{instructions}}');
       }

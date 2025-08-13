@@ -3,54 +3,48 @@
  * Ensures legacy APIs continue working while deprecated warnings are shown
  */
 
-import { describe, test, expect, beforeEach, afterEach, vi } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'bun:test';
 
 // Test both legacy and modern imports to ensure compatibility
 import {
+  createDestinationId,
+  createDestPath,
+  createOutputPath,
+  createProviderId,
   // Legacy branded type aliases (should still work)
   type DestinationId,
   type DestPath,
-  createDestinationId,
-  createDestPath,
   isDestinationId,
   isDestPath,
-  
+  isOutputPath,
+  isProviderId,
+  type OutputPath,
   // Modern branded types (for comparison)
   type ProviderId,
-  type OutputPath,
-  createProviderId,
-  createOutputPath,
-  isProviderId,
-  isOutputPath,
 } from '../src/brands';
-
 import {
-  // Legacy provider interfaces (should still work)
-  type DestinationPlugin,
-  type DestinationConfig,
-  type DestinationCapabilities,
-  
-  // Modern provider interfaces (for comparison)
-  type ProviderConfig,
-  type ProviderCapabilities,
-  
-  // Migration utilities
-  migrateDestinationToProvider,
-  isLegacyDestinationConfig,
-} from '../src/provider';
-
-import {
+  hasGeneratedPaths,
   // Legacy destination plugin interface
   type WriteResult,
-  hasGeneratedPaths,
 } from '../src/destination-plugin';
-
 // Also test imports from the main index to ensure re-exports work
-import {
+import type {
   // Should re-export everything needed for backwards compatibility
-  type CompiledDoc,
-  type Logger,
+  CompiledDoc,
+  Logger,
 } from '../src/index';
+import {
+  type DestinationCapabilities,
+  type DestinationConfig,
+  // Legacy provider interfaces (should still work)
+  type DestinationPlugin,
+  isLegacyDestinationConfig,
+  // Migration utilities
+  migrateDestinationToProvider,
+  type ProviderCapabilities,
+  // Modern provider interfaces (for comparison)
+  type ProviderConfig,
+} from '../src/provider';
 
 describe('Backwards Compatibility', () => {
   let consoleSpy: any;
@@ -69,10 +63,10 @@ describe('Backwards Compatibility', () => {
         // These types should be assignable to each other
         const providerId: ProviderId = createProviderId('cursor');
         const destinationId: DestinationId = providerId;
-        
+
         const outputPath: OutputPath = createOutputPath('.cursor/rules');
         const destPath: DestPath = outputPath;
-        
+
         expect(destinationId).toBe(providerId);
         expect(destPath).toBe(outputPath);
       });
@@ -82,7 +76,7 @@ describe('Backwards Compatibility', () => {
         // (This is mainly tested at compile time, but we can verify behavior)
         const destinationId = createDestinationId('cursor');
         const destPath = createDestPath('.cursor/rules');
-        
+
         expect(typeof destinationId).toBe('string');
         expect(typeof destPath).toBe('string');
         expect(destinationId).toBe('cursor');
@@ -94,7 +88,7 @@ describe('Backwards Compatibility', () => {
       test('createDestinationId should work like createProviderId', () => {
         const modernId = createProviderId('cursor');
         const legacyId = createDestinationId('cursor');
-        
+
         expect(modernId).toBe(legacyId);
         expect(typeof modernId).toBe(typeof legacyId);
       });
@@ -103,13 +97,13 @@ describe('Backwards Compatibility', () => {
         const originalEnv = process.env.NODE_ENV;
         process.env.NODE_ENV = 'development';
         consoleSpy.mockClear(); // Clear any previous calls
-        
+
         createDestinationId('cursor');
-        
+
         expect(consoleSpy).toHaveBeenCalledWith(
           'createDestinationId is deprecated. Use createProviderId instead.'
         );
-        
+
         process.env.NODE_ENV = originalEnv;
       });
 
@@ -117,18 +111,18 @@ describe('Backwards Compatibility', () => {
         const originalEnv = process.env.NODE_ENV;
         process.env.NODE_ENV = 'production';
         consoleSpy.mockClear(); // Clear any previous calls
-        
+
         createDestinationId('cursor');
-        
+
         expect(consoleSpy).not.toHaveBeenCalled();
-        
+
         process.env.NODE_ENV = originalEnv;
       });
 
       test('createDestPath should work like createOutputPath', () => {
         const modernPath = createOutputPath('.cursor/rules');
         const legacyPath = createDestPath('.cursor/rules');
-        
+
         expect(modernPath).toBe(legacyPath);
         expect(typeof modernPath).toBe(typeof legacyPath);
       });
@@ -137,13 +131,13 @@ describe('Backwards Compatibility', () => {
         const originalEnv = process.env.NODE_ENV;
         process.env.NODE_ENV = 'development';
         consoleSpy.mockClear(); // Clear any previous calls
-        
+
         createDestPath('.cursor/rules');
-        
+
         expect(consoleSpy).toHaveBeenCalledWith(
           'createDestPath is deprecated. Use createOutputPath instead.'
         );
-        
+
         process.env.NODE_ENV = originalEnv;
       });
 
@@ -151,7 +145,7 @@ describe('Backwards Compatibility', () => {
         // Both should fail the same way for invalid inputs
         expect(() => createProviderId('invalid')).toThrow();
         expect(() => createDestinationId('invalid')).toThrow();
-        
+
         expect(() => createOutputPath('../traversal')).toThrow();
         expect(() => createDestPath('../traversal')).toThrow();
       });
@@ -162,7 +156,7 @@ describe('Backwards Compatibility', () => {
         expect(isDestinationId('cursor')).toBe(true);
         expect(isProviderId('cursor')).toBe(true);
         expect(isDestinationId('cursor')).toBe(isProviderId('cursor'));
-        
+
         expect(isDestinationId('invalid')).toBe(false);
         expect(isProviderId('invalid')).toBe(false);
         expect(isDestinationId('invalid')).toBe(isProviderId('invalid'));
@@ -172,7 +166,7 @@ describe('Backwards Compatibility', () => {
         expect(isDestPath('.cursor/rules')).toBe(true);
         expect(isOutputPath('.cursor/rules')).toBe(true);
         expect(isDestPath('.cursor/rules')).toBe(isOutputPath('.cursor/rules'));
-        
+
         expect(isDestPath('../invalid')).toBe(false);
         expect(isOutputPath('../invalid')).toBe(false);
         expect(isDestPath('../invalid')).toBe(isOutputPath('../invalid'));
@@ -180,7 +174,7 @@ describe('Backwards Compatibility', () => {
 
       test('should handle edge cases consistently', () => {
         const testCases = [null, undefined, '', 123, {}, []];
-        
+
         for (const testCase of testCases) {
           expect(isDestinationId(testCase)).toBe(isProviderId(testCase));
           expect(isDestPath(testCase)).toBe(isOutputPath(testCase));
@@ -198,7 +192,7 @@ describe('Backwards Compatibility', () => {
           outputPath: createOutputPath('.cursor/rules'),
           format: 'markdown',
         };
-        
+
         const providerConfig: ProviderConfig = config;
         expect(providerConfig).toBe(config);
       });
@@ -212,7 +206,7 @@ describe('Backwards Compatibility', () => {
           supportsMarkdown: true,
           allowedFormats: ['markdown'],
         };
-        
+
         const providerCapabilities: ProviderCapabilities = capabilities;
         expect(providerCapabilities).toBe(capabilities);
       });
@@ -225,9 +219,9 @@ describe('Backwards Compatibility', () => {
           destinationPath: '.windsurf/rules', // Alternative naming
           format: 'markdown',
         };
-        
+
         const migrated = migrateDestinationToProvider(legacyConfig);
-        
+
         expect(migrated.outputPath).toBe('.cursor/rules'); // Uses destPath first
         expect(migrated.format).toBe('markdown');
       });
@@ -238,7 +232,7 @@ describe('Backwards Compatibility', () => {
           { destinationPath: '.windsurf/rules' },
           { destination: 'cursor' },
         ];
-        
+
         for (const config of legacyConfigs) {
           expect(isLegacyDestinationConfig(config)).toBe(true);
         }
@@ -257,7 +251,7 @@ describe('Backwards Compatibility', () => {
             size: 1024,
           },
         };
-        
+
         expect(hasGeneratedPaths(writeResult)).toBe(true);
         expect(writeResult.generatedPaths).toContain('.cursor/rules/test.mdc');
       });
@@ -273,16 +267,16 @@ describe('Backwards Compatibility', () => {
           generatedPaths: ['file1.md', 'file2.md'],
           metadata: { key: 'value' },
         };
-        
+
         const invalidResults = [
           { generatedPaths: 'not an array' },
           { metadata: 'not an object' },
           { generatedPaths: null },
           {},
         ];
-        
+
         expect(hasGeneratedPaths(validResult)).toBe(true);
-        
+
         for (const invalid of invalidResults) {
           expect(hasGeneratedPaths(invalid)).toBe(false);
         }
@@ -293,7 +287,9 @@ describe('Backwards Compatibility', () => {
       test('should support both legacy and modern plugin interfaces', () => {
         // Mock destination plugin (legacy style)
         const legacyPlugin = {
-          get name() { return 'cursor'; },
+          get name() {
+            return 'cursor';
+          },
           configSchema() {
             return {
               type: 'object',
@@ -309,7 +305,7 @@ describe('Backwards Compatibility', () => {
             };
           },
         };
-        
+
         expect(legacyPlugin.name).toBe('cursor');
         expect(typeof legacyPlugin.configSchema).toBe('function');
         expect(typeof legacyPlugin.write).toBe('function');
@@ -321,7 +317,7 @@ describe('Backwards Compatibility', () => {
     test('should re-export core types for backwards compatibility', () => {
       // Test that core types are available from main index
       expect(typeof CompiledDoc).toBe('undefined'); // This is a type, not a value
-      
+
       // These should be type imports that work
       const mockCompiledDoc: CompiledDoc = {
         source: {
@@ -345,7 +341,7 @@ describe('Backwards Compatibility', () => {
           version: '1.0.0',
         },
       };
-      
+
       expect(mockCompiledDoc).toBeDefined();
       expect(mockCompiledDoc.source.content).toBe('test');
       expect(mockCompiledDoc.output.content).toBe('compiled test');
@@ -359,7 +355,7 @@ describe('Backwards Compatibility', () => {
         warn: vi.fn(),
         error: vi.fn(),
       };
-      
+
       expect(typeof mockLogger.debug).toBe('function');
       expect(typeof mockLogger.info).toBe('function');
       expect(typeof mockLogger.warn).toBe('function');
@@ -372,7 +368,7 @@ describe('Backwards Compatibility', () => {
       // Test that data created with legacy APIs works with modern APIs
       const legacyId = createDestinationId('cursor');
       const modernId = createProviderId('cursor');
-      
+
       // Should be interchangeable
       expect(legacyId).toBe(modernId);
       expect(isProviderId(legacyId)).toBe(true);
@@ -384,18 +380,18 @@ describe('Backwards Compatibility', () => {
         // Legacy fields
         destPath: '.cursor/rules',
         destinationId: 'cursor',
-        
+
         // Modern fields
         outputPath: '.windsurf/rules',
         providerId: 'windsurf',
-        
+
         // Common fields
         format: 'markdown',
       };
-      
+
       // Should detect as legacy due to presence of legacy fields
       expect(isLegacyDestinationConfig(mixedConfig)).toBe(true);
-      
+
       // Migration should handle the mix appropriately
       const migrated = migrateDestinationToProvider(mixedConfig);
       expect(migrated.outputPath).toBe('.cursor/rules'); // Legacy takes precedence
@@ -406,19 +402,19 @@ describe('Backwards Compatibility', () => {
       const configurations = [
         // Fully legacy
         { destPath: '.cursor/rules', destinationId: 'cursor' },
-        
+
         // Partially migrated
         { outputPath: '.windsurf/rules', destinationId: 'windsurf' },
-        
+
         // Fully modern
         { outputPath: '.claude/rules', providerId: 'claude-code' },
       ];
-      
-      const migrationResults = configurations.map(config => ({
+
+      const migrationResults = configurations.map((config) => ({
         isLegacy: isLegacyDestinationConfig(config),
         config,
       }));
-      
+
       expect(migrationResults[0].isLegacy).toBe(true);
       expect(migrationResults[1].isLegacy).toBe(true); // Still has destinationId
       expect(migrationResults[2].isLegacy).toBe(false);
@@ -429,26 +425,26 @@ describe('Backwards Compatibility', () => {
     test('should maintain consistent validation behavior', () => {
       // Test that validation errors are the same for legacy and modern APIs
       const invalidValues = ['', 'invalid-provider', null, undefined, 123];
-      
+
       for (const value of invalidValues) {
         let legacyError: Error | null = null;
         let modernError: Error | null = null;
-        
+
         try {
           createDestinationId(value as any);
         } catch (e) {
           legacyError = e as Error;
         }
-        
+
         try {
           createProviderId(value as any);
         } catch (e) {
           modernError = e as Error;
         }
-        
+
         // Both should fail (or both should succeed)
         expect(!!legacyError).toBe(!!modernError);
-        
+
         if (legacyError && modernError) {
           expect(legacyError.constructor).toBe(modernError.constructor);
           expect(legacyError.message).toBe(modernError.message);
@@ -459,40 +455,40 @@ describe('Backwards Compatibility', () => {
     test('should maintain consistent serialization behavior', () => {
       const legacyId = createDestinationId('cursor');
       const modernId = createProviderId('cursor');
-      
+
       const legacySerialized = JSON.stringify({ id: legacyId });
       const modernSerialized = JSON.stringify({ id: modernId });
-      
+
       expect(legacySerialized).toBe(modernSerialized);
-      
+
       const legacyParsed = JSON.parse(legacySerialized);
       const modernParsed = JSON.parse(modernSerialized);
-      
+
       expect(legacyParsed.id).toBe(modernParsed.id);
     });
 
     test('should handle environment-specific behavior consistently', () => {
       const environments = ['development', 'test', 'production'];
-      
+
       for (const env of environments) {
         const originalEnv = process.env.NODE_ENV;
         process.env.NODE_ENV = env;
-        
+
         consoleSpy.mockClear();
-        
+
         const legacyId = createDestinationId('cursor');
         const modernId = createProviderId('cursor');
-        
+
         // Should work the same regardless of environment
         expect(legacyId).toBe(modernId);
-        
+
         // Only development should show warnings
         if (env === 'development') {
           expect(consoleSpy).toHaveBeenCalled();
         } else {
           expect(consoleSpy).not.toHaveBeenCalled();
         }
-        
+
         process.env.NODE_ENV = originalEnv;
       }
     });
@@ -501,7 +497,7 @@ describe('Backwards Compatibility', () => {
   describe('Performance Consistency', () => {
     test('legacy APIs should not significantly impact performance', () => {
       const iterations = 1000;
-      
+
       // Benchmark modern API
       const modernStart = performance.now();
       for (let i = 0; i < iterations; i++) {
@@ -509,7 +505,7 @@ describe('Backwards Compatibility', () => {
         createOutputPath('.cursor/rules');
       }
       const modernTime = performance.now() - modernStart;
-      
+
       // Benchmark legacy API
       const legacyStart = performance.now();
       for (let i = 0; i < iterations; i++) {
@@ -517,7 +513,7 @@ describe('Backwards Compatibility', () => {
         createDestPath('.cursor/rules');
       }
       const legacyTime = performance.now() - legacyStart;
-      
+
       // Legacy should not be more than 2x slower (accounting for warning overhead)
       expect(legacyTime).toBeLessThan(modernTime * 2);
     });
@@ -525,21 +521,21 @@ describe('Backwards Compatibility', () => {
     test('type guards should have consistent performance', () => {
       const iterations = 1000;
       const testValue = 'cursor';
-      
+
       const modernStart = performance.now();
       for (let i = 0; i < iterations; i++) {
         isProviderId(testValue);
         isOutputPath('.cursor/rules');
       }
       const modernTime = performance.now() - modernStart;
-      
+
       const legacyStart = performance.now();
       for (let i = 0; i < iterations; i++) {
         isDestinationId(testValue);
         isDestPath('.cursor/rules');
       }
       const legacyTime = performance.now() - legacyStart;
-      
+
       // Should be essentially the same performance (since they're aliases)
       expect(Math.abs(legacyTime - modernTime)).toBeLessThan(modernTime * 0.1);
     });
@@ -549,19 +545,19 @@ describe('Backwards Compatibility', () => {
     test('should not create memory leaks with legacy APIs', () => {
       // Test that repeated calls don't accumulate memory
       const initialUsage = process.memoryUsage();
-      
-      for (let i = 0; i < 10000; i++) {
+
+      for (let i = 0; i < 10_000; i++) {
         createDestinationId('cursor');
         createDestPath('.cursor/rules');
       }
-      
+
       // Force garbage collection if available
       if (global.gc) {
         global.gc();
       }
-      
+
       const finalUsage = process.memoryUsage();
-      
+
       // Memory usage should not grow significantly
       const heapGrowth = finalUsage.heapUsed - initialUsage.heapUsed;
       expect(heapGrowth).toBeLessThan(1024 * 1024); // Less than 1MB growth

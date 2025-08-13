@@ -2,10 +2,10 @@
  * Integration tests for the complete configuration system
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { promises as fs } from 'fs';
-import { join } from 'path';
 import { tmpdir } from 'os';
+import { join } from 'path';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { loadConfig } from '../ConfigLoader';
 import type { RulesetConfig } from '../types';
 
@@ -13,16 +13,18 @@ describe('Configuration System Integration', () => {
   let tempDir: string;
   let projectDir: string;
   let subProjectDir: string;
-  
+
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(join(tmpdir(), 'rulesets-config-integration-test-'));
+    tempDir = await fs.mkdtemp(
+      join(tmpdir(), 'rulesets-config-integration-test-')
+    );
     projectDir = join(tempDir, 'project');
     subProjectDir = join(projectDir, 'subproject');
-    
+
     await fs.mkdir(projectDir);
     await fs.mkdir(subProjectDir);
   });
-  
+
   afterEach(async () => {
     await fs.rm(tempDir, { recursive: true, force: true });
   });
@@ -62,9 +64,9 @@ describe('Configuration System Integration', () => {
         
         "outputDirectory": ".ruleset/dist"
       }`;
-      
+
       await fs.writeFile(join(tempDir, 'ruleset.config.jsonc'), rootConfig);
-      
+
       const projectConfig = `{
         // Override for this project
         "strict": false,
@@ -75,22 +77,25 @@ describe('Configuration System Integration', () => {
           }
         }
       }`;
-      
-      await fs.writeFile(join(projectDir, 'ruleset.config.jsonc'), projectConfig);
-      
+
+      await fs.writeFile(
+        join(projectDir, 'ruleset.config.jsonc'),
+        projectConfig
+      );
+
       const result = await loadConfig(subProjectDir);
-      
+
       // Should find both configs
       expect(result.sources).toHaveLength(2);
-      
+
       // Project config should override root config
       expect(result.config.strict).toBe(false);
-      
+
       // Should merge providers
       expect(result.config.providers?.cursor?.enabled).toBe(true);
       expect(result.config.providers?.['claude-code']?.enabled).toBe(true);
       expect(result.config.providers?.windsurf?.enabled).toBe(true);
-      
+
       // Should inherit other settings
       expect(result.config.defaultProviders).toEqual(['cursor', 'claude-code']);
       expect(result.config.gitignore?.enabled).toBe(true);
@@ -126,9 +131,9 @@ describe('Configuration System Integration', () => {
       enabled = true
       outputPath = "CLAUDE.md"
       `;
-      
+
       await fs.writeFile(join(tempDir, 'ruleset.config.toml'), rootConfig);
-      
+
       const projectConfig = `
       # Project-specific overrides
       strict = false
@@ -140,16 +145,21 @@ describe('Configuration System Integration', () => {
       [providers.windsurf.options]
       format = "markdown"
       `;
-      
-      await fs.writeFile(join(projectDir, 'ruleset.config.toml'), projectConfig);
-      
+
+      await fs.writeFile(
+        join(projectDir, 'ruleset.config.toml'),
+        projectConfig
+      );
+
       const result = await loadConfig(subProjectDir);
-      
+
       expect(result.sources).toHaveLength(2);
       expect(result.config.strict).toBe(false);
       expect(result.config.providers?.cursor?.enabled).toBe(true);
       expect(result.config.providers?.windsurf?.enabled).toBe(true);
-      expect(result.config.providers?.windsurf?.options?.format).toBe('markdown');
+      expect(result.config.providers?.windsurf?.options?.format).toBe(
+        'markdown'
+      );
     });
   });
 
@@ -163,9 +173,9 @@ describe('Configuration System Integration', () => {
       [providers.cursor]
       enabled = true
       `;
-      
+
       await fs.writeFile(join(tempDir, 'ruleset.config.toml'), rootConfig);
-      
+
       // Project config in JSONC (should take precedence due to file name order)
       const projectConfig = `{
         "strict": false,
@@ -175,11 +185,14 @@ describe('Configuration System Integration', () => {
           }
         }
       }`;
-      
-      await fs.writeFile(join(projectDir, 'ruleset.config.jsonc'), projectConfig);
-      
+
+      await fs.writeFile(
+        join(projectDir, 'ruleset.config.jsonc'),
+        projectConfig
+      );
+
       const result = await loadConfig(subProjectDir);
-      
+
       expect(result.sources).toHaveLength(2);
       expect(result.config.strict).toBe(false);
       expect(result.config.providers?.cursor?.enabled).toBe(true);
@@ -198,28 +211,28 @@ describe('Configuration System Integration', () => {
           }
         }
       }`;
-      
+
       await fs.writeFile(join(projectDir, 'ruleset.config.jsonc'), config);
-      
+
       const env = {
-        'RULESETS_STRICT': 'true',
-        'RULESETS_PROVIDERS_CURSOR_ENABLED': 'true',
-        'RULESETS_PROVIDERS_WINDSURF_ENABLED': 'true',
-        'RULESETS_OUTPUT_DIRECTORY': '/custom/output',
-        'RULESETS_GITIGNORE_ENABLED': 'false',
-        'OTHER_VAR': 'ignored',
+        RULESETS_STRICT: 'true',
+        RULESETS_PROVIDERS_CURSOR_ENABLED: 'true',
+        RULESETS_PROVIDERS_WINDSURF_ENABLED: 'true',
+        RULESETS_OUTPUT_DIRECTORY: '/custom/output',
+        RULESETS_GITIGNORE_ENABLED: 'false',
+        OTHER_VAR: 'ignored',
       };
-      
+
       const result = await loadConfig(projectDir, {}, undefined);
       const mockResult = await loadConfig(projectDir, {}, undefined);
-      
+
       // Manually apply env overrides for testing
       const { config: finalConfig } = result.config;
-      
+
       // Test that our env override parsing works
       const loader = (await import('../ConfigLoader')).getConfigLoader();
       const overriddenConfig = loader.applyEnvOverrides(result.config, env);
-      
+
       expect(overriddenConfig.strict).toBe(true);
       expect(overriddenConfig.providers?.cursor?.enabled).toBe(true);
       expect(overriddenConfig.providers?.windsurf?.enabled).toBe(true);
@@ -240,17 +253,20 @@ describe('Configuration System Integration', () => {
         },
         "defaultProviders": []
       }`;
-      
-      await fs.writeFile(join(projectDir, 'ruleset.config.jsonc'), invalidConfig);
-      
+
+      await fs.writeFile(
+        join(projectDir, 'ruleset.config.jsonc'),
+        invalidConfig
+      );
+
       const result = await loadConfig(projectDir);
-      
+
       expect(result.errors).toBeTruthy();
       expect(result.errors!.length).toBeGreaterThan(0);
       expect(result.warnings).toBeTruthy();
       expect(result.warnings!.length).toBeGreaterThan(0);
     });
-    
+
     it('should warn about unknown providers', async () => {
       const config = `{
         "providers": {
@@ -262,14 +278,18 @@ describe('Configuration System Integration', () => {
           }
         }
       }`;
-      
+
       await fs.writeFile(join(projectDir, 'ruleset.config.jsonc'), config);
-      
+
       const result = await loadConfig(projectDir);
-      
+
       expect(result.warnings).toBeTruthy();
-      expect(result.warnings!.some(w => w.includes('unknown-provider'))).toBe(true);
-      expect(result.warnings!.some(w => w.includes('another-unknown'))).toBe(true);
+      expect(result.warnings!.some((w) => w.includes('unknown-provider'))).toBe(
+        true
+      );
+      expect(result.warnings!.some((w) => w.includes('another-unknown'))).toBe(
+        true
+      );
     });
   });
 
@@ -298,9 +318,9 @@ describe('Configuration System Integration', () => {
           "ignore": ["*.backup", "*.tmp"]
         }
       }`;
-      
+
       await fs.writeFile(join(tempDir, 'ruleset.config.jsonc'), teamConfig);
-      
+
       // Project-specific overrides
       const projectConfig = `{
         // Enable windsurf for this project
@@ -315,22 +335,28 @@ describe('Configuration System Integration', () => {
           "keep": ["project-specific.md"]
         }
       }`;
-      
-      await fs.writeFile(join(projectDir, 'ruleset.config.jsonc'), projectConfig);
-      
+
+      await fs.writeFile(
+        join(projectDir, 'ruleset.config.jsonc'),
+        projectConfig
+      );
+
       const result = await loadConfig(subProjectDir);
-      
+
       // Should have team defaults
       expect(result.config.strict).toBe(true);
       expect(result.config.defaultProviders).toEqual(['cursor', 'claude-code']);
-      
+
       // Should enable all providers
       expect(result.config.providers?.cursor?.enabled).toBe(true);
       expect(result.config.providers?.['claude-code']?.enabled).toBe(true);
       expect(result.config.providers?.windsurf?.enabled).toBe(true);
-      
+
       // Should merge gitignore keep arrays
-      expect(result.config.gitignore?.keep).toEqual(['docs/manual-rules.md', 'project-specific.md']);
+      expect(result.config.gitignore?.keep).toEqual([
+        'docs/manual-rules.md',
+        'project-specific.md',
+      ]);
       expect(result.config.gitignore?.ignore).toEqual(['*.backup', '*.tmp']);
     });
   });

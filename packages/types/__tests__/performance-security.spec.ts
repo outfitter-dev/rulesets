@@ -3,69 +3,64 @@
  * Tests for memory leaks, performance benchmarks, security vulnerabilities, and edge cases
  */
 
-import { describe, test, expect, beforeEach, afterEach, vi } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'bun:test';
 import {
+  // Error types
+  BrandValidationError,
+  createBlockName,
+  createCompiledContent,
+  createMarkerContent,
+  createOutputPath,
+  createPropertyName,
   // Branded type creators
   createProviderId,
-  createSourcePath,
-  createOutputPath,
-  createBlockName,
-  createVariableName,
-  createPropertyName,
-  createMarkerContent,
   createRawContent,
-  createCompiledContent,
+  createSourcePath,
+  createVariableName,
   createVersion,
-  
+  isBlockName,
+  isMarkerContent,
+  isOutputPath,
+  isPropertyName,
   // Type guards
   isProviderId,
   isSourcePath,
-  isOutputPath,
-  isBlockName,
   isVariableName,
-  isPropertyName,
-  isMarkerContent,
   isVersion,
-  
-  // Error types
-  BrandValidationError,
-  
   // Constants
   VALID_PROVIDERS,
   type ValidProviderId,
 } from '../src/brands';
 
 import {
-  // Migration functions
-  migrateDestinationConfig,
-  migratePropertyScope,
-  migrateLinterConfig,
   batchMigrateConfigs,
-  summarizeMigrationResults,
   isLegacyConfig,
-  
   // Migration types
   type LegacyDestinationConfig,
   type MigrationResult,
+  // Migration functions
+  migrateDestinationConfig,
+  migrateLinterConfig,
+  migratePropertyScope,
+  summarizeMigrationResults,
 } from '../src/migration';
 
 import {
-  // Provider utilities
-  validateProviderConfig,
+  BUILT_IN_PROVIDERS,
   getProviderById,
   getProvidersByType,
-  BUILT_IN_PROVIDERS,
-  
   // Provider types
   type Provider,
   type ProviderConfig,
+  // Provider utilities
+  validateProviderConfig,
 } from '../src/provider';
 
 describe('Performance and Security Validation', () => {
   describe('Performance Benchmarks', () => {
     describe('Branded Type Creation Performance', () => {
       test('should create branded types efficiently', () => {
-        const iterations = 10000;
+        const iterations = 10_000;
         const testData = {
           providerId: 'cursor',
           sourcePath: 'rules.md',
@@ -78,7 +73,7 @@ describe('Performance and Security Validation', () => {
         };
 
         const start = performance.now();
-        
+
         for (let i = 0; i < iterations; i++) {
           createProviderId(testData.providerId);
           createSourcePath(testData.sourcePath);
@@ -89,18 +84,20 @@ describe('Performance and Security Validation', () => {
           createMarkerContent(testData.markerContent);
           createVersion(testData.version);
         }
-        
+
         const end = performance.now();
         const totalTime = end - start;
         const timePerOperation = totalTime / (iterations * 8); // 8 operations per iteration
-        
+
         // Should be less than 0.01ms per operation (very fast)
         expect(timePerOperation).toBeLessThan(0.01);
-        console.log(`Branded type creation: ${timePerOperation.toFixed(6)}ms per operation`);
+        console.log(
+          `Branded type creation: ${timePerOperation.toFixed(6)}ms per operation`
+        );
       });
 
       test('should validate types efficiently', () => {
-        const iterations = 50000;
+        const iterations = 50_000;
         const validInputs = [
           'cursor',
           'rules.md',
@@ -113,7 +110,7 @@ describe('Performance and Security Validation', () => {
         ];
 
         const start = performance.now();
-        
+
         for (let i = 0; i < iterations; i++) {
           isProviderId(validInputs[0]);
           isSourcePath(validInputs[1]);
@@ -124,33 +121,37 @@ describe('Performance and Security Validation', () => {
           isMarkerContent(validInputs[6]);
           isVersion(validInputs[7]);
         }
-        
+
         const end = performance.now();
         const timePerValidation = (end - start) / (iterations * 8);
-        
+
         // Type guards should be very fast (less than 0.005ms each)
         expect(timePerValidation).toBeLessThan(0.005);
-        console.log(`Type validation: ${timePerValidation.toFixed(6)}ms per operation`);
+        console.log(
+          `Type validation: ${timePerValidation.toFixed(6)}ms per operation`
+        );
       });
 
       test('should handle large content efficiently', () => {
-        const sizes = [1000, 10000, 100000, 1000000]; // 1KB to 1MB
-        
+        const sizes = [1000, 10_000, 100_000, 1_000_000]; // 1KB to 1MB
+
         for (const size of sizes) {
           const largeContent = 'x'.repeat(size);
-          
+
           const start = performance.now();
           createRawContent(largeContent);
           createCompiledContent(largeContent);
           const end = performance.now();
-          
+
           const timePerSize = (end - start) / 2;
-          
+
           // Should scale linearly with content size (roughly)
-          expect(timePerSize).toBeLessThan(size / 10000); // More generous scaling expectation
-          
-          if (size === 1000000) {
-            console.log(`Large content (${size} chars): ${timePerSize.toFixed(3)}ms`);
+          expect(timePerSize).toBeLessThan(size / 10_000); // More generous scaling expectation
+
+          if (size === 1_000_000) {
+            console.log(
+              `Large content (${size} chars): ${timePerSize.toFixed(3)}ms`
+            );
           }
         }
       });
@@ -167,13 +168,13 @@ describe('Performance and Security Validation', () => {
         };
 
         const iterations = 1000;
-        
+
         const start = performance.now();
         for (let i = 0; i < iterations; i++) {
           migrateDestinationConfig(legacyConfig);
         }
         const end = performance.now();
-        
+
         const timePerMigration = (end - start) / iterations;
         expect(timePerMigration).toBeLessThan(10); // Less than 10ms per migration
         console.log(`Migration: ${timePerMigration.toFixed(3)}ms per config`);
@@ -192,7 +193,7 @@ describe('Performance and Security Validation', () => {
         const start = performance.now();
         const results = batchMigrateConfigs(configs);
         const end = performance.now();
-        
+
         const totalTime = end - start;
         expect(totalTime).toBeLessThan(100); // Less than 100ms for 100 configs
         expect(Object.keys(results)).toHaveLength(100);
@@ -205,8 +206,14 @@ describe('Performance and Security Validation', () => {
         for (let i = 0; i < 1000; i++) {
           results[`config${i}`] = {
             success: i % 10 !== 0, // 10% failure rate
-            errors: i % 10 === 0 ? [{ type: 'validation', message: 'Test error', code: 'TEST' }] : [],
-            warnings: i % 5 === 0 ? [{ type: 'deprecated', message: 'Test warning' }] : [],
+            errors:
+              i % 10 === 0
+                ? [{ type: 'validation', message: 'Test error', code: 'TEST' }]
+                : [],
+            warnings:
+              i % 5 === 0
+                ? [{ type: 'deprecated', message: 'Test warning' }]
+                : [],
             metadata: {
               version: '1.0.0',
               timestamp: new Date().toISOString(),
@@ -221,11 +228,13 @@ describe('Performance and Security Validation', () => {
         const start = performance.now();
         const summary = summarizeMigrationResults(results);
         const end = performance.now();
-        
+
         const summarizationTime = end - start;
         expect(summarizationTime).toBeLessThan(50); // Less than 50ms for 1000 results
         expect(summary.totalConfigs).toBe(1000);
-        console.log(`Result summarization (1000 results): ${summarizationTime.toFixed(2)}ms`);
+        console.log(
+          `Result summarization (1000 results): ${summarizationTime.toFixed(2)}ms`
+        );
       });
     });
 
@@ -237,33 +246,44 @@ describe('Performance and Security Validation', () => {
           fileNaming: 'transform',
         };
 
-        const iterations = 10000;
-        
+        const iterations = 10_000;
+
         const start = performance.now();
         for (let i = 0; i < iterations; i++) {
           validateProviderConfig(validConfig);
         }
         const end = performance.now();
-        
+
         const timePerValidation = (end - start) / iterations;
         expect(timePerValidation).toBeLessThan(0.1); // Less than 0.1ms per validation
-        console.log(`Provider config validation: ${timePerValidation.toFixed(6)}ms per config`);
+        console.log(
+          `Provider config validation: ${timePerValidation.toFixed(6)}ms per config`
+        );
       });
 
       test('should lookup providers efficiently', () => {
-        const iterations = 100000;
-        const providerIds = ['cursor', 'claude-code', 'windsurf', 'codex-cli', 'amp', 'opencode'];
-        
+        const iterations = 100_000;
+        const providerIds = [
+          'cursor',
+          'claude-code',
+          'windsurf',
+          'codex-cli',
+          'amp',
+          'opencode',
+        ];
+
         const start = performance.now();
         for (let i = 0; i < iterations; i++) {
           const id = providerIds[i % providerIds.length];
           getProviderById(createProviderId(id));
         }
         const end = performance.now();
-        
+
         const timePerLookup = (end - start) / iterations;
         expect(timePerLookup).toBeLessThan(0.01); // Less than 0.01ms per lookup
-        console.log(`Provider lookup: ${timePerLookup.toFixed(6)}ms per lookup`);
+        console.log(
+          `Provider lookup: ${timePerLookup.toFixed(6)}ms per lookup`
+        );
       });
     });
   });
@@ -277,7 +297,7 @@ describe('Performance and Security Validation', () => {
       }
 
       const initialMemory = process.memoryUsage();
-      
+
       for (let i = 0; i < iterations; i++) {
         operation();
       }
@@ -301,11 +321,13 @@ describe('Performance and Security Validation', () => {
         createOutputPath('.cursor/rules');
         createBlockName('user-instructions');
         createVersion('1.0.0');
-      }, 10000);
+      }, 10_000);
 
       // Should not use more than 1MB of heap
       expect(memoryUsage.heapUsed).toBeLessThan(1024 * 1024);
-      console.log(`Memory usage (10k type creations): ${(memoryUsage.heapUsed / 1024).toFixed(2)} KB`);
+      console.log(
+        `Memory usage (10k type creations): ${(memoryUsage.heapUsed / 1024).toFixed(2)} KB`
+      );
     });
 
     test('should not leak memory during validation', () => {
@@ -315,11 +337,13 @@ describe('Performance and Security Validation', () => {
         isOutputPath('.cursor/rules');
         isBlockName('user-instructions');
         isVersion('1.0.0');
-      }, 10000);
+      }, 10_000);
 
       // Type guards should use minimal memory
       expect(memoryUsage.heapUsed).toBeLessThan(512 * 1024); // Less than 512KB
-      console.log(`Memory usage (10k validations): ${(memoryUsage.heapUsed / 1024).toFixed(2)} KB`);
+      console.log(
+        `Memory usage (10k validations): ${(memoryUsage.heapUsed / 1024).toFixed(2)} KB`
+      );
     });
 
     test('should not leak memory during migrations', () => {
@@ -335,12 +359,14 @@ describe('Performance and Security Validation', () => {
 
       // Migrations should not accumulate significant memory
       expect(memoryUsage.heapUsed).toBeLessThan(2 * 1024 * 1024); // Less than 2MB
-      console.log(`Memory usage (1k migrations): ${(memoryUsage.heapUsed / 1024).toFixed(2)} KB`);
+      console.log(
+        `Memory usage (1k migrations): ${(memoryUsage.heapUsed / 1024).toFixed(2)} KB`
+      );
     });
 
     test('should handle large content without excessive memory usage', () => {
-      const largeContent = 'x'.repeat(1000000); // 1MB of content
-      
+      const largeContent = 'x'.repeat(1_000_000); // 1MB of content
+
       const memoryUsage = measureMemory(() => {
         const raw = createRawContent(largeContent);
         const compiled = createCompiledContent(largeContent);
@@ -349,7 +375,9 @@ describe('Performance and Security Validation', () => {
 
       // Should not use more than 30MB (allowing for some overhead)
       expect(memoryUsage.heapUsed).toBeLessThan(30 * 1024 * 1024);
-      console.log(`Memory usage (10x 1MB content): ${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+      console.log(
+        `Memory usage (10x 1MB content): ${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`
+      );
     });
   });
 
@@ -367,13 +395,17 @@ describe('Performance and Security Validation', () => {
         ];
 
         for (const input of maliciousInputs) {
-          expect(() => createMarkerContent(input)).toThrow(BrandValidationError);
-          
+          expect(() => createMarkerContent(input)).toThrow(
+            BrandValidationError
+          );
+
           try {
             createMarkerContent(input);
           } catch (error) {
             expect(error).toBeInstanceOf(BrandValidationError);
-            expect((error as BrandValidationError).message).toContain('potentially dangerous content detected');
+            expect((error as BrandValidationError).message).toContain(
+              'potentially dangerous content detected'
+            );
           }
         }
       });
@@ -387,7 +419,9 @@ describe('Performance and Security Validation', () => {
         ];
 
         for (const input of caseVariations) {
-          expect(() => createMarkerContent(input)).toThrow(BrandValidationError);
+          expect(() => createMarkerContent(input)).toThrow(
+            BrandValidationError
+          );
         }
       });
 
@@ -424,12 +458,14 @@ describe('Performance and Security Validation', () => {
 
         for (const path of traversalAttempts) {
           expect(() => createSourcePath(path)).toThrow(BrandValidationError);
-          
+
           try {
             createSourcePath(path);
           } catch (error) {
             expect(error).toBeInstanceOf(BrandValidationError);
-            expect((error as BrandValidationError).message).toMatch(/path traversal|relative path|hidden files/);
+            expect((error as BrandValidationError).message).toMatch(
+              /path traversal|relative path|hidden files/
+            );
           }
         }
       });
@@ -484,11 +520,7 @@ describe('Performance and Security Validation', () => {
         }
 
         // OutputPath and RawContent only validate null bytes
-        const nullByteInputs = [
-          'file\x00',
-          'normal\0file',
-          'path\u0000',
-        ];
+        const nullByteInputs = ['file\x00', 'normal\0file', 'path\u0000'];
 
         for (const input of nullByteInputs) {
           expect(() => createOutputPath(input)).toThrow(BrandValidationError);
@@ -537,11 +569,13 @@ describe('Performance and Security Validation', () => {
           '__lookupGetter__', // Has underscores
           '__lookupSetter__', // Has underscores
         ];
-        
+
         for (const attempt of definitelyInvalidForPropertyName) {
-          expect(() => createPropertyName(attempt)).toThrow(BrandValidationError);
+          expect(() => createPropertyName(attempt)).toThrow(
+            BrandValidationError
+          );
         }
-        
+
         // Note: 'constructor' and 'prototype' pass format validation but are security risks
         // (In a real implementation, we might add explicit checks for these dangerous property names)
 
@@ -551,9 +585,11 @@ describe('Performance and Security Validation', () => {
           'constructor.prototype',
           '__defineGetter__',
         ];
-        
+
         for (const attempt of definitelyInvalidForVariableName) {
-          expect(() => createVariableName(attempt)).toThrow(BrandValidationError);
+          expect(() => createVariableName(attempt)).toThrow(
+            BrandValidationError
+          );
         }
 
         const definitelyInvalidForBlockName = [
@@ -561,7 +597,7 @@ describe('Performance and Security Validation', () => {
           'Constructor', // Has uppercase
           '__defineGetter__', // Has underscores
         ];
-        
+
         for (const attempt of definitelyInvalidForBlockName) {
           expect(() => createBlockName(attempt)).toThrow(BrandValidationError);
         }
@@ -570,18 +606,20 @@ describe('Performance and Security Validation', () => {
       test('should prevent object prototype manipulation', () => {
         // Test that our validation doesn't allow manipulation of Object.prototype
         const dangerousObjects = [
-          { '__proto__': { polluted: true } },
-          { 'constructor': { prototype: { polluted: true } } },
+          { __proto__: { polluted: true } },
+          { constructor: { prototype: { polluted: true } } },
         ];
 
         for (const obj of dangerousObjects) {
           // These should be rejected at the input validation level
           expect(() => createMarkerContent(JSON.stringify(obj))).not.toThrow(); // JSON is safe
-          
+
           // But the dangerous property names with underscores should be rejected
           for (const key of Object.keys(obj)) {
             if (key === '__proto__') {
-              expect(() => createPropertyName(key)).toThrow(BrandValidationError);
+              expect(() => createPropertyName(key)).toThrow(
+                BrandValidationError
+              );
             }
             // Note: 'constructor' passes PropertyName validation (it's lowercase letters only)
             // but would be dangerous in a real scenario
@@ -598,20 +636,20 @@ describe('Performance and Security Validation', () => {
           "' OR '1'='1",
           "admin'--",
           "' UNION SELECT * FROM users --",
-          
+
           // Command injection patterns
-          "; rm -rf /",
-          "| cat /etc/passwd",
-          "&& rm -rf /",
-          "`rm -rf /`",
-          "$(rm -rf /)",
-          
+          '; rm -rf /',
+          '| cat /etc/passwd',
+          '&& rm -rf /',
+          '`rm -rf /`',
+          '$(rm -rf /)',
+
           // Template injection patterns
-          "{{7*7}}",
-          "${7*7}",
-          "<%=7*7%>",
-          "#{7*7}",
-          
+          '{{7*7}}',
+          '${7*7}',
+          '<%=7*7%>',
+          '#{7*7}',
+
           // Expression injection
           "${java.lang.Runtime.getRuntime().exec('rm -rf /')}",
           "#{T(java.lang.Runtime).getRuntime().exec('rm -rf /')}",
@@ -632,9 +670,15 @@ describe('Performance and Security Validation', () => {
         // Test extremely large inputs
         const veryLargeInput = 'x'.repeat(20_000_000); // 20MB
 
-        expect(() => createRawContent(veryLargeInput)).toThrow(BrandValidationError);
-        expect(() => createCompiledContent(veryLargeInput)).toThrow(BrandValidationError);
-        expect(() => createMarkerContent(veryLargeInput)).toThrow(BrandValidationError);
+        expect(() => createRawContent(veryLargeInput)).toThrow(
+          BrandValidationError
+        );
+        expect(() => createCompiledContent(veryLargeInput)).toThrow(
+          BrandValidationError
+        );
+        expect(() => createMarkerContent(veryLargeInput)).toThrow(
+          BrandValidationError
+        );
       });
 
       test('should enforce reasonable length limits', () => {
@@ -650,9 +694,15 @@ describe('Performance and Security Validation', () => {
         expect(() => createSourcePath(excessiveLengths.path + '.md')).toThrow();
         expect(() => createOutputPath(excessiveLengths.path)).toThrow();
         expect(() => createBlockName(excessiveLengths.blockName)).toThrow();
-        expect(() => createVariableName(excessiveLengths.variableName)).toThrow();
-        expect(() => createPropertyName(excessiveLengths.propertyName)).toThrow();
-        expect(() => createMarkerContent(excessiveLengths.markerContent)).toThrow();
+        expect(() =>
+          createVariableName(excessiveLengths.variableName)
+        ).toThrow();
+        expect(() =>
+          createPropertyName(excessiveLengths.propertyName)
+        ).toThrow();
+        expect(() =>
+          createMarkerContent(excessiveLengths.markerContent)
+        ).toThrow();
       });
 
       test('should handle regex DoS attempts', () => {
@@ -666,16 +716,16 @@ describe('Performance and Security Validation', () => {
         // Our validation should either reject these quickly or handle them safely
         for (const pattern of redosPatterns) {
           const start = performance.now();
-          
+
           try {
             createMarkerContent(pattern);
           } catch (error) {
             // Expected to fail
           }
-          
+
           const end = performance.now();
           const duration = end - start;
-          
+
           // Should not take more than 10ms to validate (prevent ReDoS)
           expect(duration).toBeLessThan(10);
         }
@@ -708,9 +758,15 @@ describe('Performance and Security Validation', () => {
 
       expect(() => createSourcePath(maxValidInputs.path)).not.toThrow();
       expect(() => createBlockName(maxValidInputs.blockName)).not.toThrow();
-      expect(() => createVariableName(maxValidInputs.variableName)).not.toThrow();
-      expect(() => createPropertyName(maxValidInputs.propertyName)).not.toThrow();
-      expect(() => createMarkerContent(maxValidInputs.markerContent)).not.toThrow();
+      expect(() =>
+        createVariableName(maxValidInputs.variableName)
+      ).not.toThrow();
+      expect(() =>
+        createPropertyName(maxValidInputs.propertyName)
+      ).not.toThrow();
+      expect(() =>
+        createMarkerContent(maxValidInputs.markerContent)
+      ).not.toThrow();
     });
 
     test('should handle Unicode edge cases', () => {
@@ -762,10 +818,12 @@ describe('Performance and Security Validation', () => {
         'windsurf', // valid
       ];
 
-      for (let i = 0; i < 10000; i++) {
+      for (let i = 0; i < 10_000; i++) {
         const input = mixedInputs[i % mixedInputs.length];
-        const shouldBeValid = ['cursor', 'claude-code', 'windsurf'].includes(input);
-        
+        const shouldBeValid = ['cursor', 'claude-code', 'windsurf'].includes(
+          input
+        );
+
         expect(isProviderId(input)).toBe(shouldBeValid);
       }
     });
@@ -822,23 +880,31 @@ describe('Performance and Security Validation', () => {
         {},
         [],
         Symbol('test'),
-        function() {},
+        () => {},
         new Date(),
         /regex/,
         new Error('test'),
       ];
 
       for (const input of malformedInputs) {
-        expect(() => createProviderId(input as any)).toThrow(BrandValidationError);
-        expect(() => createSourcePath(input as any)).toThrow(BrandValidationError);
-        expect(() => createMarkerContent(input as any)).toThrow(BrandValidationError);
-        
+        expect(() => createProviderId(input as any)).toThrow(
+          BrandValidationError
+        );
+        expect(() => createSourcePath(input as any)).toThrow(
+          BrandValidationError
+        );
+        expect(() => createMarkerContent(input as any)).toThrow(
+          BrandValidationError
+        );
+
         // Should not crash, should give clear error messages
         try {
           createProviderId(input as any);
         } catch (error) {
           expect(error).toBeInstanceOf(BrandValidationError);
-          expect((error as BrandValidationError).message).toContain('must be a non-empty string');
+          expect((error as BrandValidationError).message).toContain(
+            'must be a non-empty string'
+          );
         }
       }
     });

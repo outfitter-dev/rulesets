@@ -5,14 +5,14 @@ import { compile } from '@rulesets/compiler';
 import { lint } from '@rulesets/linter';
 import { parse } from '@rulesets/parser';
 import type { Logger } from '@rulesets/types';
+import { hasGeneratedPaths } from '@rulesets/types';
 import { promises as fs } from 'fs';
 import { dirname } from 'path';
-import { destinations } from './providers';
-import { ConsoleLogger } from './logger';
-import { createGitignoreManager } from './gitignore';
-import { hasGeneratedPaths } from '@rulesets/types';
-import { loadConfig } from './config';
 import type { RulesetConfig } from './config';
+import { loadConfig } from './config';
+import { createGitignoreManager } from './gitignore';
+import { ConsoleLogger } from './logger';
+import { destinations } from './providers';
 
 export { compile } from '@rulesets/compiler';
 export type { LinterConfig, LintResult } from '@rulesets/linter';
@@ -22,56 +22,64 @@ export { lint } from '@rulesets/linter';
 export { parse } from '@rulesets/parser';
 // Re-export from types for backward compatibility
 export type { CompiledDoc, Logger, ParsedDoc } from '@rulesets/types';
-// Export local APIs - Modern provider exports
-export { providers, getProvider, getAllProviders, getProviderIds } from './providers';
-export { CursorProvider, WindsurfProvider, ClaudeCodeProvider, CodexProvider, AmpProvider, OpenCodeProvider } from './providers';
-
-// Export GitignoreManager functionality
+export type {
+  ConfigContext,
+  ConfigFileResult,
+  ConfigLoader as IConfigLoader,
+  ConfigLoadOptions,
+  ConfigLoadResult,
+  ProviderConfig,
+  RulesetConfig,
+} from './config';
+// Export Configuration system
 export {
-  GitignoreManager,
-  createGitignoreManager,
-  normalizeGitignorePath,
-  matchesAnyPattern,
-  parseOverrideFile,
-} from './gitignore';
+  applyEnvOverrides,
+  CONFIG_FILE_NAMES,
+  ConfigLoader,
+  DEFAULT_CONFIG,
+  DEFAULT_LOAD_OPTIONS,
+  findConfigFile,
+  getConfigLoader,
+  KNOWN_PROVIDERS,
+  loadConfig,
+  mergeConfigs,
+  parseConfigContent,
+  validateConfig,
+} from './config';
 export type {
   GitignoreConfig,
   GitignoreOverrides,
   GitignoreResult,
   ManagedBlockConfig,
 } from './gitignore';
-
-// Export Configuration system
+// Export GitignoreManager functionality
 export {
-  ConfigLoader,
-  getConfigLoader,
-  loadConfig,
-  validateConfig,
-  findConfigFile,
-  parseConfigContent,
-  mergeConfigs,
-  applyEnvOverrides,
-} from './config';
-export type {
-  RulesetConfig,
-  ProviderConfig,
-  ConfigContext,
-  ConfigLoadOptions,
-  ConfigLoadResult,
-  ConfigFileResult,
-  ConfigLoader as IConfigLoader,
-} from './config';
-export {
-  DEFAULT_CONFIG,
-  CONFIG_FILE_NAMES,
-  DEFAULT_LOAD_OPTIONS,
-  KNOWN_PROVIDERS,
-} from './config';
-
+  createGitignoreManager,
+  GitignoreManager,
+  matchesAnyPattern,
+  normalizeGitignorePath,
+  parseOverrideFile,
+} from './gitignore';
+export { ConsoleLogger } from './logger';
+// Export local APIs - Modern provider exports
 // Legacy exports for backwards compatibility
 // @deprecated - Use providers instead. Will be removed in v1.0
-export { destinations, cursorPlugin as CursorPlugin, windsurfPlugin as WindsurfPlugin, claudeCodePlugin as ClaudeCodePlugin } from './providers';
-export { ConsoleLogger } from './logger';
+export {
+  AmpProvider,
+  ClaudeCodeProvider,
+  CodexProvider,
+  CursorProvider,
+  claudeCodePlugin as ClaudeCodePlugin,
+  cursorPlugin as CursorPlugin,
+  destinations,
+  getAllProviders,
+  getProvider,
+  getProviderIds,
+  OpenCodeProvider,
+  providers,
+  WindsurfProvider,
+  windsurfPlugin as WindsurfPlugin,
+} from './providers';
 
 /**
  * Orchestrates the Rulesets v0.1.0 build process for a single file.
@@ -113,35 +121,40 @@ export async function runRulesetsV0(
   logger.info('Loading configuration...');
   const projectPath = dirname(sourceFilePath);
   let config: RulesetConfig;
-  
+
   try {
     const configResult = await loadConfig(projectPath, {}, logger);
-    
+
     // Handle configuration errors and warnings
     if (configResult.errors && configResult.errors.length > 0) {
       if (configResult.config.strict) {
-        throw new Error(`Configuration validation failed: ${configResult.errors.join(', ')}`);
-      } else {
-        for (const error of configResult.errors) {
-          logger.warn(`Configuration error: ${error}`);
-        }
+        throw new Error(
+          `Configuration validation failed: ${configResult.errors.join(', ')}`
+        );
+      }
+      for (const error of configResult.errors) {
+        logger.warn(`Configuration error: ${error}`);
       }
     }
-    
+
     if (configResult.warnings && configResult.warnings.length > 0) {
       for (const warning of configResult.warnings) {
         logger.warn(`Configuration warning: ${warning}`);
       }
     }
-    
+
     // Apply configuration override if provided
-    config = configOverride 
+    config = configOverride
       ? { ...configResult.config, ...configOverride }
       : configResult.config;
-    
-    logger.debug(`Configuration loaded from ${configResult.sources.length} source(s)`);
+
+    logger.debug(
+      `Configuration loaded from ${configResult.sources.length} source(s)`
+    );
     if (Object.keys(configResult.envOverrides).length > 0) {
-      logger.debug(`Environment overrides: ${Object.keys(configResult.envOverrides).join(', ')}`);
+      logger.debug(
+        `Environment overrides: ${Object.keys(configResult.envOverrides).join(', ')}`
+      );
     }
   } catch (error) {
     logger.error('Failed to load configuration', error);
@@ -214,22 +227,26 @@ export async function runRulesetsV0(
 
   // Step 5: Determine which destinations to compile for
   const frontmatter = parsedDoc.source.frontmatter;
-  
+
   // Priority order: frontmatter destinations > config providers > config defaults > system defaults
   let destinationIds: string[] = [];
-  
-  if (frontmatter?.destinations &&
-      typeof frontmatter.destinations === 'object' &&
-      !Array.isArray(frontmatter.destinations)) {
+
+  if (
+    frontmatter?.destinations &&
+    typeof frontmatter.destinations === 'object' &&
+    !Array.isArray(frontmatter.destinations)
+  ) {
     // Use destinations from frontmatter
-    destinationIds = Object.keys(frontmatter.destinations as Record<string, unknown>);
+    destinationIds = Object.keys(
+      frontmatter.destinations as Record<string, unknown>
+    );
     logger.debug('Using destinations from frontmatter');
   } else {
     // Use enabled providers from configuration
     const enabledProviders = Object.entries(config.providers || {})
       .filter(([_, providerConfig]) => providerConfig.enabled !== false)
       .map(([providerId]) => providerId);
-    
+
     if (enabledProviders.length > 0) {
       destinationIds = enabledProviders;
       logger.debug('Using enabled providers from configuration');
@@ -248,7 +265,7 @@ export async function runRulesetsV0(
   // Step 6: Compile and write for each destination
   // Collect generated file paths for gitignore management
   const allGeneratedPaths: string[] = [];
-  
+
   for (const destinationId of destinationIds) {
     const plugin = destinations.get(destinationId);
     if (!plugin) {
@@ -283,16 +300,16 @@ export async function runRulesetsV0(
             destinationId
           ] as Record<string, unknown>) || {}
         : {};
-    
+
     // Get provider configuration
     const providerConfig = config.providers?.[destinationId] || {};
-    
+
     // Merge configurations: frontmatter > provider config > defaults
     const destConfig = {
       ...providerConfig,
       ...frontmatterDestConfig,
     };
-    
+
     // Determine output path with configuration precedence
     const outputDir = config.outputDirectory || '.ruleset/dist';
     const defaultPath = `${outputDir}/${destinationId}/my-rules.md`;
@@ -300,8 +317,8 @@ export async function runRulesetsV0(
       (typeof frontmatterDestConfig.outputPath === 'string'
         ? frontmatterDestConfig.outputPath
         : undefined) ||
-      (typeof frontmatterDestConfig.path === 'string' 
-        ? frontmatterDestConfig.path 
+      (typeof frontmatterDestConfig.path === 'string'
+        ? frontmatterDestConfig.path
         : undefined) ||
       (typeof providerConfig.outputPath === 'string'
         ? providerConfig.outputPath
@@ -316,11 +333,13 @@ export async function runRulesetsV0(
         config: destConfig,
         logger,
       });
-      
+
       // Collect generated file paths if returned by the plugin
       if (hasGeneratedPaths(writeResult)) {
         allGeneratedPaths.push(...writeResult.generatedPaths);
-        logger.debug(`Generated paths from ${destinationId}: ${writeResult.generatedPaths.join(', ')}`);
+        logger.debug(
+          `Generated paths from ${destinationId}: ${writeResult.generatedPaths.join(', ')}`
+        );
       }
     } catch (error) {
       logger.error(`Failed to write ${destinationId} output`, error);
@@ -338,21 +357,27 @@ export async function runRulesetsV0(
         keep: config.gitignore?.keep || [],
         ignore: config.gitignore?.ignore || [],
         options: {
-          comment: config.gitignore?.options?.comment || 'Rulesets Generated Files',
+          comment:
+            config.gitignore?.options?.comment || 'Rulesets Generated Files',
           sort: config.gitignore?.options?.sort ?? true,
         },
       };
-      
+
       const gitignoreManager = createGitignoreManager(gitignoreConfig);
-      const gitignoreResult = await gitignoreManager.updateGitignore(allGeneratedPaths);
-      
+      const gitignoreResult =
+        await gitignoreManager.updateGitignore(allGeneratedPaths);
+
       if (gitignoreResult.success) {
         if (gitignoreResult.added.length > 0) {
-          logger.info(`Added ${gitignoreResult.added.length} files to .gitignore`);
+          logger.info(
+            `Added ${gitignoreResult.added.length} files to .gitignore`
+          );
           logger.debug(`Added: ${gitignoreResult.added.join(', ')}`);
         }
         if (gitignoreResult.kept.length > 0) {
-          logger.info(`Kept ${gitignoreResult.kept.length} files due to override rules`);
+          logger.info(
+            `Kept ${gitignoreResult.kept.length} files due to override rules`
+          );
           logger.debug(`Kept: ${gitignoreResult.kept.join(', ')}`);
         }
         for (const message of gitignoreResult.messages) {
@@ -365,7 +390,9 @@ export async function runRulesetsV0(
         }
       }
     } catch (error) {
-      logger.warn(`GitignoreManager error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      logger.warn(
+        `GitignoreManager error: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
       // Don't throw - gitignore management is non-critical
     }
   } else if (allGeneratedPaths.length > 0) {
@@ -376,7 +403,9 @@ export async function runRulesetsV0(
 
   logger.info('Rulesets v0.1.0 processing completed successfully!');
   if (allGeneratedPaths.length > 0) {
-    logger.info(`Generated ${allGeneratedPaths.length} files across ${destinationIds.length} destinations`);
+    logger.info(
+      `Generated ${allGeneratedPaths.length} files across ${destinationIds.length} destinations`
+    );
   }
 }
 

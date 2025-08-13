@@ -1,15 +1,24 @@
 /**
  * Complete Workflow Integration Tests
- * 
+ *
  * Tests the complete Rulesets system end-to-end with all providers working together.
  * Validates that all components (configuration, providers, gitignore) integrate correctly.
  */
 
 import { promises as fs } from 'fs';
-import path from 'path';
-import { afterEach, beforeEach, describe, expect, it, vi, beforeAll, afterAll } from 'vitest';
-import { ConsoleLogger, runRulesetsV0, type RulesetConfig } from '../../src';
 import { tmpdir } from 'os';
+import path from 'path';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
+import { ConsoleLogger, type RulesetConfig, runRulesetsV0 } from '../../src';
 
 // Create real temporary directory for integration tests
 const TEST_DIR = path.join(tmpdir(), `rulesets-integration-${Date.now()}`);
@@ -41,9 +50,12 @@ describe('Complete Workflow Integration Tests', () => {
     vi.spyOn(mockLogger, 'error').mockImplementation(() => {});
 
     // Create unique test project directory for each test
-    testProjectDir = path.join(TEST_DIR, `project-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`);
+    testProjectDir = path.join(
+      TEST_DIR,
+      `project-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`
+    );
     await fs.mkdir(testProjectDir, { recursive: true });
-    
+
     // Change to test directory for relative path operations
     process.chdir(testProjectDir);
   });
@@ -128,7 +140,7 @@ Variable test: {{$destination}}
       for (const outputPath of expectedOutputs) {
         const fullPath = path.join(testProjectDir, outputPath);
         await expect(fs.access(fullPath)).resolves.not.toThrow();
-        
+
         const content = await fs.readFile(fullPath, 'utf8');
         expect(content).toContain('Complete Workflow Rules');
         expect(content).toContain('TypeScript');
@@ -138,17 +150,19 @@ Variable test: {{$destination}}
       // Verify: .gitignore was created and contains all generated files
       const gitignorePath = path.join(testProjectDir, '.gitignore');
       await expect(fs.access(gitignorePath)).resolves.not.toThrow();
-      
+
       const gitignoreContent = await fs.readFile(gitignorePath, 'utf8');
       expect(gitignoreContent).toContain('# Test Generated Files');
-      
+
       for (const outputPath of expectedOutputs) {
         expect(gitignoreContent).toContain(outputPath);
       }
 
       // Verify: Logging shows all providers were processed
       expect(mockLogger.info).toHaveBeenCalledWith(
-        expect.stringContaining('cursor, windsurf, claude-code, codex-cli, amp, opencode')
+        expect.stringContaining(
+          'cursor, windsurf, claude-code, codex-cli, amp, opencode'
+        )
       );
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Rulesets v0.1.0 processing completed successfully!'
@@ -256,10 +270,7 @@ Only cursor and windsurf should be compiled.
       await runRulesetsV0(sourceFilePath, mockLogger);
 
       // Verify: Only frontmatter destinations created outputs
-      const expectedOutputs = [
-        '.cursor/override.mdc',
-        '.windsurf/override.md',
-      ];
+      const expectedOutputs = ['.cursor/override.mdc', '.windsurf/override.md'];
 
       const unexpectedOutputs = [
         '.ruleset/dist/claude-code/my-rules.md',
@@ -368,7 +379,10 @@ Testing environment variable overrides.
       const rulesetkeepContent = `# Keep windsurf files
 .windsurf/**
 `;
-      await fs.writeFile(path.join(testProjectDir, '.rulesetkeep'), rulesetkeepContent);
+      await fs.writeFile(
+        path.join(testProjectDir, '.rulesetkeep'),
+        rulesetkeepContent
+      );
 
       const sourceContent = `---
 ruleset:
@@ -400,10 +414,10 @@ Testing gitignore with keep overrides.
       // Verify: .gitignore contains only non-kept files
       const gitignorePath = path.join(testProjectDir, '.gitignore');
       const gitignoreContent = await fs.readFile(gitignorePath, 'utf8');
-      
+
       // Should contain claude-code file (not kept)
       expect(gitignoreContent).toContain('.claude/special.md');
-      
+
       // Should NOT contain cursor or windsurf files (both kept)
       expect(gitignoreContent).not.toContain('.cursor/special.mdc');
       expect(gitignoreContent).not.toContain('.windsurf/special.md');
@@ -489,7 +503,7 @@ function example() {
       const duration = Date.now() - startTime;
 
       // Verify: Processing completed in reasonable time
-      expect(duration).toBeLessThan(10000); // Should complete within 10 seconds
+      expect(duration).toBeLessThan(10_000); // Should complete within 10 seconds
 
       // Verify: All default providers created outputs
       const expectedOutputs = [
@@ -504,9 +518,9 @@ function example() {
       for (const outputPath of expectedOutputs) {
         const fullPath = path.join(testProjectDir, outputPath);
         await expect(fs.access(fullPath)).resolves.not.toThrow();
-        
+
         const content = await fs.readFile(fullPath, 'utf8');
-        expect(content.length).toBeGreaterThan(10000); // Should contain the large content
+        expect(content.length).toBeGreaterThan(10_000); // Should contain the large content
       }
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -517,7 +531,7 @@ function example() {
     it('should handle multiple compilation runs in sequence', async () => {
       // Setup: Multiple source files
       const sourceFiles = [];
-      
+
       for (let i = 1; i <= 5; i++) {
         const content = `---
 ruleset:
@@ -532,7 +546,7 @@ destinations:
 # Sequence Test ${i}
 Content for sequence test ${i}.
 `;
-        
+
         const filePath = path.join(testProjectDir, `sequence-${i}.ruleset.md`);
         await fs.writeFile(filePath, content);
         sourceFiles.push(filePath);
@@ -553,7 +567,7 @@ Content for sequence test ${i}.
         for (const outputPath of expectedOutputs) {
           const fullPath = path.join(testProjectDir, outputPath);
           await expect(fs.access(fullPath)).resolves.not.toThrow();
-          
+
           const content = await fs.readFile(fullPath, 'utf8');
           expect(content).toContain(`Sequence Test ${i}`);
         }
@@ -562,7 +576,7 @@ Content for sequence test ${i}.
       // Verify: .gitignore contains all generated files
       const gitignorePath = path.join(testProjectDir, '.gitignore');
       const gitignoreContent = await fs.readFile(gitignorePath, 'utf8');
-      
+
       for (let i = 1; i <= 5; i++) {
         expect(gitignoreContent).toContain(`.cursor/sequence-${i}.mdc`);
         expect(gitignoreContent).toContain(`.windsurf/sequence-${i}.md`);

@@ -1,15 +1,24 @@
 /**
  * Basic Integration Test
- * 
+ *
  * Simple test to verify the core system works end-to-end.
  * This replaces the complex tests until we fix the API mismatches.
  */
 
 import { promises as fs } from 'fs';
-import path from 'path';
-import { afterEach, beforeEach, describe, expect, it, vi, beforeAll, afterAll } from 'vitest';
-import { ConsoleLogger, runRulesetsV0 } from '../../src';
 import { tmpdir } from 'os';
+import path from 'path';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
+import { ConsoleLogger, runRulesetsV0 } from '../../src';
 
 // Create real temporary directory for integration tests
 const TEST_DIR = path.join(tmpdir(), `rulesets-basic-${Date.now()}`);
@@ -41,9 +50,12 @@ describe('Basic Integration Tests', () => {
     vi.spyOn(mockLogger, 'error').mockImplementation(() => {});
 
     // Create unique test project directory for each test
-    testProjectDir = path.join(TEST_DIR, `basic-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`);
+    testProjectDir = path.join(
+      TEST_DIR,
+      `basic-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`
+    );
     await fs.mkdir(testProjectDir, { recursive: true });
-    
+
     // Change to test directory for relative path operations
     process.chdir(testProjectDir);
   });
@@ -94,9 +106,12 @@ function hello(): string {
 
       for (const outputPath of expectedOutputs) {
         const fullPath = path.join(testProjectDir, outputPath);
-        const exists = await fs.access(fullPath).then(() => true).catch(() => false);
+        const exists = await fs
+          .access(fullPath)
+          .then(() => true)
+          .catch(() => false);
         expect(exists).toBe(true);
-        
+
         if (exists) {
           const content = await fs.readFile(fullPath, 'utf8');
           expect(content).toContain('Basic Integration Test');
@@ -127,7 +142,10 @@ destinations:
 Content for frontmatter destination test.
 `;
 
-      const sourceFilePath = path.join(testProjectDir, 'frontmatter.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'frontmatter.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, sourceContent);
 
       // Execute
@@ -141,9 +159,12 @@ Content for frontmatter destination test.
 
       for (const outputPath of expectedOutputs) {
         const fullPath = path.join(testProjectDir, outputPath);
-        const exists = await fs.access(fullPath).then(() => true).catch(() => false);
+        const exists = await fs
+          .access(fullPath)
+          .then(() => true)
+          .catch(() => false);
         expect(exists).toBe(true);
-        
+
         if (exists) {
           const content = await fs.readFile(fullPath, 'utf8');
           expect(content).toContain('Frontmatter Test');
@@ -156,9 +177,14 @@ Content for frontmatter destination test.
     });
 
     it('should handle missing source file with proper error', async () => {
-      const nonexistentFile = path.join(testProjectDir, 'nonexistent.ruleset.md');
+      const nonexistentFile = path.join(
+        testProjectDir,
+        'nonexistent.ruleset.md'
+      );
 
-      await expect(runRulesetsV0(nonexistentFile, mockLogger)).rejects.toThrow();
+      await expect(
+        runRulesetsV0(nonexistentFile, mockLogger)
+      ).rejects.toThrow();
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining('Failed to read source file'),
@@ -230,8 +256,14 @@ Code with variables: {{$destination}} and {{$file}}
       await runRulesetsV0(sourceFilePath, mockLogger);
 
       // Check that syntax is preserved in at least one output
-      const outputPath = path.join(testProjectDir, '.ruleset/dist/cursor/my-rules.md');
-      const exists = await fs.access(outputPath).then(() => true).catch(() => false);
+      const outputPath = path.join(
+        testProjectDir,
+        '.ruleset/dist/cursor/my-rules.md'
+      );
+      const exists = await fs
+        .access(outputPath)
+        .then(() => true)
+        .catch(() => false);
       expect(exists).toBe(true);
 
       if (exists) {
@@ -248,20 +280,20 @@ Code with variables: {{$destination}} and {{$file}}
   describe('Provider Registry', () => {
     it('should have expected providers available', async () => {
       const { getProviderIds, getProvider } = await import('../../src');
-      
+
       const providerIds = getProviderIds();
-      
+
       // Verify we have the expected providers
       expect(providerIds).toContain('cursor');
       expect(providerIds).toContain('windsurf');
-      
+
       // Verify providers can be retrieved
       const cursorProvider = getProvider('cursor');
       const windsurfProvider = getProvider('windsurf');
-      
+
       expect(cursorProvider).toBeDefined();
       expect(windsurfProvider).toBeDefined();
-      
+
       // Verify unknown provider returns undefined
       const unknownProvider = getProvider('unknown');
       expect(unknownProvider).toBeUndefined();
@@ -284,7 +316,10 @@ ${'Instruction content. '.repeat(200)}
 {{/instructions}}
 `;
 
-      const sourceFilePath = path.join(testProjectDir, 'performance.ruleset.md');
+      const sourceFilePath = path.join(
+        testProjectDir,
+        'performance.ruleset.md'
+      );
       await fs.writeFile(sourceFilePath, largeContent);
 
       const startTime = Date.now();
@@ -292,7 +327,7 @@ ${'Instruction content. '.repeat(200)}
       const duration = Date.now() - startTime;
 
       // Should complete within 10 seconds
-      expect(duration).toBeLessThan(10000);
+      expect(duration).toBeLessThan(10_000);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Rulesets v0.1.0 processing completed successfully!'

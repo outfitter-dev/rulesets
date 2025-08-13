@@ -3,54 +3,50 @@
  * Tests modern provider exports, backwards compatibility, and provider interactions
  */
 
-import { describe, test, expect, beforeEach, vi } from 'bun:test';
-import {
-  // Modern provider registry
-  providers,
-  getProvider,
-  getAllProviders,
-  getProviderIds,
-  
-  // Provider instances
-  cursorProvider,
-  windsurfProvider,
-  claudeCodeProvider,
-  codexProvider,
-  ampProvider,
-  openCodeProvider,
-  
-  // Provider classes
-  CursorProvider,
-  WindsurfProvider,
-  ClaudeCodeProvider,
-  CodexProvider,
-  AmpProvider,
-  OpenCodeProvider,
-  
-  // Backwards compatibility
-  destinations,
-  cursorPlugin,
-  windsurfPlugin,
-  claudeCodePlugin,
-  codexPlugin,
-  ampPlugin,
-  openCodePlugin,
-} from '../index';
-
-import {
-  createProviderId,
-  createOutputPath,
-  createCompiledContent,
-  type ProviderId,
-} from '@rulesets/types';
-
+import { beforeEach, describe, expect, test, vi } from 'bun:test';
 import type {
-  Provider,
-  DestinationPlugin,
   CompiledDoc,
+  DestinationPlugin,
   Logger,
+  Provider,
   WriteResult,
 } from '@rulesets/types';
+
+import {
+  createCompiledContent,
+  createOutputPath,
+  createProviderId,
+  type ProviderId,
+} from '@rulesets/types';
+import {
+  AmpProvider,
+  ampPlugin,
+  ampProvider,
+  ClaudeCodeProvider,
+  CodexProvider,
+  // Provider classes
+  CursorProvider,
+  claudeCodePlugin,
+  claudeCodeProvider,
+  codexPlugin,
+  codexProvider,
+  cursorPlugin,
+  // Provider instances
+  cursorProvider,
+  // Backwards compatibility
+  destinations,
+  getAllProviders,
+  getProvider,
+  getProviderIds,
+  OpenCodeProvider,
+  openCodePlugin,
+  openCodeProvider,
+  // Modern provider registry
+  providers,
+  WindsurfProvider,
+  windsurfPlugin,
+  windsurfProvider,
+} from '../index';
 
 describe('Provider Registry System', () => {
   describe('Modern Provider Registry', () => {
@@ -127,11 +123,11 @@ describe('Provider Registry System', () => {
     describe('getAllProviders', () => {
       test('should return all providers as array', () => {
         const allProviders = getAllProviders();
-        
+
         expect(Array.isArray(allProviders)).toBe(true);
         expect(allProviders.length).toBe(providers.size);
 
-        const providerIds = allProviders.map(p => p.id);
+        const providerIds = allProviders.map((p) => p.id);
         expect(providerIds).toContain('cursor');
         expect(providerIds).toContain('claude-code');
         expect(providerIds).toContain('windsurf');
@@ -140,14 +136,16 @@ describe('Provider Registry System', () => {
       test('should return providers in consistent order', () => {
         const providers1 = getAllProviders();
         const providers2 = getAllProviders();
-        
-        expect(providers1.map(p => p.id)).toEqual(providers2.map(p => p.id));
+
+        expect(providers1.map((p) => p.id)).toEqual(
+          providers2.map((p) => p.id)
+        );
       });
 
       test('should return different array instances', () => {
         const providers1 = getAllProviders();
         const providers2 = getAllProviders();
-        
+
         expect(providers1).not.toBe(providers2); // Different array references
         expect(providers1[0]).toBe(providers2[0]); // Same provider instances
       });
@@ -156,7 +154,7 @@ describe('Provider Registry System', () => {
     describe('getProviderIds', () => {
       test('should return all provider IDs', () => {
         const ids = getProviderIds();
-        
+
         expect(Array.isArray(ids)).toBe(true);
         expect(ids.length).toBe(providers.size);
         expect(ids).toContain('cursor');
@@ -167,7 +165,7 @@ describe('Provider Registry System', () => {
       test('should return IDs in consistent order', () => {
         const ids1 = getProviderIds();
         const ids2 = getProviderIds();
-        
+
         expect(ids1).toEqual(ids2);
       });
     });
@@ -240,13 +238,13 @@ describe('Provider Registry System', () => {
     test('should allow creating new instances', () => {
       const customCursor = new CursorProvider();
       const customWindsurf = new WindsurfProvider();
-      
+
       expect(customCursor).toBeInstanceOf(CursorProvider);
       expect(customWindsurf).toBeInstanceOf(WindsurfProvider);
-      
+
       expect(customCursor.id).toBe('cursor');
       expect(customWindsurf.id).toBe('windsurf');
-      
+
       // Should be different instances
       expect(customCursor).not.toBe(cursorProvider);
       expect(customWindsurf).not.toBe(windsurfProvider);
@@ -384,7 +382,7 @@ describe('Provider Registry System', () => {
 
     test('should support provider compilation workflow', async () => {
       const provider = getProvider('cursor')!;
-      
+
       // Test provider can be used in compilation context
       expect(provider.id).toBe('cursor');
       expect(provider.config.format).toBe('markdown');
@@ -398,23 +396,25 @@ describe('Provider Registry System', () => {
         // Test that provider configurations are valid
         expect(provider.config.outputPath).toBeDefined();
         expect(provider.config.format).toBeDefined();
-        
+
         // Test that capabilities are consistent with config
-        const supportsFormat = provider.capabilities.allowedFormats.includes(provider.config.format);
+        const supportsFormat = provider.capabilities.allowedFormats.includes(
+          provider.config.format
+        );
         expect(supportsFormat).toBe(true);
       }
     });
 
     test('should support write operations through legacy interface', async () => {
       const provider = destinations.get('cursor')! as DestinationPlugin;
-      
+
       // Mock the write operation
       const originalWrite = provider.write;
       const mockWrite = vi.fn().mockResolvedValue({
         generatedPaths: ['.cursor/rules/test.mdc'],
         metadata: { provider: 'cursor' },
       } as WriteResult);
-      
+
       (provider as any).write = mockWrite;
 
       try {
@@ -445,8 +445,8 @@ describe('Provider Registry System', () => {
 
   describe('Provider Registry Performance', () => {
     test('should provide fast provider lookup', () => {
-      const iterations = 10000;
-      
+      const iterations = 10_000;
+
       const start = performance.now();
       for (let i = 0; i < iterations; i++) {
         getProvider('cursor');
@@ -454,29 +454,29 @@ describe('Provider Registry System', () => {
         getProvider('windsurf');
       }
       const end = performance.now();
-      
+
       const timePerLookup = (end - start) / (iterations * 3);
       expect(timePerLookup).toBeLessThan(0.01); // Less than 0.01ms per lookup
     });
 
     test('should efficiently provide all providers', () => {
       const iterations = 1000;
-      
+
       const start = performance.now();
       for (let i = 0; i < iterations; i++) {
         getAllProviders();
       }
       const end = performance.now();
-      
+
       const timePerCall = (end - start) / iterations;
       expect(timePerCall).toBeLessThan(0.1); // Less than 0.1ms per call
     });
 
     test('should not create memory leaks on repeated access', () => {
       const initialMemory = process.memoryUsage();
-      
+
       // Repeatedly access providers
-      for (let i = 0; i < 10000; i++) {
+      for (let i = 0; i < 10_000; i++) {
         getAllProviders();
         getProviderIds();
         getProvider('cursor');
@@ -490,7 +490,7 @@ describe('Provider Registry System', () => {
 
       const finalMemory = process.memoryUsage();
       const heapGrowth = finalMemory.heapUsed - initialMemory.heapUsed;
-      
+
       // Should not grow more than 1MB
       expect(heapGrowth).toBeLessThan(1024 * 1024);
     });
@@ -507,7 +507,7 @@ describe('Provider Registry System', () => {
       );
 
       const results = await Promise.all(concurrentAccess);
-      
+
       // All should return the same instance
       const firstResult = results[0];
       for (const result of results) {
@@ -529,15 +529,15 @@ describe('Provider Registry System', () => {
     test('should handle provider enumeration consistently', () => {
       const allProviders1 = getAllProviders();
       const allProviders2 = Array.from(providers.values());
-      const allProviders3 = getProviderIds().map(id => getProvider(id)!);
+      const allProviders3 = getProviderIds().map((id) => getProvider(id)!);
 
       // All methods should return the same providers
       expect(allProviders1.length).toBe(allProviders2.length);
       expect(allProviders2.length).toBe(allProviders3.length);
 
-      const ids1 = allProviders1.map(p => p.id).sort();
-      const ids2 = allProviders2.map(p => p.id).sort();
-      const ids3 = allProviders3.map(p => p.id).sort();
+      const ids1 = allProviders1.map((p) => p.id).sort();
+      const ids2 = allProviders2.map((p) => p.id).sort();
+      const ids3 = allProviders3.map((p) => p.id).sort();
 
       expect(ids1).toEqual(ids2);
       expect(ids2).toEqual(ids3);

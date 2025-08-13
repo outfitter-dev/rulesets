@@ -2,27 +2,30 @@
 // Implements the new Provider interface with branded types and modern architecture
 
 import type {
+  CompilationStats,
   CompiledDoc,
+  DestinationPlugin,
   JSONSchema7,
   Logger,
-  ProviderId,
-  Version,
+  Provider,
+  ProviderCapabilities,
   ProviderCompilationContext,
   ProviderCompilationResult,
-  ProviderError,
-  ProviderWarning,
-  CompilationStats,
-  Provider,
   ProviderConfig,
-  ProviderCapabilities,
-  DestinationPlugin,
+  ProviderError,
+  ProviderId,
+  ProviderWarning,
+  Version,
   WriteResult,
 } from '@rulesets/types';
-import { createProviderId, createOutputPath, createVersion, createCompiledContent } from '@rulesets/types';
+import {
+  createCompiledContent,
+  createOutputPath,
+  createProviderId,
+  createVersion,
+} from '@rulesets/types';
 import { promises as fs } from 'fs';
 import * as path from 'path';
-
-
 
 export class ClaudeCodeProvider implements Provider, DestinationPlugin {
   readonly id: ProviderId = createProviderId('claude-code');
@@ -47,7 +50,7 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
     supportsBlocks: true,
     supportsImports: true,
     supportsVariables: true,
-    supportsXml: true,        // Claude Code supports XML tags in markdown
+    supportsXml: true, // Claude Code supports XML tags in markdown
     supportsMarkdown: true,
     maxFileSize: 50 * 1024 * 1024, // 50MB - Claude Code can handle large context
     allowedFormats: ['markdown', 'mixed'],
@@ -64,7 +67,8 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
       properties: {
         outputPath: {
           type: 'string',
-          description: 'Path where the compiled rules file should be written (typically CLAUDE.md)',
+          description:
+            'Path where the compiled rules file should be written (typically CLAUDE.md)',
           default: 'CLAUDE.md',
         },
         mcpConfig: {
@@ -121,7 +125,9 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
    * Compiles content for Claude Code provider
    * New Provider interface method for modern compilation pipeline
    */
-  async compile(_context: ProviderCompilationContext): Promise<ProviderCompilationResult> {
+  async compile(
+    _context: ProviderCompilationContext
+  ): Promise<ProviderCompilationResult> {
     const startTime = Date.now();
     const errors: ProviderError[] = [];
     const warnings: ProviderWarning[] = [];
@@ -159,7 +165,8 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
     } catch (error) {
       errors.push({
         type: 'compilation',
-        message: error instanceof Error ? error.message : 'Unknown compilation error',
+        message:
+          error instanceof Error ? error.message : 'Unknown compilation error',
         context: { provider: this.id },
       });
 
@@ -193,10 +200,10 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
   }): Promise<WriteResult> {
     const { compiled, config, logger } = ctx;
 
-    logger.info(`Writing Claude Code rules to: CLAUDE.md`);
+    logger.info('Writing Claude Code rules to: CLAUDE.md');
 
     // Claude Code always uses CLAUDE.md as filename - ignore destPath for naming
-    const outputPath = 
+    const outputPath =
       (typeof config.outputPath === 'string' ? config.outputPath : undefined) ||
       'CLAUDE.md';
 
@@ -205,7 +212,9 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
 
     // Ensure the resolved path ends with CLAUDE.md for security
     if (!resolvedPath.endsWith('CLAUDE.md')) {
-      logger.warn(`Output path ${resolvedPath} should end with CLAUDE.md. Adjusting...`);
+      logger.warn(
+        `Output path ${resolvedPath} should end with CLAUDE.md. Adjusting...`
+      );
       const dir = path.dirname(resolvedPath);
       const adjustedPath = path.join(dir, 'CLAUDE.md');
       const sanitizedPath = this.sanitizePath(adjustedPath, process.cwd());
@@ -215,7 +224,9 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
     // Security: Check file size before writing
     const content = compiled.output.content;
     if (content.length > (this.capabilities.maxFileSize || 50 * 1024 * 1024)) {
-      throw new Error(`File too large: ${content.length} bytes (max ${this.capabilities.maxFileSize} bytes)`);
+      throw new Error(
+        `File too large: ${content.length} bytes (max ${this.capabilities.maxFileSize} bytes)`
+      );
     }
 
     const generatedPaths: string[] = [];
@@ -288,13 +299,13 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
         mcpServers: mcpConfig.servers || {},
       };
 
-      await fs.writeFile(
-        resolvedMcpPath,
-        JSON.stringify(mcpContent, null, 2),
-        { encoding: 'utf8' }
-      );
+      await fs.writeFile(resolvedMcpPath, JSON.stringify(mcpContent, null, 2), {
+        encoding: 'utf8',
+      });
 
-      logger.info(`Successfully wrote MCP configuration to: ${resolvedMcpPath}`);
+      logger.info(
+        `Successfully wrote MCP configuration to: ${resolvedMcpPath}`
+      );
       return resolvedMcpPath;
     } catch (error) {
       logger.warn(`Failed to write MCP configuration: ${error}`);

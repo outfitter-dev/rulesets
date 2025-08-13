@@ -21,15 +21,18 @@ export const DEFAULT_MANAGED_BLOCK_CONFIG: ManagedBlockConfig = {
  * @param basePath - Base path to make relative from (default: process.cwd())
  * @returns Normalized POSIX-style relative path
  */
-export function normalizeGitignorePath(filePath: string, basePath: string = process.cwd()): string {
+export function normalizeGitignorePath(
+  filePath: string,
+  basePath: string = process.cwd()
+): string {
   // Convert to relative path if absolute
-  const relativePath = path.isAbsolute(filePath) 
+  const relativePath = path.isAbsolute(filePath)
     ? path.relative(basePath, filePath)
     : filePath;
-  
+
   // Convert to POSIX-style path separators
   const posixPath = relativePath.split(path.sep).join('/');
-  
+
   // Remove leading ./ if present
   return posixPath.startsWith('./') ? posixPath.slice(2) : posixPath;
 }
@@ -40,15 +43,18 @@ export function normalizeGitignorePath(filePath: string, basePath: string = proc
  * @param patterns - Array of patterns to match against
  * @returns True if path matches any pattern
  */
-export function matchesAnyPattern(filePath: string, patterns: readonly string[]): boolean {
+export function matchesAnyPattern(
+  filePath: string,
+  patterns: readonly string[]
+): boolean {
   const normalizedPath = normalizeGitignorePath(filePath);
-  
+
   for (const pattern of patterns) {
     if (matchesPattern(normalizedPath, pattern)) {
       return true;
     }
   }
-  
+
   return false;
 }
 
@@ -64,23 +70,23 @@ export function matchesPattern(filePath: string, pattern: string): boolean {
   if (!cleanPattern) {
     return false;
   }
-  
+
   // Exact match
   if (cleanPattern === filePath) {
     return true;
   }
-  
+
   // Directory match (pattern ends with /)
   if (cleanPattern.endsWith('/') && filePath.startsWith(cleanPattern)) {
     return true;
   }
-  
+
   // Simple wildcard support for basic patterns
   if (cleanPattern.includes('*')) {
     const regexPattern = cleanPattern
       .replace(/[.+^${}()|[\]\\]/g, '\\$&') // Escape regex special chars
       .replace(/\*/g, '.*'); // Convert * to .*
-    
+
     try {
       return new RegExp(`^${regexPattern}$`).test(filePath);
     } catch {
@@ -88,7 +94,7 @@ export function matchesPattern(filePath: string, pattern: string): boolean {
       return cleanPattern.replace(/\*/g, '') === filePath.replace(/\*/g, '');
     }
   }
-  
+
   return false;
 }
 
@@ -100,9 +106,9 @@ export function matchesPattern(filePath: string, pattern: string): boolean {
 export function parseOverrideFile(content: string): string[] {
   return content
     .split('\n')
-    .map(line => line.trim())
-    .filter(line => line && !line.startsWith('#'))
-    .map(line => normalizeGitignorePath(line));
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#'))
+    .map((line) => normalizeGitignorePath(line));
 }
 
 /**
@@ -112,13 +118,15 @@ export function parseOverrideFile(content: string): string[] {
  * @returns GitignoreState with parsed information
  */
 export function parseGitignoreContent(
-  content: string, 
+  content: string,
   config: ManagedBlockConfig = DEFAULT_MANAGED_BLOCK_CONFIG
 ): GitignoreState {
   const lines = content.split('\n');
-  const startIndex = lines.findIndex(line => line.trim() === config.startComment);
-  const endIndex = lines.findIndex(line => line.trim() === config.endComment);
-  
+  const startIndex = lines.findIndex(
+    (line) => line.trim() === config.startComment
+  );
+  const endIndex = lines.findIndex((line) => line.trim() === config.endComment);
+
   if (startIndex === -1 || endIndex === -1 || startIndex >= endIndex) {
     // No managed block found
     return {
@@ -129,17 +137,17 @@ export function parseGitignoreContent(
       hasExistingBlock: false,
     };
   }
-  
+
   const beforeBlock = lines.slice(0, startIndex).join('\n');
   const afterBlock = lines.slice(endIndex + 1).join('\n');
   const managedLines = lines.slice(startIndex + 1, endIndex);
-  
+
   // Extract paths from managed block (excluding comments and empty lines)
   const managedPaths = managedLines
-    .map(line => line.trim())
-    .filter(line => line && !line.startsWith('#'))
-    .map(line => normalizeGitignorePath(line));
-  
+    .map((line) => line.trim())
+    .filter((line) => line && !line.startsWith('#'))
+    .map((line) => normalizeGitignorePath(line));
+
   return {
     original: content,
     beforeBlock: beforeBlock.replace(/\n+$/, ''), // Remove trailing newlines
@@ -156,13 +164,13 @@ export function parseGitignoreContent(
  * @returns Generated block content
  */
 export function generateManagedBlock(
-  paths: readonly string[], 
+  paths: readonly string[],
   config: ManagedBlockConfig = DEFAULT_MANAGED_BLOCK_CONFIG
 ): string {
   if (paths.length === 0) {
     return '';
   }
-  
+
   const sortedPaths = [...paths].sort();
   const blockLines = [
     config.startComment,
@@ -170,7 +178,7 @@ export function generateManagedBlock(
     ...sortedPaths,
     config.endComment,
   ];
-  
+
   return blockLines.join('\n');
 }
 
@@ -187,12 +195,12 @@ export function rebuildGitignoreContent(
   config: ManagedBlockConfig = DEFAULT_MANAGED_BLOCK_CONFIG
 ): string {
   const parts: string[] = [];
-  
+
   // Add content before managed block
   if (state.beforeBlock) {
     parts.push(state.beforeBlock);
   }
-  
+
   // Add managed block if there are paths to include
   const managedBlock = generateManagedBlock(newPaths, config);
   if (managedBlock) {
@@ -205,12 +213,12 @@ export function rebuildGitignoreContent(
       parts.push('');
     }
   }
-  
+
   // Add content after managed block
   if (state.afterBlock) {
     parts.push(state.afterBlock);
   }
-  
+
   return parts.join('\n');
 }
 
@@ -220,7 +228,7 @@ export function rebuildGitignoreContent(
  * @returns Sorted and deduplicated array
  */
 export function sortAndDedupePaths(paths: readonly string[]): string[] {
-  const normalizedPaths = paths.map(p => normalizeGitignorePath(p));
+  const normalizedPaths = paths.map((p) => normalizeGitignorePath(p));
   const uniquePaths = Array.from(new Set(normalizedPaths));
   return uniquePaths.sort();
 }

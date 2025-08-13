@@ -1,9 +1,9 @@
 // TLDR: Unit tests for the Windsurf provider
 
+import type { CompiledDoc, Logger } from '@rulesets/types';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { CompiledDoc, Logger } from '@rulesets/types';
 import { WindsurfProvider } from '../windsurf-provider';
 
 vi.mock('fs', () => ({

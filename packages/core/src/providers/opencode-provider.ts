@@ -2,26 +2,31 @@
 // Implements the Provider interface with branded types and modern architecture
 
 import type {
+  CompilationStats,
   CompiledDoc,
+  DestinationPlugin,
   JSONSchema7,
   Logger,
-  ProviderId,
-  Version,
+  Provider,
+  ProviderCapabilities,
   ProviderCompilationContext,
   ProviderCompilationResult,
-  ProviderError,
-  ProviderWarning,
-  CompilationStats,
-  Provider,
   ProviderConfig,
-  ProviderCapabilities,
-  DestinationPlugin,
+  ProviderError,
+  ProviderId,
+  ProviderWarning,
+  Version,
   WriteResult,
 } from '@rulesets/types';
-import { createProviderId, createOutputPath, createVersion, createCompiledContent } from '@rulesets/types';
+import {
+  createCompiledContent,
+  createOutputPath,
+  createProviderId,
+  createVersion,
+} from '@rulesets/types';
 import { promises as fs } from 'fs';
-import * as path from 'path';
 import * as os from 'os';
+import * as path from 'path';
 
 export class OpenCodeProvider implements Provider, DestinationPlugin {
   readonly id: ProviderId = createProviderId('opencode');
@@ -45,7 +50,7 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
     supportsBlocks: true,
     supportsImports: true,
     supportsVariables: true,
-    supportsXml: false,       // OpenCode expects pure Markdown
+    supportsXml: false, // OpenCode expects pure Markdown
     supportsMarkdown: true,
     maxFileSize: 10 * 1024 * 1024, // 10MB - reasonable limit for web context
     allowedFormats: ['markdown'],
@@ -62,7 +67,8 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
       properties: {
         outputPath: {
           type: 'string',
-          description: 'Path where the compiled rules file should be written (typically AGENTS.md)',
+          description:
+            'Path where the compiled rules file should be written (typically AGENTS.md)',
           default: 'AGENTS.md',
         },
         mcpConfig: {
@@ -82,7 +88,8 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
             globalConfig: {
               type: 'boolean',
               default: false,
-              description: 'Also write to global config at ~/.config/opencode/opencode.json',
+              description:
+                'Also write to global config at ~/.config/opencode/opencode.json',
             },
             mcpServers: {
               type: 'object',
@@ -129,7 +136,9 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
    * Compiles content for OpenCode provider
    * New Provider interface method for modern compilation pipeline
    */
-  async compile(_context: ProviderCompilationContext): Promise<ProviderCompilationResult> {
+  async compile(
+    _context: ProviderCompilationContext
+  ): Promise<ProviderCompilationResult> {
     const startTime = Date.now();
     const errors: ProviderError[] = [];
     const warnings: ProviderWarning[] = [];
@@ -168,7 +177,8 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
     } catch (error) {
       errors.push({
         type: 'compilation',
-        message: error instanceof Error ? error.message : 'Unknown compilation error',
+        message:
+          error instanceof Error ? error.message : 'Unknown compilation error',
         context: { provider: this.id },
       });
 
@@ -202,10 +212,10 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
   }): Promise<WriteResult> {
     const { compiled, config, logger } = ctx;
 
-    logger.info(`Writing OpenCode rules to: AGENTS.md`);
+    logger.info('Writing OpenCode rules to: AGENTS.md');
 
     // OpenCode uses AGENTS.md as filename (shared with Codex) - ignore destPath for naming
-    const outputPath = 
+    const outputPath =
       (typeof config.outputPath === 'string' ? config.outputPath : undefined) ||
       'AGENTS.md';
 
@@ -214,7 +224,9 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
 
     // Ensure the resolved path ends with AGENTS.md for security
     if (!resolvedPath.endsWith('AGENTS.md')) {
-      logger.warn(`Output path ${resolvedPath} should end with AGENTS.md. Adjusting...`);
+      logger.warn(
+        `Output path ${resolvedPath} should end with AGENTS.md. Adjusting...`
+      );
       const dir = path.dirname(resolvedPath);
       const adjustedPath = path.join(dir, 'AGENTS.md');
       const sanitizedPath = this.sanitizePath(adjustedPath, process.cwd());
@@ -224,7 +236,9 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
     // Security: Check file size before writing
     const content = compiled.output.content;
     if (content.length > (this.capabilities.maxFileSize || 10 * 1024 * 1024)) {
-      throw new Error(`File too large: ${content.length} bytes (max ${this.capabilities.maxFileSize} bytes)`);
+      throw new Error(
+        `File too large: ${content.length} bytes (max ${this.capabilities.maxFileSize} bytes)`
+      );
     }
 
     const generatedPaths: string[] = [];
@@ -248,7 +262,11 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
       if (config.mcpConfig && typeof config.mcpConfig === 'object') {
         const mcpConfig = config.mcpConfig as any;
         if (mcpConfig.enabled && mcpConfig.mcpServers) {
-          const mcpPaths = await this.writeMcpJsonConfig(mcpConfig, config, logger);
+          const mcpPaths = await this.writeMcpJsonConfig(
+            mcpConfig,
+            config,
+            logger
+          );
           generatedPaths.push(...mcpPaths);
         }
       }
@@ -262,7 +280,7 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
           size: content.length,
           outputFile: 'AGENTS.md',
           mcpEnabled: !!(config.mcpConfig as any)?.enabled,
-          webOptimized: config.webOptimized || true,
+          webOptimized: true,
         },
       };
     } catch (error) {
@@ -303,31 +321,32 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
       const localDir = path.dirname(resolvedLocalPath);
       await fs.mkdir(localDir, { recursive: true });
 
-      await fs.writeFile(
-        resolvedLocalPath,
-        jsonContent,
-        { encoding: 'utf8' }
-      );
+      await fs.writeFile(resolvedLocalPath, jsonContent, { encoding: 'utf8' });
 
-      logger.info(`Successfully wrote MCP JSON configuration to: ${resolvedLocalPath}`);
+      logger.info(
+        `Successfully wrote MCP JSON configuration to: ${resolvedLocalPath}`
+      );
       generatedPaths.push(resolvedLocalPath);
 
       // Write global configuration if enabled
       if (mcpConfig.globalConfig) {
         try {
-          const globalMcpPath = path.join(os.homedir(), '.config', 'opencode', 'opencode.json');
-          
+          const globalMcpPath = path.join(
+            os.homedir(),
+            '.config',
+            'opencode',
+            'opencode.json'
+          );
+
           // Ensure the global directory exists
           const globalDir = path.dirname(globalMcpPath);
           await fs.mkdir(globalDir, { recursive: true });
 
-          await fs.writeFile(
-            globalMcpPath,
-            jsonContent,
-            { encoding: 'utf8' }
-          );
+          await fs.writeFile(globalMcpPath, jsonContent, { encoding: 'utf8' });
 
-          logger.info(`Successfully wrote global MCP JSON configuration to: ${globalMcpPath}`);
+          logger.info(
+            `Successfully wrote global MCP JSON configuration to: ${globalMcpPath}`
+          );
           generatedPaths.push(globalMcpPath);
         } catch (error) {
           logger.warn(`Failed to write global MCP configuration: ${error}`);

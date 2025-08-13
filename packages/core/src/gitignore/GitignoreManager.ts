@@ -6,18 +6,18 @@
 import { promises as fs } from 'fs';
 import * as path from 'path';
 import type {
-  GitignoreManager as IGitignoreManager,
   GitignoreConfig,
   GitignoreOverrides,
   GitignoreResult,
+  GitignoreManager as IGitignoreManager,
   ManagedBlockConfig,
 } from './types';
 import {
   DEFAULT_MANAGED_BLOCK_CONFIG,
-  normalizeGitignorePath,
   matchesAnyPattern,
-  parseOverrideFile,
+  normalizeGitignorePath,
   parseGitignoreContent,
+  parseOverrideFile,
   rebuildGitignoreContent,
   sortAndDedupePaths,
 } from './utils';
@@ -48,7 +48,7 @@ export class GitignoreManager implements IGitignoreManager {
   ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.basePath = path.resolve(basePath);
-    
+
     // Create managed block config with custom prefix if provided
     this.managedBlockConfig = {
       ...DEFAULT_MANAGED_BLOCK_CONFIG,
@@ -67,7 +67,9 @@ export class GitignoreManager implements IGitignoreManager {
   /**
    * Update .gitignore with generated file paths
    */
-  async updateGitignore(generatedPaths: readonly string[]): Promise<GitignoreResult> {
+  async updateGitignore(
+    generatedPaths: readonly string[]
+  ): Promise<GitignoreResult> {
     if (!this.isEnabled()) {
       return {
         success: true,
@@ -80,9 +82,11 @@ export class GitignoreManager implements IGitignoreManager {
     try {
       // Read current overrides
       await this.readOverrides();
-      
+
       // Normalize and filter paths
-      const normalizedPaths = generatedPaths.map(p => normalizeGitignorePath(p, this.basePath));
+      const normalizedPaths = generatedPaths.map((p) =>
+        normalizeGitignorePath(p, this.basePath)
+      );
       const pathsToAdd: string[] = [];
       const pathsToKeep: string[] = [];
 
@@ -97,10 +101,13 @@ export class GitignoreManager implements IGitignoreManager {
       // Read current .gitignore
       const gitignorePath = path.join(this.basePath, '.gitignore');
       const currentContent = await this.readGitignoreFile(gitignorePath);
-      
+
       // Parse current content
-      const state = parseGitignoreContent(currentContent, this.managedBlockConfig);
-      
+      const state = parseGitignoreContent(
+        currentContent,
+        this.managedBlockConfig
+      );
+
       // Combine existing managed paths with new paths
       const allManagedPaths = sortAndDedupePaths([
         ...state.managedPaths,
@@ -108,8 +115,12 @@ export class GitignoreManager implements IGitignoreManager {
       ]);
 
       // Generate new content
-      const newContent = rebuildGitignoreContent(state, allManagedPaths, this.managedBlockConfig);
-      
+      const newContent = rebuildGitignoreContent(
+        state,
+        allManagedPaths,
+        this.managedBlockConfig
+      );
+
       // Write only if content changed
       if (newContent !== currentContent) {
         await fs.writeFile(gitignorePath, newContent, 'utf8');
@@ -134,7 +145,9 @@ export class GitignoreManager implements IGitignoreManager {
         success: false,
         added: [],
         kept: [],
-        messages: [`Failed to update .gitignore: ${error instanceof Error ? error.message : 'Unknown error'}`],
+        messages: [
+          `Failed to update .gitignore: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
       };
     }
   }
@@ -173,10 +186,18 @@ export class GitignoreManager implements IGitignoreManager {
 
     // Add configuration-based overrides
     if (this.config.alwaysKeep) {
-      keep.push(...this.config.alwaysKeep.map(p => normalizeGitignorePath(p, this.basePath)));
+      keep.push(
+        ...this.config.alwaysKeep.map((p) =>
+          normalizeGitignorePath(p, this.basePath)
+        )
+      );
     }
     if (this.config.alwaysIgnore) {
-      config.push(...this.config.alwaysIgnore.map(p => normalizeGitignorePath(p, this.basePath)));
+      config.push(
+        ...this.config.alwaysIgnore.map((p) =>
+          normalizeGitignorePath(p, this.basePath)
+        )
+      );
     }
 
     this.cachedOverrides = {
@@ -197,7 +218,7 @@ export class GitignoreManager implements IGitignoreManager {
     }
 
     const normalizedPath = normalizeGitignorePath(filePath, this.basePath);
-    
+
     // Get overrides (use cached if available)
     const overrides = this.cachedOverrides || {
       keep: [],
@@ -211,8 +232,10 @@ export class GitignoreManager implements IGitignoreManager {
     }
 
     // Check if path should be ignored by configuration or override files
-    if (matchesAnyPattern(normalizedPath, overrides.ignore) ||
-        matchesAnyPattern(normalizedPath, overrides.config)) {
+    if (
+      matchesAnyPattern(normalizedPath, overrides.ignore) ||
+      matchesAnyPattern(normalizedPath, overrides.config)
+    ) {
       return true;
     }
 
