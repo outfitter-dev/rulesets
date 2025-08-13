@@ -2,23 +2,28 @@
 // Implements the Provider interface with branded types and modern architecture
 
 import type {
+  CompilationStats,
   CompiledDoc,
+  DestinationPlugin,
   JSONSchema7,
   Logger,
-  ProviderId,
-  Version,
+  Provider,
+  ProviderCapabilities,
   ProviderCompilationContext,
   ProviderCompilationResult,
-  ProviderError,
-  ProviderWarning,
-  CompilationStats,
-  Provider,
   ProviderConfig,
-  ProviderCapabilities,
-  DestinationPlugin,
+  ProviderError,
+  ProviderId,
+  ProviderWarning,
+  Version,
   WriteResult,
 } from '@rulesets/types';
-import { createProviderId, createOutputPath, createVersion, createCompiledContent } from '@rulesets/types';
+import {
+  createCompiledContent,
+  createOutputPath,
+  createProviderId,
+  createVersion,
+} from '@rulesets/types';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
@@ -45,7 +50,7 @@ export class CodexProvider implements Provider, DestinationPlugin {
     supportsBlocks: true,
     supportsImports: true,
     supportsVariables: true,
-    supportsXml: false,       // Codex CLI expects pure Markdown
+    supportsXml: false, // Codex CLI expects pure Markdown
     supportsMarkdown: true,
     maxFileSize: 10 * 1024 * 1024, // 10MB - reasonable limit for CLI context
     allowedFormats: ['markdown'],
@@ -62,7 +67,8 @@ export class CodexProvider implements Provider, DestinationPlugin {
       properties: {
         outputPath: {
           type: 'string',
-          description: 'Path where the compiled rules file should be written (typically AGENTS.md)',
+          description:
+            'Path where the compiled rules file should be written (typically AGENTS.md)',
           default: 'AGENTS.md',
         },
         codexHome: {
@@ -128,7 +134,9 @@ export class CodexProvider implements Provider, DestinationPlugin {
    * Compiles content for Codex provider
    * New Provider interface method for modern compilation pipeline
    */
-  async compile(_context: ProviderCompilationContext): Promise<ProviderCompilationResult> {
+  async compile(
+    _context: ProviderCompilationContext
+  ): Promise<ProviderCompilationResult> {
     const startTime = Date.now();
     const errors: ProviderError[] = [];
     const warnings: ProviderWarning[] = [];
@@ -167,7 +175,8 @@ export class CodexProvider implements Provider, DestinationPlugin {
     } catch (error) {
       errors.push({
         type: 'compilation',
-        message: error instanceof Error ? error.message : 'Unknown compilation error',
+        message:
+          error instanceof Error ? error.message : 'Unknown compilation error',
         context: { provider: this.id },
       });
 
@@ -201,10 +210,10 @@ export class CodexProvider implements Provider, DestinationPlugin {
   }): Promise<WriteResult> {
     const { compiled, config, logger } = ctx;
 
-    logger.info(`Writing Codex rules to: AGENTS.md`);
+    logger.info('Writing Codex rules to: AGENTS.md');
 
     // Codex always uses AGENTS.md as filename - ignore destPath for naming
-    const outputPath = 
+    const outputPath =
       (typeof config.outputPath === 'string' ? config.outputPath : undefined) ||
       'AGENTS.md';
 
@@ -213,7 +222,9 @@ export class CodexProvider implements Provider, DestinationPlugin {
 
     // Ensure the resolved path ends with AGENTS.md for security
     if (!resolvedPath.endsWith('AGENTS.md')) {
-      logger.warn(`Output path ${resolvedPath} should end with AGENTS.md. Adjusting...`);
+      logger.warn(
+        `Output path ${resolvedPath} should end with AGENTS.md. Adjusting...`
+      );
       const dir = path.dirname(resolvedPath);
       const adjustedPath = path.join(dir, 'AGENTS.md');
       const sanitizedPath = this.sanitizePath(adjustedPath, process.cwd());
@@ -223,7 +234,9 @@ export class CodexProvider implements Provider, DestinationPlugin {
     // Security: Check file size before writing
     const content = compiled.output.content;
     if (content.length > (this.capabilities.maxFileSize || 10 * 1024 * 1024)) {
-      throw new Error(`File too large: ${content.length} bytes (max ${this.capabilities.maxFileSize} bytes)`);
+      throw new Error(
+        `File too large: ${content.length} bytes (max ${this.capabilities.maxFileSize} bytes)`
+      );
     }
 
     const generatedPaths: string[] = [];
@@ -247,7 +260,11 @@ export class CodexProvider implements Provider, DestinationPlugin {
       if (config.mcpConfig && typeof config.mcpConfig === 'object') {
         const mcpConfig = config.mcpConfig as any;
         if (mcpConfig.enabled && mcpConfig.servers) {
-          const mcpPath = await this.writeMcpTomlConfig(mcpConfig, config, logger);
+          const mcpPath = await this.writeMcpTomlConfig(
+            mcpConfig,
+            config,
+            logger
+          );
           if (mcpPath) {
             generatedPaths.push(mcpPath);
           }
@@ -293,9 +310,10 @@ export class CodexProvider implements Provider, DestinationPlugin {
     try {
       // Determine MCP config path with CODEX_HOME support
       let mcpPath = mcpConfig.outputPath || '.codex/config.toml';
-      
+
       // Support CODEX_HOME environment variable or config override
-      const codexHome = globalConfig.codexHome as string || process.env.CODEX_HOME;
+      const codexHome =
+        (globalConfig.codexHome as string) || process.env.CODEX_HOME;
       if (codexHome && !path.isAbsolute(mcpPath)) {
         mcpPath = path.join(codexHome, 'config.toml');
       }
@@ -309,13 +327,11 @@ export class CodexProvider implements Provider, DestinationPlugin {
       // Generate TOML content for MCP configuration
       const tomlContent = this.generateMcpToml(mcpConfig.servers || {});
 
-      await fs.writeFile(
-        resolvedMcpPath,
-        tomlContent,
-        { encoding: 'utf8' }
-      );
+      await fs.writeFile(resolvedMcpPath, tomlContent, { encoding: 'utf8' });
 
-      logger.info(`Successfully wrote MCP TOML configuration to: ${resolvedMcpPath}`);
+      logger.info(
+        `Successfully wrote MCP TOML configuration to: ${resolvedMcpPath}`
+      );
       return resolvedMcpPath;
     } catch (error) {
       logger.warn(`Failed to write MCP configuration: ${error}`);
@@ -329,7 +345,7 @@ export class CodexProvider implements Provider, DestinationPlugin {
    */
   private generateMcpToml(servers: Record<string, any>): string {
     const lines: string[] = [];
-    
+
     lines.push('[mcp]');
     lines.push('enabled = true');
     lines.push('');
@@ -337,9 +353,11 @@ export class CodexProvider implements Provider, DestinationPlugin {
     for (const [serverName, serverConfig] of Object.entries(servers)) {
       lines.push(`[mcp.servers.${serverName}]`);
       lines.push(`command = "${serverConfig.command}"`);
-      
+
       if (serverConfig.args && Array.isArray(serverConfig.args)) {
-        const argsString = serverConfig.args.map((arg: string) => `"${arg}"`).join(', ');
+        const argsString = serverConfig.args
+          .map((arg: string) => `"${arg}"`)
+          .join(', ');
         lines.push(`args = [${argsString}]`);
       }
 

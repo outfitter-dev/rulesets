@@ -2,23 +2,28 @@
 // Implements the new Provider interface with branded types and modern architecture
 
 import type {
+  CompilationStats,
   CompiledDoc,
+  DestinationPlugin,
   JSONSchema7,
   Logger,
-  ProviderId,
-  Version,
+  Provider,
+  ProviderCapabilities,
   ProviderCompilationContext,
   ProviderCompilationResult,
-  ProviderError,
-  ProviderWarning,
-  CompilationStats,
-  Provider,
   ProviderConfig,
-  ProviderCapabilities,
-  DestinationPlugin,
+  ProviderError,
+  ProviderId,
+  ProviderWarning,
+  Version,
   WriteResult,
 } from '@rulesets/types';
-import { createProviderId, createOutputPath, createVersion, createCompiledContent } from '@rulesets/types';
+import {
+  createCompiledContent,
+  createOutputPath,
+  createProviderId,
+  createVersion,
+} from '@rulesets/types';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
@@ -79,7 +84,9 @@ export class WindsurfProvider implements Provider, DestinationPlugin {
    * Compiles content for Windsurf provider
    * New Provider interface method for modern compilation pipeline
    */
-  async compile(_context: ProviderCompilationContext): Promise<ProviderCompilationResult> {
+  async compile(
+    _context: ProviderCompilationContext
+  ): Promise<ProviderCompilationResult> {
     const startTime = Date.now();
     const errors: ProviderError[] = [];
     const warnings: ProviderWarning[] = [];
@@ -112,7 +119,8 @@ export class WindsurfProvider implements Provider, DestinationPlugin {
     } catch (error) {
       errors.push({
         type: 'compilation',
-        message: error instanceof Error ? error.message : 'Unknown compilation error',
+        message:
+          error instanceof Error ? error.message : 'Unknown compilation error',
         context: { provider: this.id },
       });
 
@@ -168,7 +176,9 @@ export class WindsurfProvider implements Provider, DestinationPlugin {
     // Security: Check file size before writing
     const content = compiled.output.content;
     if (content.length > (this.capabilities.maxFileSize || 10 * 1024 * 1024)) {
-      throw new Error(`File too large: ${content.length} bytes (max ${this.capabilities.maxFileSize} bytes)`);
+      throw new Error(
+        `File too large: ${content.length} bytes (max ${this.capabilities.maxFileSize} bytes)`
+      );
     }
 
     // Write the content

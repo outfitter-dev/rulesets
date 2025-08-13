@@ -79,7 +79,11 @@ export function createDestinationId(value: string): DestinationId {
  */
 export function createSourcePath(value: string): SourcePath {
   if (!value || typeof value !== 'string') {
-    throw new BrandValidationError('SourcePath', value, 'must be a non-empty string');
+    throw new BrandValidationError(
+      'SourcePath',
+      value,
+      'must be a non-empty string'
+    );
   }
 
   // Must be relative path (no absolute paths for portability)
@@ -92,7 +96,7 @@ export function createSourcePath(value: string): SourcePath {
   }
 
   // Must end with .md or .rule.md
-  if (!value.endsWith('.md') && !value.endsWith('.rule.md')) {
+  if (!(value.endsWith('.md') || value.endsWith('.rule.md'))) {
     throw new BrandValidationError(
       'SourcePath',
       value,
@@ -144,12 +148,20 @@ export function createSourcePath(value: string): SourcePath {
  */
 export function createDestPath(value: string): DestPath {
   if (!value || typeof value !== 'string') {
-    throw new BrandValidationError('DestPath', value, 'must be a non-empty string');
+    throw new BrandValidationError(
+      'DestPath',
+      value,
+      'must be a non-empty string'
+    );
   }
 
   // Prevent path traversal
   if (value.includes('../') || value.includes('..\\')) {
-    throw new BrandValidationError('DestPath', value, 'path traversal not allowed');
+    throw new BrandValidationError(
+      'DestPath',
+      value,
+      'path traversal not allowed'
+    );
   }
 
   // Prevent absolute paths that might escape project
@@ -183,7 +195,11 @@ export function createDestPath(value: string): DestPath {
  */
 export function createBlockName(value: string): BlockName {
   if (!value || typeof value !== 'string') {
-    throw new BrandValidationError('BlockName', value, 'must be a non-empty string');
+    throw new BrandValidationError(
+      'BlockName',
+      value,
+      'must be a non-empty string'
+    );
   }
 
   // Must be kebab-case
@@ -237,7 +253,7 @@ export function createVariableName(value: string): VariableName {
   }
 
   // Must start with $ or be a valid JS identifier
-  if (!value.startsWith('$') && !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value)) {
+  if (!(value.startsWith('$') || /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value))) {
     throw new BrandValidationError(
       'VariableName',
       value,
@@ -248,7 +264,7 @@ export function createVariableName(value: string): VariableName {
   // If starts with $, validate the rest
   if (value.startsWith('$')) {
     const rest = value.slice(1);
-    if (!rest || !/^[a-zA-Z_][a-zA-Z0-9_.]*$/.test(rest)) {
+    if (!(rest && /^[a-zA-Z_][a-zA-Z0-9_.]*$/.test(rest))) {
       throw new BrandValidationError(
         'VariableName',
         value,
@@ -307,11 +323,7 @@ export function createPropertyName(value: string): PropertyName {
  */
 export function createMarkerContent(value: string): MarkerContent {
   if (typeof value !== 'string') {
-    throw new BrandValidationError(
-      'MarkerContent',
-      value,
-      'must be a string'
-    );
+    throw new BrandValidationError('MarkerContent', value, 'must be a string');
   }
 
   // Can be empty for self-closing markers
@@ -360,7 +372,10 @@ export function createMarkerContent(value: string): MarkerContent {
 /**
  * Raw content validation - unprocessed markdown
  */
-export function createRawContent(value: string, maxLength = 10_000_000): RawContent {
+export function createRawContent(
+  value: string,
+  maxLength = 10_000_000
+): RawContent {
   if (typeof value !== 'string') {
     throw new BrandValidationError('RawContent', value, 'must be a string');
   }
@@ -376,7 +391,11 @@ export function createRawContent(value: string, maxLength = 10_000_000): RawCont
 
   // Prevent null bytes
   if (value.includes('\0')) {
-    throw new BrandValidationError('RawContent', value, 'null bytes not allowed');
+    throw new BrandValidationError(
+      'RawContent',
+      value,
+      'null bytes not allowed'
+    );
   }
 
   return value as RawContent;
@@ -390,7 +409,11 @@ export function createCompiledContent(
   maxLength = 5_000_000
 ): CompiledContent {
   if (typeof value !== 'string') {
-    throw new BrandValidationError('CompiledContent', value, 'must be a string');
+    throw new BrandValidationError(
+      'CompiledContent',
+      value,
+      'must be a string'
+    );
   }
 
   if (value.length > maxLength) {
@@ -410,7 +433,11 @@ export function createCompiledContent(
  */
 export function createVersion(value: string): Version {
   if (!value || typeof value !== 'string') {
-    throw new BrandValidationError('Version', value, 'must be a non-empty string');
+    throw new BrandValidationError(
+      'Version',
+      value,
+      'must be a non-empty string'
+    );
   }
 
   // Basic semver pattern (simplified)

@@ -17,6 +17,7 @@ let logger: Logger | undefined;
 // :M: v0.1.0: Pass-through implementation without transformation
 // :M: todo(v0.2.0): Process block markers and convert to XML
 // :M: todo(v0.3.0): Process variables and perform substitution
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: This is a complex compile function that will be refactored in v0.1-beta
 export function compile(
   parsedDoc: ParsedDoc,
   destinationId: string,

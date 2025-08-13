@@ -3,62 +3,61 @@
  * Following TDD principles with security, validation, and backwards compatibility focus
  */
 
-import { describe, test, expect, beforeEach, vi } from 'bun:test';
+import { beforeEach, describe, expect, test, vi } from 'bun:test';
 import {
-  // Creation functions
-  createProviderId,
-  createSourcePath,
-  createOutputPath,
-  createBlockName,
-  createVariableName,
-  createPropertyName,
-  createMarkerContent,
-  createRawContent,
-  createCompiledContent,
-  createVersion,
-  
-  // Type guards
-  isProviderId,
-  isSourcePath,
-  isOutputPath,
-  isBlockName,
-  isVariableName,
-  isPropertyName,
-  isMarkerContent,
-  isVersion,
-  
+  type BlockName,
   // Error class
   BrandValidationError,
-  
+  type CompiledContent,
+  createBlockName,
+  createCompiledContent,
   // Backwards compatibility
   createDestinationId,
   createDestPath,
+  createMarkerContent,
+  createOutputPath,
+  createPropertyName,
+  // Creation functions
+  createProviderId,
+  createRawContent,
+  createSourcePath,
+  createVariableName,
+  createVersion,
+  isBlockName,
   isDestinationId,
   isDestPath,
-  
+  isMarkerContent,
+  isOutputPath,
+  isPropertyName,
+  // Type guards
+  isProviderId,
+  isSourcePath,
+  isVariableName,
+  isVersion,
+  type MarkerContent,
+  type OutputPath,
+  type PropertyName,
+  type ProviderId,
+  type RawContent,
+  type SourcePath,
   // Unsafe brands for performance
   UnsafeBrands,
-  
   // Constants
   VALID_PROVIDERS,
   type ValidProviderId,
-  type ProviderId,
-  type SourcePath,
-  type OutputPath,
-  type BlockName,
   type VariableName,
-  type PropertyName,
-  type MarkerContent,
-  type RawContent,
-  type CompiledContent,
   type Version,
 } from '../src/brands';
 
 describe('Branded Types System', () => {
   describe('BrandValidationError', () => {
     test('should create error with brand type, value, and message', () => {
-      const error = new BrandValidationError('TestBrand', 'invalid', 'test message');
-      
+      const error = new BrandValidationError(
+        'TestBrand',
+        'invalid',
+        'test message'
+      );
+
       expect(error.name).toBe('BrandValidationError');
       expect(error.brandType).toBe('TestBrand');
       expect(error.value).toBe('invalid');
@@ -68,14 +67,23 @@ describe('Branded Types System', () => {
 
     test('should include context when provided', () => {
       const context = { validOptions: ['a', 'b'] };
-      const error = new BrandValidationError('TestBrand', 'invalid', 'test message', context);
-      
+      const error = new BrandValidationError(
+        'TestBrand',
+        'invalid',
+        'test message',
+        context
+      );
+
       expect(error.context).toEqual(context);
     });
 
     test('should extend Error properly', () => {
-      const error = new BrandValidationError('TestBrand', 'invalid', 'test message');
-      
+      const error = new BrandValidationError(
+        'TestBrand',
+        'invalid',
+        'test message'
+      );
+
       expect(error).toBeInstanceOf(Error);
       expect(error.stack).toBeDefined();
     });
@@ -113,15 +121,21 @@ describe('Branded Types System', () => {
 
         for (const id of invalidIds) {
           expect(() => createProviderId(id)).toThrow(BrandValidationError);
-          
+
           try {
             createProviderId(id);
           } catch (error) {
             expect(error).toBeInstanceOf(BrandValidationError);
-            expect((error as BrandValidationError).brandType).toBe('ProviderId');
+            expect((error as BrandValidationError).brandType).toBe(
+              'ProviderId'
+            );
             expect((error as BrandValidationError).value).toBe(id);
-            expect((error as BrandValidationError).message).toContain('must be one of');
-            expect((error as BrandValidationError).context?.validProviders).toEqual(VALID_PROVIDERS);
+            expect((error as BrandValidationError).message).toContain(
+              'must be one of'
+            );
+            expect(
+              (error as BrandValidationError).context?.validProviders
+            ).toEqual(VALID_PROVIDERS);
           }
         }
       });
@@ -130,13 +144,17 @@ describe('Branded Types System', () => {
         const invalidValues = [null, undefined, 123, {}, [], true];
 
         for (const value of invalidValues) {
-          expect(() => createProviderId(value as any)).toThrow(BrandValidationError);
-          
+          expect(() => createProviderId(value as any)).toThrow(
+            BrandValidationError
+          );
+
           try {
             createProviderId(value as any);
           } catch (error) {
             expect(error).toBeInstanceOf(BrandValidationError);
-            expect((error as BrandValidationError).message).toContain('must be a non-empty string');
+            expect((error as BrandValidationError).message).toContain(
+              'must be a non-empty string'
+            );
           }
         }
       });
@@ -195,11 +213,13 @@ describe('Branded Types System', () => {
 
         for (const path of invalidPaths) {
           expect(() => createSourcePath(path)).toThrow(BrandValidationError);
-          
+
           try {
             createSourcePath(path);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('must end with .md or .rule.md');
+            expect((error as BrandValidationError).message).toContain(
+              'must end with .md or .rule.md'
+            );
           }
         }
       });
@@ -213,11 +233,13 @@ describe('Branded Types System', () => {
 
         for (const path of absolutePaths) {
           expect(() => createSourcePath(path)).toThrow(BrandValidationError);
-          
+
           try {
             createSourcePath(path);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('must be a relative path');
+            expect((error as BrandValidationError).message).toContain(
+              'must be a relative path'
+            );
           }
         }
       });
@@ -233,11 +255,13 @@ describe('Branded Types System', () => {
 
         for (const path of traversalPaths) {
           expect(() => createSourcePath(path)).toThrow(BrandValidationError);
-          
+
           try {
             createSourcePath(path);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('path traversal not allowed');
+            expect((error as BrandValidationError).message).toContain(
+              'path traversal not allowed'
+            );
           }
         }
       });
@@ -252,24 +276,28 @@ describe('Branded Types System', () => {
 
         for (const path of hiddenPaths) {
           expect(() => createSourcePath(path)).toThrow(BrandValidationError);
-          
+
           try {
             createSourcePath(path);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('hidden files not allowed');
+            expect((error as BrandValidationError).message).toContain(
+              'hidden files not allowed'
+            );
           }
         }
       });
 
       test('should enforce length limits', () => {
         const longPath = 'a'.repeat(260) + '.md';
-        
+
         expect(() => createSourcePath(longPath)).toThrow(BrandValidationError);
-        
+
         try {
           createSourcePath(longPath);
         } catch (error) {
-          expect((error as BrandValidationError).message).toContain('path too long');
+          expect((error as BrandValidationError).message).toContain(
+            'path too long'
+          );
         }
       });
 
@@ -283,11 +311,13 @@ describe('Branded Types System', () => {
 
         for (const path of controlCharPaths) {
           expect(() => createSourcePath(path)).toThrow(BrandValidationError);
-          
+
           try {
             createSourcePath(path);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('control characters not allowed');
+            expect((error as BrandValidationError).message).toContain(
+              'control characters not allowed'
+            );
           }
         }
       });
@@ -335,11 +365,13 @@ describe('Branded Types System', () => {
 
         for (const path of traversalPaths) {
           expect(() => createOutputPath(path)).toThrow(BrandValidationError);
-          
+
           try {
             createOutputPath(path);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('path traversal not allowed');
+            expect((error as BrandValidationError).message).toContain(
+              'path traversal not allowed'
+            );
           }
         }
       });
@@ -353,41 +385,44 @@ describe('Branded Types System', () => {
 
         for (const path of absolutePaths) {
           expect(() => createOutputPath(path)).toThrow(BrandValidationError);
-          
+
           try {
             createOutputPath(path);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('absolute paths not recommended');
+            expect((error as BrandValidationError).message).toContain(
+              'absolute paths not recommended'
+            );
           }
         }
       });
 
       test('should prevent null bytes', () => {
-        const nullBytePaths = [
-          'output\0.md',
-          'normal\0/path',
-        ];
+        const nullBytePaths = ['output\0.md', 'normal\0/path'];
 
         for (const path of nullBytePaths) {
           expect(() => createOutputPath(path)).toThrow(BrandValidationError);
-          
+
           try {
             createOutputPath(path);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('null bytes not allowed');
+            expect((error as BrandValidationError).message).toContain(
+              'null bytes not allowed'
+            );
           }
         }
       });
 
       test('should enforce length limits', () => {
         const longPath = 'a'.repeat(260);
-        
+
         expect(() => createOutputPath(longPath)).toThrow(BrandValidationError);
-        
+
         try {
           createOutputPath(longPath);
         } catch (error) {
-          expect((error as BrandValidationError).message).toContain('path too long');
+          expect((error as BrandValidationError).message).toContain(
+            'path too long'
+          );
         }
       });
     });
@@ -427,31 +462,37 @@ describe('Branded Types System', () => {
 
         for (const name of invalidNames) {
           expect(() => createBlockName(name)).toThrow(BrandValidationError);
-          
+
           try {
             createBlockName(name);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('must be kebab-case');
+            expect((error as BrandValidationError).message).toContain(
+              'must be kebab-case'
+            );
           }
         }
       });
 
       test('should enforce length limits', () => {
         expect(() => createBlockName('a')).toThrow(BrandValidationError); // too short
-        
+
         const longName = 'a'.repeat(51);
         expect(() => createBlockName(longName)).toThrow(BrandValidationError); // too long
-        
+
         try {
           createBlockName('a');
         } catch (error) {
-          expect((error as BrandValidationError).message).toContain('must be at least 2 characters');
+          expect((error as BrandValidationError).message).toContain(
+            'must be at least 2 characters'
+          );
         }
-        
+
         try {
           createBlockName(longName);
         } catch (error) {
-          expect((error as BrandValidationError).message).toContain('must be at most 50 characters');
+          expect((error as BrandValidationError).message).toContain(
+            'must be at most 50 characters'
+          );
         }
       });
 
@@ -464,11 +505,13 @@ describe('Branded Types System', () => {
 
         for (const name of doubleHyphenNames) {
           expect(() => createBlockName(name)).toThrow(BrandValidationError);
-          
+
           try {
             createBlockName(name);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('cannot contain consecutive hyphens');
+            expect((error as BrandValidationError).message).toContain(
+              'cannot contain consecutive hyphens'
+            );
           }
         }
       });
@@ -530,13 +573,17 @@ describe('Branded Types System', () => {
 
       test('should enforce length limits', () => {
         const longName = '$' + 'a'.repeat(100);
-        
-        expect(() => createVariableName(longName)).toThrow(BrandValidationError);
-        
+
+        expect(() => createVariableName(longName)).toThrow(
+          BrandValidationError
+        );
+
         try {
           createVariableName(longName);
         } catch (error) {
-          expect((error as BrandValidationError).message).toContain('must be at most 100 characters');
+          expect((error as BrandValidationError).message).toContain(
+            'must be at most 100 characters'
+          );
         }
       });
     });
@@ -578,24 +625,30 @@ describe('Branded Types System', () => {
 
         for (const name of invalidNames) {
           expect(() => createPropertyName(name)).toThrow(BrandValidationError);
-          
+
           try {
             createPropertyName(name);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('must be lowercase with optional hyphens');
+            expect((error as BrandValidationError).message).toContain(
+              'must be lowercase with optional hyphens'
+            );
           }
         }
       });
 
       test('should enforce length limits', () => {
         const longName = 'a'.repeat(51);
-        
-        expect(() => createPropertyName(longName)).toThrow(BrandValidationError);
-        
+
+        expect(() => createPropertyName(longName)).toThrow(
+          BrandValidationError
+        );
+
         try {
           createPropertyName(longName);
         } catch (error) {
-          expect((error as BrandValidationError).message).toContain('must be at most 50 characters');
+          expect((error as BrandValidationError).message).toContain(
+            'must be at most 50 characters'
+          );
         }
       });
     });
@@ -623,13 +676,17 @@ describe('Branded Types System', () => {
 
       test('should enforce length limits', () => {
         const longContent = 'a'.repeat(5001);
-        
-        expect(() => createMarkerContent(longContent)).toThrow(BrandValidationError);
-        
+
+        expect(() => createMarkerContent(longContent)).toThrow(
+          BrandValidationError
+        );
+
         try {
           createMarkerContent(longContent);
         } catch (error) {
-          expect((error as BrandValidationError).message).toContain('marker content too long');
+          expect((error as BrandValidationError).message).toContain(
+            'marker content too long'
+          );
         }
       });
 
@@ -641,12 +698,16 @@ describe('Branded Types System', () => {
         ];
 
         for (const content of nestedContent) {
-          expect(() => createMarkerContent(content)).toThrow(BrandValidationError);
-          
+          expect(() => createMarkerContent(content)).toThrow(
+            BrandValidationError
+          );
+
           try {
             createMarkerContent(content);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('nested markers not allowed');
+            expect((error as BrandValidationError).message).toContain(
+              'nested markers not allowed'
+            );
           }
         }
       });
@@ -663,13 +724,19 @@ describe('Branded Types System', () => {
         ];
 
         for (const content of dangerousContent) {
-          expect(() => createMarkerContent(content)).toThrow(BrandValidationError);
-          
+          expect(() => createMarkerContent(content)).toThrow(
+            BrandValidationError
+          );
+
           try {
             createMarkerContent(content);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('potentially dangerous content detected');
-            expect((error as BrandValidationError).context?.detectedPattern).toBeDefined();
+            expect((error as BrandValidationError).message).toContain(
+              'potentially dangerous content detected'
+            );
+            expect(
+              (error as BrandValidationError).context?.detectedPattern
+            ).toBeDefined();
           }
         }
       });
@@ -683,7 +750,9 @@ describe('Branded Types System', () => {
         ];
 
         for (const content of dangerousContent) {
-          expect(() => createMarkerContent(content)).toThrow(BrandValidationError);
+          expect(() => createMarkerContent(content)).toThrow(
+            BrandValidationError
+          );
         }
       });
     });
@@ -710,27 +779,39 @@ describe('Branded Types System', () => {
       test('should enforce custom length limits', () => {
         const maxLength = 1000;
         const longContent = 'a'.repeat(maxLength + 1);
-        
-        expect(() => createRawContent(longContent, maxLength)).toThrow(BrandValidationError);
-        
+
+        expect(() => createRawContent(longContent, maxLength)).toThrow(
+          BrandValidationError
+        );
+
         try {
           createRawContent(longContent, maxLength);
         } catch (error) {
-          expect((error as BrandValidationError).message).toContain(`content too long (max ${maxLength} characters)`);
-          expect((error as BrandValidationError).context?.actualLength).toBe(longContent.length);
-          expect((error as BrandValidationError).context?.maxLength).toBe(maxLength);
+          expect((error as BrandValidationError).message).toContain(
+            `content too long (max ${maxLength} characters)`
+          );
+          expect((error as BrandValidationError).context?.actualLength).toBe(
+            longContent.length
+          );
+          expect((error as BrandValidationError).context?.maxLength).toBe(
+            maxLength
+          );
         }
       });
 
       test('should prevent null bytes', () => {
         const nullByteContent = 'content\0with\0nulls';
-        
-        expect(() => createRawContent(nullByteContent)).toThrow(BrandValidationError);
-        
+
+        expect(() => createRawContent(nullByteContent)).toThrow(
+          BrandValidationError
+        );
+
         try {
           createRawContent(nullByteContent);
         } catch (error) {
-          expect((error as BrandValidationError).message).toContain('null bytes not allowed');
+          expect((error as BrandValidationError).message).toContain(
+            'null bytes not allowed'
+          );
         }
       });
 
@@ -763,13 +844,17 @@ describe('Branded Types System', () => {
       test('should enforce custom length limits', () => {
         const maxLength = 1000;
         const longContent = 'a'.repeat(maxLength + 1);
-        
-        expect(() => createCompiledContent(longContent, maxLength)).toThrow(BrandValidationError);
-        
+
+        expect(() => createCompiledContent(longContent, maxLength)).toThrow(
+          BrandValidationError
+        );
+
         try {
           createCompiledContent(longContent, maxLength);
         } catch (error) {
-          expect((error as BrandValidationError).message).toContain(`content too long (max ${maxLength} characters)`);
+          expect((error as BrandValidationError).message).toContain(
+            `content too long (max ${maxLength} characters)`
+          );
         }
       });
 
@@ -815,11 +900,13 @@ describe('Branded Types System', () => {
 
         for (const version of invalidVersions) {
           expect(() => createVersion(version)).toThrow(BrandValidationError);
-          
+
           try {
             createVersion(version);
           } catch (error) {
-            expect((error as BrandValidationError).message).toContain('must be valid semantic version');
+            expect((error as BrandValidationError).message).toContain(
+              'must be valid semantic version'
+            );
           }
         }
       });
@@ -860,24 +947,24 @@ describe('Branded Types System', () => {
       test('should emit deprecation warning in development', () => {
         const originalEnv = process.env.NODE_ENV;
         process.env.NODE_ENV = 'development';
-        
+
         createDestinationId('cursor');
-        
+
         expect(consoleSpy).toHaveBeenCalledWith(
           'createDestinationId is deprecated. Use createProviderId instead.'
         );
-        
+
         process.env.NODE_ENV = originalEnv;
       });
 
       test('should not emit warning in production', () => {
         const originalEnv = process.env.NODE_ENV;
         process.env.NODE_ENV = 'production';
-        
+
         createDestinationId('cursor');
-        
+
         expect(consoleSpy).not.toHaveBeenCalled();
-        
+
         process.env.NODE_ENV = originalEnv;
       });
     });
@@ -892,13 +979,13 @@ describe('Branded Types System', () => {
       test('should emit deprecation warning in development', () => {
         const originalEnv = process.env.NODE_ENV;
         process.env.NODE_ENV = 'development';
-        
+
         createDestPath('.cursor/rules');
-        
+
         expect(consoleSpy).toHaveBeenCalledWith(
           'createDestPath is deprecated. Use createOutputPath instead.'
         );
-        
+
         process.env.NODE_ENV = originalEnv;
       });
     });
@@ -924,12 +1011,12 @@ describe('Branded Types System', () => {
       const invalidId = UnsafeBrands.providerId('invalid-provider');
       const invalidPath = UnsafeBrands.sourcePath('../invalid/path.txt');
       const invalidBlock = UnsafeBrands.blockName('Invalid_Block_Name');
-      
+
       // But they are successfully created as branded types
       expect(typeof invalidId).toBe('string');
       expect(typeof invalidPath).toBe('string');
       expect(typeof invalidBlock).toBe('string');
-      
+
       // The values are preserved exactly
       expect(invalidId).toBe('invalid-provider');
       expect(invalidPath).toBe('../invalid/path.txt');
@@ -938,7 +1025,7 @@ describe('Branded Types System', () => {
 
     test('should provide all brand creators', () => {
       const brands = UnsafeBrands;
-      
+
       expect(typeof brands.providerId).toBe('function');
       expect(typeof brands.sourcePath).toBe('function');
       expect(typeof brands.outputPath).toBe('function');
@@ -961,22 +1048,22 @@ describe('Branded Types System', () => {
 
   describe('Edge Cases and Security', () => {
     test('should handle extremely large inputs gracefully', () => {
-      const largeInput = 'x'.repeat(1000000); // 1MB
-      
+      const largeInput = 'x'.repeat(1_000_000); // 1MB
+
       expect(() => createRawContent(largeInput)).not.toThrow();
       expect(() => createCompiledContent(largeInput)).not.toThrow();
-      
+
       // But it should fail if over the limit
-      const tooLarge = 'x'.repeat(15000000); // 15MB
+      const tooLarge = 'x'.repeat(15_000_000); // 15MB
       expect(() => createRawContent(tooLarge)).toThrow();
     });
 
     test('should handle unicode and special characters properly', () => {
       const unicodeContent = '🚀 Unicode content with émojis and spëcial chars';
-      
+
       expect(() => createRawContent(unicodeContent)).not.toThrow();
       expect(() => createMarkerContent('instructions 📝')).not.toThrow();
-      
+
       // But should still catch dangerous patterns in unicode
       expect(() => createMarkerContent('OnClick="alert()"')).toThrow();
     });
@@ -988,7 +1075,7 @@ describe('Branded Types System', () => {
         () => createSourcePath('rules.md'),
         () => createBlockName('user-instructions'),
       ];
-      
+
       for (const testCase of testCases) {
         expect(() => testCase()).not.toThrow();
       }
@@ -1001,7 +1088,7 @@ describe('Branded Types System', () => {
         'constructor.prototype.polluted',
         'prototype.polluted',
       ];
-      
+
       for (const input of maliciousInputs) {
         // These should either be rejected by validation or safely handled
         expect(() => createPropertyName(input)).toThrow();
@@ -1015,13 +1102,13 @@ describe('Branded Types System', () => {
       const providerId = createProviderId('cursor');
       const sourcePath = createSourcePath('rules.md');
       const outputPath = createOutputPath('.cursor/rules');
-      
+
       // TypeScript should enforce these are different types
       // (This is tested at compile time, but we can verify the values)
       expect(typeof providerId).toBe('string');
       expect(typeof sourcePath).toBe('string');
       expect(typeof outputPath).toBe('string');
-      
+
       // But they should not be assignable to each other in TypeScript
       // This would be caught at compile time if we tried:
       // const invalid: ProviderId = sourcePath; // Type error
@@ -1030,13 +1117,13 @@ describe('Branded Types System', () => {
     test('should work with JSON serialization', () => {
       const providerId = createProviderId('cursor');
       const blockName = createBlockName('user-instructions');
-      
+
       const serialized = JSON.stringify({ providerId, blockName });
       const parsed = JSON.parse(serialized);
-      
+
       expect(parsed.providerId).toBe('cursor');
       expect(parsed.blockName).toBe('user-instructions');
-      
+
       // After parsing, they're regular strings and need re-validation
       expect(isProviderId(parsed.providerId)).toBe(true);
       expect(isBlockName(parsed.blockName)).toBe(true);

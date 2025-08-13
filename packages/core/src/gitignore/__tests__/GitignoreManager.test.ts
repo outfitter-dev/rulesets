@@ -4,7 +4,7 @@
 
 import { promises as fs } from 'fs';
 import * as path from 'path';
-import { GitignoreManager, createGitignoreManager } from '../GitignoreManager';
+import { createGitignoreManager, GitignoreManager } from '../GitignoreManager';
 import type { GitignoreConfig } from '../types';
 
 // Mock fs module
@@ -19,7 +19,7 @@ const mockFs = fs as jest.Mocked<typeof fs>;
 
 describe('GitignoreManager', () => {
   const testBasePath = '/test/project';
-  
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockFs.readFile.mockResolvedValue('');
@@ -51,7 +51,7 @@ describe('GitignoreManager', () => {
     it('should do nothing when disabled', async () => {
       const manager = new GitignoreManager({ enabled: false });
       const result = await manager.updateGitignore(['.cursor/rules/test.mdc']);
-      
+
       expect(result.success).toBe(true);
       expect(result.added).toEqual([]);
       expect(result.messages).toEqual(['GitignoreManager is disabled']);
@@ -60,14 +60,14 @@ describe('GitignoreManager', () => {
 
     it('should create .gitignore if it does not exist', async () => {
       mockFs.readFile
-        .mockRejectedValueOnce({ code: 'ENOENT' })  // .gitignore doesn't exist
-        .mockResolvedValueOnce('')                  // Return empty after creation
-        .mockResolvedValueOnce('')                  // .rulesetkeep doesn't exist
-        .mockResolvedValueOnce('');                 // .rulesetignore doesn't exist
+        .mockRejectedValueOnce({ code: 'ENOENT' }) // .gitignore doesn't exist
+        .mockResolvedValueOnce('') // Return empty after creation
+        .mockResolvedValueOnce('') // .rulesetkeep doesn't exist
+        .mockResolvedValueOnce(''); // .rulesetignore doesn't exist
 
       const manager = new GitignoreManager({}, testBasePath);
       const result = await manager.updateGitignore(['.cursor/rules/test.mdc']);
-      
+
       expect(mockFs.writeFile).toHaveBeenCalledWith(
         path.join(testBasePath, '.gitignore'),
         '',
@@ -87,17 +87,17 @@ describe('GitignoreManager', () => {
       const manager = new GitignoreManager({}, testBasePath);
       const result = await manager.updateGitignore([
         '.cursor/rules/test.mdc',
-        '.windsurf/rules/test.md'
+        '.windsurf/rules/test.md',
       ]);
-      
+
       expect(result.success).toBe(true);
       expect(result.added).toEqual([
         '.cursor/rules/test.mdc',
-        '.windsurf/rules/test.md'
+        '.windsurf/rules/test.md',
       ]);
-      
-      const writeCall = mockFs.writeFile.mock.calls.find(call => 
-        call[0] === path.join(testBasePath, '.gitignore')
+
+      const writeCall = mockFs.writeFile.mock.calls.find(
+        (call) => call[0] === path.join(testBasePath, '.gitignore')
       );
       expect(writeCall).toBeDefined();
       const writtenContent = writeCall![1] as string;
@@ -127,11 +127,11 @@ dist/`;
 
       const manager = new GitignoreManager({}, testBasePath);
       const result = await manager.updateGitignore(['.cursor/rules/new.mdc']);
-      
+
       expect(result.success).toBe(true);
-      
-      const writeCall = mockFs.writeFile.mock.calls.find(call => 
-        call[0] === path.join(testBasePath, '.gitignore')
+
+      const writeCall = mockFs.writeFile.mock.calls.find(
+        (call) => call[0] === path.join(testBasePath, '.gitignore')
       );
       const writtenContent = writeCall![1] as string;
       expect(writtenContent).toContain('.cursor/rules/old.mdc');
@@ -154,11 +154,11 @@ dist/`;
 
       const manager = new GitignoreManager({}, testBasePath);
       const result = await manager.updateGitignore([
-        '.cursor/rules/important.mdc',  // Should be kept
-        '.cursor/rules/normal.mdc',     // Should be ignored
-        'temp.tmp'                      // Should be ignored by .rulesetignore
+        '.cursor/rules/important.mdc', // Should be kept
+        '.cursor/rules/normal.mdc', // Should be ignored
+        'temp.tmp', // Should be ignored by .rulesetignore
       ]);
-      
+
       expect(result.success).toBe(true);
       expect(result.kept).toContain('.cursor/rules/important.mdc');
       expect(result.added).toContain('.cursor/rules/normal.mdc');
@@ -170,7 +170,7 @@ dist/`;
 
       const manager = new GitignoreManager({}, testBasePath);
       const result = await manager.updateGitignore(['.cursor/rules/test.mdc']);
-      
+
       expect(result.success).toBe(false);
       expect(result.messages[0]).toContain('Failed to update .gitignore');
     });
@@ -190,7 +190,7 @@ dist/`;
 
       const manager = new GitignoreManager({}, testBasePath);
       await manager.updateGitignore(['.cursor/rules/test.mdc']);
-      
+
       // Should only be called once to create the file if it doesn't exist
       expect(mockFs.writeFile).toHaveBeenCalledTimes(0);
     });
@@ -210,10 +210,10 @@ dist/`;
 
       const manager = new GitignoreManager({}, testBasePath);
       const overrides = await manager.readOverrides();
-      
+
       expect(overrides.keep).toEqual([
         '.cursor/rules/important.mdc',
-        '.windsurf/rules/keep.md'
+        '.windsurf/rules/keep.md',
       ]);
       expect(overrides.ignore).toEqual(['*.tmp', 'dist/']);
     });
@@ -223,7 +223,7 @@ dist/`;
 
       const manager = new GitignoreManager({}, testBasePath);
       const overrides = await manager.readOverrides();
-      
+
       expect(overrides.keep).toEqual([]);
       expect(overrides.ignore).toEqual([]);
       expect(overrides.config).toEqual([]);
@@ -238,7 +238,7 @@ dist/`;
       };
       const manager = new GitignoreManager(config, testBasePath);
       const overrides = await manager.readOverrides();
-      
+
       expect(overrides.keep).toEqual(['important.txt']);
       expect(overrides.config).toEqual(['*.temp']);
     });
@@ -249,7 +249,7 @@ dist/`;
       const manager = new GitignoreManager({}, testBasePath);
       await manager.readOverrides();
       await manager.readOverrides(); // Second call
-      
+
       // Should only read files once
       expect(mockFs.readFile).toHaveBeenCalledTimes(2); // Once for each override file
     });
@@ -261,7 +261,7 @@ dist/`;
       await manager.readOverrides();
       manager.clearCache();
       await manager.readOverrides();
-      
+
       // Should read files twice due to cache clear
       expect(mockFs.readFile).toHaveBeenCalledTimes(4);
     });
@@ -288,7 +288,7 @@ dist/`;
 
       const manager = new GitignoreManager({}, testBasePath);
       await manager.readOverrides(); // Load overrides
-      
+
       expect(manager.shouldIgnore('.cursor/rules/important.mdc')).toBe(false);
       expect(manager.shouldIgnore('.cursor/rules/other.mdc')).toBe(true);
     });
@@ -303,7 +303,7 @@ dist/`;
 
       const manager = new GitignoreManager({}, testBasePath);
       await manager.readOverrides(); // Load overrides
-      
+
       expect(manager.shouldIgnore('file.tmp')).toBe(true);
       expect(manager.shouldIgnore('file.js')).toBe(true); // Default behavior
     });
@@ -318,14 +318,17 @@ dist/`;
         throw { code: 'ENOENT' };
       });
 
-      const manager = new GitignoreManager({
-        commentPrefix: 'MyTool'
-      }, testBasePath);
-      
+      const manager = new GitignoreManager(
+        {
+          commentPrefix: 'MyTool',
+        },
+        testBasePath
+      );
+
       await manager.updateGitignore(['.cursor/rules/test.mdc']);
-      
-      const writeCall = mockFs.writeFile.mock.calls.find(call => 
-        call[0] === path.join(testBasePath, '.gitignore')
+
+      const writeCall = mockFs.writeFile.mock.calls.find(
+        (call) => call[0] === path.join(testBasePath, '.gitignore')
       );
       const writtenContent = writeCall![1] as string;
       expect(writtenContent).toContain('# START MyTool Generated Files');
@@ -343,10 +346,10 @@ dist/`;
       const manager = new GitignoreManager({}, testBasePath);
       const result = await manager.updateGitignore([
         '.cursor/rules/test.mdc',
-        './cursor/rules/test.mdc',  // Same file, different path format
-        '.cursor/rules/test.mdc'    // Exact duplicate
+        './cursor/rules/test.mdc', // Same file, different path format
+        '.cursor/rules/test.mdc', // Exact duplicate
       ]);
-      
+
       expect(result.added).toEqual(['.cursor/rules/test.mdc']);
     });
 
@@ -360,10 +363,10 @@ dist/`;
 
       const manager = new GitignoreManager({}, testBasePath);
       const result = await manager.updateGitignore([
-        '.cursor\\rules\\test.mdc',  // Windows path
-        '.cursor/rules/test.mdc'    // Unix path
+        '.cursor\\rules\\test.mdc', // Windows path
+        '.cursor/rules/test.mdc', // Unix path
       ]);
-      
+
       expect(result.added).toEqual(['.cursor/rules/test.mdc']);
     });
   });

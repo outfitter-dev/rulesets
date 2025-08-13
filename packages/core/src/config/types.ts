@@ -119,38 +119,52 @@ export interface ConfigLoader {
   /**
    * Load configuration from project path with hierarchical discovery
    */
-  loadConfig(context: ConfigContext, options?: ConfigLoadOptions): Promise<ConfigLoadResult>;
-  
+  loadConfig(
+    context: ConfigContext,
+    options?: ConfigLoadOptions
+  ): Promise<ConfigLoadResult>;
+
   /**
    * Validate configuration against schema
    */
-  validateConfig(config: unknown): Promise<{ valid: boolean; errors: string[]; warnings: string[] }>;
-  
+  validateConfig(
+    config: unknown
+  ): Promise<{ valid: boolean; errors: string[]; warnings: string[] }>;
+
   /**
    * Find configuration file starting from given path
    */
-  findConfigFile(startPath: string, options?: ConfigLoadOptions): Promise<ConfigFileResult | null>;
-  
+  findConfigFile(
+    startPath: string,
+    options?: ConfigLoadOptions
+  ): Promise<ConfigFileResult | null>;
+
   /**
    * Parse configuration file content
    */
   parseConfigFile(filePath: string, content: string): Promise<RulesetConfig>;
-  
+
   /**
    * Merge multiple configurations with proper precedence
    */
   mergeConfigs(configs: RulesetConfig[]): RulesetConfig;
-  
+
   /**
    * Apply environment variable overrides
    */
-  applyEnvOverrides(config: RulesetConfig, env: Record<string, string>, prefix?: string): RulesetConfig;
+  applyEnvOverrides(
+    config: RulesetConfig,
+    env: Record<string, string>,
+    prefix?: string
+  ): RulesetConfig;
 }
 
 /**
  * Default configuration values
  */
-export const DEFAULT_CONFIG: Required<Omit<RulesetConfig, 'providers' | 'options'>> & {
+export const DEFAULT_CONFIG: Required<
+  Omit<RulesetConfig, 'providers' | 'options'>
+> & {
   providers: Record<string, ProviderConfig>;
   options: Record<string, unknown>;
 } = {

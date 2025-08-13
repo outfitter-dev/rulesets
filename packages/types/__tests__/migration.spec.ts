@@ -3,41 +3,36 @@
  * Tests configuration migration, batch operations, error handling, and analytics
  */
 
-import { describe, test, expect, beforeEach } from 'bun:test';
+import { beforeEach, describe, expect, test } from 'bun:test';
 import {
-  // Migration interfaces
-  type LegacyDestinationConfig,
-  type MigrationResult,
-  type MigrationError,
-  type MigrationWarning,
-  type MigrationMetadata,
-  type MigrationSummary,
-  
-  // Migration functions
-  migrateDestinationConfig,
-  migratePropertyScope,
-  migrateLinterConfig,
-  isLegacyConfig,
-  getMigrationRecommendations,
-  validateMigrationCompleteness,
-  batchMigrateConfigs,
-  summarizeMigrationResults,
-} from '../src/migration';
-
-import {
-  createProviderId,
   createOutputPath,
-  type ProviderId,
-  type OutputPath,
+  createPropertyName,
+  createProviderId,
   type DestinationId,
   type DestPath,
+  type OutputPath,
+  type ProviderId,
 } from '../src/brands';
-
 import {
-  type ProviderConfig,
-  type LinterConfig,
-  type Property,
-} from '../src/provider';
+  batchMigrateConfigs,
+  getMigrationRecommendations,
+  isLegacyConfig,
+  // Migration interfaces
+  type LegacyDestinationConfig,
+  type MigrationError,
+  type MigrationMetadata,
+  type MigrationResult,
+  type MigrationSummary,
+  type MigrationWarning,
+  // Migration functions
+  migrateDestinationConfig,
+  migrateLinterConfig,
+  migratePropertyScope,
+  summarizeMigrationResults,
+  validateMigrationCompleteness,
+} from '../src/migration';
+
+import type { LinterConfig, Property, ProviderConfig } from '../src/provider';
 
 describe('Migration System', () => {
   describe('Legacy Configuration Detection', () => {
@@ -93,16 +88,22 @@ describe('Migration System', () => {
         const recommendations = getMigrationRecommendations(legacyConfig);
 
         expect(recommendations).toHaveLength(3);
-        
-        const fieldRecommendations = recommendations.map(r => r.field);
+
+        const fieldRecommendations = recommendations.map((r) => r.field);
         expect(fieldRecommendations).toContain('destinationId');
         expect(fieldRecommendations).toContain('destPath');
         expect(fieldRecommendations).toContain('allowedDestinations');
 
-        const suggestionTexts = recommendations.map(r => r.suggestion);
-        expect(suggestionTexts.some(s => s?.includes('providerId'))).toBe(true);
-        expect(suggestionTexts.some(s => s?.includes('outputPath'))).toBe(true);
-        expect(suggestionTexts.some(s => s?.includes('allowedProviders'))).toBe(true);
+        const suggestionTexts = recommendations.map((r) => r.suggestion);
+        expect(suggestionTexts.some((s) => s?.includes('providerId'))).toBe(
+          true
+        );
+        expect(suggestionTexts.some((s) => s?.includes('outputPath'))).toBe(
+          true
+        );
+        expect(
+          suggestionTexts.some((s) => s?.includes('allowedProviders'))
+        ).toBe(true);
       });
 
       test('should not recommend changes for modern configs', () => {
@@ -142,7 +143,7 @@ describe('Migration System', () => {
           },
           validation: {
             allowedFormats: ['markdown'],
-            maxLength: 10000,
+            maxLength: 10_000,
           },
         };
 
@@ -191,10 +192,10 @@ describe('Migration System', () => {
 
         for (const config of invalidConfigs) {
           const result = migrateDestinationConfig(config as any);
-          
+
           expect(result.success).toBe(false);
           expect(result.errors.length).toBeGreaterThan(0);
-          
+
           // Note: The migration function may still return a partial result object
           // even when success is false
         }
@@ -212,8 +213,8 @@ describe('Migration System', () => {
         expect(result.success).toBe(true);
         expect(result.warnings.length).toBeGreaterThan(0);
 
-        const deprecatedWarning = result.warnings.find(w => 
-          w.type === 'deprecated' && w.field === 'includeXml'
+        const deprecatedWarning = result.warnings.find(
+          (w) => w.type === 'deprecated' && w.field === 'includeXml'
         );
         expect(deprecatedWarning).toBeDefined();
         expect(deprecatedWarning!.suggestion).toContain('format configuration');
@@ -233,9 +234,13 @@ describe('Migration System', () => {
         expect(result.metadata.timestamp).toBeDefined();
         expect(result.metadata.fieldsProcessed).toContain('destPath');
         expect(result.metadata.fieldsProcessed).toContain('fileNaming');
-        expect(result.metadata.fieldsMigrated).toContain('destPath -> outputPath');
+        expect(result.metadata.fieldsMigrated).toContain(
+          'destPath -> outputPath'
+        );
         expect(result.metadata.fieldsMigrated).toContain('fileNaming');
-        expect(result.metadata.assumptionsMade).toContain('format defaulted to markdown');
+        expect(result.metadata.assumptionsMade).toContain(
+          'destination ID maps to provider ID'
+        );
       });
 
       test('should handle migration errors gracefully', () => {
@@ -267,9 +272,11 @@ describe('Migration System', () => {
         const result = migrateDestinationConfig(legacyConfig);
 
         expect(result.success).toBe(true);
-        expect(result.warnings.some(w => 
-          w.type === 'data-loss' && w.field === 'validation.maxLength'
-        )).toBe(true);
+        expect(
+          result.warnings.some(
+            (w) => w.type === 'data-loss' && w.field === 'validation.maxLength'
+          )
+        ).toBe(true);
       });
     });
   });
@@ -334,7 +341,9 @@ describe('Migration System', () => {
 
         expect(result.warnings.length).toBeGreaterThan(0);
         expect(result.warnings[0].type).toBe('assumption');
-        expect(result.warnings[0].message).toContain('Destination scope migrated to provider scope');
+        expect(result.warnings[0].message).toContain(
+          'Destination scope migrated to provider scope'
+        );
       });
     });
   });
@@ -354,7 +363,10 @@ describe('Migration System', () => {
         expect(result.result).toBeDefined();
 
         const migratedConfig = result.result!;
-        expect(migratedConfig.allowedProviders).toEqual(['cursor', 'claude-code']);
+        expect(migratedConfig.allowedProviders).toEqual([
+          'cursor',
+          'claude-code',
+        ]);
         expect(migratedConfig.requireRulesetsVersion).toBe(true);
         expect(migratedConfig.maxErrors).toBe(10);
       });
@@ -383,7 +395,9 @@ describe('Migration System', () => {
 
         expect(result.warnings.length).toBeGreaterThan(0);
         expect(result.warnings[0].type).toBe('assumption');
-        expect(result.warnings[0].message).toContain('Destination IDs migrated to provider IDs');
+        expect(result.warnings[0].message).toContain(
+          'Destination IDs migrated to provider IDs'
+        );
       });
 
       test('should handle migration errors', () => {
@@ -391,7 +405,7 @@ describe('Migration System', () => {
         const invalidConfig = null as any;
 
         expect(() => migrateLinterConfig(invalidConfig)).not.toThrow();
-        
+
         // The function should handle this gracefully
         const result = migrateLinterConfig(invalidConfig);
         expect(result.success).toBe(false);
@@ -415,7 +429,10 @@ describe('Migration System', () => {
           format: 'markdown',
         };
 
-        const warnings = validateMigrationCompleteness(originalConfig, migratedConfig);
+        const warnings = validateMigrationCompleteness(
+          originalConfig,
+          migratedConfig
+        );
         expect(warnings).toHaveLength(0);
       });
 
@@ -434,7 +451,10 @@ describe('Migration System', () => {
           // Missing extraField
         };
 
-        const warnings = validateMigrationCompleteness(originalConfig, migratedConfig);
+        const warnings = validateMigrationCompleteness(
+          originalConfig,
+          migratedConfig
+        );
         expect(warnings.length).toBeGreaterThan(0);
         expect(warnings[0].type).toBe('data-loss');
         expect(warnings[0].message).toContain('extraField');
@@ -495,7 +515,10 @@ describe('Migration System', () => {
 
         expect(results.linter.success).toBe(true);
         const linterResult = results.linter.result as LinterConfig;
-        expect(linterResult.allowedProviders).toEqual(['cursor', 'claude-code']);
+        expect(linterResult.allowedProviders).toEqual([
+          'cursor',
+          'claude-code',
+        ]);
       });
 
       test('should handle non-legacy configs gracefully', () => {
@@ -578,8 +601,16 @@ describe('Migration System', () => {
           failure1: {
             success: false,
             errors: [
-              { type: 'validation' as const, message: 'Test error', code: 'TEST_ERROR' },
-              { type: 'missing' as const, message: 'Missing field', code: 'MISSING_FIELD' },
+              {
+                type: 'validation' as const,
+                message: 'Test error',
+                code: 'TEST_ERROR',
+              },
+              {
+                type: 'missing' as const,
+                message: 'Missing field',
+                code: 'MISSING_FIELD',
+              },
             ],
             warnings: [],
             metadata: {
@@ -745,7 +776,9 @@ describe('Migration System', () => {
         expect(error).toHaveProperty('type');
         expect(error).toHaveProperty('message');
         expect(error).toHaveProperty('code');
-        expect(['validation', 'mapping', 'incompatible', 'missing']).toContain(error.type);
+        expect(['validation', 'mapping', 'incompatible', 'missing']).toContain(
+          error.type
+        );
         expect(typeof error.message).toBe('string');
         expect(typeof error.code).toBe('string');
       }
@@ -765,7 +798,9 @@ describe('Migration System', () => {
       for (const warning of result.warnings) {
         expect(warning).toHaveProperty('type');
         expect(warning).toHaveProperty('message');
-        expect(['deprecated', 'fallback', 'assumption', 'data-loss']).toContain(warning.type);
+        expect(['deprecated', 'fallback', 'assumption', 'data-loss']).toContain(
+          warning.type
+        );
         expect(typeof warning.message).toBe('string');
       }
     });

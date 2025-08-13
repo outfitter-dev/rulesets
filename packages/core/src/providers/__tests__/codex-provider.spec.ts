@@ -1,9 +1,13 @@
 // TLDR: Unit tests for the Codex provider (Rulesets v1)
 
+import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test';
+import type {
+  CompiledDoc,
+  Logger,
+  ProviderCompilationContext,
+} from '@rulesets/types';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test';
-import type { CompiledDoc, Logger, ProviderCompilationContext } from '@rulesets/types';
 import { CodexProvider } from '../codex-provider';
 
 // Mock fs using Bun's mock API
@@ -101,7 +105,10 @@ describe('CodexProvider', () => {
     });
 
     it('should require special handling for Codex features', () => {
-      expect(provider.capabilities.requiresSpecialHandling).toEqual(['codex-home', 'mcp-config']);
+      expect(provider.capabilities.requiresSpecialHandling).toEqual([
+        'codex-home',
+        'mcp-config',
+      ]);
     });
   });
 
@@ -133,7 +140,9 @@ describe('CodexProvider', () => {
       expect(mcpConfigProp.type).toBe('object');
       expect(mcpConfigProp.properties.enabled).toBeDefined();
       expect(mcpConfigProp.properties.outputPath).toBeDefined();
-      expect(mcpConfigProp.properties.outputPath.default).toBe('.codex/config.toml');
+      expect(mcpConfigProp.properties.outputPath.default).toBe(
+        '.codex/config.toml'
+      );
       expect(mcpConfigProp.properties.servers).toBeDefined();
     });
 
@@ -146,14 +155,16 @@ describe('CodexProvider', () => {
 
     it('should include layered instructions option', () => {
       const schema = provider.configSchema();
-      const layeredInstructionsProp = schema.properties!.layeredInstructions as any;
+      const layeredInstructionsProp = schema.properties!
+        .layeredInstructions as any;
       expect(layeredInstructionsProp.type).toBe('boolean');
       expect(layeredInstructionsProp.default).toBe(true);
     });
 
     it('should include project context option', () => {
       const schema = provider.configSchema();
-      const includeProjectContextProp = schema.properties!.includeProjectContext as any;
+      const includeProjectContextProp = schema.properties!
+        .includeProjectContext as any;
       expect(includeProjectContextProp.type).toBe('boolean');
       expect(includeProjectContextProp.default).toBe(true);
     });
@@ -201,7 +212,8 @@ describe('CodexProvider', () => {
   describe('write', () => {
     const mockCompiledDoc: CompiledDoc = {
       source: {
-        content: '---\nruleset:\n  version: 1.0.0\n---\n\n# Codex Rules\n\nThis is test content.',
+        content:
+          '---\nruleset:\n  version: 1.0.0\n---\n\n# Codex Rules\n\nThis is test content.',
         frontmatter: { ruleset: { version: '1.0.0' } },
       },
       ast: {
@@ -355,7 +367,11 @@ describe('CodexProvider', () => {
           servers: {
             filesystem: {
               command: 'npx',
-              args: ['-y', '@modelcontextprotocol/server-filesystem', '/path/to/project'],
+              args: [
+                '-y',
+                '@modelcontextprotocol/server-filesystem',
+                '/path/to/project',
+              ],
             },
             database: {
               command: 'mcp-db-server',
@@ -382,21 +398,25 @@ describe('CodexProvider', () => {
       expect(result.metadata.mcpEnabled).toBe(true);
 
       // Verify directory creation
-      expect(mockMkdir).toHaveBeenCalledWith(path.dirname(mcpPath), { recursive: true });
+      expect(mockMkdir).toHaveBeenCalledWith(path.dirname(mcpPath), {
+        recursive: true,
+      });
 
       // Verify TOML content structure
       const writeFileCalls = mockWriteFile.mock.calls;
-      const tomlCall = writeFileCalls.find(call => 
+      const tomlCall = writeFileCalls.find((call) =>
         call[0].toString().includes('config.toml')
       );
       expect(tomlCall).toBeDefined();
-      
+
       const tomlContent = tomlCall![1] as string;
       expect(tomlContent).toContain('[mcp]');
       expect(tomlContent).toContain('enabled = true');
       expect(tomlContent).toContain('[mcp.servers.filesystem]');
       expect(tomlContent).toContain('command = "npx"');
-      expect(tomlContent).toContain('args = ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/project"]');
+      expect(tomlContent).toContain(
+        'args = ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/project"]'
+      );
       expect(tomlContent).toContain('[mcp.servers.database]');
       expect(tomlContent).toContain('[mcp.servers.database.env]');
       expect(tomlContent).toContain('DB_PASSWORD = "secret"');
@@ -447,7 +467,7 @@ describe('CodexProvider', () => {
   describe('generateMcpToml', () => {
     it('should generate valid TOML with complex server configuration', async () => {
       const provider = new CodexProvider() as any;
-      
+
       const servers = {
         filesystem: {
           command: 'npx',
@@ -475,7 +495,9 @@ describe('CodexProvider', () => {
       // Check filesystem server
       expect(toml).toContain('[mcp.servers.filesystem]');
       expect(toml).toContain('command = "npx"');
-      expect(toml).toContain('args = ["-y", "@modelcontextprotocol/server-filesystem", "/project"]');
+      expect(toml).toContain(
+        'args = ["-y", "@modelcontextprotocol/server-filesystem", "/project"]'
+      );
       expect(toml).toContain('[mcp.servers.filesystem.env]');
       expect(toml).toContain('NODE_ENV = "production"');
       expect(toml).toContain('LOG_LEVEL = "info"');

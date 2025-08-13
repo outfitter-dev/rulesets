@@ -25,11 +25,11 @@ describe('GitignoreManager Integration', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Mock successful file operations
     mockFs.mkdir.mockResolvedValue(undefined);
     mockFs.writeFile.mockResolvedValue(undefined);
-    
+
     // Mock reading source file
     mockFs.readFile.mockImplementation(async (filePath: string) => {
       if (filePath === testSourcePath) {
@@ -44,11 +44,11 @@ ruleset:
 These are test instructions for the AI assistant.
 {{/instructions}}`;
       }
-      
+
       if (filePath.endsWith('.gitignore')) {
         return '# Existing gitignore\nnode_modules/\n';
       }
-      
+
       // Override files don't exist
       throw { code: 'ENOENT' };
     });
@@ -69,26 +69,31 @@ These are test instructions for the AI assistant.
       await runRulesetsV0(testSourcePath, logger);
 
       // Verify .gitignore was updated
-      const gitignoreWriteCalls = mockFs.writeFile.mock.calls.filter(call =>
+      const gitignoreWriteCalls = mockFs.writeFile.mock.calls.filter((call) =>
         (call[0] as string).endsWith('.gitignore')
       );
-      
+
       expect(gitignoreWriteCalls.length).toBeGreaterThan(0);
-      
+
       const gitignoreContent = gitignoreWriteCalls[0][1] as string;
       expect(gitignoreContent).toContain('# Existing gitignore');
       expect(gitignoreContent).toContain('# START Rulesets Generated Files');
       expect(gitignoreContent).toContain('# END Rulesets Generated Files');
-      
+
       // Should contain generated file paths from both providers
       expect(gitignoreContent).toMatch(/\.cursor\/rules\/.*\.mdc/);
       expect(gitignoreContent).toMatch(/\.windsurf\/rules\/.*\.md/);
-      
+
       // Verify logger messages
-      expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('Updating .gitignore'));
-      expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('Added'));
-      expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('Generated'));
-      
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining('Updating .gitignore')
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining('Added')
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining('Generated')
+      );
     } finally {
       mockCwd.mockRestore();
       process.chdir(originalCwd);
@@ -112,11 +117,11 @@ ruleset:
 
 # Test Rules`;
       }
-      
+
       if (filePath.endsWith('.gitignore')) {
         throw new Error('Permission denied');
       }
-      
+
       throw { code: 'ENOENT' };
     });
 
@@ -128,9 +133,12 @@ ruleset:
       await runRulesetsV0(testSourcePath, logger);
 
       // Verify warning was logged but process continued
-      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('GitignoreManager error'));
-      expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('processing completed successfully'));
-      
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('GitignoreManager error')
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining('processing completed successfully')
+      );
     } finally {
       mockCwd.mockRestore();
       process.chdir(originalCwd);
@@ -152,15 +160,15 @@ ruleset:
 
 # Test Rules`;
       }
-      
+
       if (filePath.endsWith('.gitignore')) {
         return 'node_modules/\n';
       }
-      
+
       if (filePath.endsWith('.rulesetkeep')) {
         return '.cursor/rules/*\n# Keep cursor rules in git\n';
       }
-      
+
       throw { code: 'ENOENT' };
     });
 
@@ -172,8 +180,9 @@ ruleset:
 
       // Verify files were kept due to override rules
       expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('Kept'));
-      expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('override rules'));
-      
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining('override rules')
+      );
     } finally {
       mockCwd.mockRestore();
       process.chdir(originalCwd);
@@ -187,12 +196,14 @@ ruleset:
 
     // Test GitignoreManager with disabled config
     const gitignoreManager = new GitignoreManager({ enabled: false });
-    const result = await gitignoreManager.updateGitignore(['.cursor/rules/test.mdc']);
-    
+    const result = await gitignoreManager.updateGitignore([
+      '.cursor/rules/test.mdc',
+    ]);
+
     expect(result.success).toBe(true);
     expect(result.added).toEqual([]);
     expect(result.messages).toEqual(['GitignoreManager is disabled']);
-    
+
     // Verify no file operations occurred
     expect(mockFs.readFile).not.toHaveBeenCalled();
     expect(mockFs.writeFile).not.toHaveBeenCalled();
@@ -200,7 +211,7 @@ ruleset:
 
   it('should normalize paths correctly across platforms', async () => {
     const gitignoreManager = new GitignoreManager({}, testProjectPath);
-    
+
     mockFs.readFile.mockImplementation(async (filePath: string) => {
       if (filePath.endsWith('.gitignore')) {
         return '';
@@ -209,9 +220,9 @@ ruleset:
     });
 
     const result = await gitignoreManager.updateGitignore([
-      '/test/project/.cursor/rules/test.mdc',  // Absolute path
-      '.\\windsurf\\rules\\test.md',            // Windows path
-      './another/test.mdc',                     // Relative path with ./
+      '/test/project/.cursor/rules/test.mdc', // Absolute path
+      '.\\windsurf\\rules\\test.md', // Windows path
+      './another/test.mdc', // Relative path with ./
     ]);
 
     expect(result.success).toBe(true);

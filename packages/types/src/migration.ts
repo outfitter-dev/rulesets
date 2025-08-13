@@ -3,19 +3,9 @@
  * Provides backwards compatibility and safe migration paths
  */
 
-import type {
-  ProviderId,
-  OutputPath,
-  DestinationId,
-  DestPath,
-} from './brands';
-import type {
-  ProviderConfig,
-} from './provider';
-import type {
-  LinterConfig,
-  Property,
-} from './ruleset-context';
+import type { DestinationId, DestPath, OutputPath, ProviderId } from './brands';
+import type { ProviderConfig } from './provider';
+import type { LinterConfig, Property } from './ruleset-context';
 
 /**
  * Legacy destination configuration interface
@@ -99,12 +89,18 @@ export function migrateDestinationConfig(
         message: 'Legacy config must be an object',
         code: 'INVALID_LEGACY_CONFIG',
       });
-      return createMigrationResult<ProviderConfig>(false, undefined, errors, warnings, {
-        fieldsProcessed,
-        fieldsMigrated,
-        fieldsSkipped,
-        assumptionsMade,
-      });
+      return createMigrationResult<ProviderConfig>(
+        false,
+        undefined,
+        errors,
+        warnings,
+        {
+          fieldsProcessed,
+          fieldsMigrated,
+          fieldsSkipped,
+          assumptionsMade,
+        }
+      );
     }
 
     // Start migration - build new config object instead of mutating
@@ -119,8 +115,7 @@ export function migrateDestinationConfig(
     // Migrate ID: DestinationId -> ProviderId (direct mapping)
     if ('id' in legacyConfig) {
       fieldsProcessed.push('id');
-      configBuilder.outputPath = legacyConfig.destPath as unknown as OutputPath;
-      fieldsMigrated.push('id -> outputPath mapping');
+      // ID doesn't directly affect outputPath, it's just tracked for metadata
       warnings.push({
         type: 'assumption',
         message: 'ID migration assumes destination ID maps to provider ID',
@@ -161,7 +156,6 @@ export function migrateDestinationConfig(
     } else {
       // Default to markdown if no format specified
       configBuilder.format = 'markdown';
-      assumptionsMade.push('format defaulted to markdown');
       warnings.push({
         type: 'assumption',
         message: 'No format specified, defaulting to markdown',
@@ -177,12 +171,13 @@ export function migrateDestinationConfig(
         customRules: [], // Empty rules array for now
       };
       fieldsMigrated.push('validation');
-      
+
       if (legacyConfig.validation.maxLength) {
         // Note: maxLength doesn't directly map, add as warning
         warnings.push({
           type: 'data-loss',
-          message: 'maxLength validation property not directly supported in new format',
+          message:
+            'maxLength validation property not directly supported in new format',
           suggestion: 'Consider implementing as custom validation rule',
           field: 'validation.maxLength',
         });
@@ -222,7 +217,6 @@ export function migrateDestinationConfig(
         assumptionsMade,
       }
     );
-
   } catch (error) {
     errors.push({
       type: 'validation',
@@ -230,24 +224,32 @@ export function migrateDestinationConfig(
       code: 'MIGRATION_ERROR',
     });
 
-    return createMigrationResult<ProviderConfig>(false, undefined, errors, warnings, {
-      fieldsProcessed,
-      fieldsMigrated,
-      fieldsSkipped,
-      assumptionsMade,
-    });
+    return createMigrationResult<ProviderConfig>(
+      false,
+      undefined,
+      errors,
+      warnings,
+      {
+        fieldsProcessed,
+        fieldsMigrated,
+        fieldsSkipped,
+        assumptionsMade,
+      }
+    );
   }
 }
 
 /**
  * Migrate legacy property with destination scope to provider scope
  */
-export function migratePropertyScope(legacyProperty: Property): MigrationResult<Property | undefined> {
+export function migratePropertyScope(
+  legacyProperty: Property
+): MigrationResult<Property | undefined> {
   const errors: MigrationError[] = [];
   const warnings: MigrationWarning[] = [];
 
   try {
-    if (!legacyProperty.scope && !legacyProperty.legacyScope) {
+    if (!(legacyProperty.scope || legacyProperty.legacyScope)) {
       // No scope to migrate
       return createMigrationResult(true, legacyProperty, errors, warnings, {
         fieldsProcessed: ['scope'],
@@ -259,7 +261,7 @@ export function migratePropertyScope(legacyProperty: Property): MigrationResult<
 
     // Use legacy scope if present, otherwise scope is already provider-based
     const scopeToMigrate = legacyProperty.legacyScope || legacyProperty.scope;
-    
+
     const migratedProperty: Property = {
       ...legacyProperty,
       scope: scopeToMigrate as ProviderId,
@@ -280,7 +282,6 @@ export function migratePropertyScope(legacyProperty: Property): MigrationResult<
       fieldsSkipped: [],
       assumptionsMade: ['destination scope maps to provider scope'],
     });
-
   } catch (error) {
     errors.push({
       type: 'validation',
@@ -300,7 +301,9 @@ export function migratePropertyScope(legacyProperty: Property): MigrationResult<
 /**
  * Migrate legacy linter configuration
  */
-export function migrateLinterConfig(legacyConfig: LinterConfig): MigrationResult<LinterConfig | undefined> {
+export function migrateLinterConfig(
+  legacyConfig: LinterConfig
+): MigrationResult<LinterConfig | undefined> {
   const errors: MigrationError[] = [];
   const warnings: MigrationWarning[] = [];
   const fieldsProcessed: string[] = [];
@@ -320,7 +323,7 @@ export function migrateLinterConfig(legacyConfig: LinterConfig): MigrationResult
     if (legacyConfig.allowedDestinations) {
       fieldsProcessed.push('allowedDestinations');
       fieldsMigrated.push('allowedDestinations -> allowedProviders');
-      
+
       warnings.push({
         type: 'assumption',
         message: 'Destination IDs migrated to provider IDs',
@@ -333,9 +336,10 @@ export function migrateLinterConfig(legacyConfig: LinterConfig): MigrationResult
       fieldsProcessed,
       fieldsMigrated,
       fieldsSkipped: [],
-      assumptionsMade: legacyConfig.allowedDestinations ? ['destination IDs map to provider IDs'] : [],
+      assumptionsMade: legacyConfig.allowedDestinations
+        ? ['destination IDs map to provider IDs']
+        : [],
     });
-
   } catch (error) {
     errors.push({
       type: 'validation',
@@ -343,12 +347,18 @@ export function migrateLinterConfig(legacyConfig: LinterConfig): MigrationResult
       code: 'LINTER_CONFIG_MIGRATION_ERROR',
     });
 
-    return createMigrationResult<LinterConfig>(false, undefined, errors, warnings, {
-      fieldsProcessed,
-      fieldsMigrated,
-      fieldsSkipped: [],
-      assumptionsMade: [],
-    });
+    return createMigrationResult<LinterConfig>(
+      false,
+      undefined,
+      errors,
+      warnings,
+      {
+        fieldsProcessed,
+        fieldsMigrated,
+        fieldsSkipped: [],
+        assumptionsMade: [],
+      }
+    );
   }
 }
 
@@ -370,13 +380,15 @@ export function isLegacyConfig(config: unknown): boolean {
     'legacyDestPath',
   ];
 
-  return legacyFields.some(field => field in config);
+  return legacyFields.some((field) => field in config);
 }
 
 /**
  * Extract migration recommendations from a configuration
  */
-export function getMigrationRecommendations(config: unknown): MigrationWarning[] {
+export function getMigrationRecommendations(
+  config: unknown
+): MigrationWarning[] {
   const recommendations: MigrationWarning[] = [];
 
   if (!config || typeof config !== 'object') {
@@ -423,16 +435,20 @@ export function validateMigrationCompleteness(
 ): MigrationWarning[] {
   const warnings: MigrationWarning[] = [];
 
-  if (!originalConfig || !migratedConfig) {
+  if (!(originalConfig && migratedConfig)) {
     warnings.push({
       type: 'data-loss',
-      message: 'Unable to validate migration completeness due to missing configuration',
+      message:
+        'Unable to validate migration completeness due to missing configuration',
     });
     return warnings;
   }
 
   // Type guard to ensure objects
-  if (typeof originalConfig !== 'object' || typeof migratedConfig !== 'object') {
+  if (
+    typeof originalConfig !== 'object' ||
+    typeof migratedConfig !== 'object'
+  ) {
     warnings.push({
       type: 'data-loss',
       message: 'Configuration must be objects for completeness validation',
@@ -440,12 +456,32 @@ export function validateMigrationCompleteness(
     return warnings;
   }
 
+  // Define known field mappings
+  const fieldMappings = {
+    destinationId: 'providerId',
+    destPath: 'outputPath',
+    allowedDestinations: 'allowedProviders',
+    legacyScope: 'scope',
+    legacyId: 'id',
+    legacyDestPath: 'outputPath',
+  };
+
   // Check for potential data loss
   const originalKeys = Object.keys(originalConfig as Record<string, unknown>);
   const migratedKeys = Object.keys(migratedConfig as Record<string, unknown>);
 
-  const missingKeys = originalKeys.filter(key => !migratedKeys.includes(key));
-  
+  const missingKeys = originalKeys.filter((key) => {
+    // Check if key exists directly
+    if (migratedKeys.includes(key)) return false;
+
+    // Check if key has a known mapping
+    const mappedKey = (fieldMappings as any)[key];
+    if (mappedKey && migratedKeys.includes(mappedKey)) return false;
+
+    // Key is truly missing
+    return true;
+  });
+
   if (missingKeys.length > 0) {
     warnings.push({
       type: 'data-loss',
@@ -453,7 +489,6 @@ export function validateMigrationCompleteness(
       suggestion: 'Review missing fields and migrate manually if needed',
     });
   }
-
   return warnings;
 }
 
@@ -493,7 +528,9 @@ export function batchMigrateConfigs(
       // Attempt migration based on config structure
       if (typeof config === 'object' && config !== null) {
         if ('destPath' in config && 'id' in config) {
-          results[key] = migrateDestinationConfig(config as LegacyDestinationConfig);
+          results[key] = migrateDestinationConfig(
+            config as LegacyDestinationConfig
+          );
         } else if ('allowedDestinations' in config) {
           results[key] = migrateLinterConfig(config as LinterConfig);
         } else {
@@ -501,11 +538,14 @@ export function batchMigrateConfigs(
           const configObject = config as Record<string, unknown>;
           results[key] = {
             success: false,
-            errors: [{
-              type: 'incompatible',
-              message: 'Config structure not recognized for automatic migration',
-              code: 'UNKNOWN_LEGACY_FORMAT',
-            }],
+            errors: [
+              {
+                type: 'incompatible',
+                message:
+                  'Config structure not recognized for automatic migration',
+                code: 'UNKNOWN_LEGACY_FORMAT',
+              },
+            ],
             warnings: getMigrationRecommendations(config),
             metadata: {
               version: '1.0.0',
@@ -521,11 +561,13 @@ export function batchMigrateConfigs(
         // Invalid config type
         results[key] = {
           success: false,
-          errors: [{
-            type: 'validation',
-            message: 'Config must be an object',
-            code: 'INVALID_CONFIG_TYPE',
-          }],
+          errors: [
+            {
+              type: 'validation',
+              message: 'Config must be an object',
+              code: 'INVALID_CONFIG_TYPE',
+            },
+          ],
           warnings: [],
           metadata: {
             version: '1.0.0',
@@ -538,22 +580,82 @@ export function batchMigrateConfigs(
         };
       }
     } else {
-      // Not a legacy config, return success with no changes
-      const configObject = config as Record<string, unknown>;
-      results[key] = {
-        success: true,
-        result: config,
-        errors: [],
-        warnings: [],
-        metadata: {
-          version: '1.0.0',
-          timestamp: new Date().toISOString(),
-          fieldsProcessed: typeof config === 'object' && config !== null ? Object.keys(configObject) : [],
-          fieldsMigrated: [],
-          fieldsSkipped: [],
-          assumptionsMade: [],
-        },
-      };
+      // Not a legacy config - check if it's a valid modern config
+      if (typeof config === 'object' && config !== null) {
+        const configObject = config as Record<string, unknown>;
+        const hasProviderFields = Object.keys(configObject).some((key) =>
+          [
+            'provider',
+            'providers',
+            'outputPath',
+            'format',
+            'id',
+            'name',
+            'type',
+          ].includes(key)
+        );
+
+        if (hasProviderFields) {
+          // Modern config, return success with no changes
+          results[key] = {
+            success: true,
+            result: config,
+            errors: [],
+            warnings: [],
+            metadata: {
+              version: '1.0.0',
+              timestamp: new Date().toISOString(),
+              fieldsProcessed: Object.keys(configObject),
+              fieldsMigrated: [],
+              fieldsSkipped: [],
+              assumptionsMade: [],
+            },
+          };
+        } else {
+          // Unrecognized config format
+          results[key] = {
+            success: false,
+            errors: [
+              {
+                type: 'incompatible',
+                message:
+                  'Config structure not recognized - neither legacy nor modern format',
+                code: 'UNKNOWN_LEGACY_FORMAT',
+              },
+            ],
+            warnings: [],
+            metadata: {
+              version: '1.0.0',
+              timestamp: new Date().toISOString(),
+              fieldsProcessed: Object.keys(configObject),
+              fieldsMigrated: [],
+              fieldsSkipped: Object.keys(configObject),
+              assumptionsMade: [],
+            },
+          };
+        }
+      } else {
+        // Invalid config type
+        results[key] = {
+          success: false,
+          errors: [
+            {
+              type: 'validation',
+              message: 'Config must be an object',
+              code: 'INVALID_CONFIG_TYPE',
+            },
+          ],
+          warnings: [],
+          metadata: {
+            version: '1.0.0',
+            timestamp: new Date().toISOString(),
+            fieldsProcessed: [],
+            fieldsMigrated: [],
+            fieldsSkipped: [],
+            assumptionsMade: [],
+          },
+        };
+      }
     }
   }
 
@@ -568,7 +670,7 @@ export function summarizeMigrationResults(
 ): MigrationSummary {
   const errorCounts: Record<string, number> = {};
   const warningCounts: Record<string, number> = {};
-  
+
   let successfulMigrations = 0;
   let failedMigrations = 0;
   let totalErrors = 0;
@@ -597,12 +699,12 @@ export function summarizeMigrationResults(
 
   // Get most common issues
   const mostCommonErrors = Object.entries(errorCounts)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 5)
     .map(([type, count]) => ({ type, count }));
 
   const mostCommonWarnings = Object.entries(warningCounts)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 5)
     .map(([type, count]) => ({ type, count }));
 

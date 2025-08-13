@@ -1,9 +1,13 @@
 // TLDR: Unit tests for the Claude Code provider (Rulesets v1)
 
+import type {
+  CompiledDoc,
+  Logger,
+  ProviderCompilationContext,
+} from '@rulesets/types';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { CompiledDoc, Logger, ProviderCompilationContext } from '@rulesets/types';
 import { ClaudeCodeProvider } from '../claude-code-provider';
 
 vi.mock('fs', () => ({
@@ -46,7 +50,9 @@ describe('ClaudeCodeProvider', () => {
     });
 
     it('should have correct website', () => {
-      expect(provider.website).toBe('https://docs.anthropic.com/en/docs/claude-code');
+      expect(provider.website).toBe(
+        'https://docs.anthropic.com/en/docs/claude-code'
+      );
     });
 
     it('should have correct description', () => {
@@ -91,11 +97,16 @@ describe('ClaudeCodeProvider', () => {
     });
 
     it('should support markdown and mixed formats', () => {
-      expect(provider.capabilities.allowedFormats).toEqual(['markdown', 'mixed']);
+      expect(provider.capabilities.allowedFormats).toEqual([
+        'markdown',
+        'mixed',
+      ]);
     });
 
     it('should require special handling for MCP config', () => {
-      expect(provider.capabilities.requiresSpecialHandling).toEqual(['mcp-config']);
+      expect(provider.capabilities.requiresSpecialHandling).toEqual([
+        'mcp-config',
+      ]);
     });
   });
 
@@ -132,7 +143,8 @@ describe('ClaudeCodeProvider', () => {
 
     it('should include project context option', () => {
       const schema = provider.configSchema();
-      const includeProjectContextProp = schema.properties!.includeProjectContext as any;
+      const includeProjectContextProp = schema.properties!
+        .includeProjectContext as any;
       expect(includeProjectContextProp.type).toBe('boolean');
       expect(includeProjectContextProp.default).toBe(true);
     });
@@ -182,11 +194,13 @@ describe('ClaudeCodeProvider', () => {
       provider.compile = vi.fn().mockImplementation(async () => {
         return {
           success: false,
-          errors: [{
-            type: 'compilation' as const,
-            message: 'Compilation failed',
-            context: { provider: 'claude-code' },
-          }],
+          errors: [
+            {
+              type: 'compilation' as const,
+              message: 'Compilation failed',
+              context: { provider: 'claude-code' },
+            },
+          ],
           warnings: [],
           metadata: {},
           stats: {
@@ -215,7 +229,8 @@ describe('ClaudeCodeProvider', () => {
   describe('write', () => {
     const mockCompiledDoc: CompiledDoc = {
       source: {
-        content: '---\nruleset:\n  version: 1.0.0\n---\n\n# Claude Code Rules\n\nThis is test content.',
+        content:
+          '---\nruleset:\n  version: 1.0.0\n---\n\n# Claude Code Rules\n\nThis is test content.',
         frontmatter: { ruleset: { version: '1.0.0' } },
       },
       ast: {
@@ -391,7 +406,11 @@ describe('ClaudeCodeProvider', () => {
           servers: {
             filesystem: {
               command: 'npx',
-              args: ['-y', '@modelcontextprotocol/server-filesystem', '/path/to/project'],
+              args: [
+                '-y',
+                '@modelcontextprotocol/server-filesystem',
+                '/path/to/project',
+              ],
             },
           },
         },
@@ -412,14 +431,22 @@ describe('ClaudeCodeProvider', () => {
 
       expect(fs.writeFile).toHaveBeenCalledWith(
         mcpPath,
-        JSON.stringify({
-          mcpServers: {
-            filesystem: {
-              command: 'npx',
-              args: ['-y', '@modelcontextprotocol/server-filesystem', '/path/to/project'],
+        JSON.stringify(
+          {
+            mcpServers: {
+              filesystem: {
+                command: 'npx',
+                args: [
+                  '-y',
+                  '@modelcontextprotocol/server-filesystem',
+                  '/path/to/project',
+                ],
+              },
             },
           },
-        }, null, 2),
+          null,
+          2
+        ),
         { encoding: 'utf8' }
       );
 

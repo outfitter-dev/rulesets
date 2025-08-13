@@ -2,12 +2,12 @@
 // Implements Provider terminology while maintaining backwards compatibility
 
 import type { DestinationPlugin, Provider } from '@rulesets/types';
-import { CursorProvider } from './cursor-provider';
-import { WindsurfProvider } from './windsurf-provider';
+import { AmpProvider } from './amp-provider';
 import { ClaudeCodeProvider } from './claude-code-provider';
 import { CodexProvider } from './codex-provider';
-import { AmpProvider } from './amp-provider';
+import { CursorProvider } from './cursor-provider';
 import { OpenCodeProvider } from './opencode-provider';
+import { WindsurfProvider } from './windsurf-provider';
 
 // Create singleton instances of modern providers
 export const cursorProvider = new CursorProvider();
@@ -18,7 +18,10 @@ export const ampProvider = new AmpProvider();
 export const openCodeProvider = new OpenCodeProvider();
 
 // Modern provider registry - primary export for new code
-export const providers: ReadonlyMap<string, Provider> = new Map<string, Provider>([
+export const providers: ReadonlyMap<string, Provider> = new Map<
+  string,
+  Provider
+>([
   ['cursor', cursorProvider],
   ['windsurf', windsurfProvider],
   ['claude-code', claudeCodeProvider],
@@ -64,7 +67,14 @@ export const ampPlugin = ampProvider;
 export const openCodePlugin = openCodeProvider;
 
 // Export classes for testing and extension
-export { CursorProvider, WindsurfProvider, ClaudeCodeProvider, CodexProvider, AmpProvider, OpenCodeProvider };
+export {
+  CursorProvider,
+  WindsurfProvider,
+  ClaudeCodeProvider,
+  CodexProvider,
+  AmpProvider,
+  OpenCodeProvider,
+};
 
 // Export types for modern usage
 export type { Provider } from '@rulesets/types';

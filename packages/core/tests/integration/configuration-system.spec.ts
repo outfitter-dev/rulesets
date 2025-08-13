@@ -1,25 +1,34 @@
 /**
  * Configuration System Integration Tests
- * 
+ *
  * Tests the configuration loading, parsing, validation, and hierarchy system.
  * Validates JSONC and TOML support, environment overrides, and config inheritance.
  */
 
 import { promises as fs } from 'fs';
-import path from 'path';
-import { afterEach, beforeEach, describe, expect, it, vi, beforeAll, afterAll } from 'vitest';
-import { 
-  ConsoleLogger,
-  loadConfig,
-  validateConfig,
-  findConfigFile,
-  parseConfigContent,
-  mergeConfigs,
-  applyEnvOverrides,
-  type RulesetConfig,
-  DEFAULT_CONFIG,
-} from '../../src';
 import { tmpdir } from 'os';
+import path from 'path';
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
+import {
+  applyEnvOverrides,
+  ConsoleLogger,
+  DEFAULT_CONFIG,
+  findConfigFile,
+  loadConfig,
+  mergeConfigs,
+  parseConfigContent,
+  type RulesetConfig,
+  validateConfig,
+} from '../../src';
 
 // Create real temporary directory for integration tests
 const TEST_DIR = path.join(tmpdir(), `rulesets-config-${Date.now()}`);
@@ -55,25 +64,28 @@ describe('Configuration System Integration Tests', () => {
     originalEnv = { ...process.env };
 
     // Clean RULESETS_ environment variables
-    Object.keys(process.env).forEach(key => {
+    Object.keys(process.env).forEach((key) => {
       if (key.startsWith('RULESETS_')) {
         delete process.env[key];
       }
     });
 
     // Create unique test project directory for each test
-    testProjectDir = path.join(TEST_DIR, `config-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`);
+    testProjectDir = path.join(
+      TEST_DIR,
+      `config-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`
+    );
     await fs.mkdir(testProjectDir, { recursive: true });
-    
+
     // Change to test directory for relative path operations
     process.chdir(testProjectDir);
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
-    
+
     // Restore original environment
-    Object.keys(process.env).forEach(key => {
+    Object.keys(process.env).forEach((key) => {
       if (key.startsWith('RULESETS_')) {
         delete process.env[key];
       }
@@ -117,11 +129,15 @@ describe('Configuration System Integration Tests', () => {
       expect(result.config.rulesets.version).toBe('0.1.0');
       expect(result.config.outputDirectory).toBe('.custom/output');
       expect(result.config.providers?.cursor?.enabled).toBe(true);
-      expect(result.config.providers?.cursor?.outputPath).toBe('.cursor/custom.mdc');
+      expect(result.config.providers?.cursor?.outputPath).toBe(
+        '.cursor/custom.mdc'
+      );
       expect(result.config.providers?.windsurf?.enabled).toBe(false);
       expect(result.config.gitignore?.enabled).toBe(true);
-      expect(result.config.gitignore?.options?.comment).toBe('Custom Generated Files');
-      
+      expect(result.config.gitignore?.options?.comment).toBe(
+        'Custom Generated Files'
+      );
+
       expect(result.sources).toContain(configPath);
       expect(result.errors).toBeUndefined();
       expect(result.warnings).toBeUndefined();
@@ -176,7 +192,7 @@ describe('Configuration System Integration Tests', () => {
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined();
       expect(result.errors!.length).toBeGreaterThan(0);
-      
+
       // Should contain validation errors for invalid version, unknown provider, and wrong type
       const errorText = result.errors!.join(' ');
       expect(errorText).toContain('version');
@@ -222,15 +238,22 @@ sort = false
       expect(result.config.rulesets.version).toBe('0.1.0');
       expect(result.config.outputDirectory).toBe('.toml/output');
       expect(result.config.providers?.cursor?.enabled).toBe(true);
-      expect(result.config.providers?.cursor?.outputPath).toBe('.cursor/toml.mdc');
+      expect(result.config.providers?.cursor?.outputPath).toBe(
+        '.cursor/toml.mdc'
+      );
       expect(result.config.providers?.windsurf?.enabled).toBe(true);
       expect(result.config.providers?.['claude-code']?.enabled).toBe(false);
       expect(result.config.gitignore?.enabled).toBe(true);
-      expect(result.config.gitignore?.keep).toEqual(['.cursor/**', '.special/**']);
+      expect(result.config.gitignore?.keep).toEqual([
+        '.cursor/**',
+        '.special/**',
+      ]);
       expect(result.config.gitignore?.ignore).toEqual(['.temp/**']);
-      expect(result.config.gitignore?.options?.comment).toBe('TOML Generated Files');
+      expect(result.config.gitignore?.options?.comment).toBe(
+        'TOML Generated Files'
+      );
       expect(result.config.gitignore?.options?.sort).toBe(false);
-      
+
       expect(result.sources).toContain(configPath);
     });
 
@@ -271,10 +294,10 @@ invalid-key-format = value  # Invalid key format
 
       // Create all config files
       for (const config of configs) {
-        const content = config.name.endsWith('.toml') 
+        const content = config.name.endsWith('.toml')
           ? `[rulesets]\nversion = "0.1.0"\npriority = ${config.priority}`
           : `{"rulesets": {"version": "0.1.0"}, "priority": ${config.priority}}`;
-        
+
         await fs.writeFile(path.join(testProjectDir, config.name), content);
       }
 
@@ -300,8 +323,14 @@ invalid-key-format = value  # Invalid key format
         },
       };
 
-      const parentConfigPath = path.join(testProjectDir, 'ruleset.config.jsonc');
-      await fs.writeFile(parentConfigPath, JSON.stringify(parentConfig, null, 2));
+      const parentConfigPath = path.join(
+        testProjectDir,
+        'ruleset.config.jsonc'
+      );
+      await fs.writeFile(
+        parentConfigPath,
+        JSON.stringify(parentConfig, null, 2)
+      );
 
       // Load config from nested directory
       const result = await loadConfig(subDir, {}, mockLogger);
@@ -317,7 +346,9 @@ invalid-key-format = value  # Invalid key format
       expect(result.success).toBe(true);
       expect(result.config).toEqual(DEFAULT_CONFIG);
       expect(result.sources).toEqual([]);
-      expect(result.warnings).toContain('No configuration file found, using defaults');
+      expect(result.warnings).toContain(
+        'No configuration file found, using defaults'
+      );
     });
   });
 
@@ -350,15 +381,25 @@ invalid-key-format = value  # Invalid key format
 
       expect(result.success).toBe(true);
       expect(result.config.outputDirectory).toBe('.env/output');
-      expect(result.config.providers?.cursor?.outputPath).toBe('.cursor/env.mdc');
+      expect(result.config.providers?.cursor?.outputPath).toBe(
+        '.cursor/env.mdc'
+      );
       expect(result.config.providers?.windsurf?.enabled).toBe(true);
       expect(result.config.providers?.['claude-code']?.enabled).toBe(true);
-      expect(result.config.providers?.['claude-code']?.outputPath).toBe('.claude/env.md');
+      expect(result.config.providers?.['claude-code']?.outputPath).toBe(
+        '.claude/env.md'
+      );
       expect(result.config.gitignore?.enabled).toBe(true);
-      expect(result.config.gitignore?.options?.comment).toBe('Env Generated Files');
+      expect(result.config.gitignore?.options?.comment).toBe(
+        'Env Generated Files'
+      );
 
-      expect(Object.keys(result.envOverrides)).toContain('RULESETS_OUTPUT_DIRECTORY');
-      expect(Object.keys(result.envOverrides)).toContain('RULESETS_PROVIDERS_CURSOR_OUTPUT_PATH');
+      expect(Object.keys(result.envOverrides)).toContain(
+        'RULESETS_OUTPUT_DIRECTORY'
+      );
+      expect(Object.keys(result.envOverrides)).toContain(
+        'RULESETS_PROVIDERS_CURSOR_OUTPUT_PATH'
+      );
     });
 
     it('should handle invalid environment variable values gracefully', async () => {
@@ -382,7 +423,7 @@ invalid-key-format = value  # Invalid key format
       expect(result.success).toBe(true);
       expect(result.warnings).toBeDefined();
       expect(result.warnings!.length).toBeGreaterThan(0);
-      
+
       const warningText = result.warnings!.join(' ');
       expect(warningText).toContain('environment variable');
     });
@@ -417,7 +458,9 @@ invalid-key-format = value  # Invalid key format
       expect(result.config.gitignore?.enabled).toBe(true);
       expect(result.config.gitignore?.keep).toEqual(['.env/**', '.special/**']);
       expect(result.config.gitignore?.ignore).toEqual(['.env-temp/**']);
-      expect(result.config.gitignore?.options?.comment).toBe('Env Override Comment');
+      expect(result.config.gitignore?.options?.comment).toBe(
+        'Env Override Comment'
+      );
       expect(result.config.gitignore?.options?.sort).toBe(true);
     });
   });
@@ -444,8 +487,14 @@ invalid-key-format = value  # Invalid key format
         },
       };
 
-      const globalConfigPath = path.join(globalConfigDir, 'ruleset.config.jsonc');
-      await fs.writeFile(globalConfigPath, JSON.stringify(globalConfig, null, 2));
+      const globalConfigPath = path.join(
+        globalConfigDir,
+        'ruleset.config.jsonc'
+      );
+      await fs.writeFile(
+        globalConfigPath,
+        JSON.stringify(globalConfig, null, 2)
+      );
 
       // Create project config that overrides some settings
       const projectConfig = {
@@ -461,11 +510,18 @@ invalid-key-format = value  # Invalid key format
         },
       };
 
-      const projectConfigPath = path.join(testProjectDir, 'ruleset.config.jsonc');
-      await fs.writeFile(projectConfigPath, JSON.stringify(projectConfig, null, 2));
+      const projectConfigPath = path.join(
+        testProjectDir,
+        'ruleset.config.jsonc'
+      );
+      await fs.writeFile(
+        projectConfigPath,
+        JSON.stringify(projectConfig, null, 2)
+      );
 
       // Mock global config discovery to use our test global config
-      const originalGetGlobalConfigDir = require('../../src/config/utils').getGlobalConfigDir;
+      const originalGetGlobalConfigDir =
+        require('../../src/config/utils').getGlobalConfigDir;
       vi.doMock('../../src/config/utils', () => ({
         ...require('../../src/config/utils'),
         getGlobalConfigDir: () => globalConfigDir,
@@ -474,22 +530,28 @@ invalid-key-format = value  # Invalid key format
       const result = await loadConfig(testProjectDir, {}, mockLogger);
 
       expect(result.success).toBe(true);
-      
+
       // Should use global version (required field)
       expect(result.config.rulesets.version).toBe('0.1.0');
-      
+
       // Should use project outputDirectory (overrides global)
       expect(result.config.outputDirectory).toBe('.project/output');
-      
+
       // Providers should be merged
       expect(result.config.providers?.cursor?.enabled).toBe(true); // From global
-      expect(result.config.providers?.cursor?.outputPath).toBe('.cursor/project.mdc'); // From project
+      expect(result.config.providers?.cursor?.outputPath).toBe(
+        '.cursor/project.mdc'
+      ); // From project
       expect(result.config.providers?.windsurf?.enabled).toBe(true); // From global
-      expect(result.config.providers?.windsurf?.outputPath).toBe('.windsurf/global.md'); // From global
+      expect(result.config.providers?.windsurf?.outputPath).toBe(
+        '.windsurf/global.md'
+      ); // From global
       expect(result.config.providers?.['claude-code']?.enabled).toBe(true); // From project
-      expect(result.config.providers?.['claude-code']?.outputPath).toBe('.claude/project.md'); // From project
+      expect(result.config.providers?.['claude-code']?.outputPath).toBe(
+        '.claude/project.md'
+      ); // From project
       expect(result.config.providers?.amp?.enabled).toBe(true); // From project
-      
+
       // Gitignore should be merged
       expect(result.config.gitignore?.enabled).toBe(true); // From global
       expect(result.config.gitignore?.keep).toEqual(['.project/**']); // From project (array replacement)
@@ -527,12 +589,24 @@ invalid-key-format = value  # Invalid key format
         },
       };
 
-      const overrideConfigPath = path.join(testProjectDir, 'override.config.jsonc');
-      await fs.writeFile(overrideConfigPath, JSON.stringify(overrideConfig, null, 2));
+      const overrideConfigPath = path.join(
+        testProjectDir,
+        'override.config.jsonc'
+      );
+      await fs.writeFile(
+        overrideConfigPath,
+        JSON.stringify(overrideConfig, null, 2)
+      );
 
       // Parse configs individually
-      const baseResult = parseConfigContent(JSON.stringify(baseConfig), 'jsonc');
-      const overrideResult = parseConfigContent(JSON.stringify(overrideConfig), 'jsonc');
+      const baseResult = parseConfigContent(
+        JSON.stringify(baseConfig),
+        'jsonc'
+      );
+      const overrideResult = parseConfigContent(
+        JSON.stringify(overrideConfig),
+        'jsonc'
+      );
 
       expect(baseResult.success).toBe(true);
       expect(overrideResult.success).toBe(true);
@@ -545,7 +619,7 @@ invalid-key-format = value  # Invalid key format
 
       expect(validation.isValid).toBe(false);
       expect(validation.errors.length).toBeGreaterThan(0);
-      
+
       const errorText = validation.errors.join(' ');
       expect(errorText).toMatch(/outputDirectory.*type/);
       expect(errorText).toContain('invalid-provider');
@@ -608,7 +682,9 @@ invalid-key-format = value  # Invalid key format
       }
 
       // The validation should still pass for basic structure
-      expect(validation.errors.filter(err => err.includes('required')).length).toBe(0);
+      expect(
+        validation.errors.filter((err) => err.includes('required')).length
+      ).toBe(0);
     });
 
     it('should provide helpful error messages for common mistakes', async () => {
@@ -632,7 +708,7 @@ invalid-key-format = value  # Invalid key format
 
       for (const testCase of invalidConfigs) {
         const validation = validateConfig(testCase.config as RulesetConfig);
-        
+
         expect(validation.isValid).toBe(false);
         const errorText = validation.errors.join(' ');
         expect(errorText).toContain(testCase.expectedError);

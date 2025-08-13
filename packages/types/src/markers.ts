@@ -3,7 +3,12 @@
  * Concrete types for all marker patterns in the Rulesets language
  */
 
-import type { BlockName, MarkerContent, PropertyName, VariableName } from './brands';
+import type {
+  BlockName,
+  MarkerContent,
+  PropertyName,
+  VariableName,
+} from './brands';
 
 /**
  * Marker types - all possible marker patterns
@@ -202,7 +207,9 @@ export function isRawCloseMarker(marker: Marker): marker is RawCloseMarker {
   return marker.type === 'raw-close';
 }
 
-export function isPlaceholderMarker(marker: Marker): marker is PlaceholderMarker {
+export function isPlaceholderMarker(
+  marker: Marker
+): marker is PlaceholderMarker {
   return marker.type === 'placeholder';
 }
 
@@ -215,15 +222,15 @@ export const MARKER_PATTERNS = {
   CLOSE: /\{\{\/([^}]+)\}\}/,
   IMPORT: /\{\{>\s*([^}]+)\}\}/,
   VARIABLE: /\{\{\$([^}]+)\}\}/,
-  
+
   // Raw markers
   RAW_OPEN: /\{\{\{([^}]*)\}\}\}/,
   RAW_CLOSE: /\{\{\{\/([^}]*)\}\}\}/,
-  
+
   // Placeholders
   BRACKET_PLACEHOLDER: /\[([^\]]+)\]/,
   BRACE_PLACEHOLDER: /\{([^}]+)\}/,
-  
+
   // Property patterns
   PROPERTY: /(\w+)(?:=(?:"([^"]*)"|'([^']*)'|([^\s]+)))?/,
   MODIFIER: /([+\-!])(\w+)/,
@@ -242,7 +249,7 @@ export const RESERVED_BLOCKS = [
   'assistant',
 ] as const;
 
-export type ReservedBlockName = typeof RESERVED_BLOCKS[number];
+export type ReservedBlockName = (typeof RESERVED_BLOCKS)[number];
 
 /**
  * Check if a block name is reserved
@@ -257,13 +264,13 @@ export function isReservedBlock(name: string): name is ReservedBlockName {
 export const BLOCK_PROPERTIES = {
   // Output control
   OUTPUT: ['output', 'format', 'render'],
-  
+
   // Scope control
   SCOPE: ['provider', 'target', 'only', 'except', 'destination'], // destination kept for backwards compatibility
-  
+
   // Display control
   DISPLAY: ['name', 'title', 'label', 'id'],
-  
+
   // Behavior control
   BEHAVIOR: ['required', 'optional', 'hidden', 'collapsed'],
 } as const;

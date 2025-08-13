@@ -4,14 +4,14 @@
  */
 
 import type {
-  ProviderId,
-  OutputPath,
-  SourcePath,
-  CompiledContent,
-  RawContent,
-  Version,
   BlockName,
+  CompiledContent,
+  OutputPath,
   PropertyName,
+  ProviderId,
+  RawContent,
+  SourcePath,
+  Version,
 } from './brands';
 
 /**
@@ -32,12 +32,12 @@ export interface Provider {
  * Provider types categorized by tool nature
  */
 export type ProviderType =
-  | 'ide'           // VS Code extensions, IDEs
-  | 'cli'           // Command line tools
-  | 'web'           // Web-based tools
-  | 'agent'         // AI agents
-  | 'editor'        // Text editors
-  | 'platform';     // Development platforms
+  | 'ide' // VS Code extensions, IDEs
+  | 'cli' // Command line tools
+  | 'web' // Web-based tools
+  | 'agent' // AI agents
+  | 'editor' // Text editors
+  | 'platform'; // Development platforms
 
 /**
  * Provider configuration for compilation
@@ -68,7 +68,7 @@ export interface ProviderCapabilities {
 /**
  * Output format types supported by providers
  */
-export type OutputFormat = 
+export type OutputFormat =
   | 'markdown'
   | 'xml'
   | 'json'
@@ -81,10 +81,10 @@ export type OutputFormat =
  * File naming strategies for output files
  */
 export type FileNamingStrategy =
-  | 'preserve'      // Keep original name
-  | 'transform'     // Apply transformation rules
-  | 'template'      // Use template pattern
-  | 'custom';       // Custom function
+  | 'preserve' // Keep original name
+  | 'transform' // Apply transformation rules
+  | 'template' // Use template pattern
+  | 'custom'; // Custom function
 
 /**
  * Template configuration for providers
@@ -386,14 +386,20 @@ export function isProviderPlugin(value: unknown): value is ProviderPlugin {
  * Provider utility functions
  */
 export function getProviderById(id: ProviderId): Provider | undefined {
-  return Object.values(BUILT_IN_PROVIDERS).find(provider => provider.id === id);
+  return Object.values(BUILT_IN_PROVIDERS).find(
+    (provider) => provider.id === id
+  );
 }
 
 export function getProvidersByType(type: ProviderType): Provider[] {
-  return Object.values(BUILT_IN_PROVIDERS).filter(provider => provider.type === type);
+  return Object.values(BUILT_IN_PROVIDERS).filter(
+    (provider) => provider.type === type
+  );
 }
 
-export function validateProviderConfig(config: ProviderConfig): ProviderError[] {
+export function validateProviderConfig(
+  config: ProviderConfig
+): ProviderError[] {
   const errors: ProviderError[] = [];
 
   if (!config.outputPath) {
@@ -432,11 +438,12 @@ export function migrateDestinationToProvider(
   legacyConfig: Record<string, unknown>
 ): ProviderConfig {
   // Build new config object instead of mutating
-  const outputPath = ('destPath' in legacyConfig 
-    ? legacyConfig.destPath as OutputPath
-    : 'destinationPath' in legacyConfig 
-    ? legacyConfig.destinationPath as OutputPath
-    : '' as OutputPath);
+  const outputPath =
+    'destPath' in legacyConfig
+      ? (legacyConfig.destPath as OutputPath)
+      : 'destinationPath' in legacyConfig
+        ? (legacyConfig.destinationPath as OutputPath)
+        : ('' as OutputPath);
 
   const format = (legacyConfig.format as OutputFormat) || 'markdown';
 
@@ -456,14 +463,19 @@ export function isLegacyDestinationConfig(config: unknown): boolean {
   return (
     typeof config === 'object' &&
     config !== null &&
-    ('destPath' in config || 'destinationPath' in config || 'destination' in config)
+    ('destPath' in config ||
+      'destinationPath' in config ||
+      'destination' in config)
   );
 }
 
 /**
  * Default provider configurations for common tools
  */
-export const DEFAULT_PROVIDER_CONFIGS: Record<string, Partial<ProviderConfig>> = {
+export const DEFAULT_PROVIDER_CONFIGS: Record<
+  string,
+  Partial<ProviderConfig>
+> = {
   cursor: {
     outputPath: '.cursor/rules' as OutputPath,
     format: 'markdown',

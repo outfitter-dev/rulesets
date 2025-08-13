@@ -6,17 +6,17 @@
 import type {
   BlockName,
   CompiledContent,
-  ProviderId,
-  OutputPath,
+  // Backwards compatibility aliases
+  DestinationId,
+  DestPath,
   MarkerContent,
+  OutputPath,
   PropertyName,
+  ProviderId,
   RawContent,
   SourcePath,
   VariableName,
   Version,
-  // Backwards compatibility aliases
-  DestinationId,
-  DestPath,
 } from './brands';
 
 /**
@@ -241,7 +241,9 @@ export function isLinterContext(ctx: CompilationContext): ctx is LinterContext {
   return ctx.stage === 'lint';
 }
 
-export function isCompilerContext(ctx: CompilationContext): ctx is CompilerContext {
+export function isCompilerContext(
+  ctx: CompilationContext
+): ctx is CompilerContext {
   return ctx.stage === 'compile';
 }
 
