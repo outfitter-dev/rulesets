@@ -3,8 +3,13 @@
  * Provides path manipulation, file parsing, and content management utilities
  */
 
-import * as path from 'node:path';
+import { isAbsolute, relative, sep } from 'node:path';
 import type { GitignoreState, ManagedBlockConfig } from './types';
+
+// Regex constants at top level for performance
+const COMMENT_LINE_REGEX = /^\s*#.*$/;
+const TRAILING_NEWLINES_REGEX = /\n+$/;
+const LEADING_NEWLINES_REGEX = /^\n+/;
 
 /**
  * Default configuration for managed gitignore blocks
@@ -26,12 +31,12 @@ export function normalizeGitignorePath(
   basePath: string = process.cwd()
 ): string {
   // Convert to relative path if absolute
-  const relativePath = path.isAbsolute(filePath)
-    ? path.relative(basePath, filePath)
+  const relativePath = isAbsolute(filePath)
+    ? relative(basePath, filePath)
     : filePath;
 
   // Convert to POSIX-style path separators
-  const posixPath = relativePath.split(path.sep).join('/');
+  const posixPath = relativePath.split(sep).join('/');
 
   // Remove leading ./ if present
   return posixPath.startsWith('./') ? posixPath.slice(2) : posixPath;
@@ -66,7 +71,7 @@ export function matchesAnyPattern(
  */
 export function matchesPattern(filePath: string, pattern: string): boolean {
   // Remove leading comments and whitespace
-  const cleanPattern = pattern.replace(/^\s*#.*$/, '').trim();
+  const cleanPattern = pattern.replace(COMMENT_LINE_REGEX, '').trim();
   if (!cleanPattern) {
     return false;
   }
@@ -150,8 +155,8 @@ export function parseGitignoreContent(
 
   return {
     original: content,
-    beforeBlock: beforeBlock.replace(/\n+$/, ''), // Remove trailing newlines
-    afterBlock: afterBlock.replace(/^\n+/, ''), // Remove leading newlines
+    beforeBlock: beforeBlock.replace(TRAILING_NEWLINES_REGEX, ''), // Remove trailing newlines
+    afterBlock: afterBlock.replace(LEADING_NEWLINES_REGEX, ''), // Remove leading newlines
     managedPaths,
     hasExistingBlock: true,
   };
