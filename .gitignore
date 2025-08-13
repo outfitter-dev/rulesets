@@ -39,7 +39,7 @@ bun-debug.log*
 /.turbo
 
 docs_archive/
+.private-journal/
 
 # .agent
-!.agent/**
-.agent/research
+.agent/

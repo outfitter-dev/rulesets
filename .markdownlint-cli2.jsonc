@@ -24,7 +24,7 @@
   ],
   "customRules": [],
   "fix": false,
-  "frontMatter": "---\\n.*\\n---\\n",
+  "frontMatter": "^---\\n[\\s\\S]*?\\n---\\n?",
   "globs": ["**/*.md", "**/*.mdx", "**/*.mdc"],
   "markdownItPlugins": [],
   "noInlineConfig": false,
