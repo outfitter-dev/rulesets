@@ -35,17 +35,14 @@ jobs:
             ~/.bun/install/cache
             node_modules
             .turbo
-          key: ${{ runner.os }}-deps-${{ hashFiles('**/bun.lock', '**/package.json') }}
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/yarn.lock', '**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-deps-
 
       - name: Install
         run: |
-          if [ -f "bun.lock" ]; then
-            bun install --frozen-lockfile
-          else
-            bun install
-          fi
+          # Use yarn.lock since bun.lock doesn't generate properly
+          bun install --yarn
 
       # Skip linting for now - too many issues to fix at once
       - name: Type Check (Continue on Error)
