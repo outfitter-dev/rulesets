@@ -7,7 +7,7 @@
 
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { tmpdir } from 'os';
+import { tmpdir } from 'node:os';
 import {
   afterAll,
   afterEach,

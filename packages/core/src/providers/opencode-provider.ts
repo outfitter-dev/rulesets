@@ -26,7 +26,7 @@ import {
   createProviderId,
   createVersion,
 } from '@rulesets/types';
-import * as os from 'os';
+import * as os from 'node:os';
 
 export class OpenCodeProvider implements Provider, DestinationPlugin {
   readonly id: ProviderId = createProviderId('opencode');
