@@ -3,13 +3,8 @@
  */
 
 import { promises as fs } from 'node:fs';
-<<<<<<< HEAD
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-=======
-import { join } from 'node:path';
-import { tmpdir } from 'os';
->>>>>>> 76de235 (fix: optimize CI/CD workflow and add bun.lock)
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { RulesetConfig } from '../types';
 import {

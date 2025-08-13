@@ -3,15 +3,9 @@
  */
 
 import { promises as fs } from 'node:fs';
-<<<<<<< HEAD:packages/core/src/config/__tests__/config-loader.test.ts
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-=======
-import { join } from 'node:path';
-import { tmpdir } from 'os';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
->>>>>>> 76de235 (fix: optimize CI/CD workflow and add bun.lock):packages/core/src/config/__tests__/ConfigLoader.test.ts
 import {
   ConfigLoader,
   getConfigLoader,
