@@ -19,18 +19,33 @@ export type RawContent = Opaque<string, 'RawContent'>;
 export type CompiledContent = Opaque<string, 'CompiledContent'>;
 export type Version = Opaque<string, 'Version'>;
 
+// Regular expression patterns defined at top level for performance
+const KEBAB_CASE_PATTERN = /^[a-z][a-z0-9-]*[a-z0-9]$/;
+const VARIABLE_NAME_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+const VARIABLE_REST_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_.]*$/;
+const PROPERTY_NAME_PATTERN = /^[a-z][a-z0-9]*(-[a-z][a-z0-9]*)*$/;
+const CONTROL_CHARS_PATTERN = /[\x00-\x1f\x7f]/;
+const VERSION_PATTERN = /^\d+\.\d+\.\d+([-\w.]+)?(\+[\w.]+)?$/;
+
 /**
  * Brand validation errors with rich context
  */
 export class BrandValidationError extends Error {
+  readonly brandType: string;
+  readonly value: unknown;
+  readonly context?: Record<string, unknown>;
+
   constructor(
-    public readonly brandType: string,
-    public readonly value: unknown,
+    brandType: string,
+    value: unknown,
     message: string,
-    public readonly context?: Record<string, unknown>
+    context?: Record<string, unknown>
   ) {
     super(`Invalid ${brandType}: ${message}`);
     this.name = 'BrandValidationError';
+    this.brandType = brandType;
+    this.value = value;
+    this.context = context;
   }
 }
 
@@ -68,7 +83,7 @@ export function createProviderId(value: string): ProviderId {
     );
   }
 
-  if (!VALID_PROVIDERS.includes(value as any)) {
+  if (!VALID_PROVIDERS.includes(value as ValidProviderId)) {
     throw new BrandValidationError(
       'ProviderId',
       value,
@@ -139,7 +154,7 @@ export function createSourcePath(value: string): SourcePath {
   }
 
   // Prevent null bytes and control characters
-  if (/[\x00-\x1f\x7f]/.test(value)) {
+  if (CONTROL_CHARS_PATTERN.test(value)) {
     throw new BrandValidationError(
       'SourcePath',
       value,
@@ -213,15 +228,6 @@ export function createBlockName(value: string): BlockName {
     );
   }
 
-  // Must be kebab-case
-  if (!/^[a-z][a-z0-9-]*[a-z0-9]$/.test(value)) {
-    throw new BrandValidationError(
-      'BlockName',
-      value,
-      'must be kebab-case (e.g., user-instructions)'
-    );
-  }
-
   // Length limits
   if (value.length < 2) {
     throw new BrandValidationError(
@@ -236,6 +242,15 @@ export function createBlockName(value: string): BlockName {
       'BlockName',
       value,
       'must be at most 50 characters'
+    );
+  }
+
+  // Must be kebab-case
+  if (!KEBAB_CASE_PATTERN.test(value)) {
+    throw new BrandValidationError(
+      'BlockName',
+      value,
+      'must be kebab-case (e.g., user-instructions)'
     );
   }
 
@@ -264,7 +279,7 @@ export function createVariableName(value: string): VariableName {
   }
 
   // Must start with $ or be a valid JS identifier
-  if (!(value.startsWith('$') || /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(value))) {
+  if (!(value.startsWith('$') || VARIABLE_NAME_PATTERN.test(value))) {
     throw new BrandValidationError(
       'VariableName',
       value,
@@ -302,7 +317,7 @@ export function createVariableName(value: string): VariableName {
   // If starts with $, validate the rest
   if (value.startsWith('$')) {
     const rest = value.slice(1);
-    if (!(rest && /^[a-zA-Z_][a-zA-Z0-9_.]*$/.test(rest))) {
+    if (!(rest && VARIABLE_REST_PATTERN.test(rest))) {
       throw new BrandValidationError(
         'VariableName',
         value,
@@ -336,7 +351,7 @@ export function createPropertyName(value: string): PropertyName {
   }
 
   // Must follow property format: name or name-family
-  if (!/^[a-z][a-z0-9]*(-[a-z][a-z0-9]*)*$/.test(value)) {
+  if (!PROPERTY_NAME_PATTERN.test(value)) {
     throw new BrandValidationError(
       'PropertyName',
       value,
@@ -479,7 +494,7 @@ export function createVersion(value: string): Version {
   }
 
   // Basic semver pattern (simplified)
-  if (!/^\d+\.\d+\.\d+(-[\w.]+)?(\+[\w.]+)?$/.test(value)) {
+  if (!VERSION_PATTERN.test(value)) {
     throw new BrandValidationError(
       'Version',
       value,
@@ -598,16 +613,18 @@ export type DestinationId = ProviderId;
 export type DestPath = OutputPath;
 
 export const createDestinationId = (value: string): ProviderId => {
-  if (process.env.NODE_ENV !== 'production') {
-    console.warn(
-      'createDestinationId is deprecated. Use createProviderId instead.'
-    );
+  // @deprecated Use createProviderId instead - will be removed in v1.0
+  if (process.env.NODE_ENV === 'development') {
+    // biome-ignore lint/suspicious/noConsole: Deprecation warning for developers
+    console.warn('createDestinationId is deprecated. Use createProviderId instead.');
   }
   return createProviderId(value);
 };
 
 export const createDestPath = (value: string): OutputPath => {
-  if (process.env.NODE_ENV !== 'production') {
+  // @deprecated Use createOutputPath instead - will be removed in v1.0
+  if (process.env.NODE_ENV === 'development') {
+    // biome-ignore lint/suspicious/noConsole: Deprecation warning for developers
     console.warn('createDestPath is deprecated. Use createOutputPath instead.');
   }
   return createOutputPath(value);

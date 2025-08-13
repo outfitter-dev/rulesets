@@ -465,7 +465,8 @@ export function isLegacyDestinationConfig(config: unknown): boolean {
     config !== null &&
     ('destPath' in config ||
       'destinationPath' in config ||
-      'destination' in config)
+      'destination' in config ||
+      'destinationId' in config)
   );
 }
 

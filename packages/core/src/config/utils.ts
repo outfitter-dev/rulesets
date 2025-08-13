@@ -13,6 +13,9 @@ import type {
   RulesetConfig,
 } from './types';
 import { CONFIG_FILE_NAMES, DEFAULT_LOAD_OPTIONS } from './types';
+import { getChildLogger } from '../utils/logger';
+
+const logger = getChildLogger('config');
 
 /**
  * Check if a file exists and is readable
@@ -56,7 +59,7 @@ export async function findConfigFile(
           };
         } catch (error) {
           // Continue searching if file read fails
-          console.warn(`Failed to read config file ${filePath}:`, error);
+          logger.warn({ filePath, error }, 'Failed to read config file');
         }
       }
     }
@@ -221,9 +224,9 @@ export function applyEnvOverrides(
         applied[key] = override.value;
       }
     } catch (error) {
-      console.warn(
-        `Failed to apply environment override ${key}=${value}:`,
-        error
+      logger.warn(
+        { key, value, error },
+        'Failed to apply environment override'
       );
     }
   }

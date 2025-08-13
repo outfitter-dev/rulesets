@@ -1,20 +1,17 @@
 // Example demonstrating the Amp provider usage
 // This shows how to programmatically use the Amp provider
 
-import type { CompiledDoc, Logger } from '@rulesets/types';
+import type { CompiledDoc } from '@rulesets/types';
 import { AmpProvider } from '../src/providers/amp-provider';
+import { createLogger, toRulesetsLogger } from '../src/utils/logger';
 
 // Simple example of using the Amp provider
 function exampleAmpUsage() {
   const provider = new AmpProvider();
 
-  // Mock logger for this example
-  const logger: Logger = {
-    info: (msg: string) => console.log(`[INFO] ${msg}`),
-    error: (msg: string) => console.error(`[ERROR] ${msg}`),
-    warn: (msg: string) => console.warn(`[WARN] ${msg}`),
-    debug: (msg: string) => console.log(`[DEBUG] ${msg}`),
-  };
+  // Create a proper logger using pino
+  const pinoLogger = createLogger({ name: 'amp-example', level: 'debug' });
+  // const logger = toRulesetsLogger(pinoLogger); // Available if needed for provider operations
 
   // Example compiled document (in real usage, this comes from the compiler)
   const compiledDoc: CompiledDoc = {
@@ -75,43 +72,35 @@ This is a modern TypeScript web application using:
     },
   };
 
-  console.log('🚀 Amp Provider Example');
-  console.log('========================');
+  pinoLogger.info('🚀 Amp Provider Example');
+  pinoLogger.info('========================');
 
   // Display provider information
-  console.log(`Provider ID: ${provider.id}`);
-  console.log(`Provider Name: ${provider.name}`);
-  console.log(`Provider Type: ${provider.type}`);
-  console.log(`Output Path: ${provider.config.outputPath}`);
-  console.log(`Format: ${provider.config.format}`);
-  console.log(`File Naming: ${provider.config.fileNaming}`);
+  pinoLogger.info({ providerId: provider.id }, 'Provider ID');
+  pinoLogger.info({ providerName: provider.name }, 'Provider Name');
+  pinoLogger.info({ providerType: provider.type }, 'Provider Type');
+  pinoLogger.info({ outputPath: provider.config.outputPath }, 'Output Path');
+  pinoLogger.info({ format: provider.config.format }, 'Format');
+  pinoLogger.info({ fileNaming: provider.config.fileNaming }, 'File Naming');
 
-  console.log('\n📋 Provider Capabilities:');
-  console.log(`Supports Blocks: ${provider.capabilities.supportsBlocks}`);
-  console.log(`Supports Imports: ${provider.capabilities.supportsImports}`);
-  console.log(`Supports Variables: ${provider.capabilities.supportsVariables}`);
-  console.log(`Supports XML: ${provider.capabilities.supportsXml}`);
-  console.log(`Supports Markdown: ${provider.capabilities.supportsMarkdown}`);
-  console.log(`Max File Size: ${provider.capabilities.maxFileSize} bytes`);
-  console.log(
-    `Allowed Formats: ${provider.capabilities.allowedFormats.join(', ')}`
-  );
+  pinoLogger.info('📋 Provider Capabilities:');
+  pinoLogger.info({ capabilities: provider.capabilities }, 'Provider capabilities');
 
-  console.log('\n⚙️  Configuration Schema:');
+  pinoLogger.info('⚙️  Configuration Schema:');
   const schema = provider.configSchema();
-  console.log('Schema type:', schema.type);
-  console.log('Available properties:', Object.keys(schema.properties || {}));
+  pinoLogger.info({ schemaType: schema.type, properties: Object.keys(schema.properties || {}) }, 'Schema configuration');
 
   // In a real scenario, you would use the write method like this:
-  console.log('\n📝 Example Write Operation:');
-  console.log('(Simulated - would write to AGENT.md)');
+  pinoLogger.info('📝 Example Write Operation:');
+  pinoLogger.info('(Simulated - would write to AGENT.md)');
 
   try {
-    console.log('Content preview:');
-    console.log('================');
-    console.log(compiledDoc.output.content.substring(0, 200) + '...');
-    console.log(
-      `\nTotal content length: ${compiledDoc.output.content.length} characters`
+    pinoLogger.info('Content preview:');
+    pinoLogger.info('================');
+    pinoLogger.info({ preview: `${compiledDoc.output.content.substring(0, 200)}...` }, 'Content preview');
+    pinoLogger.info(
+      { contentLength: compiledDoc.output.content.length },
+      'Total content length in characters'
     );
 
     // Note: In real usage, this would actually write to disk
@@ -122,12 +111,12 @@ This is a modern TypeScript web application using:
     //   logger,
     // });
 
-    console.log('\n✅ Example completed successfully!');
-    console.log(
+    pinoLogger.info('✅ Example completed successfully!');
+    pinoLogger.info(
       'In real usage, this would create AGENT.md in your project root.'
     );
   } catch (error) {
-    console.error('\n❌ Error in example:', error);
+    pinoLogger.error({ error }, '❌ Error in example');
   }
 }
 
