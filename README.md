@@ -2,11 +2,11 @@
 
 > **🚀 v0 Release Now Available!** The initial implementation of Rulesets is ready for testing. See [Installation](#installation) to get started.
 
-Rulesets simplifies rules management for tools like Cursor, Claude Code, Codex, etc. With Rulesets, you author rules (called "source rules") in previewable Markdown and compile them into compiled rules for each destination (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many destinations, your agents, no matter the tool, on the (literal) same page.
+Rulesets simplifies rules management for tools like Cursor, Claude Code, Codex, etc. With Rulesets, you author rules (called "source rules") in previewable Markdown and compile them into compiled rules for each provider (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many providers, your agents, no matter the tool, on the (literal) same page.
 
 ## What is Rulesets?
 
-If you're reading this, you're probably already familiar with at least one of the AI coding tools that Rulesets is [designed to work with](#supported-destinations). Each tool has its own unique way of being provided context, guidance, and operational instructions for your projects e.g. Cursor's rules (`.cursor/rules`), OpenAI Codex instructions (`codex.md`), Claude Code's instructions (`CLAUDE.md`), etc.
+If you're reading this, you're probably already familiar with at least one of the AI coding tools that Rulesets is [designed to work with](#supported-providers). Each tool has its own unique way of being provided context, guidance, and operational instructions for your projects e.g. Cursor's rules (`.cursor/rules`), OpenAI Codex instructions (`codex.md`), Claude Code's instructions (`CLAUDE.md`), etc.
 
 The problem is, they all have different formats, behavior, and capabilities, which can become a huge pain to manage. This can be frustrating, and might even lead you to just sticking to one tool. But that's no fun, and you'll be missing out on all the awesome capabilities and differences each tool has to offer! That's where Rulesets comes in…
 
@@ -39,7 +39,7 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 : source rules files, written in 100% previewable Markdown with `.rule.md` extension. Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
 
 **compiled rules**
-: Destination-specific compiled files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their destination directories, these are referred to as "tool-ready rules".
+: Provider-specific compiled files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their provider directories, these are referred to as "tool-ready rules".
 
 **Block**
 : Delimited, reusable blocks of content using notation like `{{instructions}}...{{/instructions}}` with optional properties. They are 1:1 translations of XML tags (e.g., `{{instructions}}` → `<instructions>`), but readable in Markdown previewers.
@@ -48,7 +48,7 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 : A reference to another source rules file, block, partial, or template (`{{> my-rule}}`). Embeds content from another source.
 
 **Variable**
-: Dynamic value replaced inline at compile time (e.g., `{{$key}}` for aliases, `{{$.frontmatter.key}}` for frontmatter data, `{{$destination}}` for the current destination name).
+: Dynamic value replaced inline at compile time (e.g., `{{$key}}` for aliases, `{{$.frontmatter.key}}` for frontmatter data, `{{$provider}}` for the current provider name).
 
 **Notation Marker**
 : Element using `{{...}}` notation, used throughout Rulesets to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
@@ -56,13 +56,13 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 **Partial**
 : Modular, reusable content component stored in `/_partials`.
 
-**Destination**
-: A supported tool (Cursor, Roo Code, etc.) identified by a `kebab-case` ID (e.g., `cursor`, `roo-code`). Defines destination-specific criteria for compiling source rules into compiled rules and is provided through plugins.
+**Provider**
+: A supported tool (Cursor, Roo Code, etc.) identified by a `kebab-case` ID (e.g., `cursor`, `roo-code`). Defines provider-specific criteria for compiling source rules into compiled rules and is provided through plugins.
 
-**Destination Group**
-: Named set of destinations (`@cursor`, `@ide`, `@cli`) for property filtering (a planned feature for easier filtering).
+**Provider Group**
+: Named set of providers (`@cursor`, `@ide`, `@cli`) for property filtering (a planned feature for easier filtering).
 
-## Supported Destinations
+## Supported Providers
 
 | ID             | Tool                                                                                    | Type        | Status         |
 | -------------- | --------------------------------------------------------------------------------------- | ----------- | -------------- |
@@ -74,19 +74,19 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 | `openai-codex` | [OpenAI Codex](https://github.com/openai/codex)                                         | CLI         | 🔵 Planned     |
 | `windsurf`     | [Windsurf](https://windsurf.dev/)                                                       | IDE         | 🟡 In Progress |
 
-_Want a new destination? Implement `toolProvider` and publish `@rulesets/plugin-<your-tool>`. See existing plugin examples and general development guidelines._
+_Want a new provider? Implement `RulesetProvider` and publish `@rulesets/plugin-<your-tool>`. See existing plugin examples and general development guidelines._
 
 ## Key Features
 
 ### Rulesets Syntax
 
 - **100% Preview-able Markdown** – Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
-- **Granular Blocks** – Filter blocks within a single source rules file for per-destination inclusion/exclusion.
+- **Granular Blocks** – Filter blocks within a single source rules file for per-provider inclusion/exclusion.
 - **Build-time Variables** – Aliases and frontmatter data injection.
 
 ### Compiler & Integration
 
-- **Plugin Architecture** – Add new destinations via `RulesetsPluginProvider` without touching core.
+- **Plugin Architecture** – Add new providers via `RulesetProvider` without touching core.
 - **CLI & API** – `rulesets build`, `rulesets validate`, and `POST /compile` endpoint.
 
 ## CLI Installation
@@ -118,7 +118,7 @@ yarn add @rulesets/core
 ruleset: { version: '0.1.0' }
 title: My Coding Standards
 description: Rules for AI coding assistants
-destinations:
+providers:
   cursor:
     outputPath: '.cursor/rules/standards.mdc'
   windsurf:
@@ -194,7 +194,7 @@ project/
 | **Project File Link**       | `@path/to/file.txt` or `@path/to/file.txt("Custom Title")` | Links to project files, optionally with an alias. |
 | **Alias Variable**          | `{{$project}}`                                             | Resolved via `aliases` in config.                 |
 | **Data Variable**           | `{{$.key}}`                                                | Injects YAML frontmatter data.                    |
-| **Destination Variable**    | `{{$destination}}` / `{{$destination.id}}`                 | Injects current destination name/ID.              |
+| **Provider Variable**       | `{{$provider}}` / `{{$provider.id}}`                       | Injects current provider name/ID.                 |
 | **Instruction Placeholder** | `[fill this in]`                                           | Marker for LLM to complete.                       |
 
 The full Rulesets syntax specification can be found in `docs/project/OVERVIEW.md`.

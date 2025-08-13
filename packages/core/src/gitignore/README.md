@@ -10,7 +10,7 @@ GitignoreManager automatically manages `.gitignore` entries for files generated 
 
 - **Automatic .gitignore Management**: Automatically adds generated file paths to `.gitignore`
 - **Managed Comment Blocks**: Uses `# START Rulesets Generated Files` and `# END Rulesets Generated Files` comments to manage entries
-- **Override Files Support**: `.rulesekeep` and `.rulesetignore` files for fine-grained control
+- **Override Files Support**: `.rulesetkeep` and `.rulesetignore` files for fine-grained control
 - **Configuration Support**: Programmatic configuration via config objects
 - **Path Normalization**: POSIX-style relative paths for cross-platform compatibility
 - **Error Handling**: Graceful error handling without breaking compilation
@@ -46,9 +46,9 @@ console.log(`Added ${result.added.length} files to .gitignore`);
 
 ## Override Files
 
-### .rulesekeep - Keep Files in Git
+### .rulesetkeep - Keep Files in Git
 
-Create a `.rulesekeep` file to specify patterns that should NOT be ignored:
+Create a `.rulesetkeep` file to specify patterns that should NOT be ignored:
 
 ```
 # Keep important cursor rules in git
@@ -120,7 +120,7 @@ dist/
 
 Override rules are applied in the following priority order (highest to lowest):
 
-1. **Keep patterns** (`.rulesekeep` + `alwaysKeep` config) - Never ignored
+1. **Keep patterns** (`.rulesetkeep` + `alwaysKeep` config) - Never ignored
 2. **Ignore patterns** (`.rulesetignore` + `alwaysIgnore` config) - Always ignored
 3. **Default behavior** - Generated files are ignored
 
@@ -210,7 +210,7 @@ const manager = new GitignoreManager({
 
 ### Complex Override Patterns
 
-**.rulesekeep**:
+**.rulesetkeep**:
 ```
 # Keep all cursor rules
 .cursor/rules/*
@@ -251,7 +251,7 @@ GitignoreManager works seamlessly in CI/CD environments:
 
 ### Common Issues
 
-1. **Files not being ignored**: Check override files (`.rulesekeep`) that might be keeping them
+1. **Files not being ignored**: Check override files (`.rulesetkeep`) that might be keeping them
 2. **Permission errors**: Ensure write access to project root for `.gitignore`
 3. **Paths not normalized**: GitignoreManager automatically handles path normalization
 4. **Managed block corrupted**: Delete the managed block and re-run compilation

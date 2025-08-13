@@ -2,6 +2,7 @@
   "compilerOptions": {
     // Type checking
     "strict": true,
+    "strictNullChecks": true,
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -25,8 +26,9 @@
     "isolatedModules": true,
 
     // Language and environment
-    "target": "ESNext",
-    "lib": ["ESNext"],
+    "target": "ES2018",
+    "lib": ["ES2018"],
+    "downlevelIteration": true,
 
     // Bun-specific optimizations
     "types": ["bun-types"],

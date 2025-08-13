@@ -3,13 +3,12 @@
  * Supports comprehensive validation for both JSONC and TOML formats
  */
 
-import type { JSONSchemaType } from 'ajv';
-import type { RulesetConfig, ProviderConfig, GitignoreConfig } from './types';
+// JSON Schema definitions for configuration validation
 
 /**
  * Provider configuration schema
  */
-export const providerConfigSchema: JSONSchemaType<ProviderConfig> = {
+export const providerConfigSchema = {
   type: 'object',
   properties: {
     enabled: {
@@ -30,12 +29,12 @@ export const providerConfigSchema: JSONSchemaType<ProviderConfig> = {
     },
   },
   additionalProperties: false,
-};
+} as const;
 
 /**
  * Gitignore configuration schema
  */
-export const gitignoreConfigSchema: JSONSchemaType<GitignoreConfig> = {
+export const gitignoreConfigSchema = {
   type: 'object',
   properties: {
     enabled: {
@@ -74,25 +73,48 @@ export const gitignoreConfigSchema: JSONSchemaType<GitignoreConfig> = {
     },
   },
   additionalProperties: false,
-};
+} as const;
 
 /**
- * Main Rulesets configuration schema
+ * Main Rulesets configuration schema (simplified for TypeScript compatibility)
  */
-export const rulesetConfigSchema: JSONSchemaType<RulesetConfig> = {
+export const rulesetConfigSchema = {
   type: 'object',
   properties: {
     providers: {
       type: 'object',
       patternProperties: {
-        '^[a-zA-Z][a-zA-Z0-9-]*$': providerConfigSchema,
+        '^[a-zA-Z][a-zA-Z0-9-]*$': {
+          type: 'object',
+          properties: {
+            enabled: { type: 'boolean', nullable: true },
+            outputPath: { type: 'string', nullable: true },
+            options: { type: 'object', nullable: true, additionalProperties: true },
+          },
+          additionalProperties: false,
+        },
       },
       additionalProperties: false,
       nullable: true,
       description: 'Provider-specific settings',
     },
     gitignore: {
-      ...gitignoreConfigSchema,
+      type: 'object',
+      properties: {
+        enabled: { type: 'boolean', nullable: true },
+        keep: { type: 'array', items: { type: 'string' }, nullable: true },
+        ignore: { type: 'array', items: { type: 'string' }, nullable: true },
+        options: {
+          type: 'object',
+          properties: {
+            comment: { type: 'string', nullable: true },
+            sort: { type: 'boolean', nullable: true },
+          },
+          additionalProperties: false,
+          nullable: true,
+        },
+      },
+      additionalProperties: false,
       nullable: true,
       description: 'Gitignore management settings',
     },
@@ -124,7 +146,7 @@ export const rulesetConfigSchema: JSONSchemaType<RulesetConfig> = {
     },
   },
   additionalProperties: false,
-};
+} as const;
 
 /**
  * Known provider IDs for validation
@@ -140,16 +162,24 @@ export const KNOWN_PROVIDERS = [
 ] as const;
 
 /**
- * Enhanced schema with provider validation
+ * Enhanced schema with provider validation (simplified for TypeScript compatibility)
  */
-export const rulesetConfigSchemaEnhanced: JSONSchemaType<RulesetConfig> = {
+export const rulesetConfigSchemaEnhanced = {
   ...rulesetConfigSchema,
   properties: {
     ...rulesetConfigSchema.properties,
     providers: {
       type: 'object',
       patternProperties: {
-        [`^(${KNOWN_PROVIDERS.join('|')}|[a-zA-Z][a-zA-Z0-9-]*)$`]: providerConfigSchema,
+        [`^(${KNOWN_PROVIDERS.join('|')}|[a-zA-Z][a-zA-Z0-9-]*)$`]: {
+          type: 'object',
+          properties: {
+            enabled: { type: 'boolean', nullable: true },
+            outputPath: { type: 'string', nullable: true },
+            options: { type: 'object', nullable: true, additionalProperties: true },
+          },
+          additionalProperties: false,
+        },
       },
       additionalProperties: false,
       nullable: true,
@@ -159,13 +189,13 @@ export const rulesetConfigSchemaEnhanced: JSONSchemaType<RulesetConfig> = {
       type: 'array',
       items: {
         type: 'string',
-        enum: [...KNOWN_PROVIDERS] as unknown as string[],
+        enum: [...KNOWN_PROVIDERS],
       },
       nullable: true,
       description: 'Default providers to enable (must be known providers)',
     },
   },
-};
+} as const;
 
 /**
  * Schema for environment variable overrides

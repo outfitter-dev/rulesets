@@ -1,6 +1,89 @@
-# Branded Types Migration Guide
+# Provider Terminology Migration Guide
 
-This guide demonstrates how to migrate existing Rulesets code to use the new branded types system inspired by Grapple's security-first approach.
+This guide demonstrates the migration from "Destination" to "Provider" terminology in the Rulesets project, along with the new branded types system inspired by Grapple's security-first approach.
+
+## Provider Terminology Migration
+
+### Overview
+
+The Rulesets project has completed a comprehensive refactoring from "Destination" to "Provider" terminology:
+
+**Key Changes:**
+- All TypeScript interfaces updated (`DestinationPlugin` → `RulesetProvider`)
+- System variables updated (`$destination` → `$provider`)
+- Configuration frontmatter updated (`destination:` → `provider:`)
+- File structure updated (`destinations/` → `providers/`)
+- Documentation updated throughout
+
+### Migration Examples
+
+#### TypeScript Interfaces
+
+**Before:**
+```typescript
+interface DestinationPlugin {
+  id: DestinationId;
+  name: string;
+  compile(doc: ParsedDocument, destPath: DestPath): CompiledDocument;
+}
+```
+
+**After:**
+```typescript
+interface RulesetProvider {
+  id: ProviderId;
+  name: string;
+  compile(doc: ParsedDocument, outputPath: OutputPath): CompiledDocument;
+}
+```
+
+#### Configuration Frontmatter
+
+**Before:**
+```yaml
+---
+destination:
+  include: ['cursor', 'windsurf']
+  exclude: ['claude-code']
+cursor:
+  destination:
+    path: '.cursor/rules'
+---
+```
+
+**After:**
+```yaml
+---
+provider:
+  include: ['cursor', 'windsurf']
+  exclude: ['claude-code']
+cursor:
+  provider:
+    path: '.cursor/rules'
+---
+```
+
+#### System Variables
+
+**Before:**
+```markdown
+Current destination: {{$destination}}
+Destination ID: {{$destination.id}}
+```
+
+**After:**
+```markdown
+Current provider: {{$provider}}
+Provider ID: {{$provider.id}}
+```
+
+### Backwards Compatibility
+
+- Old `destination:` frontmatter keys still work but are deprecated
+- `$destination` variable still available but will be removed in v1.0
+- Legacy plugin interfaces continue to work through adapters
+
+## Branded Types Migration
 
 ## Overview
 
@@ -225,7 +308,7 @@ import {
 export function compile(
   context: CompilerContext
 ): CompiledDocument {
-  const { parsedDoc, destinationId, destPath } = context;
+  const { parsedDoc, providerId, outputPath } = context;
   let output = parsedDoc.source.content;
   
   // Type-safe block processing
@@ -249,7 +332,7 @@ export function compile(
       metadata: {}
     },
     context: {
-      destinationId,
+      providerId,
       config: {}
     }
   };
@@ -278,8 +361,8 @@ export async function compileCommand(
 // apps/cli/src/commands/compile.ts
 import {
   createSourcePath,
-  createDestinationId,
-  createDestPath,
+  createProviderId,
+  createOutputPath,
   createRawContent,
   createParserContext,
   createCompilerContext,
@@ -295,8 +378,8 @@ export async function compileCommand(
   try {
     // Validate all inputs upfront
     const sourcePath = createSourcePath(source);
-    const destinationId = createDestinationId(destination);
-    const destPath = createDestPath(output);
+    const providerId = createProviderId(destination);
+    const outputPath = createOutputPath(output);
     
     // Read and validate content
     const content = await fs.readFile(source, 'utf-8');
@@ -314,7 +397,7 @@ export async function compileCommand(
     const parserCtx = createParserContext(
       sourcePath,
       rawContent,
-      destinationId,
+      providerId,
       environment
     );
     
@@ -322,9 +405,9 @@ export async function compileCommand(
     
     const compilerCtx = createCompilerContext(
       parsed,
-      destPath,
-      destinationId,
-      { id: destinationId, outputPath: destPath },
+      outputPath,
+      providerId,
+      { id: providerId, outputPath: outputPath },
       environment
     );
     
@@ -332,9 +415,9 @@ export async function compileCommand(
     
     const writerCtx = createWriterContext(
       compiled.output.content,
-      destPath,
+      outputPath,
       sourcePath,
-      destinationId,
+      providerId,
       environment
     );
     

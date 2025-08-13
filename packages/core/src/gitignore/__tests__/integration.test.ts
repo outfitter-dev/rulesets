@@ -137,7 +137,7 @@ ruleset:
     }
   });
 
-  it('should respect .rulesekeep override files', async () => {
+  it('should respect .rulesetkeep override files', async () => {
     const logger = new ConsoleLogger();
     jest.spyOn(logger, 'info').mockImplementation();
     jest.spyOn(logger, 'debug').mockImplementation();
@@ -157,7 +157,7 @@ ruleset:
         return 'node_modules/\n';
       }
       
-      if (filePath.endsWith('.rulesekeep')) {
+      if (filePath.endsWith('.rulesetkeep')) {
         return '.cursor/rules/*\n# Keep cursor rules in git\n';
       }
       

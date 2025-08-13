@@ -42,7 +42,7 @@ Transform Rulesets v0 into a production-ready system with comprehensive provider
 **Dependencies**: Task 1.1
 **Deliverables**:
 - Automatic .gitignore management for generated files
-- Support for `.rulesekeep` override file
+- Support for `.rulesetkeep` override file
 - Support for `.rulesetignore` override file
 - Configuration-based gitignore control
 
@@ -55,14 +55,14 @@ interface GitignoreManager {
 }
 
 interface GitignoreOverrides {
-  keep: string[];      // from .rulesekeep
+  keep: string[];      // from .rulesetkeep
   ignore: string[];    // from .rulesetignore
   config: string[];    // from config file
 }
 ```
 
 **File Structure**:
-- `.rulesekeep` - paths to keep in git (override default ignoring)
+- `.rulesetkeep` - paths to keep in git (override default ignoring)
 - `.rulesetignore` - additional paths to ignore
 - Managed block in `.gitignore` with marker comments
 

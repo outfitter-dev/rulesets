@@ -38,7 +38,7 @@ export class BrandValidationError extends Error {
  * Provider ID validation and creation
  * Must match a known provider
  */
-const VALID_PROVIDERS = [
+export const VALID_PROVIDERS = [
   'cursor',
   'windsurf',
   'claude-code',
@@ -54,6 +54,7 @@ const VALID_PROVIDERS = [
   'aider',
   'continue',
   'amp',
+  'opencode',
 ] as const;
 
 export type ValidProviderId = typeof VALID_PROVIDERS[number];

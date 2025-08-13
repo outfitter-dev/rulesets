@@ -24,7 +24,7 @@ export { parse } from '@rulesets/parser';
 export type { CompiledDoc, Logger, ParsedDoc } from '@rulesets/types';
 // Export local APIs - Modern provider exports
 export { providers, getProvider, getAllProviders, getProviderIds } from './providers';
-export { CursorProvider, WindsurfProvider, ClaudeCodeProvider, CodexProvider } from './providers';
+export { CursorProvider, WindsurfProvider, ClaudeCodeProvider, CodexProvider, AmpProvider, OpenCodeProvider } from './providers';
 
 // Export GitignoreManager functionality
 export {

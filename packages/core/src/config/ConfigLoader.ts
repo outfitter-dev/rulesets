@@ -21,9 +21,7 @@ import {
   mergeConfigs,
   applyEnvOverrides,
   getGlobalConfigDir,
-  fileExists,
 } from './utils';
-import { join } from 'path';
 
 /**
  * Default ConfigLoader implementation with comprehensive features
@@ -91,9 +89,17 @@ export class ConfigLoader implements IConfigLoader {
     const mergedConfig = mergeConfigs(...configs);
     
     // Step 3: Apply environment overrides
+    // Filter out undefined values from env to match Record<string, string>
+    const filteredEnv: Record<string, string> = {};
+    for (const [key, value] of Object.entries(env)) {
+      if (value !== undefined) {
+        filteredEnv[key] = value;
+      }
+    }
+    
     const { config: finalConfig, applied: envOverrides } = applyEnvOverrides(
       mergedConfig,
-      env,
+      filteredEnv,
       opts.envPrefix
     );
     
@@ -265,8 +271,16 @@ export async function loadConfig(
   logger?: Logger
 ): Promise<ConfigLoadResult> {
   const loader = getConfigLoader(logger);
+  // Filter out undefined values from process.env
+  const filteredEnv: Record<string, string> = {};
+  for (const [key, value] of Object.entries(process.env)) {
+    if (value !== undefined) {
+      filteredEnv[key] = value;
+    }
+  }
+  
   return loader.loadConfig(
-    { projectPath, env: process.env, logger },
+    { projectPath, env: filteredEnv, logger },
     options
   );
 }
