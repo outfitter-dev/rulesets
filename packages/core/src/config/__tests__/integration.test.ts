@@ -226,7 +226,6 @@ describe('Configuration System Integration', () => {
       const _mockResult = await loadConfig(projectDir, {}, undefined);
 
       // Manually apply env overrides for testing
-      const { config: finalConfig } = result.config;
 
       // Test that our env override parsing works
       const loader = (await import('../ConfigLoader')).getConfigLoader();

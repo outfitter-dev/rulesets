@@ -7,6 +7,10 @@ import { getChildLogger } from '../utils/logger';
 
 const pinoLogger = getChildLogger('handlebars-compiler');
 
+// Regex constants at top level for performance
+const FILE_EXTENSION_REGEX = /\.[^.]*$/;
+const BLOCK_HELPER_REGEX = /\{\{#([a-zA-Z][a-zA-Z0-9-]*)/g;
+
 /**
  * Context provided to Handlebars templates during compilation
  */
@@ -204,10 +208,8 @@ export class HandlebarsRulesetCompiler {
     const fileName =
       (frontmatter.name as string) ||
       (source.path
-        ? source.path
-            .split('/')
-            .pop()
-            ?.replace(/\.[^.]*$/, '') || 'unnamed'
+        ? source.path.split('/').pop()?.replace(FILE_EXTENSION_REGEX, '') ||
+          'unnamed'
         : 'unnamed');
 
     return {
@@ -305,12 +307,14 @@ export class HandlebarsRulesetCompiler {
    */
   private preRegisterSectionHelpers(content: string): void {
     // Simple regex to find block helpers: {{#name}} or {{#name arg1 arg2}}
-    const blockHelperRegex = /\{\{#([a-zA-Z][a-zA-Z0-9-]*)/g;
-    let match;
+    let match: RegExpExecArray | null = BLOCK_HELPER_REGEX.exec(content);
 
-    while ((match = blockHelperRegex.exec(content)) !== null) {
+    while (match !== null) {
       const helperName = match[1];
-      this.registerSectionHelper(helperName);
+      if (helperName) {
+        this.registerSectionHelper(helperName);
+      }
+      match = BLOCK_HELPER_REGEX.exec(content);
     }
   }
 

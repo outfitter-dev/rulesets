@@ -43,10 +43,14 @@ export async function findConfigFile(
 
   while (depth <= maxSearchDepth) {
     // Try each config file name in order of precedence
-    for (const fileName of CONFIG_FILE_NAMES) {
-      const filePath = join(currentPath, fileName);
-
-      if (await fileExists(filePath)) {
+    const filePaths = CONFIG_FILE_NAMES.map(fileName => join(currentPath, fileName));
+    const existenceResults = await Promise.all(filePaths.map(fileExists));
+    
+    for (let i = 0; i < CONFIG_FILE_NAMES.length; i++) {
+      if (existenceResults[i]) {
+        const fileName = CONFIG_FILE_NAMES[i];
+        const filePath = filePaths[i];
+        
         try {
           const content = await fs.readFile(filePath, 'utf8');
           const format = getConfigFormat(fileName);
@@ -94,11 +98,11 @@ export function getConfigFormat(fileName: string): 'jsonc' | 'toml' {
 /**
  * Parse configuration file content based on format
  */
-export async function parseConfigContent(
+export function parseConfigContent(
   content: string,
   format: 'jsonc' | 'toml',
   filePath: string
-): Promise<RulesetConfig> {
+): RulesetConfig {
   try {
     switch (format) {
       case 'jsonc': {
@@ -389,7 +393,10 @@ export function setDeepValue(
     current = current[key] as Record<string, unknown>;
   }
 
-  current[path.at(-1)] = value;
+  const lastKey = path[path.length - 1];
+  if (lastKey !== undefined) {
+    current[lastKey] = value;
+  }
 }
 
 /**

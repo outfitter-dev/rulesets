@@ -2,7 +2,7 @@
 // TLDR: v0.1.0 Stub implementation that writes raw content to .cursor/rules/
 
 import { promises as fs } from 'node:fs';
-import * as path from 'node:path';
+import { dirname, isAbsolute, normalize, resolve, sep } from 'node:path';
 import type {
   CompiledDoc,
   DestinationPlugin,
@@ -59,7 +59,7 @@ export class CursorPlugin implements DestinationPlugin {
     const resolvedPath = this.sanitizePath(outputPath, process.cwd());
 
     // Ensure directory exists
-    const dir = path.dirname(resolvedPath);
+    const dir = dirname(resolvedPath);
     try {
       await fs.mkdir(dir, { recursive: true });
     } catch (error) {
@@ -96,17 +96,17 @@ export class CursorPlugin implements DestinationPlugin {
   // Security: Sanitize file paths to prevent directory traversal attacks
   private sanitizePath(userPath: string, baseDir: string): string {
     // Resolve and normalize the path
-    const resolved = path.isAbsolute(userPath)
-      ? path.resolve(userPath)
-      : path.resolve(baseDir, userPath);
+    const resolved = isAbsolute(userPath)
+      ? resolve(userPath)
+      : resolve(baseDir, userPath);
 
     // Normalize to handle . and .. segments
-    const normalized = path.normalize(resolved);
+    const normalized = normalize(resolved);
 
     // Ensure the resolved path is within the base directory or its subdirectories
-    const baseDirResolved = path.resolve(baseDir);
+    const baseDirResolved = resolve(baseDir);
     if (
-      !normalized.startsWith(baseDirResolved + path.sep) &&
+      !normalized.startsWith(baseDirResolved + sep) &&
       normalized !== baseDirResolved
     ) {
       throw new Error(

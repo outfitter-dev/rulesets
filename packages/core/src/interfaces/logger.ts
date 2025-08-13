@@ -19,24 +19,24 @@ export interface Logger {
 export class ConsoleLogger implements Logger {
   // TLDR: Logs a debug message to the console (mixd-v0)
   // TLDR: v0.1.0 Console implementation of debug logging
-  public debug(message: string, ...args: unknown[]): void {
+  debug(message: string, ...args: unknown[]): void {
     if (process.env.RULESETS_LOG_LEVEL === 'debug') {
       console.debug(`[DEBUG] ${message}`, ...args);
     }
   }
   // TLDR: Logs an informational message to the console (mixd-v0)
   // TLDR: v0.1.0 Console implementation of info logging
-  public info(message: string, ...args: unknown[]): void {
+  info(message: string, ...args: unknown[]): void {
     console.info(`[INFO] ${message}`, ...args);
   }
   // TLDR: Logs a warning message to the console (mixd-v0)
   // TLDR: v0.1.0 Console implementation of warning logging
-  public warn(message: string, ...args: unknown[]): void {
+  warn(message: string, ...args: unknown[]): void {
     console.warn(`[WARN] ${message}`, ...args);
   }
   // TLDR: Logs an error message to the console (mixd-v0)
   // TLDR: v0.1.0 Console implementation with stack trace support
-  public error(message: string | Error, ...args: unknown[]): void {
+  error(message: string | Error, ...args: unknown[]): void {
     if (message instanceof Error) {
       console.error(`[ERROR] ${message.message}`, message.stack, ...args);
     } else {

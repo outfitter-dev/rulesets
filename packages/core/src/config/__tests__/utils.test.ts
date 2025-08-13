@@ -19,6 +19,10 @@ import {
   setDeepValue,
 } from '../utils';
 
+// Regex constants at top level for performance
+const FAILED_TO_PARSE_JSONC_REGEX = /Failed to parse JSONC/;
+const FAILED_TO_PARSE_TOML_REGEX = /Failed to parse TOML/;
+
 describe('Configuration Utilities', () => {
   let tempDir: string;
 
@@ -60,7 +64,7 @@ describe('Configuration Utilities', () => {
   });
 
   describe('parseConfigContent', () => {
-    it('should parse valid JSONC content', async () => {
+    it('should parse valid JSONC content', () => {
       const content = `{
         // This is a comment
         "strict": true,
@@ -71,13 +75,13 @@ describe('Configuration Utilities', () => {
         }
       }`;
 
-      const result = await parseConfigContent(content, 'jsonc', 'test.jsonc');
+      const result = parseConfigContent(content, 'jsonc', 'test.jsonc');
 
       expect(result.strict).toBe(true);
       expect(result.providers?.cursor?.enabled).toBe(true);
     });
 
-    it('should parse valid TOML content', async () => {
+    it('should parse valid TOML content', () => {
       const content = `
       strict = true
       defaultProviders = ["cursor", "claude-code"]
@@ -87,27 +91,27 @@ describe('Configuration Utilities', () => {
       outputPath = ".cursor/rules/"
       `;
 
-      const result = await parseConfigContent(content, 'toml', 'test.toml');
+      const result = parseConfigContent(content, 'toml', 'test.toml');
 
       expect(result.strict).toBe(true);
       expect(result.defaultProviders).toEqual(['cursor', 'claude-code']);
       expect(result.providers?.cursor?.enabled).toBe(true);
     });
 
-    it('should throw on invalid JSONC', async () => {
+    it('should throw on invalid JSONC', () => {
       const content = '{ invalid json }';
 
-      await expect(
-        parseConfigContent(content, 'jsonc', 'test.jsonc')
-      ).rejects.toThrow(/Failed to parse JSONC/);
+      expect(() => {
+        parseConfigContent(content, 'jsonc', 'test.jsonc');
+      }).toThrow(FAILED_TO_PARSE_JSONC_REGEX);
     });
 
-    it('should throw on invalid TOML', async () => {
+    it('should throw on invalid TOML', () => {
       const content = '[invalid toml';
 
-      await expect(
-        parseConfigContent(content, 'toml', 'test.toml')
-      ).rejects.toThrow(/Failed to parse TOML/);
+      expect(() => {
+        parseConfigContent(content, 'toml', 'test.toml');
+      }).toThrow(FAILED_TO_PARSE_TOML_REGEX);
     });
   });
 
@@ -310,7 +314,9 @@ describe('Configuration Utilities', () => {
 
       setDeepValue(obj, ['providers', 'cursor', 'enabled'], true);
 
-      expect((obj as any).providers.cursor.enabled).toBe(true);
+      expect((obj as Record<string, unknown>).providers).toBeDefined();
+      expect(((obj as Record<string, unknown>).providers as Record<string, unknown>).cursor).toBeDefined();
+      expect((((obj as Record<string, unknown>).providers as Record<string, unknown>).cursor as Record<string, unknown>).enabled).toBe(true);
     });
 
     it('should overwrite existing values', () => {
@@ -334,7 +340,9 @@ describe('Configuration Utilities', () => {
       const { config: result, applied } = applyEnvOverrides(config, env);
 
       expect(result.strict).toBe(true);
-      expect((result as any).providers.cursor.enabled).toBe(true);
+      expect((result as Record<string, unknown>).providers).toBeDefined();
+      expect(((result as Record<string, unknown>).providers as Record<string, unknown>).cursor).toBeDefined();
+      expect((((result as Record<string, unknown>).providers as Record<string, unknown>).cursor as Record<string, unknown>).enabled).toBe(true);
       expect(applied.RULESETS_STRICT).toBe(true);
       expect(applied.RULESETS_PROVIDERS_CURSOR_ENABLED).toBe(true);
       expect(applied.OTHER_VAR).toBeUndefined();
