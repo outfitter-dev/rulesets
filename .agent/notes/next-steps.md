@@ -26,8 +26,8 @@
 - [ ] Ensure that `@path/to/file.md` syntax is properly documented for provider tools to handle
   - [ ] Note: File embedding is handled by downstream provider tools, not by Rulesets itself
   - [ ] Document the expected path rewriting behavior (relative to project root, determined by `ruleset.jsonc`)
-- [ ] Standard bare markdown links (`[path/to/file.md]`) and aliased links should be supported, and should be rewritten based on the `provider` configuration
-  - Pay particular attention to `cursor` with this and rewrite bare links to `[path/to/file](path/to/file.mdc)] and ensure the path is relative to the output path.
+- [ ] Standard bare Markdown links (`[path/to/file.md]`) and aliased links should be supported, and should be rewritten based on the `provider` configuration
+  - Pay particular attention to `cursor` with this and rewrite bare links to `[path/to/file](path/to/file.mdc)` and ensure the path is relative to the output path.
 
 ## Additional Notes
 

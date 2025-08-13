@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Rulesets is a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files for various AI tools and IDEs. Think of it as Terraform for AI rules: write once, compile for many destinations.
+Rulesets is a CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into provider-specific rules files for various AI tools and IDEs. Think of it as Terraform for AI rules: write once, compile for many providers.
 
 ## Essential Navigation Strategy
 
@@ -29,28 +29,28 @@ Rulesets is a CommonMark-compliant rules compiler that lets you author a single 
   - `GREPABLE.md` - Marker system and navigation guide
   - `LANGUAGE.md` - Terminology and language specifications
   - `plans/` - Implementation plans and reviews
-- `/packages/core/` - Core Mixdown library (main implementation area)
-- `.mixdown/` - Mixdown-specific configurations
+- `/packages/core/` - Core Rulesets library (main implementation area)
+- `.ruleset/` - Rulesets-specific configurations
 
 ## Key Terminology (from LANGUAGE.md)
 
-- **Source rules** - Markdown files with Mixdown notation (`*.mix.md`)
-- **Compiled rules** - Generated files for specific destinations
-- **Destination** - Target tool (Cursor, Claude Code, etc.)
-- **Stem** - Content blocks marked with `{{stem-name}}...{{/stem-name}}`
+- **Source rules** - Markdown files written in Rulesets syntax
+- **Compiled rules** - Generated files for specific providers
+- **Provider** - Output adapter (Cursor, Claude Code, etc.)
+- **Block** - Delimited content blocks `{{block-name}}...{{/block-name}}`
 - **Marker** - Elements using `{{...}}` notation
-- **Mixin** - Reusable components in `_mixins/`
+- **Partial** - Reusable components in `_partials/`
 
 ## Current Implementation Status
 
-We're implementing **Mixdown v0** with these limitations:
+We're implementing **Rulesets v0.1-beta** with these limitations:
 
 - Parser handles frontmatter and raw body only
 - Compiler is pass-through (no marker processing)
 - Linter validates basic frontmatter schema
 - Architecture designed for easy v0.1+ enhancement
 
-Reference `docs/project/plans/PLAN-mixdown-v0.md` for complete implementation details.
+Reference `docs/project/plans/PLAN-rulesets-v0.md` for complete implementation details.
 
 ## Development Workflow
 

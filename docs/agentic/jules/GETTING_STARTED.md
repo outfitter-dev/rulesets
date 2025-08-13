@@ -9,7 +9,7 @@
 - **Parser:** Handle frontmatter and raw body only (no marker processing yet)
 - **Compiler:** Pass-through implementation (no `{{...}}` notation processing)
 - **Linter:** Basic frontmatter schema validation
-- **Plugins:** Stub implementations for cursor and windsurf destinations
+- **Providers:** Stub implementations for cursor and windsurf providers
 
 ## Required Code Patterns
 

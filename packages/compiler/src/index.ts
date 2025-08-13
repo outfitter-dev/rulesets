@@ -5,15 +5,15 @@ import type { CompiledDoc, Logger, ParsedDoc } from '@rulesets/types';
 let logger: Logger | undefined;
 
 /**
- * Compiles a parsed Rulesets document for a specific destination.
+ * Compiles a parsed Rulesets document for a specific provider.
  * For v0.1.0, this is a pass-through implementation that doesn't process markers.
  *
  * @param parsedDoc - The parsed document to compile
- * @param destinationId - The ID of the destination to compile for
+ * @param destinationId - The ID of the provider to compile for (legacy parameter name)
  * @param projectConfig - Optional project configuration
  * @returns A promise that resolves to a CompiledDoc
  */
-// TLDR: Compiles parsed document to destination format (mixd-v0)
+// TLDR: Compiles parsed document to provider format (mixd-v0)
 // TLDR: v0.1.0 Pass-through implementation without transformation
 // TODO(v0.2.0): Process block markers and convert to XML
 // TODO(v0.3.0): Process variables and perform substitution
@@ -75,7 +75,7 @@ export function compile(
         title: source.frontmatter?.title,
         description: source.frontmatter?.description,
         version: source.frontmatter?.version,
-        // Include destination-specific metadata if available
+        // Include provider-specific metadata if available
         ...(source.frontmatter?.destinations &&
         typeof source.frontmatter.destinations === 'object' &&
         !Array.isArray(source.frontmatter.destinations)
@@ -89,7 +89,7 @@ export function compile(
       destinationId,
       config: {
         ...projectConfig,
-        // Merge destination-specific config from frontmatter
+        // Merge provider-specific config from frontmatter
         ...(source.frontmatter?.destinations &&
         typeof source.frontmatter.destinations === 'object' &&
         !Array.isArray(source.frontmatter.destinations)
