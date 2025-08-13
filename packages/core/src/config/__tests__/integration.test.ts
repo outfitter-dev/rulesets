@@ -2,9 +2,9 @@
  * Integration tests for the complete configuration system
  */
 
-import { promises as fs } from 'fs';
+import { promises as fs } from 'node:fs';
+import { join } from 'node:path';
 import { tmpdir } from 'os';
-import { join } from 'path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { loadConfig } from '../ConfigLoader';
 import type { RulesetConfig } from '../types';

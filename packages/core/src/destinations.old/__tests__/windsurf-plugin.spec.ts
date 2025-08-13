@@ -1,7 +1,7 @@
 // TLDR: Unit tests for the Windsurf destination plugin
 
-import { promises as fs } from 'fs';
-import path from 'path';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CompiledDoc, Logger } from '../../interfaces';
 import { WindsurfPlugin } from '../windsurf-plugin';

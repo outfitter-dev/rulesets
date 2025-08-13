@@ -1,14 +1,14 @@
 // TLDR: Windsurf destination plugin implementation (mixd-v0)
 // TLDR: v0.1.0 Stub implementation that writes raw content to .windsurf/rules/
 
+import { promises as fs } from 'node:fs';
+import * as path from 'node:path';
 import type {
   CompiledDoc,
   DestinationPlugin,
   JSONSchema7,
   Logger,
 } from '@rulesets/types';
-import { promises as fs } from 'fs';
-import * as path from 'path';
 
 export class WindsurfPlugin implements DestinationPlugin {
   // TLDR: Returns the canonical name for Windsurf destination (mixd-v0)

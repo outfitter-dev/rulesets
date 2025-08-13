@@ -3,8 +3,8 @@
  * Replaces console.* usage to meet Ultracite standards
  */
 
-import pino from 'pino';
 import type { Logger as PinoLogger } from 'pino';
+import pino from 'pino';
 
 // Define log levels for the application
 export type LogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
@@ -22,10 +22,11 @@ export interface LoggerOptions {
 export function createLogger(options: LoggerOptions = {}): PinoLogger {
   const isDevelopment = process.env.NODE_ENV === 'development';
   const isTest = process.env.NODE_ENV === 'test';
-  
+
   const defaultOptions: pino.LoggerOptions = {
     name: options.name || '@rulesets/core',
-    level: options.level || (isTest ? 'silent' : isDevelopment ? 'debug' : 'info'),
+    level:
+      options.level || (isTest ? 'silent' : isDevelopment ? 'debug' : 'info'),
     formatters: {
       level: (label) => {
         return { level: label.toUpperCase() };
@@ -56,7 +57,10 @@ export function createLogger(options: LoggerOptions = {}): PinoLogger {
 export const logger = createLogger();
 
 // Child logger factory for specific modules
-export function getChildLogger(module: string, context?: Record<string, unknown>): PinoLogger {
+export function getChildLogger(
+  module: string,
+  context?: Record<string, unknown>
+): PinoLogger {
   return logger.child({ module, ...context });
 }
 

@@ -5,12 +5,12 @@
  * Measures build times, runtime performance, and memory usage
  */
 
+import { promises as fs } from 'node:fs';
+import { performance } from 'node:perf_hooks';
 import { compile } from '@rulesets/compiler';
 import { ConsoleLogger, runRulesetsV0 } from '@rulesets/core';
 import { lint } from '@rulesets/linter';
 import { parse } from '@rulesets/parser';
-import { promises as fs } from 'fs';
-import { performance } from 'perf_hooks';
 
 // import type { ParsedDoc } from '@rulesets/types';
 

@@ -3,17 +3,17 @@
  * Supports both JSONC and TOML formats with robust error handling
  */
 
+import { constants, promises as fs } from 'node:fs';
+import { dirname, join, resolve } from 'node:path';
 import { parse as parseToml } from '@iarna/toml';
-import { constants, promises as fs } from 'fs';
 import { type ParseError, parse as parseJsonc } from 'jsonc-parser';
-import { dirname, join, resolve } from 'path';
+import { getChildLogger } from '../utils/logger';
 import type {
   ConfigFileResult,
   ConfigLoadOptions,
   RulesetConfig,
 } from './types';
 import { CONFIG_FILE_NAMES, DEFAULT_LOAD_OPTIONS } from './types';
-import { getChildLogger } from '../utils/logger';
 
 const logger = getChildLogger('config');
 

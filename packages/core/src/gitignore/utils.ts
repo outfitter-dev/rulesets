@@ -3,7 +3,7 @@
  * Provides path manipulation, file parsing, and content management utilities
  */
 
-import * as path from 'path';
+import * as path from 'node:path';
 import type { GitignoreState, ManagedBlockConfig } from './types';
 
 /**

@@ -2,9 +2,9 @@
  * Tests for ConfigLoader class
  */
 
-import { promises as fs } from 'fs';
+import { promises as fs } from 'node:fs';
+import { join } from 'node:path';
 import { tmpdir } from 'os';
-import { join } from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   ConfigLoader,

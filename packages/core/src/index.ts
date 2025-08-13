@@ -1,13 +1,13 @@
 // TLDR: Main entry point and CLI orchestration for Rulesets (mixd-v0)
 // TLDR: v0.1.0 Basic orchestration for single file processing with minimal features
 
+import { promises as fs } from 'node:fs';
+import { dirname } from 'node:path';
 import { compile } from '@rulesets/compiler';
 import { lint } from '@rulesets/linter';
 import { parse } from '@rulesets/parser';
 import type { Logger } from '@rulesets/types';
 import { hasGeneratedPaths } from '@rulesets/types';
-import { promises as fs } from 'fs';
-import { dirname } from 'path';
 import type { RulesetConfig } from './config';
 import { loadConfig } from './config';
 import { createGitignoreManager } from './gitignore';

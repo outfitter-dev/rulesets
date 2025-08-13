@@ -1,13 +1,13 @@
 // TLDR: Unit tests for the Codex provider (Rulesets v1)
 
 import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import type {
   CompiledDoc,
   Logger,
   ProviderCompilationContext,
 } from '@rulesets/types';
-import { promises as fs } from 'fs';
-import path from 'path';
 import { CodexProvider } from '../codex-provider';
 
 // Mock fs using Bun's mock API

@@ -1,8 +1,8 @@
 // TLDR: Unit tests for the Cursor provider (Rulesets v0)
 
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import type { CompiledDoc, Logger } from '@rulesets/types';
-import { promises as fs } from 'fs';
-import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CursorProvider } from '../cursor-provider';
 

@@ -1,12 +1,12 @@
 // TLDR: Unit tests for the Claude Code provider (Rulesets v1)
 
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import type {
   CompiledDoc,
   Logger,
   ProviderCompilationContext,
 } from '@rulesets/types';
-import { promises as fs } from 'fs';
-import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClaudeCodeProvider } from '../claude-code-provider';
 

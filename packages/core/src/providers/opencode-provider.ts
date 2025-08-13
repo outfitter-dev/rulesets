@@ -1,6 +1,8 @@
 // Provider implementation for OpenCode web agent
 // Implements the Provider interface with branded types and modern architecture
 
+import { promises as fs } from 'node:fs';
+import * as path from 'node:path';
 import type {
   CompilationStats,
   CompiledDoc,
@@ -24,9 +26,7 @@ import {
   createProviderId,
   createVersion,
 } from '@rulesets/types';
-import { promises as fs } from 'fs';
 import * as os from 'os';
-import * as path from 'path';
 
 export class OpenCodeProvider implements Provider, DestinationPlugin {
   readonly id: ProviderId = createProviderId('opencode');

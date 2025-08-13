@@ -3,7 +3,7 @@
 
 import type { CompiledDoc } from '@rulesets/types';
 import { AmpProvider } from '../src/providers/amp-provider';
-import { createLogger, toRulesetsLogger } from '../src/utils/logger';
+import { createLogger } from '../src/utils/logger';
 
 // Simple example of using the Amp provider
 function exampleAmpUsage() {
@@ -84,11 +84,20 @@ This is a modern TypeScript web application using:
   pinoLogger.info({ fileNaming: provider.config.fileNaming }, 'File Naming');
 
   pinoLogger.info('📋 Provider Capabilities:');
-  pinoLogger.info({ capabilities: provider.capabilities }, 'Provider capabilities');
+  pinoLogger.info(
+    { capabilities: provider.capabilities },
+    'Provider capabilities'
+  );
 
   pinoLogger.info('⚙️  Configuration Schema:');
   const schema = provider.configSchema();
-  pinoLogger.info({ schemaType: schema.type, properties: Object.keys(schema.properties || {}) }, 'Schema configuration');
+  pinoLogger.info(
+    {
+      schemaType: schema.type,
+      properties: Object.keys(schema.properties || {}),
+    },
+    'Schema configuration'
+  );
 
   // In a real scenario, you would use the write method like this:
   pinoLogger.info('📝 Example Write Operation:');
@@ -97,7 +106,10 @@ This is a modern TypeScript web application using:
   try {
     pinoLogger.info('Content preview:');
     pinoLogger.info('================');
-    pinoLogger.info({ preview: `${compiledDoc.output.content.substring(0, 200)}...` }, 'Content preview');
+    pinoLogger.info(
+      { preview: `${compiledDoc.output.content.substring(0, 200)}...` },
+      'Content preview'
+    );
     pinoLogger.info(
       { contentLength: compiledDoc.output.content.length },
       'Total content length in characters'

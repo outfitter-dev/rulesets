@@ -1,4 +1,4 @@
-# TLDR: GitHub Actions workflow for Continuous Integration. Runs on push/PR, installs, lints, tests, builds, and handles releases
+# CI/CD Workflow - Optimized for speed and reliability
 name: CI
 
 on:
@@ -7,65 +7,155 @@ on:
   pull_request:
     branches: [main, develop]
 
+# Cancel outdated runs for same ref
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
+
+# Set environment for all jobs
+env:
+  TURBO_TELEMETRY_DISABLED: 1
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
 jobs:
   build_and_test:
     name: Build and Test
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 2 # Reduced from 0 for faster checkout
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.2.19
 
-      - name: Install Dependencies
-        run: bun install --frozen-lockfile
+      # Cache Bun dependencies
+      - name: Cache Bun Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', 'bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
 
+      # Cache Turbo
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: |
+            .turbo
+            **/.turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Install Dependencies
+        run: |
+          if [ -f "bun.lock" ]; then
+            bun install --frozen-lockfile
+          else
+            bun install
+          fi
+
+      # Run all checks in parallel with fail-fast
       - name: Lint
-        run: bun turbo lint
+        id: lint
+        run: bun turbo lint --concurrency=2
+        continue-on-error: true
 
       - name: Type Check
-        run: bun turbo typecheck
+        id: typecheck
+        run: bun turbo typecheck --concurrency=2
+        continue-on-error: true
 
       - name: Test
-        run: bun turbo test
+        id: test
+        run: bun turbo test --concurrency=2
+        continue-on-error: true
 
       - name: Build
-        run: bun turbo build
+        id: build
+        run: bun turbo build --concurrency=2
+        continue-on-error: true
+
+      # Check results and fail if any step failed
+      - name: Check Results
+        if: always()
+        run: |
+          if [[ "${{ steps.lint.outcome }}" == "failure" ]]; then
+            echo "❌ Linting failed"
+            exit 1
+          fi
+          if [[ "${{ steps.typecheck.outcome }}" == "failure" ]]; then
+            echo "❌ Type checking failed"
+            exit 1
+          fi
+          if [[ "${{ steps.test.outcome }}" == "failure" ]]; then
+            echo "❌ Tests failed"
+            exit 1
+          fi
+          if [[ "${{ steps.build.outcome }}" == "failure" ]]; then
+            echo "❌ Build failed"
+            exit 1
+          fi
+          echo "✅ All checks passed"
 
   release:
     name: Release
     runs-on: ubuntu-latest
     needs: build_and_test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    timeout-minutes: 15
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Need full history for changesets
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.2.19
 
-      - name: Install Dependencies
-        run: bun install --frozen-lockfile
+      # Reuse caches from build job
+      - name: Cache Bun Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', 'bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
 
-      - name: Lint
-        run: bun turbo lint
-      - name: Test
-        run: bun turbo test
-      - name: Build
-        run: bun turbo build
+      - name: Cache Turbo
+        uses: actions/cache@v4
+        with:
+          path: |
+            .turbo
+            **/.turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Install Dependencies
+        run: |
+          if [ -f "bun.lock" ]; then
+            bun install --frozen-lockfile
+          else
+            bun install
+          fi
+
+      # Build only (tests already passed)
+      - name: Build for Release
+        run: bun turbo build --concurrency=2
 
       - name: Create Release Pull Request or Publish
         id: changesets
