@@ -1,5 +1,5 @@
-// :M: tldr: Defines the CompiledDoc interface for Rulesets
-// :M: v0.1.0: Minimal interface structure without marker processing
+// TLDR: Defines the CompiledDoc interface for Rulesets (mixd-v0)
+// TLDR: v0.1.0 Minimal interface structure without marker processing
 
 /**
  * Represents the structure of a parsed Rulesets block.

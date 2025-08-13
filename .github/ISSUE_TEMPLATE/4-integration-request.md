@@ -1,6 +1,6 @@
 ---
 name: '🧩 Integration Request'
-about: 'Request a new destination or plugin for Mixdown'
+about: 'Request a new provider or plugin for Rulesets'
 title: '[Integration]: '
 labels: ['triage']
 type: 'integration'

@@ -1,5 +1,5 @@
-// :M: tldr: Windsurf destination plugin implementation
-// :M: v0.1.0: Stub implementation that writes raw content to .windsurf/rules/
+// TLDR: Windsurf destination plugin implementation (mixd-v0)
+// TLDR: v0.1.0 Stub implementation that writes raw content to .windsurf/rules/
 
 import type {
   CompiledDoc,
@@ -11,14 +11,14 @@ import { promises as fs } from 'fs';
 import * as path from 'path';
 
 export class WindsurfPlugin implements DestinationPlugin {
-  // :M: tldr: Returns the canonical name for Windsurf destination
-  // :M: v0.1.0: Static identifier for plugin registration
+  // TLDR: Returns the canonical name for Windsurf destination (mixd-v0)
+  // TLDR: v0.1.0 Static identifier for plugin registration
   get name(): string {
     return 'windsurf';
   }
 
-  // :M: tldr: Provides configuration schema for Windsurf plugin
-  // :M: v0.1.0: Basic schema with outputPath and format options
+  // TLDR: Provides configuration schema for Windsurf plugin (mixd-v0)
+  // TLDR: v0.1.0 Basic schema with outputPath and format options
   configSchema(): JSONSchema7 {
     return {
       type: 'object',
@@ -38,9 +38,9 @@ export class WindsurfPlugin implements DestinationPlugin {
     };
   }
 
-  // :M: tldr: Writes compiled document to Windsurf rules directory
-  // :M: v0.1.0: Basic file writing with security validation
-  // :M: todo(v0.2.0): Add Windsurf-specific formatting and transformations
+  // TLDR: Writes compiled document to Windsurf rules directory (mixd-v0)
+  // TLDR: v0.1.0 Basic file writing with security validation
+  // TODO(v0.2.0): Add Windsurf-specific formatting and transformations
   async write(ctx: {
     compiled: CompiledDoc;
     destPath: string;

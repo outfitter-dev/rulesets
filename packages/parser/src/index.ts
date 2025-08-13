@@ -1,5 +1,5 @@
-// :M: tldr: Parser implementation for Rulesets notation
-// :M: v0.1.0: Basic frontmatter extraction without marker processing
+// TLDR: Parser implementation for Rulesets notation (mixd-v0)
+// TLDR: v0.1.0 Basic frontmatter extraction without marker processing
 
 import type { ParsedDoc } from '@rulesets/types';
 import * as yaml from 'js-yaml';
@@ -11,10 +11,10 @@ import * as yaml from 'js-yaml';
  * @param content - The raw markdown content to parse
  * @returns A promise that resolves to a ParsedDoc
  */
-// :M: tldr: Parse frontmatter and body from markdown content
-// :M: v0.1.0: Simple YAML frontmatter extraction only
-// :M: todo(v0.2.0): Add support for block parsing
-// :M: todo(v0.3.0): Add variable substitution
+// TLDR: Parse frontmatter and body from markdown content (mixd-v0)
+// TLDR: v0.1.0 Simple YAML frontmatter extraction only
+// TODO(v0.2.0): Add support for block parsing
+// TODO(v0.3.0): Add variable substitution
 export async function parse(
   content: string,
   sourcePath?: string

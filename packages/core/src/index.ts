@@ -1,5 +1,5 @@
-// :M: tldr: Main entry point and CLI orchestration for Rulesets
-// :M: v0.1.0: Basic orchestration for single file processing with minimal features
+// TLDR: Main entry point and CLI orchestration for Rulesets (mixd-v0)
+// TLDR: v0.1.0 Basic orchestration for single file processing with minimal features
 
 import { compile } from '@rulesets/compiler';
 import { lint } from '@rulesets/linter';
@@ -108,8 +108,8 @@ export {
  * @param configOverride - Optional: Configuration override (takes precedence over config files).
  * @returns A promise that resolves when the process is complete, or rejects on error.
  */
-// :M: tldr: Main orchestration logic for reading, parsing, linting, compiling, and writing a Rulesets file
-// :M: v0.1.0: Sequential processing of parse → lint → compile → write for each destination
+// TLDR: Main orchestration logic for reading, parsing, linting, compiling, and writing a Rulesets file (mixd-v0)
+// TLDR: v0.1.0 Sequential processing of parse → lint → compile → write for each destination
 export async function runRulesetsV0(
   sourceFilePath: string,
   logger: Logger = new ConsoleLogger(),
@@ -410,9 +410,9 @@ export async function runRulesetsV0(
 }
 
 // CLI entry point for testing
-// :M: tldr: Simple CLI wrapper for testing the orchestration logic
-// :M: v0.1.0: Basic CLI for development testing only
-// :M: todo(v0.2.0): Replace with proper CLI using commander or yargs
+// TLDR: Simple CLI wrapper for testing the orchestration logic (mixd-v0)
+// TLDR: v0.1.0 Basic CLI for development testing only
+// TODO(v0.2.0): Replace with proper CLI using commander or yargs
 if (require.main === module) {
   const logger = new ConsoleLogger();
   const sourceFile = process.argv[2] || './my-rules.ruleset.md';

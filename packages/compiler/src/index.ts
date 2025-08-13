@@ -1,5 +1,5 @@
-// :M: tldr: Compiler implementation for Rulesets notation
-// :M: v0.1.0: Pass-through implementation without marker processing
+// TLDR: Compiler implementation for Rulesets notation (mixd-v0)
+// TLDR: v0.1.0 Pass-through implementation without marker processing
 import type { CompiledDoc, Logger, ParsedDoc } from '@rulesets/types';
 
 let logger: Logger | undefined;
@@ -13,10 +13,10 @@ let logger: Logger | undefined;
  * @param projectConfig - Optional project configuration
  * @returns A promise that resolves to a CompiledDoc
  */
-// :M: tldr: Compiles parsed document to destination format
-// :M: v0.1.0: Pass-through implementation without transformation
-// :M: todo(v0.2.0): Process block markers and convert to XML
-// :M: todo(v0.3.0): Process variables and perform substitution
+// TLDR: Compiles parsed document to destination format (mixd-v0)
+// TLDR: v0.1.0 Pass-through implementation without transformation
+// TODO(v0.2.0): Process block markers and convert to XML
+// TODO(v0.3.0): Process variables and perform substitution
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: v0 implementation will be refactored
 export function compile(
   parsedDoc: ParsedDoc,
