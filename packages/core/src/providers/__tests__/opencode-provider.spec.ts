@@ -1,6 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test';
+<<<<<<< HEAD
 import * as path from 'node:path';
 import type { CompiledDoc, Logger } from '@rulesets/types';
+=======
+import { promises as fs } from 'node:fs';
+import * as path from 'node:path';
+import type { CompiledDoc, Logger } from '@rulesets/types';
+import * as os from 'os';
+>>>>>>> 76de235 (fix: optimize CI/CD workflow and add bun.lock)
 import { OpenCodeProvider } from '../opencode-provider';
 
 // Mock fs promises

@@ -616,7 +616,9 @@ export const createDestinationId = (value: string): ProviderId => {
   // @deprecated Use createProviderId instead - will be removed in v1.0
   if (process.env.NODE_ENV === 'development') {
     // biome-ignore lint/suspicious/noConsole: Deprecation warning for developers
-    console.warn('createDestinationId is deprecated. Use createProviderId instead.');
+    console.warn(
+      'createDestinationId is deprecated. Use createProviderId instead.'
+    );
   }
   return createProviderId(value);
 };

@@ -5,9 +5,9 @@
  * Validates JSONC and TOML support, environment overrides, and config inheritance.
  */
 
-import { promises as fs } from 'fs';
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
 import { tmpdir } from 'os';
-import path from 'path';
 import {
   afterAll,
   afterEach,

@@ -4,10 +4,10 @@
  * Simplified performance benchmark for Rulesets monorepo
  */
 
+import { performance } from 'node:perf_hooks';
 import { compile } from '@rulesets/compiler';
 import { lint } from '@rulesets/linter';
 import { parse } from '@rulesets/parser';
-import { performance } from 'perf_hooks';
 
 // Test data generation
 function generateRuleset(size: number): string {
@@ -106,7 +106,9 @@ async function benchmark() {
   for (const test of testSizes.slice(0, 2)) {
     // Test smaller sizes only
     const parseResult = parseResults.find((r) => r.name === test.name);
-    if (!parseResult) continue;
+    if (!parseResult) {
+      continue;
+    }
 
     for (const dest of destinations) {
       const startTime = performance.now();
@@ -126,7 +128,9 @@ async function benchmark() {
   for (const test of testSizes.slice(0, 2)) {
     // Test smaller sizes only
     const parseResult = parseResults.find((r) => r.name === test.name);
-    if (!parseResult) continue;
+    if (!parseResult) {
+      continue;
+    }
 
     const startTime = performance.now();
     const lintResult = await lint(parseResult.parsed, {

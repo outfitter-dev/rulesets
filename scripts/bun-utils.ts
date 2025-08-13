@@ -1,10 +1,11 @@
 #!/usr/bin/env bun
+
 /**
  * Bun utility scripts demonstrating native capabilities
  */
 
+import { parseArgs } from 'node:util';
 import { $ } from 'bun';
-import { parseArgs } from 'util';
 
 // Parse command line arguments
 const { values } = parseArgs({

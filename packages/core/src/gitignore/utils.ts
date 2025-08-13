@@ -3,7 +3,11 @@
  * Provides path manipulation, file parsing, and content management utilities
  */
 
+<<<<<<< HEAD
 import { isAbsolute, relative, sep } from 'node:path';
+=======
+import * as path from 'node:path';
+>>>>>>> 76de235 (fix: optimize CI/CD workflow and add bun.lock)
 import type { GitignoreState, ManagedBlockConfig } from './types';
 
 // Regex constants at top level for performance
