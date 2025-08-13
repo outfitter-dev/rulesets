@@ -560,7 +560,7 @@ Next, configure your environment...
 
 Renders as:
 
-```markdown
+````markdown
 ## Getting Started
 
 This section explains how to get started with the project.
@@ -570,12 +570,9 @@ This section explains how to get started with the project.
 First, install the dependencies:
 ```bash
 npm install
+```
 ````
 
 ### Configuration
 
 Next, configure your environment...
-
-```
-
-```
