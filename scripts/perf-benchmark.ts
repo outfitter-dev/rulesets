@@ -5,12 +5,12 @@
  * Measures build times, runtime performance, and memory usage
  */
 
+import { promises as fs } from 'node:fs';
+import { performance } from 'node:perf_hooks';
 import { compile } from '@rulesets/compiler';
 import { ConsoleLogger, runRulesetsV0 } from '@rulesets/core';
 import { lint } from '@rulesets/linter';
 import { parse } from '@rulesets/parser';
-import { promises as fs } from 'fs';
-import { performance } from 'perf_hooks';
 
 // import type { ParsedDoc } from '@rulesets/types';
 
@@ -237,7 +237,9 @@ interface Example {
 
     for (let i = 0; i < repetitions; i++) {
       content += baseContent;
-      if (content.length >= size) break;
+      if (content.length >= size) {
+        break;
+      }
     }
 
     return content.slice(0, size);
@@ -255,7 +257,9 @@ interface Example {
     const groups = this.results.reduce(
       (acc, result) => {
         const category = result.operation.split(' ')[0] || 'unknown';
-        if (!acc[category]) acc[category] = [];
+        if (!acc[category]) {
+          acc[category] = [];
+        }
         acc[category].push(result);
         return acc;
       },

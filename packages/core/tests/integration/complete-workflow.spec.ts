@@ -5,9 +5,9 @@
  * Validates that all components (configuration, providers, gitignore) integrate correctly.
  */
 
-import { promises as fs } from 'fs';
-import { tmpdir } from 'os';
-import path from 'path';
+import { promises as fs } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import {
   afterAll,
   afterEach,
@@ -36,10 +36,7 @@ describe('Complete Workflow Integration Tests', () => {
     // Clean up test directory
     try {
       await fs.rm(TEST_DIR, { recursive: true, force: true });
-    } catch (error) {
-      // Ignore cleanup errors
-      console.warn('Failed to cleanup test directory:', error);
-    }
+    } catch (_error) {}
   });
 
   beforeEach(async () => {
@@ -351,9 +348,9 @@ Testing environment variable overrides.
         );
       } finally {
         // Cleanup environment variables
-        delete process.env.RULESETS_OUTPUT_DIRECTORY;
-        delete process.env.RULESETS_PROVIDERS_CLAUDE_CODE_ENABLED;
-        delete process.env.RULESETS_PROVIDERS_AMP_ENABLED;
+        process.env.RULESETS_OUTPUT_DIRECTORY = undefined;
+        process.env.RULESETS_PROVIDERS_CLAUDE_CODE_ENABLED = undefined;
+        process.env.RULESETS_PROVIDERS_AMP_ENABLED = undefined;
       }
     });
 

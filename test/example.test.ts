@@ -82,7 +82,7 @@ describe('Bun Test Runner Examples', () => {
 test.todo('implement advanced feature');
 
 // Test with .skip to skip tests
-test.skip('skip this test temporarily', () => {
+test('skip this test temporarily', () => {
   // This won't run
 });
 

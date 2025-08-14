@@ -5,9 +5,9 @@
  * This replaces the complex tests until we fix the API mismatches.
  */
 
-import { promises as fs } from 'fs';
-import { tmpdir } from 'os';
-import path from 'path';
+import { promises as fs } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import {
   afterAll,
   afterEach,
@@ -36,10 +36,7 @@ describe('Basic Integration Tests', () => {
     // Clean up test directory
     try {
       await fs.rm(TEST_DIR, { recursive: true, force: true });
-    } catch (error) {
-      // Ignore cleanup errors
-      console.warn('Failed to cleanup test directory:', error);
-    }
+    } catch (_error) {}
   });
 
   beforeEach(async () => {

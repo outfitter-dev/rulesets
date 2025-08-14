@@ -259,7 +259,7 @@ export function number(options?: {
   integer?: boolean;
 }): Validator<number> {
   return (value, path = '') => {
-    if (typeof value !== 'number' || isNaN(value)) {
+    if (typeof value !== 'number' || Number.isNaN(value)) {
       return failure([error(path, 'Expected a number')]);
     }
 

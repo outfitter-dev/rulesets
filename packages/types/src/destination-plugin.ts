@@ -1,10 +1,17 @@
 // TLDR: Defines the DestinationPlugin interface for Rulesets (mixd-v0)
 // TLDR: v0.1.0 Basic plugin contract for writing compiled rules to destinations
-import type { JSONSchema7 } from 'json-schema';
 import type { CompiledDoc } from './compiled-doc';
 import type { Logger } from './logger';
 
-export type { JSONSchema7 }; // Re-export for convenience
+// Basic JSONSchema7 type definition
+export interface JSONSchema7 {
+  type?: string | string[];
+  properties?: Record<string, JSONSchema7>;
+  required?: string[];
+  additionalProperties?: boolean | JSONSchema7;
+  items?: JSONSchema7 | JSONSchema7[];
+  [key: string]: any;
+}
 
 /**
  * Result of a write operation, including generated file paths for gitignore management
@@ -43,7 +50,7 @@ export interface DestinationPlugin {
    * specific to the destination's format or requirements.
    * // TLDR: Writes the compiled document to the target destination (mixd-v0)
    * // TLDR: v0.1.0 Basic file writing without destination-specific transformations
-   *    * // TODO(v0.2.0): Added optional WriteResult return for gitignore management
+   * // TODO(v0.2.0): Added optional WriteResult return for gitignore management
    *
    * @param ctx - The context object for the write operation.
    * @param ctx.compiled - The compiled document to write.
@@ -59,7 +66,7 @@ export interface DestinationPlugin {
     destPath: string;
     config: Record<string, unknown>; // Validated via schema from configSchema()
     logger: Logger;
-  }): Promise<void | WriteResult>;
+  }): Promise<undefined | WriteResult>;
 }
 
 /**

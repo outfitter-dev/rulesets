@@ -36,8 +36,6 @@ import type {
 import {
   type DestinationCapabilities,
   type DestinationConfig,
-  // Legacy provider interfaces (should still work)
-  type DestinationPlugin,
   isLegacyDestinationConfig,
   // Migration utilities
   migrateDestinationToProvider,
