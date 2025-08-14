@@ -29,7 +29,7 @@
     "lib": ["ESNext"],
 
     // Bun-specific optimizations
-    "types": [],
+    "types": ["@types/node"],
     "skipLibCheck": true,
 
     // Path mapping
