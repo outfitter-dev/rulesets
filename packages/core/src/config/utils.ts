@@ -43,14 +43,16 @@ export async function findConfigFile(
 
   while (depth <= maxSearchDepth) {
     // Try each config file name in order of precedence
-    const filePaths = CONFIG_FILE_NAMES.map(fileName => join(currentPath, fileName));
+    const filePaths = CONFIG_FILE_NAMES.map((fileName) =>
+      join(currentPath, fileName)
+    );
     const existenceResults = await Promise.all(filePaths.map(fileExists));
-    
+
     for (let i = 0; i < CONFIG_FILE_NAMES.length; i++) {
       if (existenceResults[i]) {
         const fileName = CONFIG_FILE_NAMES[i];
         const filePath = filePaths[i];
-        
+
         try {
           const content = await fs.readFile(filePath, 'utf8');
           const format = getConfigFormat(fileName);

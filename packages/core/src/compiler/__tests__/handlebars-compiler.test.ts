@@ -2,7 +2,7 @@
  * Tests for HandlebarsRulesetCompiler
  */
 
-import { describe, expect, it } from 'bun:test';
+import { describe, expect, it } from 'vitest';
 import type { ParsedDoc } from '../../interfaces';
 import { HandlebarsRulesetCompiler } from '../handlebars-compiler';
 

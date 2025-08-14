@@ -44,3 +44,6 @@ docs_archive/
 # .agent
 !.agent/
 .agent/research
+
+# Archived/deprecated code
+.archive/

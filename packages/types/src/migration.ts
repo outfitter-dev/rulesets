@@ -106,10 +106,12 @@ export function migrateDestinationConfig(
     // Start migration - build new config object instead of mutating
     const configBuilder: {
       outputPath?: OutputPath;
-      fileNaming?: any;
-      format?: any;
-      template?: any;
-      validation?: any;
+      fileNaming?: string;
+      format?: 'markdown' | 'xml' | 'json' | 'yaml' | 'text' | 'html' | 'mixed';
+      template?: {
+        readonly format: 'markdown' | 'xml' | 'json';
+      };
+      validation?: unknown;
     } = {};
 
     // Migrate ID: DestinationId -> ProviderId (direct mapping)
@@ -141,7 +143,7 @@ export function migrateDestinationConfig(
     // Migrate fileNaming
     if ('fileNaming' in legacyConfig) {
       fieldsProcessed.push('fileNaming');
-      configBuilder.fileNaming = legacyConfig.fileNaming as any;
+      configBuilder.fileNaming = legacyConfig.fileNaming;
       fieldsMigrated.push('fileNaming');
     }
 
@@ -166,31 +168,24 @@ export function migrateDestinationConfig(
     // Migrate validation settings
     if (legacyConfig.validation) {
       fieldsProcessed.push('validation');
-      configBuilder.validation = {
-        strictMode: true, // Enable strict mode by default for migrated configs
-        customRules: [], // Empty rules array for now
-      };
-      fieldsMigrated.push('validation');
-
-      if (legacyConfig.validation.maxLength) {
-        // Note: maxLength doesn't directly map, add as warning
-        warnings.push({
-          type: 'data-loss',
-          message:
-            'maxLength validation property not directly supported in new format',
-          suggestion: 'Consider implementing as custom validation rule',
-          field: 'validation.maxLength',
-        });
-      }
+      // Legacy validation doesn't map directly - skip for now
+      warnings.push({
+        type: 'data-loss',
+        message:
+          'Legacy validation properties not directly supported in new format',
+        suggestion: 'Consider implementing validation through provider capabilities',
+        field: 'validation',
+      });
+      fieldsSkipped.push('validation');
     }
 
     // Build final config as readonly
     const migratedConfig: ProviderConfig = {
       outputPath: configBuilder.outputPath!,
       format: configBuilder.format || 'markdown',
-      fileNaming: configBuilder.fileNaming,
-      template: configBuilder.template,
-      validation: configBuilder.validation,
+      fileNaming: configBuilder.fileNaming as 'preserve' | 'transform' | 'template' | 'custom' | undefined,
+      template: configBuilder.template as ProviderConfig['template'],
+      validation: undefined, // Legacy validation not supported in provider config
     };
 
     // Check for includeXml (deprecated feature)

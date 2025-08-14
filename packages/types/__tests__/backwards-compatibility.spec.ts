@@ -3,7 +3,7 @@
  * Ensures legacy APIs continue working while deprecated warnings are shown
  */
 
-import { afterEach, beforeEach, describe, expect, test, vi } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 // Test both legacy and modern imports to ensure compatibility
 import {
@@ -45,7 +45,7 @@ import {
 } from '../src/provider';
 
 describe('Backwards Compatibility', () => {
-  let consoleSpy: any;
+  let consoleSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -296,7 +296,7 @@ describe('Backwards Compatibility', () => {
               },
             };
           },
-          async write(ctx: any): Promise<WriteResult> {
+          async write(ctx: { destPath: string }): Promise<WriteResult> {
             return {
               generatedPaths: [ctx.destPath],
               metadata: { provider: 'cursor' },

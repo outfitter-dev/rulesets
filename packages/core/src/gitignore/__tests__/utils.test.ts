@@ -2,6 +2,7 @@
  * Tests for gitignore utility functions
  */
 
+import { afterEach, beforeEach, describe, expect, it, test } from 'vitest';
 import {
   generateManagedBlock,
   matchesAnyPattern,

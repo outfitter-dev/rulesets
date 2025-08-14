@@ -288,7 +288,18 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
    * Future enhancement for Model Context Protocol integration
    */
   private async writeMcpConfig(
-    mcpConfig: any,
+    mcpConfig: {
+      enabled?: boolean;
+      outputPath?: string;
+      servers?: Record<
+        string,
+        {
+          command?: string;
+          args?: string[];
+          env?: Record<string, string>;
+        }
+      >;
+    },
     logger: Logger
   ): Promise<string | null> {
     try {

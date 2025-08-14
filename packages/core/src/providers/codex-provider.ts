@@ -303,7 +303,18 @@ export class CodexProvider implements Provider, DestinationPlugin {
    * Supports both default .codex/config.toml and custom CODEX_HOME location
    */
   private async writeMcpTomlConfig(
-    mcpConfig: any,
+    mcpConfig: {
+      enabled?: boolean;
+      outputPath?: string;
+      servers?: Record<
+        string,
+        {
+          command?: string;
+          args?: string[];
+          env?: Record<string, string>;
+        }
+      >;
+    },
     globalConfig: Record<string, unknown>,
     logger: Logger
   ): Promise<string | null> {

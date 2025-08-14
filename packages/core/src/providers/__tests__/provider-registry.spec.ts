@@ -3,15 +3,14 @@
  * Tests modern provider exports, backwards compatibility, and provider interactions
  */
 
-import { beforeEach, describe, expect, test, vi } from 'bun:test';
 import type {
   CompiledDoc,
   DestinationPlugin,
   Logger,
   WriteResult,
 } from '@rulesets/types';
-
 import { createCompiledContent } from '@rulesets/types';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   AmpProvider,
   ampPlugin,

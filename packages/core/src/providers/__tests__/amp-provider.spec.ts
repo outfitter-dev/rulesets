@@ -1,6 +1,5 @@
 // Tests for AmpProvider - Amp AI assistant provider implementation
 
-import { beforeEach, describe, expect, it } from 'bun:test';
 import type { Logger, ProviderCompilationContext } from '@rulesets/types';
 import {
   createOutputPath,
@@ -8,6 +7,7 @@ import {
   createSourcePath,
   createVersion,
 } from '@rulesets/types';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { AmpProvider } from '../amp-provider';
 
 describe('AmpProvider', () => {

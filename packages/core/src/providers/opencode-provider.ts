@@ -303,7 +303,18 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
    * Supports both local opencode.json and global ~/.config/opencode/opencode.json
    */
   private async writeMcpJsonConfig(
-    mcpConfig: any,
+    mcpConfig: {
+      enabled?: boolean;
+      outputPath?: string;
+      servers?: Record<
+        string,
+        {
+          command?: string;
+          args?: string[];
+          env?: Record<string, string>;
+        }
+      >;
+    },
     _globalConfig: Record<string, unknown>,
     logger: Logger
   ): Promise<string[]> {

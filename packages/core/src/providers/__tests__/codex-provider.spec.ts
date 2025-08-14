@@ -1,19 +1,19 @@
 // TLDR: Unit tests for the Codex provider (Rulesets v1)
 
-import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test';
-import path from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import type {
   CompiledDoc,
   Logger,
   ProviderCompilationContext,
 } from '@rulesets/types';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CodexProvider } from '../codex-provider';
 
 // Mock fs using Bun's mock API
-const mockWriteFile = mock(() => Promise.resolve());
-const mockMkdir = mock(() => Promise.resolve());
+const mockWriteFile = vi.fn().mockResolvedValue(undefined);
+const mockMkdir = vi.fn().mockResolvedValue(undefined);
 
-mock.module('fs', () => ({
+vi.mock('node:fs', () => ({
   promises: {
     mkdir: mockMkdir,
     writeFile: mockWriteFile,
@@ -27,10 +27,10 @@ describe('CodexProvider', () => {
   beforeEach(() => {
     provider = new CodexProvider();
     mockLogger = {
-      debug: mock(() => {}),
-      info: mock(() => {}),
-      warn: mock(() => {}),
-      error: mock(() => {}),
+      debug: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
     };
     // Clear mock call counts
     mockWriteFile.mockClear();
@@ -242,7 +242,7 @@ describe('CodexProvider', () => {
         logger: mockLogger,
       });
 
-      const resolvedPath = path.resolve('AGENTS.md');
+      const resolvedPath = resolve('AGENTS.md');
 
       expect(mockWriteFile).toHaveBeenCalledWith(
         resolvedPath,
@@ -269,7 +269,7 @@ describe('CodexProvider', () => {
         logger: mockLogger,
       });
 
-      const resolvedPath = path.resolve('custom/AGENTS.md');
+      const resolvedPath = resolve('custom/AGENTS.md');
       expect(mockWriteFile).toHaveBeenCalledWith(
         resolvedPath,
         mockCompiledDoc.output.content,
@@ -390,14 +390,14 @@ describe('CodexProvider', () => {
         logger: mockLogger,
       });
 
-      const agentsPath = path.resolve('AGENTS.md');
-      const mcpPath = path.resolve('.codex/config.toml');
+      const agentsPath = resolve('AGENTS.md');
+      const mcpPath = resolve('.codex/config.toml');
 
       expect(result.generatedPaths).toEqual([agentsPath, mcpPath]);
       expect(result.metadata.mcpEnabled).toBe(true);
 
       // Verify directory creation
-      expect(mockMkdir).toHaveBeenCalledWith(path.dirname(mcpPath), {
+      expect(mockMkdir).toHaveBeenCalledWith(dirname(mcpPath), {
         recursive: true,
       });
 
@@ -452,12 +452,12 @@ describe('CodexProvider', () => {
     it('should allow valid relative paths', () => {
       const provider = new CodexProvider() as any;
       const result = provider.sanitizePath('AGENTS.md', process.cwd());
-      expect(result).toBe(path.resolve(process.cwd(), 'AGENTS.md'));
+      expect(result).toBe(resolve(process.cwd(), 'AGENTS.md'));
     });
 
     it('should allow valid absolute paths within project', () => {
       const provider = new CodexProvider() as any;
-      const validPath = path.join(process.cwd(), 'docs', 'AGENTS.md');
+      const validPath = join(process.cwd(), 'docs', 'AGENTS.md');
       const result = provider.sanitizePath(validPath, process.cwd());
       expect(result).toBe(validPath);
     });

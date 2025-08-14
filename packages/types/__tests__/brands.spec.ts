@@ -3,7 +3,7 @@
  * Following TDD principles with security, validation, and backwards compatibility focus
  */
 
-import { afterEach, beforeEach, describe, expect, test, vi } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import {
   // Error class
   BrandValidationError,
@@ -914,7 +914,7 @@ describe('Branded Types System', () => {
   });
 
   describe('Backwards Compatibility', () => {
-    let consoleSpy: any;
+    let consoleSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
       consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});

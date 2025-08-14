@@ -4,7 +4,7 @@
  */
 
 import { promises as fs } from 'node:fs';
-import * as path from 'node:path';
+import { join, resolve } from 'node:path';
 import type {
   GitignoreConfig,
   GitignoreOverrides,
@@ -47,7 +47,7 @@ export class GitignoreManager implements IGitignoreManager {
     basePath: string = process.cwd()
   ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
-    this.basePath = path.resolve(basePath);
+    this.basePath = resolve(basePath);
 
     // Create managed block config with custom prefix if provided
     this.managedBlockConfig = {
@@ -99,7 +99,7 @@ export class GitignoreManager implements IGitignoreManager {
       }
 
       // Read current .gitignore
-      const gitignorePath = path.join(this.basePath, '.gitignore');
+      const gitignorePath = join(this.basePath, '.gitignore');
       const currentContent = await this.readGitignoreFile(gitignorePath);
 
       // Parse current content
@@ -270,7 +270,7 @@ export class GitignoreManager implements IGitignoreManager {
    * Read an override file (.rulesetkeep or .rulesetignore)
    */
   private async readOverrideFile(filename: string): Promise<string | null> {
-    const filePath = path.join(this.basePath, filename);
+    const filePath = join(this.basePath, filename);
     try {
       return await fs.readFile(filePath, 'utf8');
     } catch (error) {

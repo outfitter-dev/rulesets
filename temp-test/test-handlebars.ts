@@ -4,7 +4,7 @@
  * Test script for Handlebars compiler
  */
 
-import { readFile } from 'fs/promises';
+import { readFile } from 'node:fs/promises';
 import { parse } from 'yaml';
 import { HandlebarsRulesetCompiler } from '../packages/core/src/compiler/handlebars-compiler';
 import type { ParsedDoc } from '../packages/core/src/interfaces';
@@ -13,7 +13,10 @@ async function testHandlebarsCompiler() {
   console.log('🔧 Testing Handlebars compiler...\n');
 
   // Read the test file
-  const content = await readFile('./temp-test/handlebars-example.rule.md', 'utf-8');
+  const content = await readFile(
+    './temp-test/handlebars-example.rule.md',
+    'utf-8'
+  );
 
   // Simple frontmatter parsing
   let frontmatter: Record<string, unknown> = {};
@@ -33,14 +36,14 @@ async function testHandlebarsCompiler() {
     source: {
       path: 'temp-test/handlebars-example.rule.md',
       content,
-      frontmatter
+      frontmatter,
     },
     ast: {
       blocks: [],
       imports: [],
       variables: [],
-      markers: []
-    }
+      markers: [],
+    },
   };
 
   // Create compiler and test with different providers

@@ -315,8 +315,20 @@ describe('Configuration Utilities', () => {
       setDeepValue(obj, ['providers', 'cursor', 'enabled'], true);
 
       expect((obj as Record<string, unknown>).providers).toBeDefined();
-      expect(((obj as Record<string, unknown>).providers as Record<string, unknown>).cursor).toBeDefined();
-      expect((((obj as Record<string, unknown>).providers as Record<string, unknown>).cursor as Record<string, unknown>).enabled).toBe(true);
+      expect(
+        ((obj as Record<string, unknown>).providers as Record<string, unknown>)
+          .cursor
+      ).toBeDefined();
+      expect(
+        (
+          (
+            (obj as Record<string, unknown>).providers as Record<
+              string,
+              unknown
+            >
+          ).cursor as Record<string, unknown>
+        ).enabled
+      ).toBe(true);
     });
 
     it('should overwrite existing values', () => {
@@ -341,8 +353,24 @@ describe('Configuration Utilities', () => {
 
       expect(result.strict).toBe(true);
       expect((result as Record<string, unknown>).providers).toBeDefined();
-      expect(((result as Record<string, unknown>).providers as Record<string, unknown>).cursor).toBeDefined();
-      expect((((result as Record<string, unknown>).providers as Record<string, unknown>).cursor as Record<string, unknown>).enabled).toBe(true);
+      expect(
+        (
+          (result as Record<string, unknown>).providers as Record<
+            string,
+            unknown
+          >
+        ).cursor
+      ).toBeDefined();
+      expect(
+        (
+          (
+            (result as Record<string, unknown>).providers as Record<
+              string,
+              unknown
+            >
+          ).cursor as Record<string, unknown>
+        ).enabled
+      ).toBe(true);
       expect(applied.RULESETS_STRICT).toBe(true);
       expect(applied.RULESETS_PROVIDERS_CURSOR_ENABLED).toBe(true);
       expect(applied.OTHER_VAR).toBeUndefined();

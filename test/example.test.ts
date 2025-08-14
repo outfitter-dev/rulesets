@@ -2,7 +2,7 @@
  * Example test file demonstrating Bun's built-in test runner
  */
 
-import { describe, expect, it, mock, spyOn, test } from 'bun:test';
+import { describe, expect, it, test, vi } from 'vitest';
 
 describe('Bun Test Runner Examples', () => {
   describe('Basic assertions', () => {
@@ -40,7 +40,7 @@ describe('Bun Test Runner Examples', () => {
 
   describe('Mocking', () => {
     it('should mock functions', () => {
-      const mockFn = mock(() => 'mocked');
+      const mockFn = vi.fn(() => 'mocked');
       expect(mockFn()).toBe('mocked');
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
@@ -49,7 +49,7 @@ describe('Bun Test Runner Examples', () => {
       const obj = {
         method: (x: number) => x * 2,
       };
-      const spy = spyOn(obj, 'method');
+      const spy = vi.spyOn(obj, 'method');
 
       const result = obj.method(5);
       expect(result).toBe(10);

@@ -3,7 +3,7 @@
  * Tests configuration migration, batch operations, error handling, and analytics
  */
 
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'vitest';
 import {
   createPropertyName,
   type DestinationId,
