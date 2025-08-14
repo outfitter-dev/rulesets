@@ -3,10 +3,7 @@
  */
 
 import { promises as fs } from 'node:fs';
-<<<<<<< HEAD
-=======
 import * as path from 'node:path';
->>>>>>> 76de235 (fix: optimize CI/CD workflow and add bun.lock)
 import { runRulesetsV0 } from '../../index';
 import { ConsoleLogger } from '../../logger';
 import { GitignoreManager } from '../GitignoreManager';

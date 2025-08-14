@@ -6,8 +6,8 @@
  */
 
 import { promises as fs } from 'node:fs';
-import path from 'node:path';
 import { tmpdir } from 'node:os';
+import path from 'node:path';
 import {
   afterAll,
   afterEach,
@@ -41,10 +41,7 @@ describe('Error Handling Integration Tests', () => {
     // Clean up test directory
     try {
       await fs.rm(TEST_DIR, { recursive: true, force: true });
-    } catch (error) {
-      // Ignore cleanup errors
-      console.warn('Failed to cleanup test directory:', error);
-    }
+    } catch (_error) {}
   });
 
   beforeEach(async () => {
@@ -143,8 +140,7 @@ ruleset:
 
     it('should handle disk space exhaustion scenarios gracefully', async () => {
       // Simulate by creating a very large output path that would exceed typical limits
-      const veryLongPath =
-        '.cursor/' + 'very-long-directory-name/'.repeat(50) + 'file.mdc';
+      const veryLongPath = `.cursor/${'very-long-directory-name/'.repeat(50)}file.mdc`;
 
       const config: RulesetConfig = {
         rulesets: { version: '0.1.0' },
@@ -174,7 +170,7 @@ ruleset:
         // If it succeeds, verify the file was created
         const outputPath = path.join(testProjectDir, veryLongPath);
         await expect(fs.access(outputPath)).resolves.not.toThrow();
-      } catch (error) {
+      } catch (_error) {
         // If it fails, verify proper error handling
         expect(mockLogger.error).toHaveBeenCalledWith(
           expect.stringContaining('Failed to write cursor output'),
@@ -209,8 +205,8 @@ ruleset:
 
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
-      expect(result.errors![0]).toContain('JSON parsing error');
+      expect(result.errors?.length).toBeGreaterThan(0);
+      expect(result.errors?.[0]).toContain('JSON parsing error');
     });
 
     it('should handle configuration schema validation errors', async () => {
@@ -242,9 +238,9 @@ ruleset:
 
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
+      expect(result.errors?.length).toBeGreaterThan(0);
 
-      const errorText = result.errors!.join(' ');
+      const errorText = result.errors?.join(' ');
       expect(errorText).toContain('version');
       expect(errorText).toContain('outputDirectory');
       expect(errorText).toMatch(/unknown-provider|cursor|gitignore/);
@@ -270,15 +266,15 @@ ruleset:
 
       expect(result.success).toBe(true); // Should succeed with warnings
       expect(result.warnings).toBeDefined();
-      expect(result.warnings!.length).toBeGreaterThan(0);
+      expect(result.warnings?.length).toBeGreaterThan(0);
 
-      const warningText = result.warnings!.join(' ');
+      const warningText = result.warnings?.join(' ');
       expect(warningText).toContain('environment variable');
 
       // Clean up environment variables
-      delete process.env.RULESETS_PROVIDERS_CURSOR_ENABLED;
-      delete process.env.RULESETS_OUTPUT_DIRECTORY;
-      delete process.env.RULESETS_GITIGNORE_OPTIONS_SORT;
+      process.env.RULESETS_PROVIDERS_CURSOR_ENABLED = undefined;
+      process.env.RULESETS_OUTPUT_DIRECTORY = undefined;
+      process.env.RULESETS_GITIGNORE_OPTIONS_SORT = undefined;
     });
 
     it('should handle missing global configuration directory gracefully', async () => {
@@ -375,7 +371,7 @@ Invalid variable usage here.
 
         // If it succeeds, check that warnings were logged
         expect(mockLogger.warn).toHaveBeenCalled();
-      } catch (error) {
+      } catch (_error) {
         // If it fails, ensure proper error logging
         expect(mockLogger.error).toHaveBeenCalled();
       }
@@ -390,7 +386,7 @@ ruleset:
 
 # Large File Memory Test
 
-${'## Section\n\n' + 'Very long content line. '.repeat(1000) + '\n\n'.repeat(5000)}
+${`## Section\n\n${'Very long content line. '.repeat(1000)}${'\n\n'.repeat(5000)}`}
 
 {{instructions}}
 ${'Large instruction block. '.repeat(10_000)}
@@ -803,7 +799,7 @@ ruleset:
 
 # Memory Stress Test
 
-${'## Large Section\n\n' + 'x'.repeat(10_000) + '\n\n'.repeat(100)}
+${`## Large Section\n\n${'x'.repeat(10_000)}${'\n\n'.repeat(100)}`}
 
 {{instructions}}
 ${'Large instruction block with repeated content. '.repeat(5000)}

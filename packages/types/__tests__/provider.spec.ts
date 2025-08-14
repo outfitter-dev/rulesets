@@ -3,20 +3,15 @@
  * Tests provider interfaces, built-in providers, validation, and type safety
  */
 
-import { beforeEach, describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'bun:test';
 import {
-  type BlockName,
-  type CompiledContent,
   createBlockName,
   createCompiledContent,
   createOutputPath,
   createPropertyName,
   createProviderId,
   createVersion,
-  type OutputPath,
-  type PropertyName,
   type ProviderId,
-  type Version,
 } from '../src/brands';
 import {
   // Built-in providers
@@ -43,13 +38,10 @@ import {
   type ProviderCompilationResult,
   type ProviderConfig,
   type ProviderError,
-  type ProviderFeatures,
   type ProviderHooks,
   type ProviderPlugin,
   type ProviderType,
   type ProviderWarning,
-  type TemplateConfig,
-  type ValidationConfig,
   type ValidationRule,
   validateProviderConfig,
   // WriteResult (imported from destination-plugin)
@@ -368,13 +360,9 @@ describe('Provider System', () => {
         afterParse: (ast) => ({ ...ast, normalized: true }),
         beforeCompile: (ast) => ({ ...ast, preCompiled: true }),
         afterCompile: (content) =>
-          createCompiledContent(content + '\n<!-- Compiled -->'),
-        beforeWrite: (content, path) => {
-          console.log(`Writing to ${path}`);
-        },
-        afterWrite: (path) => {
-          console.log(`Wrote to ${path}`);
-        },
+          createCompiledContent(`${content}\n<!-- Compiled -->`),
+        beforeWrite: (_content, _path) => {},
+        afterWrite: (_path) => {},
       };
 
       const provider: Provider = {

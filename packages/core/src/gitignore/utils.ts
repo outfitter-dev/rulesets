@@ -3,11 +3,7 @@
  * Provides path manipulation, file parsing, and content management utilities
  */
 
-<<<<<<< HEAD
-import { isAbsolute, relative, sep } from 'node:path';
-=======
 import * as path from 'node:path';
->>>>>>> 76de235 (fix: optimize CI/CD workflow and add bun.lock)
 import type { GitignoreState, ManagedBlockConfig } from './types';
 
 // Regex constants at top level for performance
@@ -35,12 +31,12 @@ export function normalizeGitignorePath(
   basePath: string = process.cwd()
 ): string {
   // Convert to relative path if absolute
-  const relativePath = isAbsolute(filePath)
-    ? relative(basePath, filePath)
+  const relativePath = path.isAbsolute(filePath)
+    ? path.relative(basePath, filePath)
     : filePath;
 
   // Convert to POSIX-style path separators
-  const posixPath = relativePath.split(sep).join('/');
+  const posixPath = relativePath.split(path.sep).join('/');
 
   // Remove leading ./ if present
   return posixPath.startsWith('./') ? posixPath.slice(2) : posixPath;

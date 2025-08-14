@@ -198,7 +198,7 @@ async function benchmark() {
   });
 
   // Check for O(n²) behavior
-  const largeRate = parseRates[parseRates.length - 1]?.rate || 0;
+  const largeRate = parseRates.at(-1)?.rate || 0;
   const smallRate = parseRates[0]?.rate || 1;
   const scalingFactor = largeRate / smallRate;
 

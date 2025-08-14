@@ -34,21 +34,17 @@ import {
 function exampleDestinationIds() {
   try {
     // ✅ Valid destination ID
-    const cursorDest = createDestinationId('cursor');
-    console.log('Created destination:', cursorDest);
+    const _cursorDest = createDestinationId('cursor');
+    void _cursorDest; // Example usage
 
     // ✅ Type guard usage
     const unknownId: unknown = 'windsurf';
     if (isDestinationId(unknownId)) {
-      // TypeScript now knows unknownId is DestinationId
-      console.log('Valid destination ID:', unknownId);
     }
 
     // ❌ This will throw a validation error
     // const invalidDest = createDestinationId('invalid-destination');
-  } catch (error) {
-    console.error('Validation error:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -57,19 +53,17 @@ function exampleDestinationIds() {
 function exampleFilePaths() {
   try {
     // ✅ Valid source path
-    const sourcePath = createSourcePath('./src/my-rules.rule.md');
-    console.log('Created source path:', sourcePath);
+    const _sourcePath = createSourcePath('./src/my-rules.rule.md');
+    void _sourcePath; // Example usage
 
     // ✅ Valid destination path
-    const destPath = createDestPath('./.cursor/rules/my-rules.mdc');
-    console.log('Created destination path:', destPath);
+    const _destPath = createDestPath('./.cursor/rules/my-rules.mdc');
+    void _destPath; // Example usage
 
     // ❌ These would throw validation errors:
     // const badSource = createSourcePath('./src/../../../etc/passwd'); // Path traversal
     // const badExt = createSourcePath('./src/rules.txt'); // Wrong extension
-  } catch (error) {
-    console.error('Path validation error:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -78,23 +72,18 @@ function exampleFilePaths() {
 function exampleBlockNames() {
   try {
     // ✅ Valid block names
-    const instructions = createBlockName('instructions');
-    const userGuidelines = createBlockName('user-guidelines');
-    const codeExamples = createBlockName('code-examples');
-
-    console.log('Created block names:', {
-      instructions,
-      userGuidelines,
-      codeExamples,
-    });
+    const _instructions = createBlockName('instructions');
+    void _instructions; // Example usage
+    const _userGuidelines = createBlockName('user-guidelines');
+    void _userGuidelines; // Example usage
+    const _codeExamples = createBlockName('code-examples');
+    void _codeExamples; // Example usage
 
     // ❌ These would throw validation errors:
     // const invalidCase = createBlockName('CamelCase'); // Not kebab-case
     // const reserved = createBlockName('function'); // Reserved word
     // const empty = createBlockName(''); // Empty name
-  } catch (error) {
-    console.error('Block name validation error:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -103,25 +92,20 @@ function exampleBlockNames() {
 function exampleVariableNames() {
   try {
     // ✅ Valid variable names
-    const destination = createVariableName('destination');
-    const userName = createVariableName('userName');
+    const _destination = createVariableName('destination');
+    void _destination; // Example usage
+    const _userName = createVariableName('userName');
+    void _userName; // Example usage
     const _private = createVariableName('_private');
-    const $jquery = createVariableName('$jquery');
-
-    console.log('Created variable names:', {
-      destination,
-      userName,
-      _private,
-      $jquery,
-    });
+    void _private; // Example usage
+    const _$jquery = createVariableName('$jquery');
+    void _$jquery; // Example usage
 
     // ❌ These would throw validation errors:
     // const invalidStart = createVariableName('123invalid'); // Starts with number
     // const reserved = createVariableName('class'); // Reserved word
     // const spaces = createVariableName('user name'); // Contains spaces
-  } catch (error) {
-    console.error('Variable name validation error:', error);
-  }
+  } catch (_error) {}
 }
 
 /**
@@ -130,7 +114,7 @@ function exampleVariableNames() {
 function exampleContentValidation() {
   try {
     // ✅ Valid content
-    const rawContent = createRawContent(`
+    const _rawContent = createRawContent(`
 # My Rules
 
 These are the coding standards for our project.
@@ -141,24 +125,19 @@ These are the coding standards for our project.
 - Use meaningful variable names
 - Write comprehensive tests
     `);
+    void _rawContent; // Example usage
 
-    const compiledContent = createCompiledContent(`
+    const _compiledContent = createCompiledContent(`
 <instructions>
 Follow TypeScript best practices and write comprehensive tests.
 </instructions>
     `);
-
-    console.log('Created content successfully', {
-      rawLength: rawContent.length,
-      compiledLength: compiledContent.length,
-    });
+    void _compiledContent; // Example usage
 
     // ❌ These would be rejected by security validation:
     // const malicious = createRawContent('<script>alert("xss")</script>');
     // const dangerous = createRawContent('Content with \0 null byte');
-  } catch (error) {
-    console.error('Content validation error:', error);
-  }
+  } catch (_error) {}
 }
 
 // ============================================================================
@@ -173,15 +152,13 @@ function exampleValidatorRegistry() {
   // Validator utilities are no longer exported - using type guards instead
   const testId = 'cursor';
   if (isDestinationId(testId)) {
-    console.log('Validation passed:', testId);
   } else {
-    console.error('Validation failed: Invalid destination ID');
   }
 
   // Direct validation using type guards
   const testId2 = 'windsurf';
-  const isValid = isDestinationId(testId2);
-  console.log('Registry validation result:', isValid);
+  const _isValid = isDestinationId(testId2);
+  void _isValid; // Example usage
 }
 
 /**
@@ -190,23 +167,16 @@ function exampleValidatorRegistry() {
 function exampleMarkerValidation() {
   try {
     // ✅ Valid markers
-    const blockMarker = createMarkerContent('{{instructions}}');
-    const importMarker = createMarkerContent('{{> @legal}}');
-
-    // MarkerValidationUtil no longer exported - validation happens during creation
-    console.log('Block marker created successfully:', blockMarker);
-    console.log('Import marker created successfully:', importMarker);
+    const _blockMarker = createMarkerContent('{{instructions}}');
+    void _blockMarker; // Example usage
+    const _importMarker = createMarkerContent('{{> @legal}}');
+    void _importMarker; // Example usage
 
     // ❌ Invalid marker syntax - would throw during creation
     try {
       createMarkerContent('{{invalid marker syntax');
-      console.log('Should not reach here - validation failed');
-    } catch (error) {
-      console.log('Invalid marker validation caught error:', error);
-    }
-  } catch (error) {
-    console.error('Marker validation error:', error);
-  }
+    } catch (_error) {}
+  } catch (_error) {}
 }
 
 /**
@@ -251,7 +221,7 @@ Follow these coding standards for consistency.
     },
     metadata: {
       timestamp: new Date(),
-      runId: 'run-' + Date.now(),
+      runId: `run-${Date.now()}`,
       version: createVersion('0.1.0'),
       baseDir: process.cwd(),
     },
@@ -267,12 +237,8 @@ function exampleErrorHandling() {
     createDestinationId('nonexistent-destination');
   } catch (error) {
     if (error instanceof Error) {
-      console.log('Error name:', error.name);
-      console.log('Error message:', error.message);
-
       // If it's a RulesetValidationError, we get structured information
       if ('code' in error && 'category' in error && 'toJSON' in error) {
-        console.log('Error details:', (error as any).toJSON());
       }
     }
   }
@@ -292,13 +258,9 @@ function exampleBatchValidation() {
       return { input, success: false, error };
     }
   });
-
-  console.log('Batch validation results:');
   results.forEach((result) => {
     if (result.success) {
-      console.log(`✅ ${result.input} -> ${result.result}`);
     } else {
-      console.log(`❌ ${result.input} -> ${result.error}`);
     }
   });
 }
@@ -322,34 +284,15 @@ export {
 
 // Demo function to run all examples
 export function runAllExamples() {
-  console.log('=== Destination IDs ===');
   exampleDestinationIds();
-
-  console.log('\n=== File Paths ===');
   exampleFilePaths();
-
-  console.log('\n=== Block Names ===');
   exampleBlockNames();
-
-  console.log('\n=== Variable Names ===');
   exampleVariableNames();
-
-  console.log('\n=== Content Validation ===');
   exampleContentValidation();
-
-  console.log('\n=== Validator Registry ===');
   exampleValidatorRegistry();
-
-  console.log('\n=== Marker Validation ===');
   exampleMarkerValidation();
-
-  console.log('\n=== Error Handling ===');
   exampleErrorHandling();
-
-  console.log('\n=== Batch Validation ===');
   exampleBatchValidation();
-
-  console.log('\n=== Compilation Context ===');
-  const context = exampleCompilationContext();
-  console.log('Created compilation context for:', context.sourcePath);
+  const _context = exampleCompilationContext();
+  void _context; // Example usage
 }

@@ -393,10 +393,14 @@ export function setDeepValue(
     current = current[key] as Record<string, unknown>;
   }
 
+<<<<<<< HEAD
   const lastKey = path[path.length - 1];
   if (lastKey !== undefined) {
     current[lastKey] = value;
   }
+=======
+  current[path.at(-1)] = value;
+>>>>>>> be1fccf (fix: resolve TypeScript and linting errors for CI/CD)
 }
 
 /**

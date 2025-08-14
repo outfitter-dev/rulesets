@@ -5,10 +5,8 @@
 
 import { afterEach, beforeEach, describe, expect, test, vi } from 'bun:test';
 import {
-  type BlockName,
   // Error class
   BrandValidationError,
-  type CompiledContent,
   createBlockName,
   createCompiledContent,
   // Backwards compatibility
@@ -26,27 +24,16 @@ import {
   isBlockName,
   isDestinationId,
   isDestPath,
-  isMarkerContent,
   isOutputPath,
-  isPropertyName,
   // Type guards
   isProviderId,
   isSourcePath,
-  isVariableName,
   isVersion,
-  type MarkerContent,
-  type OutputPath,
-  type PropertyName,
-  type ProviderId,
-  type RawContent,
-  type SourcePath,
   // Unsafe brands for performance
   UnsafeBrands,
   // Constants
   VALID_PROVIDERS,
   type ValidProviderId,
-  type VariableName,
-  type Version,
 } from '../src/brands';
 
 describe('Branded Types System', () => {
@@ -288,7 +275,7 @@ describe('Branded Types System', () => {
       });
 
       test('should enforce length limits', () => {
-        const longPath = 'a'.repeat(260) + '.md';
+        const longPath = `${'a'.repeat(260)}.md`;
 
         expect(() => createSourcePath(longPath)).toThrow(BrandValidationError);
 
@@ -572,7 +559,7 @@ describe('Branded Types System', () => {
       });
 
       test('should enforce length limits', () => {
-        const longName = '$' + 'a'.repeat(100);
+        const longName = `$${'a'.repeat(100)}`;
 
         expect(() => createVariableName(longName)).toThrow(
           BrandValidationError
