@@ -2,7 +2,7 @@
 // TLDR: v0.1.0 Basic orchestration for single file processing with minimal features
 
 import { dirname } from 'node:path';
-import { compile } from '@rulesets/compiler';
+import { compile, compileWithProvider } from '@rulesets/compiler';
 import { lint } from '@rulesets/linter';
 import { parse } from '@rulesets/parser';
 import type { Logger, ParsedDoc } from '@rulesets/types';
@@ -11,7 +11,7 @@ import type { RulesetConfig } from './config';
 import { loadConfig } from './config';
 import { createGitignoreManager } from './gitignore';
 import { ConsoleLogger } from './logger';
-import { destinations } from './providers';
+import { destinations, providers as providerRegistry } from './providers';
 
 export { compile } from '@rulesets/compiler';
 export type { LinterConfig, LintResult } from '@rulesets/linter';
@@ -284,10 +284,15 @@ async function processDestination(
 
   logger.info(`Processing destination: ${destinationId}`);
 
-  // Compile for this destination
+  // Prefer modern provider from registry when available
+  const provider = providerRegistry.get(destinationId);
+
+  // Compile using unified provider-aware compiler when possible, else fallback
   let compiledDoc: CompiledDoc;
   try {
-    compiledDoc = compile(parsedDoc, destinationId, config);
+    compiledDoc = provider
+      ? compileWithProvider(parsedDoc, provider, config)
+      : compile(parsedDoc, destinationId, config);
   } catch (error) {
     logger.error(`Failed to compile for destination: ${destinationId}`, error);
     return [];

@@ -1,6 +1,6 @@
 // TLDR: Compiler implementation for Rulesets notation (mixd-v0)
 // TLDR: v0.1.0 Pass-through implementation without marker processing
-import type { CompiledDoc, Logger, ParsedDoc } from '@rulesets/types';
+import type { CompiledDoc, Logger, ParsedDoc, Provider } from '@rulesets/types';
 
 let logger: Logger | undefined;
 
@@ -102,4 +102,36 @@ export function compile(
   };
 
   return compiledDoc;
+}
+
+/**
+ * Compiles a parsed Rulesets document using a Provider definition.
+ * Centralized compiler entry that consumes provider metadata/capabilities.
+ * Currently behaves like pass-through (v0.1.0) but sets context from provider.id
+ * to enable a single compiler for all providers.
+ */
+export function compileWithProvider(
+  parsedDoc: ParsedDoc,
+  provider: Provider,
+  projectConfig: Record<string, unknown> = {}
+): CompiledDoc {
+  const compiled = compile(parsedDoc, provider.id as unknown as string, projectConfig);
+
+  // Preserve output/content from base compile; enrich metadata minimally for now
+  return {
+    ...compiled,
+    output: {
+      ...compiled.output,
+      metadata: {
+        ...compiled.output.metadata,
+        provider: provider.id,
+        providerName: provider.name,
+        providerFormat: provider.config.format,
+      },
+    },
+    context: {
+      ...compiled.context,
+      // destinationId already set to provider.id by base compile
+    },
+  };
 }
