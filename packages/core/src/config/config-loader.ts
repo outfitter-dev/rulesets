@@ -169,11 +169,11 @@ export class ConfigLoader implements IConfigLoader {
   /**
    * Validate configuration against JSON schema
    */
-  validateConfig(config: unknown): {
+  async validateConfig(config: unknown): Promise<{
     valid: boolean;
     errors: string[];
     warnings: string[];
-  } {
+  }> {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -251,17 +251,17 @@ export class ConfigLoader implements IConfigLoader {
   /**
    * Find configuration file starting from given path
    */
-  findConfigFile(
+  async findConfigFile(
     startPath: string,
     options: ConfigLoadOptions = {}
-  ): ConfigFileResult | null {
-    return findConfigFile(startPath, { ...DEFAULT_LOAD_OPTIONS, ...options });
+  ): Promise<ConfigFileResult | null> {
+    return await findConfigFile(startPath, { ...DEFAULT_LOAD_OPTIONS, ...options });
   }
 
   /**
    * Parse configuration file content
    */
-  parseConfigFile(filePath: string, content: string): RulesetConfig {
+  async parseConfigFile(filePath: string, content: string): Promise<RulesetConfig> {
     const format = filePath.endsWith('.toml') ? 'toml' : 'jsonc';
     return parseConfigContent(content, format, filePath);
   }

@@ -322,7 +322,7 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
 
     try {
       // Generate JSON content for MCP configuration
-      const jsonContent = this.generateMcpJson(mcpConfig.mcpServers || {});
+      const jsonContent = this.generateMcpJson(mcpConfig.servers || {});
 
       // Write local configuration file
       const localMcpPath = mcpConfig.outputPath || 'opencode.json';
@@ -339,8 +339,8 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
       );
       generatedPaths.push(resolvedLocalPath);
 
-      // Write global configuration if enabled
-      if (mcpConfig.globalConfig) {
+      // Write global configuration (always enabled for opencode)
+      if (true) {
         try {
           const globalMcpPath = path.join(
             os.homedir(),
