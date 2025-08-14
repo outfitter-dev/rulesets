@@ -124,14 +124,14 @@ The `.ruleset/dist/` directory stores compiled rules, compilation artifacts, and
 
 Rulesets uses specific delimiters consistently throughout the syntax:
 
-| Delimiter | Role                     | Example                               | Purpose                                                        |
-| --------- | ------------------------ | ------------------------------------- | -------------------------------------------------------------- |
-| `:`       | Scope indicator          | `provider:code-javascript`            | Indicates that properties are scoped to a specific provider    |
-| `()`      | Property value container | `name-("provider-rules")`             | Contains value for a property family                           |
-| `[]`      | Property grouping        | `provider:[property-1 property-2]`    | Groups multiple properties for readability                     |
-| `+`       | Inclusion modifier       | `+provider`                           | Indicates inclusion of a provider                              |
-| `!`       | Exclusion modifier       | `!provider`, `!block-two`             | Indicates exclusion of a provider or block on imports          |
-| `""`      | XML attribute value      | `priority="high"`                     | Contains custom XML attribute values                           |
+| Delimiter | Role                     | Example                            | Purpose                                                     |
+| --------- | ------------------------ | ---------------------------------- | ----------------------------------------------------------- |
+| `:`       | Scope indicator          | `provider:code-javascript`         | Indicates that properties are scoped to a specific provider |
+| `()`      | Property value container | `name-("provider-rules")`          | Contains value for a property family                        |
+| `[]`      | Property grouping        | `provider:[property-1 property-2]` | Groups multiple properties for readability                  |
+| `+`       | Inclusion modifier       | `+provider`                        | Indicates inclusion of a provider                           |
+| `!`       | Exclusion modifier       | `!provider`, `!block-two`          | Indicates exclusion of a provider or block on imports       |
+| `""`      | XML attribute value      | `priority="high"`                  | Contains custom XML attribute values                        |
 
 ## Markdown Formatting
 
@@ -200,6 +200,7 @@ For detailed migration instructions, see the [Provider Migration Guide](../../pa
 ## Changelog
 
 - **2025-01-13:**
+
   - **BREAKING**: Migrated from "Destination" to "Provider" terminology
   - Updated all interfaces: `DestinationPlugin` → `RulesetProvider`
   - Updated system variables: `$destination` → `$provider`

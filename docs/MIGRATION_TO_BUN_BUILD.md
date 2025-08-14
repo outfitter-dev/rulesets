@@ -7,11 +7,13 @@ We've successfully migrated from Turborepo to a Bun-native build system, achievi
 ## What Changed
 
 ### Removed
+
 - ❌ `turbo.json` configuration file
 - ❌ `turbo` dependency from package.json
 - ❌ All `turbo` commands from scripts
 
 ### Added
+
 - ✅ Native Bun build scripts in `/scripts` directory
 - ✅ Shared build configuration (`build.config.ts`)
 - ✅ Direct use of `Bun.build()` API
@@ -21,13 +23,13 @@ We've successfully migrated from Turborepo to a Bun-native build system, achievi
 
 Based on benchmarks:
 
-| Task | Turbo (estimated) | Bun Native | Improvement |
-|------|-------------------|------------|-------------|
-| Cold Build | ~8-12s | ~2.3s | **4-5x faster** |
-| Incremental Build | ~3-4s | ~2.0s | **1.5-2x faster** |
-| Test Suite | ~2-3s | ~0.04s | **50x faster** |
-| Type Check | ~3-4s | ~0.8s | **4x faster** |
-| **Total CI** | ~16-23s | ~5.2s | **3-4x faster** |
+| Task              | Turbo (estimated) | Bun Native | Improvement       |
+| ----------------- | ----------------- | ---------- | ----------------- |
+| Cold Build        | ~8-12s            | ~2.3s      | **4-5x faster**   |
+| Incremental Build | ~3-4s             | ~2.0s      | **1.5-2x faster** |
+| Test Suite        | ~2-3s             | ~0.04s     | **50x faster**    |
+| Type Check        | ~3-4s             | ~0.8s      | **4x faster**     |
+| **Total CI**      | ~16-23s           | ~5.2s      | **3-4x faster**   |
 
 ## New Commands
 
@@ -120,11 +122,11 @@ All packages use shared configuration from `scripts/build.config.ts`:
 
 ```typescript
 export const baseBuildConfig = {
-  target: "node",
-  format: "esm",
+  target: 'node',
+  format: 'esm',
   minify: true,
   treeShaking: true,
-  external: ["bun", "node:*", "@rulesets/*"],
+  external: ['bun', 'node:*', '@rulesets/*'],
 };
 ```
 
@@ -134,9 +136,9 @@ Add custom configuration for specific packages:
 
 ```typescript
 export const packageOverrides = {
-  "@rulesets/cli": {
-    platform: "node",
-    format: "esm",
+  '@rulesets/cli': {
+    platform: 'node',
+    format: 'esm',
   },
 };
 ```

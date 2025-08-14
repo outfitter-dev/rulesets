@@ -8,13 +8,13 @@ We've migrated from a Node.js + ESLint + Prettier setup to a modern Bun + Biome 
 
 ### What Changed
 
-| Before | After | Improvement |
-|--------|-------|-------------|
-| `npm install` | `bun install` | ~10x faster |
-| ESLint + Prettier | Biome (code) + Prettier (prose) | ~100x faster linting |
-| Jest/Vitest only | Bun test + Vitest hybrid | 10-100x faster simple tests |
-| `npm run` | `bun run` | Faster script execution |
-| Complex shared configs | Explicit per-package builds | Simpler, more reliable |
+| Before                 | After                           | Improvement                 |
+| ---------------------- | ------------------------------- | --------------------------- |
+| `npm install`          | `bun install`                   | ~10x faster                 |
+| ESLint + Prettier      | Biome (code) + Prettier (prose) | ~100x faster linting        |
+| Jest/Vitest only       | Bun test + Vitest hybrid        | 10-100x faster simple tests |
+| `npm run`              | `bun run`                       | Faster script execution     |
+| Complex shared configs | Explicit per-package builds     | Simpler, more reliable      |
 
 ## Migration Steps
 
@@ -168,7 +168,7 @@ We now use a **hybrid testing approach**:
 **Good for**:
 
 - Simple unit tests
-- Pure function testing  
+- Pure function testing
 - No mocking required
 - Fast feedback loops
 
@@ -178,7 +178,7 @@ We now use a **hybrid testing approach**:
 // Before (Jest/Vitest)
 import { describe, expect, it } from 'vitest';
 
-// After (Bun test)  
+// After (Bun test)
 import { describe, expect, it } from 'bun:test';
 
 // Test logic stays the same
@@ -266,7 +266,7 @@ bun run lint
    ```typescript
    // Change this
    import { describe, expect, it } from 'vitest';
-   
+
    // To this (for simple tests)
    import { describe, expect, it } from 'bun:test';
    ```
@@ -303,7 +303,7 @@ You should see significant improvements:
 - **Before**: 3-5 seconds for `npm install`
 - **After**: ~300ms for `bun install`
 
-#### Linting  
+#### Linting
 
 - **Before**: 2-3 seconds for ESLint + Prettier
 - **After**: ~28ms for Biome check
@@ -362,7 +362,7 @@ bun run test
 ### Performance
 
 - **Installation**: 10x faster dependency installation
-- **Linting**: 100x faster code quality checks  
+- **Linting**: 100x faster code quality checks
 - **Testing**: 10-100x faster for simple tests
 - **Building**: Consistent, predictable build times
 

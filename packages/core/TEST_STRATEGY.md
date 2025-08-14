@@ -33,7 +33,7 @@ The core package falls into the complex category and benefits from Vitest's matu
 # Run tests
 bun run test
 
-# Watch mode  
+# Watch mode
 bun run test:watch
 ```
 

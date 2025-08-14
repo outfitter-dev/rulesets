@@ -45,8 +45,9 @@ bun-debug.log*
 .DS_Store
 Thumbs.db
 
-# Turbo
-/.turbo
+# Turbo cache (for future use)
+.turbo/
+**/.turbo/
 
 # Docs archive
 docs_archive/

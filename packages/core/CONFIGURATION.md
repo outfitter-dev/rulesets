@@ -32,21 +32,21 @@ Configuration files are discovered in order of precedence (highest first):
   "strict": true,
   "defaultProviders": ["cursor", "claude-code"],
   "outputDirectory": ".ruleset/dist",
-  
+
   // Provider configurations
   "providers": {
     "cursor": {
       "enabled": true,
-      "outputPath": ".cursor/rules/"
-    }
+      "outputPath": ".cursor/rules/",
+    },
   },
-  
+
   // Gitignore management
   "gitignore": {
     "enabled": true,
     "keep": ["important.md"],
-    "ignore": ["*.backup"]
-  }
+    "ignore": ["*.backup"],
+  },
 }
 ```
 
@@ -56,14 +56,15 @@ Configuration files are discovered in order of precedence (highest first):
 {
   "providers": {
     "cursor": {
-      "enabled": true,                    // Whether provider is enabled
-      "outputPath": ".cursor/rules/",     // Custom output path
-      "options": {                        // Provider-specific options
+      "enabled": true, // Whether provider is enabled
+      "outputPath": ".cursor/rules/", // Custom output path
+      "options": {
+        // Provider-specific options
         "alwaysApply": false,
-        "priority": "high"
-      }
-    }
-  }
+        "priority": "high",
+      },
+    },
+  },
 }
 ```
 
@@ -72,14 +73,14 @@ Configuration files are discovered in order of precedence (highest first):
 ```jsonc
 {
   "gitignore": {
-    "enabled": true,                      // Enable/disable gitignore management
-    "keep": ["docs/manual.md"],           // Files to keep despite being generated
-    "ignore": ["*.backup", "*.tmp"],      // Additional patterns to ignore
+    "enabled": true, // Enable/disable gitignore management
+    "keep": ["docs/manual.md"], // Files to keep despite being generated
+    "ignore": ["*.backup", "*.tmp"], // Additional patterns to ignore
     "options": {
-      "comment": "Generated Files",       // Custom comment for managed block
-      "sort": true                        // Sort entries alphabetically
-    }
-  }
+      "comment": "Generated Files", // Custom comment for managed block
+      "sort": true, // Sort entries alphabetically
+    },
+  },
 }
 ```
 
@@ -108,8 +109,8 @@ export RULESETS_GITIGNORE_ENABLED=false
 {
   "providers": {
     "cursor": { "enabled": true },
-    "claude-code": { "enabled": true }
-  }
+    "claude-code": { "enabled": true },
+  },
 }
 ```
 
@@ -143,9 +144,9 @@ outputPath = "CLAUDE.md"
   "providers": {
     "windsurf": {
       "enabled": true,
-      "outputPath": ".windsurf/rules/"
-    }
-  }
+      "outputPath": ".windsurf/rules/",
+    },
+  },
 }
 ```
 
@@ -164,7 +165,8 @@ if (result.errors) {
 
 // Use the configuration
 const config = result.config;
-console.log('Enabled providers:', 
+console.log(
+  'Enabled providers:',
   Object.entries(config.providers || {})
     .filter(([_, cfg]) => cfg.enabled !== false)
     .map(([id]) => id)
@@ -174,7 +176,7 @@ console.log('Enabled providers:',
 const loader = new ConfigLoader(logger);
 const customResult = await loader.loadConfig({
   projectPath: '/path/to/project',
-  env: process.env
+  env: process.env,
 });
 ```
 

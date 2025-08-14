@@ -97,7 +97,7 @@ method(): void { }
 
 ```typescript
 // Before
-const message = "Error: " + error.message;
+const message = 'Error: ' + error.message;
 
 // After
 const message = `Error: ${error.message}`;
@@ -126,11 +126,11 @@ const message = `Error: ${error.message}`;
 
 ```typescript
 // Before
-<Type>value
-value as any
+<Type>value;
+value as any;
 
 // After
-value as Type
+value as Type;
 // Or refactor to avoid assertion
 ```
 
@@ -183,11 +183,13 @@ done
 ### Phase 3: Manual Fixes (4-6 hours)
 
 1. **Console in Tests**:
+
    - Create test logger utility
    - Replace console calls with test logger
    - Or add biome-ignore comments with justification
 
 2. **Cognitive Complexity**:
+
    - Refactor complex functions
    - Extract helper functions
    - Simplify conditional logic

@@ -379,11 +379,11 @@ Self-closing tags render as empty XML tags in the output:
 
 - **Inclusion for a destination with a specific property:**
   `{{instructions +cursor:name-("only-for-cursor")}}`
-  _(Includes this block _only_ for the `cursor` destination, and for `cursor`, it uses `name-("only-for-cursor")`.)_
+  _(Includes this block \_only_ for the `cursor` destination, and for `cursor`, it uses `name-("only-for-cursor")`.)\_
 
 - **Inclusion for a destination with multiple specific properties:**
   `{{instructions +cursor:[name-("cursor-rules") code-javascript]}}`
-  _(Includes this block _only_ for the `cursor` destination, applying both `name-("cursor-rules")` and `code-javascript` for `cursor`.)_
+  _(Includes this block \_only_ for the `cursor` destination, applying both `name-("cursor-rules")` and `code-javascript` for `cursor`.)\_
 
 - **Exclusion for a destination, even if a scoped property is present:**
   `{{instructions !cursor:name-("ignored-for-cursor")}}`

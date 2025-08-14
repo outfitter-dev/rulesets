@@ -15,6 +15,7 @@ This directory contains the Bun-native build system for the Rulesets monorepo, r
 ### Main Orchestrator
 
 - **`run.ts`** - Single entry point for all build tasks
+
   ```bash
   bun scripts/run.ts <command> [options]
   ```
@@ -141,12 +142,12 @@ Individual packages still maintain their own scripts for standalone development:
 
 ### Performance Comparison
 
-| Task | Turbo | Bun Native | Improvement |
-|------|-------|------------|-------------|
-| Cold Build | ~12s | ~3s | 4x faster |
-| Incremental Build | ~4s | ~1s | 4x faster |
-| Test Suite | ~8s | ~2s | 4x faster |
-| Type Check | ~6s | ~3s | 2x faster |
+| Task              | Turbo | Bun Native | Improvement |
+| ----------------- | ----- | ---------- | ----------- |
+| Cold Build        | ~12s  | ~3s        | 4x faster   |
+| Incremental Build | ~4s   | ~1s        | 4x faster   |
+| Test Suite        | ~8s   | ~2s        | 4x faster   |
+| Type Check        | ~6s   | ~3s        | 2x faster   |
 
 ## 🛠️ Customization
 
@@ -162,10 +163,10 @@ Add package-specific overrides in `build.config.ts`:
 
 ```typescript
 export const packageOverrides: Record<string, Partial<BuildConfig>> = {
-  "@rulesets/my-package": {
-    platform: "browser",
-    format: "iife",
-    external: ["some-large-dep"],
+  '@rulesets/my-package': {
+    platform: 'browser',
+    format: 'iife',
+    external: ['some-large-dep'],
   },
 };
 ```
@@ -173,11 +174,13 @@ export const packageOverrides: Record<string, Partial<BuildConfig>> = {
 ## 🔍 Debugging
 
 Enable verbose output:
+
 ```bash
 DEBUG=* bun scripts/run.ts build
 ```
 
 Check individual package builds:
+
 ```bash
 cd packages/core && bun run build
 ```

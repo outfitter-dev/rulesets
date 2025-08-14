@@ -11,13 +11,13 @@ This proposal recommends adopting Handlebars.js as the templating engine for Rul
 
 ### Key Finding: We're Already Using Handlebars Syntax!
 
-| Current Rulesets | Handlebars | Status |
-|------------------|------------|--------|
-| `{{> partial}}` | `{{> partial}}` | ✅ Identical |
-| `{{{raw}}}` | `{{{raw}}}` | ✅ Identical |
-| `{{block}}...{{/block}}` | Block helpers | 🔄 Minor change |
-| `{{$variable}}` | `{{variable}}` | 🔄 Drop `$` prefix |
-| `{{block +cursor}}` | Hash arguments | 🔄 New syntax |
+| Current Rulesets         | Handlebars      | Status             |
+| ------------------------ | --------------- | ------------------ |
+| `{{> partial}}`          | `{{> partial}}` | ✅ Identical       |
+| `{{{raw}}}`              | `{{{raw}}}`     | ✅ Identical       |
+| `{{block}}...{{/block}}` | Block helpers   | 🔄 Minor change    |
+| `{{$variable}}`          | `{{variable}}`  | 🔄 Drop `$` prefix |
+| `{{block +cursor}}`      | Hash arguments  | 🔄 New syntax      |
 
 ## Current State Analysis
 
@@ -88,13 +88,13 @@ import type { RulesetProvider, CompilationContext } from '@rulesets/types';
 
 export class HandlebarsRulesetCompiler {
   private hbs: typeof Handlebars;
-  
+
   constructor(providers: RulesetProvider[]) {
     this.hbs = Handlebars.create();
     this.registerCoreHelpers();
     this.registerProviderHelpers(providers);
   }
-  
+
   compile(source: string, provider: string): CompilationResult {
     const template = this.hbs.compile(source);
     const context = this.buildContext(provider);
@@ -110,16 +110,16 @@ export class HandlebarsRulesetCompiler {
 export const coreHelpers = {
   // Freeform section helpers (auto-registered)
   // Any {{#name}} becomes a section helper automatically
-  
+
   // Provider conditionals
   'if-provider': ifProviderHelper,
   'unless-provider': unlessProviderHelper,
   'switch-provider': switchProviderHelper,
-  
+
   // Utilities
   'kebab-to-snake': kebabToSnakeHelper,
   'format-date': formatDateHelper,
-  'include-file': includeFileHelper
+  'include-file': includeFileHelper,
 };
 ```
 
@@ -129,26 +129,26 @@ export const coreHelpers = {
 interface RulesetContext {
   // Provider information
   provider: {
-    id: string;           // "cursor"
-    name: string;         // "Cursor"
-    type: string;         // "ide"
+    id: string; // "cursor"
+    name: string; // "Cursor"
+    type: string; // "ide"
     capabilities: string[]; // ["workspaces", "git"]
   };
-  
+
   // File metadata
   file: {
-    name: string;         // "coding-standards"
-    version: string;      // "1.0.0"
-    path: string;         // ".ruleset/src/coding-standards.md"
+    name: string; // "coding-standards"
+    version: string; // "1.0.0"
+    path: string; // ".ruleset/src/coding-standards.md"
   };
-  
+
   // User-defined variables
   project: {
     name: string;
     language: string;
     framework: string;
   };
-  
+
   // System variables
   timestamp: string;
   rulesetVersion: string;
@@ -164,15 +164,19 @@ interface RulesetContext {
 **Current:**
 
 ```handlebars
-Provider: {{$provider}}
-Version: {{$file.version}}
+Provider:
+{{$provider}}
+Version:
+{{$file.version}}
 ```
 
 **Handlebars:**
 
 ```handlebars
-Provider: {{provider.id}}
-Version: {{file.version}}
+Provider:
+{{provider.id}}
+Version:
+{{file.version}}
 ```
 
 #### 2. Sections (formerly "blocks")
@@ -189,7 +193,7 @@ Version: {{file.version}}
 
 ```handlebars
 {{#instructions}}
-- Follow these guidelines
+  - Follow these guidelines
 {{/instructions}}
 ```
 
@@ -208,8 +212,8 @@ Content for specific providers
 **Handlebars (Proposed):**
 
 ```handlebars
-{{#instructions include="cursor" exclude="claude-code"}}
-Content for specific providers
+{{#instructions include='cursor' exclude='claude-code'}}
+  Content for specific providers
 {{/instructions}}
 ```
 
@@ -231,7 +235,7 @@ Content for specific providers
 
 **Key Simplification**:
 
-- Keep `@path/to/file.md` syntax for _partials/ references
+- Keep `@path/to/file.md` syntax for \_partials/ references
 - For providers that support file imports, preserve the path as-is
 - For providers that don't, embed the file content (stripping frontmatter)
 - Eliminate complex filtering (`blocks="naming,structure"`) - include entire file or use separate partials
@@ -346,11 +350,11 @@ Configure your IDE with the settings in `.vscode/settings.json`
     {{> cursor/keybindings}}
     {{> cursor/extensions}}
   {{/case}}
-  
+
   {{#case "windsurf"}}
     {{> windsurf/configuration}}
   {{/case}}
-  
+
   {{#default}}
     {{> generic/setup}}
   {{/default}}
@@ -406,9 +410,9 @@ interface SectionOptions extends Handlebars.HelperOptions {
 
 // This helper is auto-generated for any {{#name}} that isn't a reserved helper
 export function createSectionHelper(sectionName: string) {
-  return function(this: CompilationContext, options: SectionOptions): string {
+  return function (this: CompilationContext, options: SectionOptions): string {
     const { include, exclude, format = 'xml' } = options.hash;
-    
+
     // Provider filtering
     if (include && !include.split(',').includes(this.provider.id)) {
       return '';
@@ -416,24 +420,25 @@ export function createSectionHelper(sectionName: string) {
     if (exclude && exclude.split(',').includes(this.provider.id)) {
       return '';
     }
-    
+
     const content = options.fn(this).trim();
-    
+
     // Format output based on provider preferences
     switch (format) {
       case 'xml':
         const xmlTag = sectionName.replace(/-/g, '_');
         return `<${xmlTag}>\n${content}\n</${xmlTag}>`;
-      
+
       case 'heading':
-        const title = sectionName.split('-').map(w => 
-          w.charAt(0).toUpperCase() + w.slice(1)
-        ).join(' ');
+        const title = sectionName
+          .split('-')
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(' ');
         return `## ${title}\n\n${content}`;
-      
+
       case 'raw':
         return content;
-      
+
       default:
         return content;
     }
@@ -449,12 +454,12 @@ export function ifProviderHelper(
   providers: string,
   options: Handlebars.HelperOptions
 ): string {
-  const allowedProviders = providers.split(',').map(p => p.trim());
-  
+  const allowedProviders = providers.split(',').map((p) => p.trim());
+
   if (allowedProviders.includes(this.provider.id)) {
     return options.fn(this);
   }
-  
+
   return options.inverse ? options.inverse(this) : '';
 }
 ```
@@ -512,13 +517,13 @@ Handlebars enables features we haven't even thought of yet:
 
 ## Potential Concerns & Mitigations
 
-| Concern | Mitigation |
-|---------|------------|
-| Learning curve for users | Syntax is 80% identical; provide migration guide |
-| Handlebars dependency size | 40KB minified; use runtime-only build (12KB) |
-| Breaking existing files | No users yet; greenfield opportunity |
-| Loss of custom features | All features mappable to Handlebars patterns |
-| Template debugging | Better than custom; source maps available |
+| Concern                    | Mitigation                                       |
+| -------------------------- | ------------------------------------------------ |
+| Learning curve for users   | Syntax is 80% identical; provide migration guide |
+| Handlebars dependency size | 40KB minified; use runtime-only build (12KB)     |
+| Breaking existing files    | No users yet; greenfield opportunity             |
+| Loss of custom features    | All features mappable to Handlebars patterns     |
+| Template debugging         | Better than custom; source maps available        |
 
 ## Success Metrics
 
@@ -587,10 +592,10 @@ Total timeline: **8 weeks** from approval to production-ready
 
 {{!-- Comments --}}
 {{! Single line comment }}
-{{!-- Multi-line 
+{{!-- Multi-line
       comment --}}
 ```
 
 ---
 
-*This proposal represents a natural evolution of Rulesets, aligning with industry standards while maintaining all current capabilities and opening doors for future enhancements.*
+_This proposal represents a natural evolution of Rulesets, aligning with industry standards while maintaining all current capabilities and opening doors for future enhancements._

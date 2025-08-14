@@ -66,10 +66,10 @@ Bun includes a built-in bundler accessible via `Bun.build()`:
 
 ```typescript
 await Bun.build({
-  entrypoints: ["./src/index.ts"],
-  outdir: "./dist",
+  entrypoints: ['./src/index.ts'],
+  outdir: './dist',
   minify: true,
-  sourcemap: "external",
+  sourcemap: 'external',
 });
 ```
 
@@ -78,7 +78,7 @@ await Bun.build({
 Use Bun's shell for better performance:
 
 ```typescript
-import { $ } from "bun";
+import { $ } from 'bun';
 
 // Instead of execa or child_process
 await $`ls -la`;

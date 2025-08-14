@@ -47,7 +47,7 @@ bun run test         # Run all tests (hybrid: Bun test + Vitest)
 bun run test:watch   # Run tests in watch mode
 bun run test:coverage # Run tests with coverage
 
-# Code Quality  
+# Code Quality
 bun run lint         # Lint with Biome + markdownlint
 bun run lint:fix     # Auto-fix linting issues
 bun run format       # Format code with Biome + Prettier
@@ -60,13 +60,13 @@ bun run release      # Publish new versions
 
 ### Our Toolchain
 
-| Tool | Purpose | File Types |
-|------|---------|------------|
-| **Bun** | Package manager, script runner, bundling | All |
-| **Biome 2.1.2** | Linting & formatting | `.ts`, `.tsx`, `.js`, `.jsx`, `.json`, `.jsonc` |
-| **Prettier** | Formatting only | `.md`, `.yml`, `.yaml` |
-| **markdownlint-cli2** | Linting only | `.md` |
-| **TypeScript** | Type checking & declaration generation | `.d.ts` files |
+| Tool                  | Purpose                                  | File Types                                      |
+| --------------------- | ---------------------------------------- | ----------------------------------------------- |
+| **Bun**               | Package manager, script runner, bundling | All                                             |
+| **Biome 2.1.2**       | Linting & formatting                     | `.ts`, `.tsx`, `.js`, `.jsx`, `.json`, `.jsonc` |
+| **Prettier**          | Formatting only                          | `.md`, `.yml`, `.yaml`                          |
+| **markdownlint-cli2** | Linting only                             | `.md`                                           |
+| **TypeScript**        | Type checking & declaration generation   | `.d.ts` files                                   |
 
 ### Testing Strategy
 
@@ -145,7 +145,7 @@ rulesets/
 ├── packages/
 │   ├── core/            # Core orchestration (Vitest - complex e2e)
 │   ├── compiler/        # Compilation logic (Bun test - simple)
-│   ├── parser/          # Markdown parsing (Bun test - simple)  
+│   ├── parser/          # Markdown parsing (Bun test - simple)
 │   ├── linter/          # Rule validation (Bun test - simple)
 │   ├── types/           # Shared TypeScript types
 │   └── testing/         # Testing utilities
@@ -225,7 +225,7 @@ bun add -D @types/new-tool
 ### Types of Documentation
 
 - **README.md**: Project overview and quick start
-- **docs/**: Detailed documentation and specifications  
+- **docs/**: Detailed documentation and specifications
 - **Code comments**: For complex logic and public APIs
 - **Changesets**: For version history
 

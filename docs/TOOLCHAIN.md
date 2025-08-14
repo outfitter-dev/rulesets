@@ -8,15 +8,15 @@ Rulesets uses a modern, fast toolchain centered around **Bun** with clear separa
 
 ## Tool Responsibilities
 
-| Tool | Purpose | File Types | Notes |
-|------|---------|------------|-------|
-| **Bun** | Package manager, script runner, bundling | All | Primary tool for all operations |
-| **Biome 2.1.2** | Linting & formatting | `.ts`, `.tsx`, `.js`, `.jsx`, `.json`, `.jsonc` | Code quality and style |
-| **Prettier** | Formatting only | `.md`, `.yml`, `.yaml` | Prose formatting |
-| **markdownlint-cli2** | Linting only | `.md` | Markdown quality checks |
-| **TypeScript** | Type checking & declaration generation | `.d.ts` files | Compile-time type safety |
-| **Bun test** | Testing (simple) | Test files | Fast unit tests |
-| **Vitest** | Testing (complex) | Test files | Advanced mocking capabilities |
+| Tool                  | Purpose                                  | File Types                                      | Notes                           |
+| --------------------- | ---------------------------------------- | ----------------------------------------------- | ------------------------------- |
+| **Bun**               | Package manager, script runner, bundling | All                                             | Primary tool for all operations |
+| **Biome 2.1.2**       | Linting & formatting                     | `.ts`, `.tsx`, `.js`, `.jsx`, `.json`, `.jsonc` | Code quality and style          |
+| **Prettier**          | Formatting only                          | `.md`, `.yml`, `.yaml`                          | Prose formatting                |
+| **markdownlint-cli2** | Linting only                             | `.md`                                           | Markdown quality checks         |
+| **TypeScript**        | Type checking & declaration generation   | `.d.ts` files                                   | Compile-time type safety        |
+| **Bun test**          | Testing (simple)                         | Test files                                      | Fast unit tests                 |
+| **Vitest**            | Testing (complex)                        | Test files                                      | Advanced mocking capabilities   |
 
 ## Detailed Tool Configuration
 
@@ -65,8 +65,8 @@ timeout = 10000
   "extends": ["@ultracite/biome-config"],
   "files": {
     "include": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx", "**/*.json", "**/*.jsonc"],
-    "ignore": ["**/dist/**", "**/node_modules/**", "**/.turbo/**"]
-  }
+    "ignore": ["**/dist/**", "**/node_modules/**", "**/.turbo/**"],
+  },
 }
 ```
 
@@ -129,10 +129,10 @@ timeout = 10000
 {
   "config": {
     "MD013": { "line_length": 120 },
-    "MD033": false
+    "MD033": false,
   },
   "globs": ["**/*.md"],
-  "ignores": ["node_modules", "dist"]
+  "ignores": ["node_modules", "dist"],
 }
 ```
 
@@ -224,7 +224,7 @@ We use a **hybrid testing approach** based on test complexity:
 **Packages using Bun test**:
 
 - `@rulesets/parser` (7 tests, 79ms)
-- `@rulesets/compiler` (6 tests, 7ms)  
+- `@rulesets/compiler` (6 tests, 7ms)
 - `@rulesets/linter` (8 tests, 7ms)
 
 **Example**:
@@ -263,7 +263,7 @@ describe('core integration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-  
+
   it('should compile rules to filesystem', async () => {
     // Complex e2e test with mocked filesystem
   });
@@ -314,7 +314,7 @@ bun add js-yaml
 bun add -D eslint  # Would go to root package.json
 
 # Package-specific types
-cd packages/parser  
+cd packages/parser
 bun add -D @types/js-yaml
 ```
 
@@ -329,7 +329,7 @@ bun add -D @types/js-yaml
 ### Linting
 
 - **Biome**: ~28ms for entire codebase
-- **ESLint**: ~2-3 seconds for same codebase  
+- **ESLint**: ~2-3 seconds for same codebase
 - **Improvement**: ~100x faster
 
 ### Testing
@@ -370,7 +370,7 @@ bun add -D @types/js-yaml
 ### From ESLint + Prettier
 
 1. **Remove**: `.eslintrc.js`, eslint dependencies
-2. **Add**: `biome.jsonc` with ultracite preset  
+2. **Add**: `biome.jsonc` with ultracite preset
 3. **Update scripts**: `eslint` → `biome check`
 4. **Configure IDE**: Switch default formatter to Biome
 

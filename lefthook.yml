@@ -5,7 +5,7 @@ pre-commit:
   parallel: false
   commands:
     lockfile-check:
-      glob: 'package.json'
+      glob: "package.json"
       run: |
         echo "📦 Checking if lockfile is up to date..."
         bun install --dry-run 2>&1 | grep -q "lockfile had changes" && {
@@ -15,19 +15,19 @@ pre-commit:
         } || echo "✅ Lockfile is in sync"
 
     prettier:
-      glob: '*.{yaml,yml,md,mdx,mdc}'
+      glob: "*.{yaml,yml,md,mdx,mdc}"
       run: prettier --write {staged_files} --ignore-path .gitignore
 
     markdownlint:
-      glob: '*.{md,mdx,mdc}'
+      glob: "*.{md,mdx,mdc}"
       run: bun run lint:md:fix
 
     lint:
-      glob: '*.{js,ts,tsx}'
+      glob: "*.{js,ts,tsx}"
       run: bun run lint
 
     typecheck:
-      glob: '*.{ts,tsx}'
+      glob: "*.{ts,tsx}"
       run: bun run typecheck
 
 commit-msg:

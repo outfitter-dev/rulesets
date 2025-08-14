@@ -44,15 +44,18 @@ Google Jules uses plain Markdown without YAML front-matter:
 # My Project Agents and Tools
 
 ## Project Overview
+
 This is a TypeScript React application using Next.js and Tailwind CSS.
 
 ## Coding Standards
+
 - Use TypeScript for all new code
 - Follow ESLint configuration in .eslintrc.js
 - Use Prettier for formatting
 - Conventional commits for Git messages
 
 ## Architecture
+
 - Components in src/components/
 - Utilities in src/utils/
 - API routes in pages/api/
@@ -73,7 +76,7 @@ Google Jules offers 1 primary activation mode:
 
    ```markdown
    # Project Configuration
-   
+
    Your instructions and context here...
    ```
 
@@ -83,15 +86,18 @@ Google Jules offers 1 primary activation mode:
 # Project Agents and Development Guidelines
 
 ## Project Overview
+
 This is a full-stack TypeScript application with React frontend and Node.js backend.
 
 ## Technology Stack
+
 - Frontend: React 18, Next.js 14, Tailwind CSS
 - Backend: Node.js, Express, PostgreSQL
 - Testing: Jest, React Testing Library
 - Deployment: Vercel (frontend), Railway (backend)
 
 ## Coding Standards
+
 - Use TypeScript strict mode
 - Follow Airbnb ESLint configuration
 - Implement proper error handling
@@ -99,6 +105,7 @@ This is a full-stack TypeScript application with React frontend and Node.js back
 - Use meaningful variable and function names
 
 ## Project Structure
+
 - `/src/components/` - Reusable React components
 - `/src/pages/` - Next.js pages and API routes
 - `/src/utils/` - Utility functions and helpers
@@ -106,6 +113,7 @@ This is a full-stack TypeScript application with React frontend and Node.js back
 - `/tests/` - Test files (unit and integration)
 
 ## Development Workflow
+
 1. Create feature branch from main
 2. Implement changes with tests
 3. Run `npm run build` and `npm test` before committing
@@ -113,6 +121,7 @@ This is a full-stack TypeScript application with React frontend and Node.js back
 5. Create PR with description and testing notes
 
 ## Testing Requirements
+
 - Unit tests for all utility functions
 - Component tests for complex UI logic
 - API endpoint tests for backend routes
@@ -120,6 +129,7 @@ This is a full-stack TypeScript application with React frontend and Node.js back
 - All tests must pass before merging
 
 ## Deployment Process
+
 - Frontend deploys automatically on merge to main
 - Backend requires manual deployment approval
 - Environment variables managed through platform dashboards
@@ -134,7 +144,9 @@ Google Jules does not support external file referencing. Instead, it automatical
 # Project Guidelines
 
 ## Codebase Context
+
 Jules automatically reads all project files including:
+
 - Source code files
 - Configuration files (package.json, tsconfig.json, etc.)
 - Documentation (README.md, docs/)
@@ -156,14 +168,14 @@ Google Jules implements no hard character limits for AGENTS.md:
 
 AGENTS.md can contain various types of guidance:
 
-| Type                       | Purpose                              | Example                             |
-| -------------------------- | ------------------------------------ | ----------------------------------- |
-| **Project Overview**       | High-level context and purpose       | Technology stack, project goals     |
-| **Coding Standards**       | Naming conventions, formatting rules | TypeScript rules, linting setup     |
-| **Architecture Decisions** | Project structure, design patterns   | Directory structure, data flow      |
-| **Development Workflow**   | Step-by-step procedures              | Git workflow, testing process       |
-| **Testing Guidelines**     | Quality criteria and requirements    | Coverage requirements, test types   |
-| **Deployment Process**     | Release and deployment steps         | Build process, environment setup    |
+| Type                       | Purpose                              | Example                           |
+| -------------------------- | ------------------------------------ | --------------------------------- |
+| **Project Overview**       | High-level context and purpose       | Technology stack, project goals   |
+| **Coding Standards**       | Naming conventions, formatting rules | TypeScript rules, linting setup   |
+| **Architecture Decisions** | Project structure, design patterns   | Directory structure, data flow    |
+| **Development Workflow**   | Step-by-step procedures              | Git workflow, testing process     |
+| **Testing Guidelines**     | Quality criteria and requirements    | Coverage requirements, test types |
+| **Deployment Process**     | Release and deployment steps         | Build process, environment setup  |
 
 ## Loading Process
 
@@ -218,11 +230,11 @@ Google Jules provides a web-based interface for managing projects:
 
 ## Version Information
 
-| Aspect                     | Details                               |
-| -------------------------- | ------------------------------------- |
-| Last-verified release      | v1.2.0 (May 2025)                    |
-| Primary docs               | Google Jules documentation website    |
-| Configuration specification| AGENTS.md format established v1.0    |
+| Aspect                      | Details                            |
+| --------------------------- | ---------------------------------- |
+| Last-verified release       | v1.2.0 (May 2025)                  |
+| Primary docs                | Google Jules documentation website |
+| Configuration specification | AGENTS.md format established v1.0  |
 
 ## Rulesets Integration
 

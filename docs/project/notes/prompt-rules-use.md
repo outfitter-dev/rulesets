@@ -130,6 +130,7 @@ activation: 'always_on'
    ```
 
 2. **[Mode 2]**: [Description of activation mode]
+
    - [When to use this mode]
    - [Requirements for this mode]
 

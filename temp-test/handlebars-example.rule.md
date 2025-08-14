@@ -31,7 +31,7 @@ Configure your IDE with these settings:
 - Enable format on save
 - Install recommended extensions
 - Use the project's TypeScript configuration
-{{/if-provider}}
+  {{/if-provider}}
 
 {{#if-provider "claude-code"}}
 
@@ -42,8 +42,8 @@ When using Claude Code:
 - Commit frequently with clear messages
 - Use feature branches for all changes
 - Run `bun test` before pushing
-{{/if-provider}}
-{{/instructions}}
+  {{/if-provider}}
+  {{/instructions}}
 
 {{#unless-provider "claude-code"}}
 {{#ide-specific}}

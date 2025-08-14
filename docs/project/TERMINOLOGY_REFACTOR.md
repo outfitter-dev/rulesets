@@ -15,13 +15,13 @@ We need to standardize terminology across the Rulesets project. Currently, we in
 
 ### Mixed Terminology Usage
 
-| Component | Current Terms | Files Affected |
-|-----------|--------------|----------------|
-| Types | `DestinationPlugin`, `DestinationId`, `Provider`, `ProviderRegistry` | 10+ files |
-| Documentation | "Destination", "Destination Providers" | LANGUAGE.md, CLAUDE.md, README.md |
-| Branded Types | `DestinationId`, `DestPath` | brands.ts, ruleset-context.ts |
-| Core Code | `destinations/` folder | cursor-plugin.ts, windsurf-plugin.ts |
-| Frontmatter | `destination:` key | All .rule.md files |
+| Component     | Current Terms                                                        | Files Affected                       |
+| ------------- | -------------------------------------------------------------------- | ------------------------------------ |
+| Types         | `DestinationPlugin`, `DestinationId`, `Provider`, `ProviderRegistry` | 10+ files                            |
+| Documentation | "Destination", "Destination Providers"                               | LANGUAGE.md, CLAUDE.md, README.md    |
+| Branded Types | `DestinationId`, `DestPath`                                          | brands.ts, ruleset-context.ts        |
+| Core Code     | `destinations/` folder                                               | cursor-plugin.ts, windsurf-plugin.ts |
+| Frontmatter   | `destination:` key                                                   | All .rule.md files                   |
 
 ## Refactoring Plan
 
@@ -173,15 +173,21 @@ function createDestinationId(value: string): ProviderId {
 
 ```markdown
 # Before
+
 ---
+
 destination:
-  include: ['cursor', 'windsurf']
+include: ['cursor', 'windsurf']
+
 ---
 
 # After
+
 ---
+
 provider:
-  include: ['cursor', 'windsurf']
+include: ['cursor', 'windsurf']
+
 ---
 ```
 
