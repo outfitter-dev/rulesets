@@ -9,13 +9,13 @@ import type {
   ProviderCompilationContext,
   SourcePath,
 } from '@rulesets/types';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import { ClaudeCodeProvider } from '../claude-code-provider';
 
-vi.mock('fs', () => ({
+// vi.mock('fs', () => ({
   promises: {
-    mkdir: vi.fn(),
-    writeFile: vi.fn(),
+    mkdir: mock(),
+    writeFile: mock(),
   },
 }));
 
@@ -26,16 +26,16 @@ describe('ClaudeCodeProvider', () => {
   beforeEach(() => {
     provider = new ClaudeCodeProvider();
     mockLogger = {
-      debug: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn(),
+      debug: mock(),
+      info: mock(),
+      warn: mock(),
+      error: mock(),
     };
-    vi.clearAllMocks();
+    // Bun test handles mock clearing automatically;
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    // Bun test automatically restores mocks after each test;
   });
 
   describe('Provider interface properties', () => {
@@ -210,7 +210,7 @@ describe('ClaudeCodeProvider', () => {
     it('should handle compilation errors gracefully', async () => {
       // Mock an error scenario by overriding the method temporarily
       const originalCompile = provider.compile;
-      provider.compile = vi.fn().mockImplementation(() => {
+      provider.compile = mock().mockImplementation(() => {
         return {
           success: false,
           errors: [
@@ -363,7 +363,7 @@ describe('ClaudeCodeProvider', () => {
     it('should handle writeFile errors', async () => {
       const destPath = 'test.md';
       const error = new Error('Permission denied');
-      vi.mocked(fs.writeFile).mockRejectedValueOnce(error);
+      // vi.mocked(fs.writeFile).mockRejectedValueOnce(error);
 
       await expect(
         provider.write({
@@ -502,7 +502,7 @@ describe('ClaudeCodeProvider', () => {
         },
       };
 
-      vi.mocked(fs.writeFile).mockImplementation((filepath) => {
+      // vi.mocked(fs.writeFile).mockImplementation((filepath) => {
         if (filepath.toString().includes('.mcp.json')) {
           return Promise.reject(new Error('Permission denied'));
         }

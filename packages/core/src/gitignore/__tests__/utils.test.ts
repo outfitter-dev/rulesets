@@ -2,7 +2,7 @@
  * Tests for gitignore utility functions
  */
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import {
   generateManagedBlock,
   matchesAnyPattern,

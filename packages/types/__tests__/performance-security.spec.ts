@@ -3,7 +3,7 @@
  * Tests for memory leaks, performance benchmarks, security vulnerabilities, and edge cases
  */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'bun:test';
 import {
   // Error types
   BrandValidationError,

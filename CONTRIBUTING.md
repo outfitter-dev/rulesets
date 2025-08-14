@@ -12,17 +12,20 @@ Welcome! We're excited you're interested in contributing to Rulesets. This guide
 ### Getting Started
 
 1. **Fork and Clone**:
+
    ```bash
    git clone https://github.com/your-username/rulesets.git
    cd rulesets
    ```
 
 2. **Install Dependencies**:
+
    ```bash
    bun install  # Installs all dependencies (~300ms)
    ```
 
 3. **Verify Setup**:
+
    ```bash
    bun run build     # Build all packages
    bun run test      # Run all tests
@@ -73,6 +76,7 @@ We use a **hybrid testing approach**:
 - **Vitest**: For complex tests requiring mocking (advanced features)
 
 **Examples:**
+
 - Simple function tests → Bun test
 - E2E tests with filesystem mocking → Vitest
 
@@ -110,6 +114,7 @@ bun changeset add
 ```
 
 Follow the prompts to:
+
 - Select affected packages
 - Choose version bump type (patch/minor/major)
 - Write a clear changelog entry
@@ -175,6 +180,7 @@ All packages use a **two-step build process**:
 ### Formatting
 
 Code is automatically formatted with:
+
 - **Biome** for JavaScript/TypeScript/JSON
 - **Prettier** for Markdown/YAML
 

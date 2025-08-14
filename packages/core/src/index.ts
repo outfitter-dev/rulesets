@@ -1,7 +1,6 @@
 // TLDR: Main entry point and CLI orchestration for Rulesets (mixd-v0)
 // TLDR: v0.1.0 Basic orchestration for single file processing with minimal features
 
-import { promises as fs } from 'node:fs';
 import { dirname } from 'node:path';
 import { compile } from '@rulesets/compiler';
 import { lint } from '@rulesets/linter';
@@ -161,7 +160,7 @@ async function readSourceFile(
   logger: Logger
 ): Promise<string> {
   try {
-    const content = await fs.readFile(sourceFilePath, 'utf8');
+    const content = await Bun.file(sourceFilePath).text();
     logger.debug(`Read ${content.length} characters from ${sourceFilePath}`);
     return content;
   } catch (error) {

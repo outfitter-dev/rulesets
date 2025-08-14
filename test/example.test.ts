@@ -2,7 +2,7 @@
  * Example test file demonstrating Bun's built-in test runner
  */
 
-import { describe, expect, it, test, vi } from 'vitest';
+import { describe, expect, it, test, mock, spyOn } from 'bun:test';
 
 // Define a top-level regex to satisfy Biome's performance rule
 const BUN_REGEX = /^B/;
@@ -53,7 +53,7 @@ describe('Bun Test Runner Examples', () => {
 
   describe('Mocking', () => {
     it('should mock functions', () => {
-      const mockFn = vi.fn(() => 'mocked');
+      const mockFn = mock(() => 'mocked');
       expect(mockFn()).toBe('mocked');
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
@@ -62,7 +62,7 @@ describe('Bun Test Runner Examples', () => {
       const obj = {
         method: (x: number) => x * 2,
       };
-      const spy = vi.spyOn(obj, 'method');
+      const spy = spyOn(obj, 'method');
 
       const result = obj.method(5);
       expect(result).toBe(10);

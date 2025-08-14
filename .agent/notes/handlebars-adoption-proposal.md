@@ -229,7 +229,8 @@ Content for specific providers
 {{> conventions}}
 ```
 
-**Key Simplification**: 
+**Key Simplification**:
+
 - Keep `@path/to/file.md` syntax for _partials/ references
 - For providers that support file imports, preserve the path as-is
 - For providers that don't, embed the file content (stripping frontmatter)

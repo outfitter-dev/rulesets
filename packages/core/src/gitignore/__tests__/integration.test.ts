@@ -3,7 +3,7 @@
  */
 
 import { promises as fs } from 'node:fs';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, mock, spyOn } from 'bun:test';
 import { runRulesetsV0 } from '../../index';
 
 // Top-level regex patterns for performance
@@ -14,11 +14,11 @@ const CURSOR_RULES_MDC_REGEX = /^\.cursor\/rules\/my-rules\.mdc$/m;
 const WINDSURF_ALL_REGEX = /\.windsurf\/\*\*/;
 
 // Mock fs module
-vi.mock('node:fs', () => ({
+// vi.mock('node:fs', () => ({
   promises: {
-    readFile: vi.fn(),
-    writeFile: vi.fn(),
-    mkdir: vi.fn(),
+    readFile: mock(),
+    writeFile: mock(),
+    mkdir: mock(),
   },
 }));
 
@@ -33,7 +33,7 @@ describe('GitignoreManager Integration', () => {
   const testProjectPath = '/test/project';
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    // Bun test handles mock clearing automatically;
 
     // Mock successful file operations
     mockFs.mkdir.mockResolvedValue(undefined);

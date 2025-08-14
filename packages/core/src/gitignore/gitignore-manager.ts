@@ -3,7 +3,6 @@
  * Handles automatic gitignore updates with override mechanisms and configuration support
  */
 
-import { promises as fs } from 'node:fs';
 import { join, resolve } from 'node:path';
 import type {
   GitignoreConfig,
@@ -123,7 +122,7 @@ export class GitignoreManager implements IGitignoreManager {
 
       // Write only if content changed
       if (newContent !== currentContent) {
-        await fs.writeFile(gitignorePath, newContent, 'utf8');
+        await Bun.write(gitignorePath, newContent);
       }
 
       const messages: string[] = [];
@@ -255,13 +254,15 @@ export class GitignoreManager implements IGitignoreManager {
    */
   private async readGitignoreFile(gitignorePath: string): Promise<string> {
     try {
-      return await fs.readFile(gitignorePath, 'utf8');
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      const file = Bun.file(gitignorePath);
+      if (await file.exists()) {
+        return await file.text();
+      } else {
         // Create empty .gitignore if it doesn't exist
-        await fs.writeFile(gitignorePath, '', 'utf8');
+        await Bun.write(gitignorePath, '');
         return '';
       }
+    } catch (error) {
       throw error;
     }
   }
@@ -272,11 +273,13 @@ export class GitignoreManager implements IGitignoreManager {
   private async readOverrideFile(filename: string): Promise<string | null> {
     const filePath = join(this.basePath, filename);
     try {
-      return await fs.readFile(filePath, 'utf8');
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      const file = Bun.file(filePath);
+      if (await file.exists()) {
+        return await file.text();
+      } else {
         return null; // File doesn't exist
       }
+    } catch (error) {
       throw error; // Other errors should be propagated
     }
   }

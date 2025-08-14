@@ -4,6 +4,7 @@ ruleset:
 ---
 
 # Test
+
 {{instructions}}
 Test content
 {{/instructions}}

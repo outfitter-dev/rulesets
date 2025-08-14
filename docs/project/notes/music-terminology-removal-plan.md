@@ -115,8 +115,8 @@ This document outlines the complete removal of all music-related terminology fro
 
 1. All TypeScript files (\*.ts)
 2. All JavaScript files (\*.js)
-3. All test files (_.spec.ts, _.test.ts)
-4. Configuration files (_.json, _.config.\*)
+3. All test files (_.spec.ts,_.test.ts)
+4. Configuration files (_.json,_.config.\*)
 
 ### Remove Entirely
 

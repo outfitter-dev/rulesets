@@ -5,7 +5,6 @@
  * Measures build times, runtime performance, and memory usage
  */
 
-import { promises as fs } from 'node:fs';
 import { performance } from 'node:perf_hooks';
 import { compile } from '@rulesets/compiler';
 import { ConsoleLogger, runRulesetsV0 } from '@rulesets/core';
@@ -136,7 +135,7 @@ class PerformanceBenchmarker {
     const testFile = '/tmp/rulesets-benchmark.rule.md';
     const content = this.generateTestRuleset(50_000); // 50KB test file
 
-    await fs.writeFile(testFile, content);
+    await Bun.write(testFile, content);
 
     try {
       await this.measureOperation('Full pipeline (50KB file)', async () => {
@@ -145,7 +144,7 @@ class PerformanceBenchmarker {
     } catch (error) {
       console.warn('Full pipeline test failed:', error);
     } finally {
-      await fs.unlink(testFile).catch(() => {
+      await import('node:fs').then(fs => fs.promises.unlink(testFile)).catch(() => {
         // Ignore cleanup errors
       });
     }

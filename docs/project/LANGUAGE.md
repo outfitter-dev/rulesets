@@ -202,7 +202,7 @@ For detailed migration instructions, see the [Provider Migration Guide](../../pa
 - **2025-01-13:**
   - **BREAKING**: Migrated from "Destination" to "Provider" terminology
   - Updated all interfaces: `DestinationPlugin` → `RulesetProvider`
-  - Updated system variables: `$destination` → `$provider` 
+  - Updated system variables: `$destination` → `$provider`
   - Updated configuration keys: `destination:` → `provider:`
   - Updated file structure: `destinations/` → `providers/`
   - Added backwards compatibility for frontmatter and variables

@@ -1,12 +1,12 @@
 import type { CompiledDoc, Logger } from '@rulesets/types';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import { OpenCodeProvider } from '../opencode-provider';
 
 // Mock fs promises
-const mockWriteFile = vi.fn().mockResolvedValue(undefined);
-const mockMkdir = vi.fn().mockResolvedValue(undefined);
+const mockWriteFile = mock().mockResolvedValue(undefined);
+const mockMkdir = mock().mockResolvedValue(undefined);
 
-vi.mock('node:fs', () => ({
+// vi.mock('node:fs', () => ({
   promises: {
     writeFile: mockWriteFile,
     mkdir: mockMkdir,
@@ -14,8 +14,8 @@ vi.mock('node:fs', () => ({
 }));
 
 // Mock os module
-const mockHomedir = vi.fn().mockReturnValue('/home/user');
-vi.mock('node:os', () => ({
+const mockHomedir = mock().mockReturnValue('/home/user');
+// vi.mock('node:os', () => ({
   homedir: mockHomedir,
 }));
 
@@ -27,10 +27,10 @@ describe('OpenCodeProvider', () => {
   beforeEach(() => {
     provider = new OpenCodeProvider();
     mockLogger = {
-      debug: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn(),
+      debug: mock(),
+      info: mock(),
+      warn: mock(),
+      error: mock(),
     };
     mockCompiledDoc = {
       content: '# Test Rules\n\nSome content',
@@ -42,11 +42,11 @@ describe('OpenCodeProvider', () => {
     };
 
     // Clear all mocks before each test
-    vi.clearAllMocks();
+    // Bun test handles mock clearing automatically;
   });
 
   afterEach(() => {
-    vi.clearAllMocks();
+    // Bun test handles mock clearing automatically;
   });
 
   describe('configSchema', () => {

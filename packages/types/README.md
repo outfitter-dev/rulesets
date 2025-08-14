@@ -346,6 +346,7 @@ function getProviderConfig(providerId: unknown) {
 ### From Existing Types
 
 1. **Replace string literals with branded types:**
+
    ```typescript
    // Before
    function processDestination(id: string) { }
@@ -355,6 +356,7 @@ function getProviderConfig(providerId: unknown) {
    ```
 
 2. **Add validation at boundaries:**
+
    ```typescript
    // Before
    const destId = userInput;
@@ -364,6 +366,7 @@ function getProviderConfig(providerId: unknown) {
    ```
 
 3. **Use type guards for unknown inputs:**
+
    ```typescript
    // Before
    if (typeof input === 'string' && validDestinations.includes(input)) {

@@ -16,8 +16,9 @@ import {
   describe,
   expect,
   it,
-  vi,
-} from 'vitest';
+  mock,
+  spyOn,
+} from 'bun:test';
 import {
   ConsoleLogger,
   loadConfig,
@@ -48,16 +49,16 @@ describe('Error Handling Integration Tests', () => {
 
   beforeEach(async () => {
     mockLogger = new ConsoleLogger();
-    vi.spyOn(mockLogger, 'info').mockImplementation(() => {
+    spyOn(mockLogger, 'info').mockImplementation(() => {
       // Mock implementation for testing
     });
-    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {
+    spyOn(mockLogger, 'debug').mockImplementation(() => {
       // Mock implementation for testing
     });
-    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {
+    spyOn(mockLogger, 'warn').mockImplementation(() => {
       // Mock implementation for testing
     });
-    vi.spyOn(mockLogger, 'error').mockImplementation(() => {
+    spyOn(mockLogger, 'error').mockImplementation(() => {
       // Mock implementation for testing
     });
 
@@ -73,7 +74,7 @@ describe('Error Handling Integration Tests', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    // Bun test automatically restores mocks after each test
   });
 
   describe('File System Error Handling', () => {

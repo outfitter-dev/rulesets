@@ -127,6 +127,7 @@ Override rules are applied in the following priority order (highest to lowest):
 ## Path Handling
 
 GitignoreManager normalizes all paths to:
+
 - **Relative paths** from project root
 - **POSIX-style separators** (`/` instead of `\`)
 - **No leading `./`** (e.g., `src/file.ts` not `./src/file.ts`)
@@ -134,6 +135,7 @@ GitignoreManager normalizes all paths to:
 ## Error Handling
 
 GitignoreManager is designed to fail gracefully:
+
 - **Non-critical errors** are logged as warnings
 - **Compilation continues** even if gitignore updates fail
 - **Invalid patterns** are skipped with warnings
@@ -211,6 +213,7 @@ const manager = new GitignoreManager({
 ### Complex Override Patterns
 
 **.rulesetkeep**:
+
 ```
 # Keep all cursor rules
 .cursor/rules/*
@@ -221,6 +224,7 @@ const manager = new GitignoreManager({
 ```
 
 **.rulesetignore**:
+
 ```
 # Ignore all temporary files
 *.tmp

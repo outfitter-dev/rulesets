@@ -21,6 +21,7 @@ We've migrated from a Node.js + ESLint + Prettier setup to a modern Bun + Biome 
 ### 1. Update Your Local Environment
 
 #### Install Bun
+
 ```bash
 # macOS/Linux
 curl -fsSL https://bun.sh/install | bash
@@ -33,6 +34,7 @@ bun --version  # Should be 1.2+
 ```
 
 #### Clean Your Local Repository
+
 ```bash
 # Remove old artifacts
 rm -rf node_modules package-lock.json yarn.lock
@@ -46,6 +48,7 @@ bun install
 #### Development Commands
 
 **Old workflow**:
+
 ```bash
 npm install
 npm run dev
@@ -54,6 +57,7 @@ npm run test
 ```
 
 **New workflow**:
+
 ```bash
 bun install        # ~300ms vs ~3s
 bun run dev        # Start development mode
@@ -64,12 +68,14 @@ bun run test       # Hybrid test runner
 #### Code Quality Commands
 
 **Old workflow**:
+
 ```bash
 npm run lint       # ESLint + Prettier
 npm run lint:fix   # Fix linting issues
 ```
 
 **New workflow**:
+
 ```bash
 bun run lint       # Biome + markdownlint (check only)
 bun run lint:fix   # Auto-fix all issues
@@ -81,13 +87,16 @@ bun run format     # Format code + prose
 #### VS Code / Cursor
 
 **Remove old extensions**:
+
 - ESLint extension (if not used elsewhere)
 - Prettier extension (keep for other projects)
 
 **Install new extensions**:
+
 - [Biome](https://marketplace.visualstudio.com/items?itemName=biomejs.biome)
 
 **Update settings.json**:
+
 ```json
 {
   "editor.defaultFormatter": "biomejs.biome",
@@ -109,6 +118,7 @@ bun run format     # Format code + prose
 #### Shell Scripts
 
 **Before**:
+
 ```bash
 npm ci
 npm run build
@@ -116,6 +126,7 @@ npm run test
 ```
 
 **After**:
+
 ```bash
 bun install --frozen-lockfile
 bun run build
@@ -127,6 +138,7 @@ bun run test
 If you have custom scripts in your fork, update them:
 
 **Before**:
+
 ```json
 {
   "scripts": {
@@ -137,6 +149,7 @@ If you have custom scripts in your fork, update them:
 ```
 
 **After**:
+
 ```json
 {
   "scripts": {
@@ -153,12 +166,14 @@ We now use a **hybrid testing approach**:
 #### When to Use Bun Test
 
 **Good for**:
+
 - Simple unit tests
 - Pure function testing  
 - No mocking required
 - Fast feedback loops
 
 **Example migration**:
+
 ```typescript
 // Before (Jest/Vitest)
 import { describe, expect, it } from 'vitest';
@@ -177,6 +192,7 @@ describe('parser', () => {
 #### When to Keep Vitest
 
 **Keep Vitest for**:
+
 - E2E integration tests
 - Complex mocking (`vi.mock()`)
 - Setup/teardown requirements
@@ -189,10 +205,12 @@ describe('parser', () => {
 #### Configuration Files
 
 **Removed**:
+
 - `.eslintrc.js` - Replaced by `biome.jsonc`
 - `.prettierrc` - Updated to only handle Markdown/YAML
 
 **Added**:
+
 - `biome.jsonc` - Biome configuration with ultracite preset
 - `bunfig.toml` - Bun configuration for monorepo
 - `docs/TOOLCHAIN.md` - Tool responsibilities guide
@@ -200,10 +218,12 @@ describe('parser', () => {
 #### Dependencies
 
 **Root level now includes**:
+
 - All common devDependencies (TypeScript, Biome, etc.)
 - Shared testing tools (Vitest for complex tests)
 
 **Package level only includes**:
+
 - Runtime dependencies (`js-yaml`, `commander`, etc.)
 - Package-specific type definitions
 
@@ -213,7 +233,8 @@ describe('parser', () => {
 
 **Problem**: `bun: command not found`
 
-**Solution**: 
+**Solution**:
+
 ```bash
 # Restart your terminal after Bun installation
 # Or source your shell profile
@@ -225,6 +246,7 @@ source ~/.bashrc  # or ~/.zshrc
 **Problem**: New linting rules from Biome/ultracite
 
 **Solution**:
+
 ```bash
 # Auto-fix most issues
 bun run lint:fix
@@ -238,7 +260,9 @@ bun run lint
 **Problem**: Tests fail after migration
 
 **Solutions**:
+
 1. **Import errors**: Update test imports
+
    ```typescript
    // Change this
    import { describe, expect, it } from 'vitest';
@@ -248,6 +272,7 @@ bun run lint
    ```
 
 2. **Mocking needed**: Keep complex tests on Vitest
+
    ```bash
    # These stay on Vitest
    vi.mock('fs')  # Module mocking
@@ -259,6 +284,7 @@ bun run lint
 **Problem**: TypeScript compilation issues
 
 **Solution**:
+
 ```bash
 # Check TypeScript directly
 bun run typecheck
@@ -273,24 +299,29 @@ bun run build
 You should see significant improvements:
 
 #### Installation
+
 - **Before**: 3-5 seconds for `npm install`
 - **After**: ~300ms for `bun install`
 
 #### Linting  
+
 - **Before**: 2-3 seconds for ESLint + Prettier
 - **After**: ~28ms for Biome check
 
 #### Testing
+
 - **Before**: 500ms-2s for simple tests
 - **After**: 7-81ms for Bun test (simple tests)
 
 #### Building
+
 - **Before**: Variable (depended on tsup configuration)
 - **After**: ~2-5 seconds for all packages (consistent)
 
 ### 9. Troubleshooting
 
 #### Clear Everything and Start Fresh
+
 ```bash
 # Nuclear option - clean everything
 rm -rf node_modules bun.lockb dist .turbo
@@ -300,12 +331,14 @@ bun run test
 ```
 
 #### Check Tool Versions
+
 ```bash
 bun --version    # Should be 1.2+
 node --version   # Should be 18+ (for compatibility)
 ```
 
 #### Verify Configuration
+
 ```bash
 # Test linting
 bun run lint
@@ -320,18 +353,21 @@ bun run test
 ## Benefits of the New Toolchain
 
 ### Developer Experience
+
 - **Faster feedback loops**: Immediate linting, fast tests
 - **Simplified mental model**: Clear tool responsibilities
 - **Better IDE integration**: Biome provides excellent VS Code support
 - **Consistent formatting**: No more formatting wars
 
 ### Performance
+
 - **Installation**: 10x faster dependency installation
 - **Linting**: 100x faster code quality checks  
 - **Testing**: 10-100x faster for simple tests
 - **Building**: Consistent, predictable build times
 
 ### Maintainability
+
 - **Fewer dependencies**: Consolidated toolchain
 - **Clear responsibilities**: Each tool has one job
 - **Modern standards**: Latest tooling with active development
@@ -340,6 +376,7 @@ bun run test
 ## Getting Help
 
 ### Documentation
+
 - [TOOLCHAIN.md](./TOOLCHAIN.md) - Detailed tool responsibilities
 - [CONTRIBUTING.md](../CONTRIBUTING.md) - Development workflow
 - [Biome docs](https://biomejs.dev/) - Biome configuration and usage

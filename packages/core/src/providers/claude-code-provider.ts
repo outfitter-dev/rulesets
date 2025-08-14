@@ -1,7 +1,6 @@
 // Provider implementation for Claude Code CLI
 // Implements the new Provider interface with branded types and modern architecture
 
-import { promises as fs } from 'node:fs';
 import { dirname, isAbsolute, join, normalize, resolve, sep } from 'node:path';
 import type {
   CompilationStats,
@@ -231,9 +230,7 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
 
     // Write the main CLAUDE.md file
     try {
-      await fs.writeFile(resolvedPath, content, {
-        encoding: 'utf8',
-      });
+      await Bun.write(resolvedPath, content);
       logger.info(`Successfully wrote Claude Code rules to: ${resolvedPath}`);
       generatedPaths.push(resolvedPath);
 
@@ -311,9 +308,7 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
         mcpServers: mcpConfig.servers || {},
       };
 
-      await fs.writeFile(resolvedMcpPath, JSON.stringify(mcpContent, null, 2), {
-        encoding: 'utf8',
-      });
+      await Bun.write(resolvedMcpPath, JSON.stringify(mcpContent, null, 2));
 
       logger.info(
         `Successfully wrote MCP configuration to: ${resolvedMcpPath}`

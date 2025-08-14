@@ -1,5 +1,5 @@
 import type { ParsedDoc } from '@rulesets/types';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'bun:test';
 import { compile } from '../index';
 
 describe('compiler', () => {

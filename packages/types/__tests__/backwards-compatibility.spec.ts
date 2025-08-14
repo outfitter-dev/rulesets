@@ -3,7 +3,7 @@
  * Ensures legacy APIs continue working while deprecated warnings are shown
  */
 
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, mock, spyOn } from 'bun:test';
 
 // Test both legacy and modern imports to ensure compatibility
 import {
@@ -45,10 +45,10 @@ import {
 } from '../src/provider';
 
 describe('Backwards Compatibility', () => {
-  let consoleSpy: ReturnType<typeof vi.spyOn>;
+  let consoleSpy: ReturnType<typeof spyOn>;
 
   beforeEach(() => {
-    consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+    consoleSpy = spyOn(console, 'warn').mockImplementation(() => {
       // Mock implementation for testing
     });
   });
@@ -350,10 +350,10 @@ describe('Backwards Compatibility', () => {
     test('should provide logger interface', () => {
       // Mock logger implementation
       const mockLogger: Logger = {
-        debug: vi.fn(),
-        info: vi.fn(),
-        warn: vi.fn(),
-        error: vi.fn(),
+        debug: mock(),
+        info: mock(),
+        warn: mock(),
+        error: mock(),
       };
 
       expect(typeof mockLogger.debug).toBe('function');

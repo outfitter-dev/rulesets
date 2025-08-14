@@ -1,7 +1,6 @@
 // Provider implementation for Windsurf IDE
 // Implements the new Provider interface with branded types and modern architecture
 
-import { promises as fs } from 'node:fs';
 import { dirname, isAbsolute, normalize, resolve, sep } from 'node:path';
 import type {
   CompilationStats,
@@ -162,10 +161,10 @@ export class WindsurfProvider implements Provider, DestinationPlugin {
 
     logger.info(`Writing Windsurf rules to: ${resolvedPath}`);
 
-    // Ensure directory exists
+    // Ensure directory exists (Bun supports Node.js fs.mkdir)
     const dir = dirname(resolvedPath);
     try {
-      await fs.mkdir(dir, { recursive: true });
+      await import('node:fs').then(fs => fs.promises.mkdir(dir, { recursive: true }));
     } catch (error) {
       logger.error(`Failed to create directory: ${dir}`, error);
       throw error;
@@ -181,9 +180,7 @@ export class WindsurfProvider implements Provider, DestinationPlugin {
 
     // Write the content
     try {
-      await fs.writeFile(resolvedPath, content, {
-        encoding: 'utf8',
-      });
+      await Bun.write(resolvedPath, content);
       logger.info(`Successfully wrote Windsurf rules to: ${resolvedPath}`);
 
       // Log additional context for debugging

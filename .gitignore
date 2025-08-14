@@ -11,6 +11,8 @@ node_modules/
 # Build outputs
 dist/
 build/
+out/
+.next/
 *.tsbuildinfo
 
 # Testing
@@ -25,6 +27,10 @@ yarn-error.log*
 pnpm-debug.log*
 bun-debug.log*
 
+# Lock files (keep only bun.lock)
+*.lock*
+!bun.lock
+
 # Environment
 .env*
 !.env.example
@@ -34,6 +40,10 @@ bun-debug.log*
 .vscode/
 *.swp
 *.swo
+
+# OS files
+.DS_Store
+Thumbs.db
 
 # Turbo
 /.turbo

@@ -10,7 +10,7 @@ import type {
   WriteResult,
 } from '@rulesets/types';
 import { createCompiledContent } from '@rulesets/types';
-import { beforeEach, describe, expect, test, vi } from 'vitest';
+import { beforeEach, describe, expect, test, mock, spyOn } from 'bun:test';
 import {
   AmpProvider,
   ampPlugin,
@@ -355,10 +355,10 @@ describe('Provider Registry System', () => {
 
     beforeEach(() => {
       mockLogger = {
-        debug: vi.fn(),
-        info: vi.fn(),
-        warn: vi.fn(),
-        error: vi.fn(),
+        debug: mock(),
+        info: mock(),
+        warn: mock(),
+        error: mock(),
       };
 
       mockCompiledDoc = {
@@ -422,7 +422,7 @@ describe('Provider Registry System', () => {
 
       // Mock the write operation
       const originalWrite = destinationPlugin.write;
-      const mockWrite = vi.fn().mockResolvedValue({
+      const mockWrite = mock().mockResolvedValue({
         generatedPaths: ['.cursor/rules/test.mdc'],
         metadata: { provider: 'cursor' },
       } as WriteResult);

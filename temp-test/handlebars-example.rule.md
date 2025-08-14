@@ -13,6 +13,7 @@ project:
 This is a demo of the new Handlebars-based Rulesets compiler for **{{project.name}}**.
 
 {{#instructions}}
+
 ## General Guidelines
 
 Follow these coding standards for {{project.language}} development:
@@ -22,6 +23,7 @@ Follow these coding standards for {{project.language}} development:
 - Follow existing patterns in the {{project.framework}} ecosystem
 
 {{#if-provider "cursor,windsurf"}}
+
 ### IDE Configuration
 
 Configure your IDE with these settings:
@@ -32,6 +34,7 @@ Configure your IDE with these settings:
 {{/if-provider}}
 
 {{#if-provider "claude-code"}}
+
 ### CLI Workflow
 
 When using Claude Code:
@@ -44,6 +47,7 @@ When using Claude Code:
 
 {{#unless-provider "claude-code"}}
 {{#ide-specific}}
+
 ## IDE-Specific Settings
 
 Configure your development environment:

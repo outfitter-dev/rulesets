@@ -1,7 +1,6 @@
 // Provider implementation for OpenAI Codex CLI
 // Implements the Provider interface with branded types and modern architecture
 
-import { promises as fs } from 'node:fs';
 import { dirname, isAbsolute, join, normalize, resolve, sep } from 'node:path';
 import type {
   CompilationStats,
@@ -280,7 +279,7 @@ export class CodexProvider implements Provider, DestinationPlugin {
     content: string,
     logger: Logger
   ): Promise<void> {
-    await fs.writeFile(resolvedPath, content, { encoding: 'utf8' });
+    await Bun.write(resolvedPath, content);
     logger.info(`Successfully wrote Codex rules to: ${resolvedPath}`);
   }
 
@@ -384,12 +383,12 @@ export class CodexProvider implements Provider, DestinationPlugin {
 
       // Ensure the directory exists
       const mcpDir = dirname(resolvedMcpPath);
-      await fs.mkdir(mcpDir, { recursive: true });
+      await import('node:fs').then(fs => fs.promises.mkdir(mcpDir, { recursive: true }));
 
       // Generate TOML content for MCP configuration
       const tomlContent = this.generateMcpToml(mcpConfig.servers || {});
 
-      await fs.writeFile(resolvedMcpPath, tomlContent, { encoding: 'utf8' });
+      await Bun.write(resolvedMcpPath, tomlContent);
 
       logger.info(
         `Successfully wrote MCP TOML configuration to: ${resolvedMcpPath}`

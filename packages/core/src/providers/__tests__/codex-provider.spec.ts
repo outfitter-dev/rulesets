@@ -6,14 +6,14 @@ import type {
   Logger,
   ProviderCompilationContext,
 } from '@rulesets/types';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import { CodexProvider } from '../codex-provider';
 
 // Mock fs using Bun's mock API
-const mockWriteFile = vi.fn().mockResolvedValue(undefined);
-const mockMkdir = vi.fn().mockResolvedValue(undefined);
+const mockWriteFile = mock().mockResolvedValue(undefined);
+const mockMkdir = mock().mockResolvedValue(undefined);
 
-vi.mock('node:fs', () => ({
+// vi.mock('node:fs', () => ({
   promises: {
     mkdir: mockMkdir,
     writeFile: mockWriteFile,
@@ -33,10 +33,10 @@ describe('CodexProvider', () => {
   beforeEach(() => {
     provider = new CodexProvider();
     mockLogger = {
-      debug: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn(),
+      debug: mock(),
+      info: mock(),
+      warn: mock(),
+      error: mock(),
     };
     // Clear mock call counts
     mockWriteFile.mockClear();

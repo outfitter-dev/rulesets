@@ -28,6 +28,7 @@ We need to standardize terminology across the Rulesets project. Currently, we in
 ### Phase 1: Type System Updates
 
 #### Before
+
 ```typescript
 // brands.ts
 export type DestinationId = Opaque<string, 'DestinationId'>;
@@ -41,6 +42,7 @@ export interface DestinationPlugin {
 ```
 
 #### After
+
 ```typescript
 // brands.ts
 export type ProviderId = Opaque<string, 'ProviderId'>;
@@ -70,6 +72,7 @@ packages/types/src/destination-plugin.ts → packages/types/src/provider.ts
 ### Phase 3: Code Updates
 
 #### Variable and Property Names
+
 ```typescript
 // Before
 const destinationId = createDestinationId('cursor');
@@ -81,6 +84,7 @@ const outputPath = createOutputPath('.cursor/rules/');
 ```
 
 #### Context Types
+
 ```typescript
 // Before
 export interface CompilerContext {
@@ -98,6 +102,7 @@ export interface CompilerContext {
 ### Phase 4: Documentation Updates
 
 #### LANGUAGE.md
+
 ```markdown
 // Before
 | **Destination** | A supported tool (e.g., Cursor, Claude Code) |
@@ -107,6 +112,7 @@ export interface CompilerContext {
 ```
 
 #### Frontmatter Schema
+
 ```yaml
 # Before
 destination:
@@ -138,6 +144,7 @@ function createDestinationId(value: string): ProviderId {
 ## Implementation Checklist
 
 ### Immediate Changes (Breaking)
+
 - [ ] Rename `DestinationId` → `ProviderId` in brands.ts
 - [ ] Rename `DestPath` → `OutputPath` in brands.ts
 - [ ] Rename `destination-plugin.ts` → `provider.ts`
@@ -146,6 +153,7 @@ function createDestinationId(value: string): ProviderId {
 - [ ] Update all imports
 
 ### Gradual Changes (Non-Breaking)
+
 - [ ] Add deprecation warnings to old functions
 - [ ] Create compatibility aliases
 - [ ] Update documentation
@@ -153,6 +161,7 @@ function createDestinationId(value: string): ProviderId {
 - [ ] Update tests
 
 ### Final Cleanup (Next Major Version)
+
 - [ ] Remove all deprecated aliases
 - [ ] Remove compatibility layer
 - [ ] Update all frontmatter in example files
@@ -199,6 +208,7 @@ class MyProvider implements Provider {
 ## Affected Files List
 
 ### High Priority (Core Types)
+
 1. `packages/types/src/brands.ts`
 2. `packages/types/src/destination-plugin.ts` → `provider.ts`
 3. `packages/types/src/provider-types.ts`
@@ -206,12 +216,14 @@ class MyProvider implements Provider {
 5. `packages/types/src/ruleset-context.ts`
 
 ### Medium Priority (Implementation)
+
 6. `packages/core/src/destinations/` → `providers/`
 7. `packages/compiler/src/index.ts`
 8. `packages/linter/src/index.ts`
 9. `packages/parser/src/index.ts`
 
 ### Low Priority (Documentation)
+
 10. `docs/project/LANGUAGE.md`
 11. `CLAUDE.md`
 12. `README.md`

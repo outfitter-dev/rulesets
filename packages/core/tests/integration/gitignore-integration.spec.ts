@@ -16,8 +16,9 @@ import {
   describe,
   expect,
   it,
-  vi,
-} from 'vitest';
+  mock,
+  spyOn,
+} from 'bun:test';
 import {
   ConsoleLogger,
   createGitignoreManager,
@@ -50,10 +51,10 @@ describe('Gitignore Integration Tests', () => {
 
   beforeEach(async () => {
     mockLogger = new ConsoleLogger();
-    vi.spyOn(mockLogger, 'info').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'error').mockImplementation(() => {});
+    spyOn(mockLogger, 'info').mockImplementation(() => {});
+    spyOn(mockLogger, 'debug').mockImplementation(() => {});
+    spyOn(mockLogger, 'warn').mockImplementation(() => {});
+    spyOn(mockLogger, 'error').mockImplementation(() => {});
 
     // Create unique test project directory for each test
     testProjectDir = path.join(
@@ -67,7 +68,7 @@ describe('Gitignore Integration Tests', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    // Bun test automatically restores mocks after each test
   });
 
   describe('Automatic Gitignore Updates', () => {

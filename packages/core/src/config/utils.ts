@@ -3,7 +3,6 @@
  * Supports both JSONC and TOML formats with robust error handling
  */
 
-import { constants, promises as fs } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { parse as parseToml } from '@iarna/toml';
 import { type ParseError, parse as parseJsonc } from 'jsonc-parser';
@@ -26,8 +25,7 @@ const FLOAT_PATTERN = /^-?\d*\.\d+$/;
  */
 export async function fileExists(filePath: string): Promise<boolean> {
   try {
-    await fs.access(filePath, constants.R_OK);
-    return true;
+    return await Bun.file(filePath).exists();
   } catch {
     return false;
   }
@@ -60,7 +58,7 @@ export async function findConfigFile(
       }
 
       try {
-        const content = await fs.readFile(filePath, 'utf8');
+        const content = await Bun.file(filePath).text();
         const fileName = CONFIG_FILE_NAMES[i];
         const format = getConfigFormat(fileName);
 

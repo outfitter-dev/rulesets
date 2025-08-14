@@ -39,7 +39,6 @@ Rulesets is being developed using an **agentic-driven development approach** whe
 - **`.github/copilot-instructions.md`** - GitHub Copilot repository instructions
 - **`docs/agentic/jules/`** - Google Jules agent documentation suite
 
-
 ## Development Workflow
 
 ### Phase-Based Agent Assignment

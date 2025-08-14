@@ -4,17 +4,15 @@
  * Test script for Handlebars compiler
  */
 
-import { readFile } from 'node:fs/promises';
 import { parse } from 'yaml';
 import { HandlebarsRulesetCompiler } from '../packages/core/src/compiler/handlebars-compiler';
 import type { ParsedDoc } from '../packages/core/src/interfaces';
 
 async function testHandlebarsCompiler() {
   // Read the test file
-  const content = await readFile(
-    './temp-test/handlebars-example.rule.md',
-    'utf-8'
-  );
+  const content = await Bun.file(
+    './temp-test/handlebars-example.rule.md'
+  ).text();
 
   // Simple frontmatter parsing
   let frontmatter: Record<string, unknown> = {};

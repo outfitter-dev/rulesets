@@ -9,6 +9,7 @@ This guide demonstrates the migration from "Destination" to "Provider" terminolo
 The Rulesets project has completed a comprehensive refactoring from "Destination" to "Provider" terminology:
 
 **Key Changes:**
+
 - All TypeScript interfaces updated (`DestinationPlugin` → `RulesetProvider`)
 - System variables updated (`$destination` → `$provider`)
 - Configuration frontmatter updated (`destination:` → `provider:`)
@@ -20,6 +21,7 @@ The Rulesets project has completed a comprehensive refactoring from "Destination
 #### TypeScript Interfaces
 
 **Before:**
+
 ```typescript
 interface DestinationPlugin {
   id: DestinationId;
@@ -29,6 +31,7 @@ interface DestinationPlugin {
 ```
 
 **After:**
+
 ```typescript
 interface RulesetProvider {
   id: ProviderId;
@@ -40,6 +43,7 @@ interface RulesetProvider {
 #### Configuration Frontmatter
 
 **Before:**
+
 ```yaml
 ---
 destination:
@@ -52,6 +56,7 @@ cursor:
 ```
 
 **After:**
+
 ```yaml
 ---
 provider:
@@ -66,12 +71,14 @@ cursor:
 #### System Variables
 
 **Before:**
+
 ```markdown
 Current destination: {{$destination}}
 Destination ID: {{$destination.id}}
 ```
 
 **After:**
+
 ```markdown
 Current provider: {{$provider}}
 Provider ID: {{$provider.id}}
@@ -88,6 +95,7 @@ Provider ID: {{$provider.id}}
 ## Overview
 
 The branded types system provides:
+
 - **Compile-time safety** through Opaque types from type-fest
 - **Runtime validation** with security checks (path traversal, injection prevention)
 - **Clear error messages** with rich context
@@ -97,6 +105,7 @@ The branded types system provides:
 ## Core Concepts
 
 ### Before: Loose Typing
+
 ```typescript
 // Old approach - prone to errors
 function parseDocument(path: string, content: string) {
@@ -109,6 +118,7 @@ parseDocument("../../../etc/passwd", "malicious content");
 ```
 
 ### After: Branded Types
+
 ```typescript
 import { 
   createSourcePath, 
@@ -133,6 +143,7 @@ parseDocument(safePath, safeContent);
 ### 1. Parser Module Migration
 
 #### Before
+
 ```typescript
 // packages/parser/src/index.ts
 export function parse(
@@ -151,6 +162,7 @@ export function parse(
 ```
 
 #### After
+
 ```typescript
 // packages/parser/src/index.ts
 import {
@@ -198,6 +210,7 @@ export function parse(
 ### 2. Linter Module Migration
 
 #### Before
+
 ```typescript
 // packages/linter/src/index.ts
 export function lint(
@@ -219,6 +232,7 @@ export function lint(
 ```
 
 #### After
+
 ```typescript
 // packages/linter/src/index.ts
 import {
@@ -272,6 +286,7 @@ export function lint(
 ### 3. Compiler Module Migration
 
 #### Before
+
 ```typescript
 // packages/compiler/src/index.ts
 export function compile(
@@ -295,6 +310,7 @@ export function compile(
 ```
 
 #### After
+
 ```typescript
 // packages/compiler/src/index.ts
 import {
@@ -342,6 +358,7 @@ export function compile(
 ### 4. CLI Module Migration
 
 #### Before
+
 ```typescript
 // apps/cli/src/commands/compile.ts
 export async function compileCommand(
@@ -357,6 +374,7 @@ export async function compileCommand(
 ```
 
 #### After
+
 ```typescript
 // apps/cli/src/commands/compile.ts
 import {
@@ -543,6 +561,7 @@ async function loadFromCache(): Promise<ParsedDocument[]> {
 ```
 
 ⚠️ **Warning**: Only use `UnsafeBrands` when:
+
 1. Data comes from a trusted source (database, validated cache)
 2. Performance is critical (hot paths, large datasets)
 3. Validation has already occurred upstream
@@ -617,6 +636,7 @@ describe('Compilation pipeline', () => {
 ## Common Patterns
 
 ### 1. Early Validation Pattern
+
 Validate all inputs at system boundaries (CLI, API endpoints):
 
 ```typescript
@@ -632,6 +652,7 @@ await processFiles(validated);
 ```
 
 ### 2. Type Guard Pattern
+
 Use type guards for conditional logic:
 
 ```typescript
@@ -645,6 +666,7 @@ if (isDestinationId(value)) {
 ```
 
 ### 3. Validation Result Pattern
+
 Handle validation results consistently:
 
 ```typescript

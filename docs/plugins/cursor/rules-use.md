@@ -100,6 +100,7 @@ Cursor offers four ways to activate rules:
 
 4. **Manual**: Rules that are only applied when manually selected by the user
    - For specialized knowledge that's only occasionally needed
+
    ```yaml
    ---
    # No special metadata - will only be used when explicitly referenced

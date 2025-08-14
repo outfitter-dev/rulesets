@@ -16,8 +16,9 @@ import {
   describe,
   expect,
   it,
-  vi,
-} from 'vitest';
+  mock,
+  spyOn,
+} from 'bun:test';
 import { ConsoleLogger, runRulesetsV0 } from '../../src';
 
 // Create real temporary directory for integration tests
@@ -43,16 +44,16 @@ describe('Basic Integration Tests', () => {
 
   beforeEach(async () => {
     mockLogger = new ConsoleLogger();
-    vi.spyOn(mockLogger, 'info').mockImplementation(() => {
+    spyOn(mockLogger, 'info').mockImplementation(() => {
       // Suppress log output during tests
     });
-    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {
+    spyOn(mockLogger, 'debug').mockImplementation(() => {
       // Suppress log output during tests
     });
-    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {
+    spyOn(mockLogger, 'warn').mockImplementation(() => {
       // Suppress log output during tests
     });
-    vi.spyOn(mockLogger, 'error').mockImplementation(() => {
+    spyOn(mockLogger, 'error').mockImplementation(() => {
       // Suppress log output during tests
     });
 
@@ -68,7 +69,7 @@ describe('Basic Integration Tests', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    // Bun test automatically restores mocks after each test
   });
 
   describe('Core Functionality', () => {

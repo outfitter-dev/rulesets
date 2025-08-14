@@ -4,30 +4,26 @@
 
 import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
-import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type Mock, mock, spyOn } from 'bun:test';
 import { createGitignoreManager, GitignoreManager } from '../GitignoreManager';
 import type { GitignoreConfig } from '../types';
 
-// Mock fs module
-vi.mock('node:fs', () => ({
-  promises: {
-    readFile: vi.fn(),
-    writeFile: vi.fn(),
-  },
-}));
+// Mock fs module - keeping fs for test mocking
+const mockReadFile = mock(() => Promise.resolve(''));
+const mockWriteFile = mock(() => Promise.resolve());
 
-const mockFs = fs as {
-  readFile: Mock<[string, BufferEncoding?], Promise<string>>;
-  writeFile: Mock<[string, string, BufferEncoding?], Promise<void>>;
+const mockFs = {
+  readFile: mockReadFile,
+  writeFile: mockWriteFile,
 };
 
 describe('GitignoreManager', () => {
   const testBasePath = '/test/project';
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    mockFs.readFile.mockResolvedValue('');
-    mockFs.writeFile.mockResolvedValue(undefined);
+    // Bun test handles mock clearing automatically;
+    mockReadFile.mockResolvedValue('');
+    mockWriteFile.mockResolvedValue(undefined);
   });
 
   describe('constructor and basic functionality', () => {

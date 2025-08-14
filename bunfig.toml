@@ -23,10 +23,12 @@ registry = "https://registry.npmjs.org"
 "@changesets" = { registry = "https://registry.npmjs.org" }
 
 [test]
-# Default test configuration
-preload = ["./test/setup.ts"]
+# Bun native test configuration
 coverage = true
+coverageThreshold = { line = 80, function = 80, branch = 80 }
 timeout = 10000
+bail = false  # Don't stop on first test failure
+watch = false # Disable watch mode by default
 
 [run]
 # Set NODE_ENV if not already set

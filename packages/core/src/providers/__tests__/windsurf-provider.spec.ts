@@ -3,13 +3,13 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type { CompiledDoc, Logger } from '@rulesets/types';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import { WindsurfProvider } from '../windsurf-provider';
 
-vi.mock('fs', () => ({
+// vi.mock('fs', () => ({
   promises: {
-    mkdir: vi.fn(),
-    writeFile: vi.fn(),
+    mkdir: mock(),
+    writeFile: mock(),
   },
 }));
 
@@ -20,16 +20,16 @@ describe('WindsurfProvider', () => {
   beforeEach(() => {
     provider = new WindsurfProvider();
     mockLogger = {
-      debug: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn(),
+      debug: mock(),
+      info: mock(),
+      warn: mock(),
+      error: mock(),
     };
-    vi.clearAllMocks();
+    // Bun test handles mock clearing automatically;
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    // Bun test automatically restores mocks after each test;
   });
 
   describe('name', () => {
@@ -164,7 +164,7 @@ describe('WindsurfProvider', () => {
     it('should handle mkdir errors', async () => {
       const destPath = '.windsurf/rules/test.md';
       const error = new Error('Permission denied');
-      vi.mocked(fs.mkdir).mockRejectedValueOnce(error);
+      // vi.mocked(fs.mkdir).mockRejectedValueOnce(error);
 
       await expect(
         provider.write({
@@ -184,7 +184,7 @@ describe('WindsurfProvider', () => {
     it('should handle writeFile errors', async () => {
       const destPath = '.windsurf/rules/test.md';
       const error = new Error('Disk full');
-      vi.mocked(fs.writeFile).mockRejectedValueOnce(error);
+      // vi.mocked(fs.writeFile).mockRejectedValueOnce(error);
 
       await expect(
         provider.write({

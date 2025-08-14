@@ -3,7 +3,7 @@
  * Tests provider interfaces, built-in providers, validation, and type safety
  */
 
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'bun:test';
 import {
   createBlockName,
   createCompiledContent,

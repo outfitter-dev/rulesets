@@ -1,7 +1,6 @@
 // Provider implementation for OpenCode web agent
 // Implements the Provider interface with branded types and modern architecture
 
-import { promises as fs } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, isAbsolute, join, normalize, resolve, sep } from 'node:path';
 import type {
@@ -243,9 +242,7 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
 
     // Write the main AGENTS.md file
     try {
-      await fs.writeFile(resolvedPath, content, {
-        encoding: 'utf8',
-      });
+      await Bun.write(resolvedPath, content);
       logger.info(`Successfully wrote OpenCode rules to: ${resolvedPath}`);
       generatedPaths.push(resolvedPath);
 
@@ -331,9 +328,9 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
 
       // Ensure the directory exists
       const localDir = dirname(resolvedLocalPath);
-      await fs.mkdir(localDir, { recursive: true });
+      await import('node:fs').then(fs => fs.promises.mkdir(localDir, { recursive: true }));
 
-      await fs.writeFile(resolvedLocalPath, jsonContent, { encoding: 'utf8' });
+      await Bun.write(resolvedLocalPath, jsonContent);
 
       logger.info(
         `Successfully wrote MCP JSON configuration to: ${resolvedLocalPath}`
@@ -349,9 +346,9 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
 
         // Ensure the global directory exists
         const globalDir = dirname(globalMcpPath);
-        await fs.mkdir(globalDir, { recursive: true });
+        await import('node:fs').then(fs => fs.promises.mkdir(globalDir, { recursive: true }));
 
-        await fs.writeFile(globalMcpPath, jsonContent, { encoding: 'utf8' });
+        await Bun.write(globalMcpPath, jsonContent);
 
         logger.info(
           `Successfully wrote global MCP JSON configuration to: ${globalMcpPath}`

@@ -17,15 +17,6 @@
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
     },
-    "filesystem": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "./docs_archive",
-        ".ruleset/src"
-      ]
-    },
     "private-journal": {
       "type": "stdio",
       "command": "npx",
