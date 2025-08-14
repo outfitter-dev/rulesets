@@ -2,7 +2,7 @@
 // Implements the Provider interface with branded types and modern architecture
 
 import { promises as fs } from 'node:fs';
-import * as path from 'node:path';
+import { dirname, isAbsolute, join, normalize, resolve, sep } from 'node:path';
 import type {
   CompilationStats,
   CompiledDoc,
@@ -225,8 +225,8 @@ export class CodexProvider implements Provider, DestinationPlugin {
       logger.warn(
         `Output path ${resolvedPath} should end with AGENTS.md. Adjusting...`
       );
-      const dir = path.dirname(resolvedPath);
-      const adjustedPath = path.join(dir, 'AGENTS.md');
+      const dir = dirname(resolvedPath);
+      const adjustedPath = join(dir, 'AGENTS.md');
       const sanitizedPath = this.sanitizePath(adjustedPath, process.cwd());
       logger.info(`Adjusted output path to: ${sanitizedPath}`);
     }
@@ -314,14 +314,14 @@ export class CodexProvider implements Provider, DestinationPlugin {
       // Support CODEX_HOME environment variable or config override
       const codexHome =
         (globalConfig.codexHome as string) || process.env.CODEX_HOME;
-      if (codexHome && !path.isAbsolute(mcpPath)) {
-        mcpPath = path.join(codexHome, 'config.toml');
+      if (codexHome && !isAbsolute(mcpPath)) {
+        mcpPath = join(codexHome, 'config.toml');
       }
 
       const resolvedMcpPath = this.sanitizePath(mcpPath, process.cwd());
 
       // Ensure the directory exists
-      const mcpDir = path.dirname(resolvedMcpPath);
+      const mcpDir = dirname(resolvedMcpPath);
       await fs.mkdir(mcpDir, { recursive: true });
 
       // Generate TOML content for MCP configuration
@@ -379,17 +379,17 @@ export class CodexProvider implements Provider, DestinationPlugin {
    */
   private sanitizePath(userPath: string, baseDir: string): string {
     // Resolve and normalize the path
-    const resolved = path.isAbsolute(userPath)
-      ? path.resolve(userPath)
-      : path.resolve(baseDir, userPath);
+    const resolved = isAbsolute(userPath)
+      ? resolve(userPath)
+      : resolve(baseDir, userPath);
 
     // Normalize to handle . and .. segments
-    const normalized = path.normalize(resolved);
+    const normalized = normalize(resolved);
 
     // Ensure the resolved path is within the base directory or its subdirectories
-    const baseDirResolved = path.resolve(baseDir);
+    const baseDirResolved = resolve(baseDir);
     if (
-      !normalized.startsWith(baseDirResolved + path.sep) &&
+      !normalized.startsWith(baseDirResolved + sep) &&
       normalized !== baseDirResolved
     ) {
       throw new Error(

@@ -1,6 +1,6 @@
 // TLDR: Parser implementation for Rulesets notation (mixd-v0)
 // TLDR: v0.1.0 Basic frontmatter extraction without marker processing
-import * as yaml from 'js-yaml';
+import { load as yamlLoad } from 'js-yaml';
 import type { ParsedDoc } from '../interfaces';
 
 /**
@@ -14,7 +14,7 @@ import type { ParsedDoc } from '../interfaces';
 // TLDR: v0.1.0 Simple YAML frontmatter extraction only
 // TODO(v0.2.0): Add support for block parsing
 // TODO(v0.3.0): Add variable substitution
-export async function parse(content: string): Promise<ParsedDoc> {
+export function parse(content: string): ParsedDoc {
   const lines = content.split('\n');
   let frontmatterStart = -1;
   let frontmatterEnd = -1;
@@ -39,7 +39,7 @@ export async function parse(content: string): Promise<ParsedDoc> {
         .join('\n');
       try {
         frontmatter =
-          (yaml.load(frontmatterContent) as Record<string, unknown>) || {};
+          (yamlLoad(frontmatterContent) as Record<string, unknown>) || {};
       } catch (error) {
         let friendlyMessage = 'Invalid YAML syntax in frontmatter. ';
 
