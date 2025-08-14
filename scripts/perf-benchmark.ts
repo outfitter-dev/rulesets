@@ -145,7 +145,9 @@ class PerformanceBenchmarker {
     } catch (error) {
       console.warn('Full pipeline test failed:', error);
     } finally {
-      await fs.unlink(testFile).catch(() => {});
+      await fs.unlink(testFile).catch(() => {
+        // Ignore cleanup errors
+      });
     }
   }
 
@@ -184,7 +186,7 @@ class PerformanceBenchmarker {
         async () => {
           const parsed = await parse(content);
           const compiled = compile(parsed, 'cursor');
-          await lint(parsed);
+          lint(parsed);
 
           // Simulate some processing time
           await new Promise((resolve) => setTimeout(resolve, 10));

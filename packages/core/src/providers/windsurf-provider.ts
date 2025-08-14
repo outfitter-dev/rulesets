@@ -2,7 +2,7 @@
 // Implements the new Provider interface with branded types and modern architecture
 
 import { promises as fs } from 'node:fs';
-import * as path from 'node:path';
+import { dirname, isAbsolute, normalize, resolve, sep } from 'node:path';
 import type {
   CompilationStats,
   CompiledDoc,
@@ -84,9 +84,7 @@ export class WindsurfProvider implements Provider, DestinationPlugin {
    * Compiles content for Windsurf provider
    * New Provider interface method for modern compilation pipeline
    */
-  async compile(
-    _context: ProviderCompilationContext
-  ): Promise<ProviderCompilationResult> {
+  compile(_context: ProviderCompilationContext): ProviderCompilationResult {
     const startTime = Date.now();
     const errors: ProviderError[] = [];
     const warnings: ProviderWarning[] = [];
@@ -165,7 +163,7 @@ export class WindsurfProvider implements Provider, DestinationPlugin {
     logger.info(`Writing Windsurf rules to: ${resolvedPath}`);
 
     // Ensure directory exists
-    const dir = path.dirname(resolvedPath);
+    const dir = dirname(resolvedPath);
     try {
       await fs.mkdir(dir, { recursive: true });
     } catch (error) {
@@ -222,17 +220,17 @@ export class WindsurfProvider implements Provider, DestinationPlugin {
    */
   private sanitizePath(userPath: string, baseDir: string): string {
     // Resolve and normalize the path
-    const resolved = path.isAbsolute(userPath)
-      ? path.resolve(userPath)
-      : path.resolve(baseDir, userPath);
+    const resolved = isAbsolute(userPath)
+      ? resolve(userPath)
+      : resolve(baseDir, userPath);
 
     // Normalize to handle . and .. segments
-    const normalized = path.normalize(resolved);
+    const normalized = normalize(resolved);
 
     // Ensure the resolved path is within the base directory or its subdirectories
-    const baseDirResolved = path.resolve(baseDir);
+    const baseDirResolved = resolve(baseDir);
     if (
-      !normalized.startsWith(baseDirResolved + path.sep) &&
+      !normalized.startsWith(baseDirResolved + sep) &&
       normalized !== baseDirResolved
     ) {
       throw new Error(

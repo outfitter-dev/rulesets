@@ -3,25 +3,29 @@
  */
 
 import { promises as fs } from 'node:fs';
-import * as path from 'node:path';
+import { join } from 'node:path';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 import { createGitignoreManager, GitignoreManager } from '../GitignoreManager';
 import type { GitignoreConfig } from '../types';
 
 // Mock fs module
-jest.mock('fs', () => ({
+vi.mock('node:fs', () => ({
   promises: {
-    readFile: jest.fn(),
-    writeFile: jest.fn(),
+    readFile: vi.fn(),
+    writeFile: vi.fn(),
   },
 }));
 
-const mockFs = fs as jest.Mocked<typeof fs>;
+const mockFs = fs as {
+  readFile: Mock<[string, BufferEncoding?], Promise<string>>;
+  writeFile: Mock<[string, string, BufferEncoding?], Promise<void>>;
+};
 
 describe('GitignoreManager', () => {
   const testBasePath = '/test/project';
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockFs.readFile.mockResolvedValue('');
     mockFs.writeFile.mockResolvedValue(undefined);
   });
@@ -69,7 +73,7 @@ describe('GitignoreManager', () => {
       const result = await manager.updateGitignore(['.cursor/rules/test.mdc']);
 
       expect(mockFs.writeFile).toHaveBeenCalledWith(
-        path.join(testBasePath, '.gitignore'),
+        join(testBasePath, '.gitignore'),
         '',
         'utf8'
       );
@@ -77,11 +81,11 @@ describe('GitignoreManager', () => {
     });
 
     it('should add generated files to .gitignore', async () => {
-      mockFs.readFile.mockImplementation(async (filePath: string) => {
+      mockFs.readFile.mockImplementation((filePath: string) => {
         if (filePath.endsWith('.gitignore')) {
           return '# Existing content\nnode_modules/\n';
         }
-        throw { code: 'ENOENT' };
+        throw new Error('ENOENT');
       });
 
       const manager = new GitignoreManager({}, testBasePath);
@@ -97,7 +101,7 @@ describe('GitignoreManager', () => {
       ]);
 
       const writeCall = mockFs.writeFile.mock.calls.find(
-        (call) => call[0] === path.join(testBasePath, '.gitignore')
+        (call) => call[0] === join(testBasePath, '.gitignore')
       );
       expect(writeCall).toBeDefined();
       const writtenContent = writeCall?.[1] as string;
@@ -118,11 +122,11 @@ node_modules/
 
 dist/`;
 
-      mockFs.readFile.mockImplementation(async (filePath: string) => {
+      mockFs.readFile.mockImplementation((filePath: string) => {
         if (filePath.endsWith('.gitignore')) {
           return existingGitignore;
         }
-        throw { code: 'ENOENT' };
+        throw new Error('ENOENT');
       });
 
       const manager = new GitignoreManager({}, testBasePath);
@@ -131,7 +135,7 @@ dist/`;
       expect(result.success).toBe(true);
 
       const writeCall = mockFs.writeFile.mock.calls.find(
-        (call) => call[0] === path.join(testBasePath, '.gitignore')
+        (call) => call[0] === join(testBasePath, '.gitignore')
       );
       const writtenContent = writeCall?.[1] as string;
       expect(writtenContent).toContain('.cursor/rules/old.mdc');
@@ -139,7 +143,7 @@ dist/`;
     });
 
     it('should respect override files', async () => {
-      mockFs.readFile.mockImplementation(async (filePath: string) => {
+      mockFs.readFile.mockImplementation((filePath: string) => {
         if (filePath.endsWith('.gitignore')) {
           return 'node_modules/\n';
         }
@@ -149,7 +153,7 @@ dist/`;
         if (filePath.endsWith('.rulesetignore')) {
           return '*.tmp\n';
         }
-        throw { code: 'ENOENT' };
+        throw new Error('ENOENT');
       });
 
       const manager = new GitignoreManager({}, testBasePath);
@@ -181,11 +185,11 @@ dist/`;
 .cursor/rules/test.mdc
 # END Rulesets Generated Files`;
 
-      mockFs.readFile.mockImplementation(async (filePath: string) => {
+      mockFs.readFile.mockImplementation((filePath: string) => {
         if (filePath.endsWith('.gitignore')) {
           return existingGitignore;
         }
-        throw { code: 'ENOENT' };
+        throw new Error('ENOENT');
       });
 
       const manager = new GitignoreManager({}, testBasePath);
@@ -198,14 +202,14 @@ dist/`;
 
   describe('readOverrides', () => {
     it('should read .rulesetkeep and .rulesetignore files', async () => {
-      mockFs.readFile.mockImplementation(async (filePath: string) => {
+      mockFs.readFile.mockImplementation((filePath: string) => {
         if (filePath.endsWith('.rulesetkeep')) {
           return '.cursor/rules/important.mdc\n# Comment\n.windsurf/rules/keep.md';
         }
         if (filePath.endsWith('.rulesetignore')) {
           return '*.tmp\ndist/';
         }
-        throw { code: 'ENOENT' };
+        throw new Error('ENOENT');
       });
 
       const manager = new GitignoreManager({}, testBasePath);
@@ -279,11 +283,11 @@ dist/`;
     });
 
     it('should respect keep patterns', async () => {
-      mockFs.readFile.mockImplementation(async (filePath: string) => {
+      mockFs.readFile.mockImplementation((filePath: string) => {
         if (filePath.endsWith('.rulesetkeep')) {
           return '.cursor/rules/important.mdc';
         }
-        throw { code: 'ENOENT' };
+        throw new Error('ENOENT');
       });
 
       const manager = new GitignoreManager({}, testBasePath);
@@ -294,11 +298,11 @@ dist/`;
     });
 
     it('should respect ignore patterns', async () => {
-      mockFs.readFile.mockImplementation(async (filePath: string) => {
+      mockFs.readFile.mockImplementation((filePath: string) => {
         if (filePath.endsWith('.rulesetignore')) {
           return '*.tmp';
         }
-        throw { code: 'ENOENT' };
+        throw new Error('ENOENT');
       });
 
       const manager = new GitignoreManager({}, testBasePath);
@@ -311,11 +315,11 @@ dist/`;
 
   describe('edge cases and error handling', () => {
     it('should handle custom comment prefix', async () => {
-      mockFs.readFile.mockImplementation(async (filePath: string) => {
+      mockFs.readFile.mockImplementation((filePath: string) => {
         if (filePath.endsWith('.gitignore')) {
           return '';
         }
-        throw { code: 'ENOENT' };
+        throw new Error('ENOENT');
       });
 
       const manager = new GitignoreManager(
@@ -328,7 +332,7 @@ dist/`;
       await manager.updateGitignore(['.cursor/rules/test.mdc']);
 
       const writeCall = mockFs.writeFile.mock.calls.find(
-        (call) => call[0] === path.join(testBasePath, '.gitignore')
+        (call) => call[0] === join(testBasePath, '.gitignore')
       );
       const writtenContent = writeCall?.[1] as string;
       expect(writtenContent).toContain('# START MyTool Generated Files');
@@ -336,11 +340,11 @@ dist/`;
     });
 
     it('should handle duplicate paths', async () => {
-      mockFs.readFile.mockImplementation(async (filePath: string) => {
+      mockFs.readFile.mockImplementation((filePath: string) => {
         if (filePath.endsWith('.gitignore')) {
           return '';
         }
-        throw { code: 'ENOENT' };
+        throw new Error('ENOENT');
       });
 
       const manager = new GitignoreManager({}, testBasePath);
@@ -354,11 +358,11 @@ dist/`;
     });
 
     it('should handle path normalization across platforms', async () => {
-      mockFs.readFile.mockImplementation(async (filePath: string) => {
+      mockFs.readFile.mockImplementation((filePath: string) => {
         if (filePath.endsWith('.gitignore')) {
           return '';
         }
-        throw { code: 'ENOENT' };
+        throw new Error('ENOENT');
       });
 
       const manager = new GitignoreManager({}, testBasePath);

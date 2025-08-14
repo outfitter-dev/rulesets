@@ -2,8 +2,8 @@
 // Implements the Provider interface with branded types and modern architecture
 
 import { promises as fs } from 'node:fs';
-import * as os from 'node:os';
-import * as path from 'node:path';
+import { homedir } from 'node:os';
+import { dirname, isAbsolute, join, normalize, resolve, sep } from 'node:path';
 import type {
   CompilationStats,
   CompiledDoc,
@@ -136,9 +136,7 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
    * Compiles content for OpenCode provider
    * New Provider interface method for modern compilation pipeline
    */
-  async compile(
-    _context: ProviderCompilationContext
-  ): Promise<ProviderCompilationResult> {
+  compile(_context: ProviderCompilationContext): ProviderCompilationResult {
     const startTime = Date.now();
     const errors: ProviderError[] = [];
     const warnings: ProviderWarning[] = [];
@@ -227,8 +225,8 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
       logger.warn(
         `Output path ${resolvedPath} should end with AGENTS.md. Adjusting...`
       );
-      const dir = path.dirname(resolvedPath);
-      const adjustedPath = path.join(dir, 'AGENTS.md');
+      const dir = dirname(resolvedPath);
+      const adjustedPath = join(dir, 'AGENTS.md');
       const sanitizedPath = this.sanitizePath(adjustedPath, process.cwd());
       logger.info(`Adjusted output path to: ${sanitizedPath}`);
     }
@@ -260,7 +258,10 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
 
       // Handle MCP configuration if enabled
       if (config.mcpConfig && typeof config.mcpConfig === 'object') {
-        const mcpConfig = config.mcpConfig as any;
+        const mcpConfig = config.mcpConfig as {
+          enabled?: boolean;
+          mcpServers?: unknown;
+        };
         if (mcpConfig.enabled && mcpConfig.mcpServers) {
           const mcpPaths = await this.writeMcpJsonConfig(
             mcpConfig,
@@ -279,7 +280,7 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
           format: this.config.format,
           size: content.length,
           outputFile: 'AGENTS.md',
-          mcpEnabled: !!(config.mcpConfig as any)?.enabled,
+          mcpEnabled: !!(config.mcpConfig as { enabled?: boolean })?.enabled,
           webOptimized: true,
         },
       };
@@ -329,7 +330,7 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
       const resolvedLocalPath = this.sanitizePath(localMcpPath, process.cwd());
 
       // Ensure the directory exists
-      const localDir = path.dirname(resolvedLocalPath);
+      const localDir = dirname(resolvedLocalPath);
       await fs.mkdir(localDir, { recursive: true });
 
       await fs.writeFile(resolvedLocalPath, jsonContent, { encoding: 'utf8' });
@@ -338,30 +339,26 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
         `Successfully wrote MCP JSON configuration to: ${resolvedLocalPath}`
       );
       generatedPaths.push(resolvedLocalPath);
+      try {
+        const globalMcpPath = join(
+          homedir(),
+          '.config',
+          'opencode',
+          'opencode.json'
+        );
 
-      // Write global configuration (always enabled for opencode)
-      if (true) {
-        try {
-          const globalMcpPath = path.join(
-            os.homedir(),
-            '.config',
-            'opencode',
-            'opencode.json'
-          );
+        // Ensure the global directory exists
+        const globalDir = dirname(globalMcpPath);
+        await fs.mkdir(globalDir, { recursive: true });
 
-          // Ensure the global directory exists
-          const globalDir = path.dirname(globalMcpPath);
-          await fs.mkdir(globalDir, { recursive: true });
+        await fs.writeFile(globalMcpPath, jsonContent, { encoding: 'utf8' });
 
-          await fs.writeFile(globalMcpPath, jsonContent, { encoding: 'utf8' });
-
-          logger.info(
-            `Successfully wrote global MCP JSON configuration to: ${globalMcpPath}`
-          );
-          generatedPaths.push(globalMcpPath);
-        } catch (error) {
-          logger.warn(`Failed to write global MCP configuration: ${error}`);
-        }
+        logger.info(
+          `Successfully wrote global MCP JSON configuration to: ${globalMcpPath}`
+        );
+        generatedPaths.push(globalMcpPath);
+      } catch (error) {
+        logger.warn(`Failed to write global MCP configuration: ${error}`);
       }
     } catch (error) {
       logger.warn(`Failed to write MCP configuration: ${error}`);
@@ -374,9 +371,25 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
    * Generates JSON content for MCP server configuration
    * Based on the expected format for OpenCode's opencode.json
    */
-  private generateMcpJson(servers: Record<string, any>): string {
+  private generateMcpJson(
+    servers: Record<
+      string,
+      {
+        command?: string;
+        args?: string[];
+        env?: Record<string, string>;
+      }
+    >
+  ): string {
     const config = {
-      mcpServers: {} as Record<string, any>,
+      mcpServers: {} as Record<
+        string,
+        {
+          command?: string;
+          args?: string[];
+          env?: Record<string, string>;
+        }
+      >,
     };
 
     for (const [serverName, serverConfig] of Object.entries(servers)) {
@@ -395,17 +408,17 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
    */
   private sanitizePath(userPath: string, baseDir: string): string {
     // Resolve and normalize the path
-    const resolved = path.isAbsolute(userPath)
-      ? path.resolve(userPath)
-      : path.resolve(baseDir, userPath);
+    const resolved = isAbsolute(userPath)
+      ? resolve(userPath)
+      : resolve(baseDir, userPath);
 
     // Normalize to handle . and .. segments
-    const normalized = path.normalize(resolved);
+    const normalized = normalize(resolved);
 
     // Ensure the resolved path is within the base directory or its subdirectories
-    const baseDirResolved = path.resolve(baseDir);
+    const baseDirResolved = resolve(baseDir);
     if (
-      !normalized.startsWith(baseDirResolved + path.sep) &&
+      !normalized.startsWith(baseDirResolved + sep) &&
       normalized !== baseDirResolved
     ) {
       throw new Error(

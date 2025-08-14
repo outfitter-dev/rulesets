@@ -35,7 +35,8 @@ function exampleDestinationIds() {
   try {
     // ✅ Valid destination ID
     const _cursorDest = createDestinationId('cursor');
-    void _cursorDest; // Example usage
+    // Example usage - variable created but not used
+    _cursorDest;
 
     // ✅ Type guard usage
     const unknownId: unknown = 'windsurf';
@@ -44,7 +45,9 @@ function exampleDestinationIds() {
 
     // ❌ This will throw a validation error
     // const invalidDest = createDestinationId('invalid-destination');
-  } catch (_error) {}
+  } catch (_error) {
+    // Validation errors are expected for invalid IDs
+  }
 }
 
 /**
@@ -54,16 +57,20 @@ function exampleFilePaths() {
   try {
     // ✅ Valid source path
     const _sourcePath = createSourcePath('./src/my-rules.rule.md');
-    void _sourcePath; // Example usage
+    // Example usage - variable created but not used
+    _sourcePath;
 
     // ✅ Valid destination path
     const _destPath = createDestPath('./.cursor/rules/my-rules.mdc');
-    void _destPath; // Example usage
+    // Example usage - variable created but not used
+    _destPath;
 
     // ❌ These would throw validation errors:
     // const badSource = createSourcePath('./src/../../../etc/passwd'); // Path traversal
     // const badExt = createSourcePath('./src/rules.txt'); // Wrong extension
-  } catch (_error) {}
+  } catch (_error) {
+    // Validation errors are expected for invalid IDs
+  }
 }
 
 /**
@@ -73,17 +80,20 @@ function exampleBlockNames() {
   try {
     // ✅ Valid block names
     const _instructions = createBlockName('instructions');
-    void _instructions; // Example usage
+    // Example usage - variable created but not used
+    _instructions;
     const _userGuidelines = createBlockName('user-guidelines');
-    void _userGuidelines; // Example usage
+    _userGuidelines;
     const _codeExamples = createBlockName('code-examples');
-    void _codeExamples; // Example usage
+    _codeExamples;
 
     // ❌ These would throw validation errors:
     // const invalidCase = createBlockName('CamelCase'); // Not kebab-case
     // const reserved = createBlockName('function'); // Reserved word
     // const empty = createBlockName(''); // Empty name
-  } catch (_error) {}
+  } catch (_error) {
+    // Validation errors are expected for invalid IDs
+  }
 }
 
 /**
@@ -93,19 +103,21 @@ function exampleVariableNames() {
   try {
     // ✅ Valid variable names
     const _destination = createVariableName('destination');
-    void _destination; // Example usage
+    _destination;
     const _userName = createVariableName('userName');
-    void _userName; // Example usage
+    _userName;
     const _private = createVariableName('_private');
-    void _private; // Example usage
+    _private;
     const _$jquery = createVariableName('$jquery');
-    void _$jquery; // Example usage
+    _$jquery;
 
     // ❌ These would throw validation errors:
     // const invalidStart = createVariableName('123invalid'); // Starts with number
     // const reserved = createVariableName('class'); // Reserved word
     // const spaces = createVariableName('user name'); // Contains spaces
-  } catch (_error) {}
+  } catch (_error) {
+    // Validation errors are expected for invalid IDs
+  }
 }
 
 /**
@@ -125,19 +137,21 @@ These are the coding standards for our project.
 - Use meaningful variable names
 - Write comprehensive tests
     `);
-    void _rawContent; // Example usage
+    _rawContent;
 
     const _compiledContent = createCompiledContent(`
 <instructions>
 Follow TypeScript best practices and write comprehensive tests.
 </instructions>
     `);
-    void _compiledContent; // Example usage
+    _compiledContent;
 
     // ❌ These would be rejected by security validation:
     // const malicious = createRawContent('<script>alert("xss")</script>');
     // const dangerous = createRawContent('Content with \0 null byte');
-  } catch (_error) {}
+  } catch (_error) {
+    // Validation errors are expected for invalid IDs
+  }
 }
 
 // ============================================================================
@@ -158,7 +172,7 @@ function exampleValidatorRegistry() {
   // Direct validation using type guards
   const testId2 = 'windsurf';
   const _isValid = isDestinationId(testId2);
-  void _isValid; // Example usage
+  _isValid;
 }
 
 /**
@@ -168,15 +182,19 @@ function exampleMarkerValidation() {
   try {
     // ✅ Valid markers
     const _blockMarker = createMarkerContent('{{instructions}}');
-    void _blockMarker; // Example usage
+    _blockMarker;
     const _importMarker = createMarkerContent('{{> @legal}}');
-    void _importMarker; // Example usage
+    _importMarker;
 
     // ❌ Invalid marker syntax - would throw during creation
     try {
       createMarkerContent('{{invalid marker syntax');
-    } catch (_error) {}
-  } catch (_error) {}
+    } catch (_error) {
+      // Validation errors are expected for invalid IDs
+    }
+  } catch (_error) {
+    // Validation errors are expected for invalid IDs
+  }
 }
 
 /**
@@ -239,6 +257,12 @@ function exampleErrorHandling() {
     if (error instanceof Error) {
       // If it's a RulesetValidationError, we get structured information
       if ('code' in error && 'category' in error && 'toJSON' in error) {
+        const structuredError = error as unknown as {
+          code: string;
+          category: string;
+          toJSON: () => object;
+        };
+        console.log(`Error: ${structuredError.code} in ${structuredError.category}`);
       }
     }
   }
@@ -258,11 +282,11 @@ function exampleBatchValidation() {
       return { input, success: false, error };
     }
   });
-  results.forEach((result) => {
+  for (const result of results) {
     if (result.success) {
     } else {
     }
-  });
+  }
 }
 
 // ============================================================================
@@ -294,5 +318,5 @@ export function runAllExamples() {
   exampleErrorHandling();
   exampleBatchValidation();
   const _context = exampleCompilationContext();
-  void _context; // Example usage
+  void _context;
 }

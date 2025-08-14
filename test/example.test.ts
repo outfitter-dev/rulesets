@@ -4,6 +4,19 @@
 
 import { describe, expect, it, test, vi } from 'vitest';
 
+// Define a top-level regex to satisfy Biome's performance rule
+const BUN_REGEX = /^B/;
+
+// Define Bun types for globalThis
+interface BunGlobal {
+  sleep?: (ms: number) => Promise<void>;
+  file?: (path: string) => { json: () => Promise<unknown> };
+}
+
+interface CustomGlobalThis extends GlobalThis {
+  Bun?: BunGlobal;
+}
+
 describe('Bun Test Runner Examples', () => {
   describe('Basic assertions', () => {
     it('should perform arithmetic correctly', () => {
@@ -13,7 +26,7 @@ describe('Bun Test Runner Examples', () => {
 
     it('should handle strings', () => {
       expect('hello world').toContain('world');
-      expect('Bun').toMatch(/^B/);
+      expect('Bun').toMatch(BUN_REGEX);
     });
 
     it('should handle arrays and objects', () => {
@@ -30,7 +43,7 @@ describe('Bun Test Runner Examples', () => {
 
     it('should handle async/await', async () => {
       const asyncFn = async () => {
-        await Bun.sleep(10);
+        await (globalThis as CustomGlobalThis).Bun?.sleep?.(10);
         return 'done';
       };
       const result = await asyncFn();
@@ -59,7 +72,7 @@ describe('Bun Test Runner Examples', () => {
 
   describe('File system tests', () => {
     it('should read files with Bun.file', async () => {
-      const file = Bun.file('package.json');
+      const file = (globalThis as CustomGlobalThis).Bun?.file?.('package.json');
       const contents = await file.json();
       expect(contents.name).toBe('rulesets');
     });

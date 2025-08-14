@@ -28,7 +28,7 @@ describe('ConfigLoader', () => {
   });
 
   describe('parseConfigFile', () => {
-    it('should parse JSONC config file', async () => {
+    it('should parse JSONC config file', () => {
       const content = `{
         // Comments are allowed
         "strict": true,
@@ -40,14 +40,14 @@ describe('ConfigLoader', () => {
         }
       }`;
 
-      const result = await loader.parseConfigFile('test.jsonc', content);
+      const result = loader.parseConfigFile('test.jsonc', content);
 
       expect(result.strict).toBe(true);
       expect(result.providers?.cursor?.enabled).toBe(true);
       expect(result.providers?.cursor?.outputPath).toBe('.cursor/rules/');
     });
 
-    it('should parse TOML config file', async () => {
+    it('should parse TOML config file', () => {
       const content = `
       strict = true
       defaultProviders = ["cursor", "claude-code"]
@@ -65,7 +65,7 @@ describe('ConfigLoader', () => {
       alwaysApply = false
       `;
 
-      const result = await loader.parseConfigFile('test.toml', content);
+      const result = loader.parseConfigFile('test.toml', content);
 
       expect(result.strict).toBe(true);
       expect(result.defaultProviders).toEqual(['cursor', 'claude-code']);
@@ -79,7 +79,7 @@ describe('ConfigLoader', () => {
   });
 
   describe('validateConfig', () => {
-    it('should validate valid configuration', async () => {
+    it('should validate valid configuration', () => {
       const config: RulesetConfig = {
         strict: true,
         providers: {
@@ -92,32 +92,32 @@ describe('ConfigLoader', () => {
         },
       };
 
-      const result = await loader.validateConfig(config);
+      const result = loader.validateConfig(config);
 
       expect(result.valid).toBe(true);
       expect(result.errors).toEqual([]);
     });
 
-    it('should reject invalid configuration types', async () => {
+    it('should reject invalid configuration types', () => {
       const config = {
         strict: 'not-a-boolean',
         providers: 'not-an-object',
       };
 
-      const result = await loader.validateConfig(config);
+      const result = loader.validateConfig(config);
 
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    it('should warn about unknown providers', async () => {
+    it('should warn about unknown providers', () => {
       const config: RulesetConfig = {
         providers: {
           'unknown-provider': { enabled: true },
         },
       };
 
-      const result = await loader.validateConfig(config);
+      const result = loader.validateConfig(config);
 
       expect(result.valid).toBe(true);
       expect(result.warnings).toContain(
@@ -125,14 +125,14 @@ describe('ConfigLoader', () => {
       );
     });
 
-    it('should reject empty output paths', async () => {
+    it('should reject empty output paths', () => {
       const config: RulesetConfig = {
         providers: {
           cursor: { outputPath: '' },
         },
       };
 
-      const result = await loader.validateConfig(config);
+      const result = loader.validateConfig(config);
 
       expect(result.valid).toBe(false);
       expect(result.errors).toContain(
@@ -140,12 +140,12 @@ describe('ConfigLoader', () => {
       );
     });
 
-    it('should warn about empty default providers', async () => {
+    it('should warn about empty default providers', () => {
       const config: RulesetConfig = {
         defaultProviders: [],
       };
 
-      const result = await loader.validateConfig(config);
+      const result = loader.validateConfig(config);
 
       expect(result.valid).toBe(true);
       expect(result.warnings).toContain(
@@ -359,7 +359,7 @@ describe('Configuration convenience functions', () => {
   });
 
   describe('validateConfig convenience function', () => {
-    it('should validate configuration using default loader', async () => {
+    it('should validate configuration using default loader', () => {
       const config: RulesetConfig = {
         strict: true,
         providers: {
@@ -367,7 +367,7 @@ describe('Configuration convenience functions', () => {
         },
       };
 
-      const result = await validateConfig(config);
+      const result = validateConfig(config);
 
       expect(result.valid).toBe(true);
     });

@@ -20,6 +20,9 @@ import {
 } from 'vitest';
 import { ConsoleLogger, type RulesetConfig, runRulesetsV0 } from '../../src';
 
+// Test constants
+const KEPT_FILES_REGEX = /Kept \d+ files due to override rules/;
+
 // Create real temporary directory for integration tests
 const TEST_DIR = path.join(tmpdir(), `rulesets-integration-${Date.now()}`);
 
@@ -36,15 +39,25 @@ describe('Complete Workflow Integration Tests', () => {
     // Clean up test directory
     try {
       await fs.rm(TEST_DIR, { recursive: true, force: true });
-    } catch (_error) {}
+    } catch (_error) {
+      // Ignore errors when removing test directory
+    }
   });
 
   beforeEach(async () => {
     mockLogger = new ConsoleLogger();
-    vi.spyOn(mockLogger, 'info').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'error').mockImplementation(() => {});
+    vi.spyOn(mockLogger, 'info').mockImplementation(() => {
+      // Suppress log output during tests
+    });
+    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {
+      // Suppress log output during tests
+    });
+    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {
+      // Suppress log output during tests
+    });
+    vi.spyOn(mockLogger, 'error').mockImplementation(() => {
+      // Suppress log output during tests
+    });
 
     // Create unique test project directory for each test
     testProjectDir = path.join(
@@ -421,7 +434,7 @@ Testing gitignore with keep overrides.
 
       // Verify logging about kept files
       expect(mockLogger.info).toHaveBeenCalledWith(
-        expect.stringMatching(/Kept \d+ files due to override rules/)
+        expect.stringMatching(KEPT_FILES_REGEX)
       );
     });
 
@@ -527,7 +540,7 @@ function example() {
 
     it('should handle multiple compilation runs in sequence', async () => {
       // Setup: Multiple source files
-      const sourceFiles = [];
+      const sourceFiles: string[] = [];
 
       for (let i = 1; i <= 5; i++) {
         const content = `---

@@ -122,8 +122,9 @@ export class BrandedParser {
   private extractBlocks(content: RawContent): Block[] {
     const blocks: Block[] = [];
     const blockRegex = /\{\{([^}]+)\}\}/g;
-    let match;
+    let match: RegExpExecArray | null;
 
+    // biome-ignore lint/suspicious/noAssignInExpressions: Standard pattern for regex exec in while loop
     while ((match = blockRegex.exec(content)) !== null) {
       const innerContent = match[1]; // Guaranteed by regex pattern [^}]+
       if (!innerContent) {
@@ -186,8 +187,9 @@ export class BrandedParser {
   private extractImports(content: RawContent): Import[] {
     const imports: Import[] = [];
     const importRegex = /\{\{>\s*([^}]+)\}\}/g;
-    let match;
+    let match: RegExpExecArray | null;
 
+    // biome-ignore lint/suspicious/noAssignInExpressions: Standard pattern for regex exec in while loop
     while ((match = importRegex.exec(content)) !== null) {
       const innerContent = match[1]?.trim();
       if (!innerContent) {
@@ -229,8 +231,9 @@ export class BrandedParser {
   private extractVariables(content: RawContent): Variable[] {
     const variables: Variable[] = [];
     const varRegex = /\{\{\$([^}]+)\}\}/g;
-    let match;
+    let match: RegExpExecArray | null;
 
+    // biome-ignore lint/suspicious/noAssignInExpressions: Standard pattern for regex exec in while loop
     while ((match = varRegex.exec(content)) !== null) {
       const varContent = match[1]?.trim();
       if (!varContent) {
@@ -306,7 +309,11 @@ export class BrandedParser {
         });
       } catch (err) {
         if (err instanceof BrandValidationError) {
+          // Skip invalid markers - they're not included in the result
+          continue;
         }
+        // Re-throw unexpected errors
+        throw err;
       }
     }
 

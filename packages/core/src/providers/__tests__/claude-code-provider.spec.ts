@@ -5,7 +5,9 @@ import path from 'node:path';
 import type {
   CompiledDoc,
   Logger,
+  OutputPath,
   ProviderCompilationContext,
+  SourcePath,
 } from '@rulesets/types';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClaudeCodeProvider } from '../claude-code-provider';
@@ -119,7 +121,11 @@ describe('ClaudeCodeProvider', () => {
 
     it('should define outputPath property with CLAUDE.md default', () => {
       const schema = provider.configSchema();
-      const outputPathProp = schema.properties?.outputPath as any;
+      const outputPathProp = schema.properties?.outputPath as {
+        type: string;
+        default: string;
+        description: string;
+      };
       expect(outputPathProp.type).toBe('string');
       expect(outputPathProp.default).toBe('CLAUDE.md');
       expect(outputPathProp.description).toContain('CLAUDE.md');
@@ -127,7 +133,14 @@ describe('ClaudeCodeProvider', () => {
 
     it('should define MCP configuration schema', () => {
       const schema = provider.configSchema();
-      const mcpConfigProp = schema.properties?.mcpConfig as any;
+      const mcpConfigProp = schema.properties?.mcpConfig as {
+        type: string;
+        properties: {
+          enabled: object;
+          outputPath: object;
+          servers: object;
+        };
+      };
       expect(mcpConfigProp.type).toBe('object');
       expect(mcpConfigProp.properties.enabled).toBeDefined();
       expect(mcpConfigProp.properties.outputPath).toBeDefined();
@@ -136,7 +149,10 @@ describe('ClaudeCodeProvider', () => {
 
     it('should enforce priority enum values', () => {
       const schema = provider.configSchema();
-      const priorityProp = schema.properties?.priority as any;
+      const priorityProp = schema.properties?.priority as {
+        type: string;
+        enum: string[];
+      };
       expect(priorityProp.type).toBe('string');
       expect(priorityProp.enum).toEqual(['low', 'medium', 'high']);
     });
@@ -144,7 +160,10 @@ describe('ClaudeCodeProvider', () => {
     it('should include project context option', () => {
       const schema = provider.configSchema();
       const includeProjectContextProp = schema.properties
-        ?.includeProjectContext as any;
+        ?.includeProjectContext as {
+        type: string;
+        default: boolean;
+      };
       expect(includeProjectContextProp.type).toBe('boolean');
       expect(includeProjectContextProp.default).toBe(true);
     });
@@ -152,9 +171,9 @@ describe('ClaudeCodeProvider', () => {
 
   describe('compile', () => {
     const mockContext: ProviderCompilationContext = {
-      provider: provider as any,
-      sourcePath: 'test.rule.md' as any,
-      outputPath: 'CLAUDE.md' as any,
+      provider,
+      sourcePath: 'test.rule.md' as SourcePath,
+      outputPath: 'CLAUDE.md' as OutputPath,
       variables: {},
       metadata: {},
     };
@@ -191,7 +210,7 @@ describe('ClaudeCodeProvider', () => {
     it('should handle compilation errors gracefully', async () => {
       // Mock an error scenario by overriding the method temporarily
       const originalCompile = provider.compile;
-      provider.compile = vi.fn().mockImplementation(async () => {
+      provider.compile = vi.fn().mockImplementation(() => {
         return {
           success: false,
           errors: [
@@ -505,23 +524,27 @@ describe('ClaudeCodeProvider', () => {
   });
 
   describe('sanitizePath', () => {
+    type ProviderWithPrivates = ClaudeCodeProvider & {
+      sanitizePath(filePath: string, basePath: string): string;
+    };
+
     it('should prevent path traversal with relative paths', () => {
-      const provider = new ClaudeCodeProvider() as any;
+      const localProvider = new ClaudeCodeProvider() as ProviderWithPrivates;
       expect(() => {
-        provider.sanitizePath('../../../etc/passwd', process.cwd());
+        localProvider.sanitizePath('../../../etc/passwd', process.cwd());
       }).toThrow('Path traversal detected');
     });
 
     it('should allow valid relative paths', () => {
-      const provider = new ClaudeCodeProvider() as any;
-      const result = provider.sanitizePath('CLAUDE.md', process.cwd());
+      const localProvider = new ClaudeCodeProvider() as ProviderWithPrivates;
+      const result = localProvider.sanitizePath('CLAUDE.md', process.cwd());
       expect(result).toBe(path.resolve(process.cwd(), 'CLAUDE.md'));
     });
 
     it('should allow valid absolute paths within project', () => {
-      const provider = new ClaudeCodeProvider() as any;
+      const localProvider = new ClaudeCodeProvider() as ProviderWithPrivates;
       const validPath = path.join(process.cwd(), 'docs', 'CLAUDE.md');
-      const result = provider.sanitizePath(validPath, process.cwd());
+      const result = localProvider.sanitizePath(validPath, process.cwd());
       expect(result).toBe(validPath);
     });
   });

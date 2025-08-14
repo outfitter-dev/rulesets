@@ -20,6 +20,12 @@ vi.mock('node:fs', () => ({
   },
 }));
 
+// Type for provider with private methods exposed
+type CodexProviderWithPrivates = CodexProvider & {
+  sanitizePath(filePath: string, basePath: string): string;
+  generateMcpToml(servers: Record<string, unknown>): string;
+};
+
 describe('CodexProvider', () => {
   let provider: CodexProvider;
   let mockLogger: Logger;
@@ -120,7 +126,11 @@ describe('CodexProvider', () => {
 
     it('should define outputPath property with AGENTS.md default', () => {
       const schema = provider.configSchema();
-      const outputPathProp = schema.properties?.outputPath as any;
+      const outputPathProp = schema.properties?.outputPath as {
+        type: string;
+        default: string;
+        description: string;
+      };
       expect(outputPathProp.type).toBe('string');
       expect(outputPathProp.default).toBe('AGENTS.md');
       expect(outputPathProp.description).toContain('AGENTS.md');
@@ -128,14 +138,26 @@ describe('CodexProvider', () => {
 
     it('should define codexHome property for CODEX_HOME support', () => {
       const schema = provider.configSchema();
-      const codexHomeProp = schema.properties?.codexHome as any;
+      const codexHomeProp = schema.properties?.codexHome as {
+        type: string;
+        description: string;
+      };
       expect(codexHomeProp.type).toBe('string');
       expect(codexHomeProp.description).toContain('CODEX_HOME');
     });
 
     it('should define MCP configuration schema for TOML output', () => {
       const schema = provider.configSchema();
-      const mcpConfigProp = schema.properties?.mcpConfig as any;
+      const mcpConfigProp = schema.properties?.mcpConfig as {
+        type: string;
+        properties: {
+          enabled: unknown;
+          outputPath: {
+            default: string;
+          };
+          servers: unknown;
+        };
+      };
       expect(mcpConfigProp.type).toBe('object');
       expect(mcpConfigProp.properties.enabled).toBeDefined();
       expect(mcpConfigProp.properties.outputPath).toBeDefined();
@@ -147,7 +169,10 @@ describe('CodexProvider', () => {
 
     it('should enforce priority enum values', () => {
       const schema = provider.configSchema();
-      const priorityProp = schema.properties?.priority as any;
+      const priorityProp = schema.properties?.priority as {
+        type: string;
+        enum: string[];
+      };
       expect(priorityProp.type).toBe('string');
       expect(priorityProp.enum).toEqual(['low', 'medium', 'high']);
     });
@@ -155,7 +180,10 @@ describe('CodexProvider', () => {
     it('should include layered instructions option', () => {
       const schema = provider.configSchema();
       const layeredInstructionsProp = schema.properties
-        ?.layeredInstructions as any;
+        ?.layeredInstructions as {
+        type: string;
+        default: boolean;
+      };
       expect(layeredInstructionsProp.type).toBe('boolean');
       expect(layeredInstructionsProp.default).toBe(true);
     });
@@ -163,7 +191,10 @@ describe('CodexProvider', () => {
     it('should include project context option', () => {
       const schema = provider.configSchema();
       const includeProjectContextProp = schema.properties
-        ?.includeProjectContext as any;
+        ?.includeProjectContext as {
+        type: string;
+        default: boolean;
+      };
       expect(includeProjectContextProp.type).toBe('boolean');
       expect(includeProjectContextProp.default).toBe(true);
     });
@@ -171,9 +202,9 @@ describe('CodexProvider', () => {
 
   describe('compile', () => {
     const mockContext: ProviderCompilationContext = {
-      provider: provider as any,
-      sourcePath: 'test.rule.md' as any,
-      outputPath: 'AGENTS.md' as any,
+      provider,
+      sourcePath: 'test.rule.md',
+      outputPath: 'AGENTS.md',
       variables: {},
       metadata: {},
     };
@@ -443,29 +474,29 @@ describe('CodexProvider', () => {
 
   describe('sanitizePath', () => {
     it('should prevent path traversal with relative paths', () => {
-      const provider = new CodexProvider() as any;
+      const localProvider = new CodexProvider() as CodexProviderWithPrivates;
       expect(() => {
-        provider.sanitizePath('../../../etc/passwd', process.cwd());
+        localProvider.sanitizePath('../../../etc/passwd', process.cwd());
       }).toThrow('Path traversal detected');
     });
 
     it('should allow valid relative paths', () => {
-      const provider = new CodexProvider() as any;
-      const result = provider.sanitizePath('AGENTS.md', process.cwd());
+      const localProvider = new CodexProvider() as CodexProviderWithPrivates;
+      const result = localProvider.sanitizePath('AGENTS.md', process.cwd());
       expect(result).toBe(resolve(process.cwd(), 'AGENTS.md'));
     });
 
     it('should allow valid absolute paths within project', () => {
-      const provider = new CodexProvider() as any;
+      const localProvider = new CodexProvider() as CodexProviderWithPrivates;
       const validPath = join(process.cwd(), 'docs', 'AGENTS.md');
-      const result = provider.sanitizePath(validPath, process.cwd());
+      const result = localProvider.sanitizePath(validPath, process.cwd());
       expect(result).toBe(validPath);
     });
   });
 
   describe('generateMcpToml', () => {
-    it('should generate valid TOML with complex server configuration', async () => {
-      const provider = new CodexProvider() as any;
+    it('should generate valid TOML with complex server configuration', () => {
+      const localProvider = new CodexProvider() as CodexProviderWithPrivates;
 
       const servers = {
         filesystem: {
@@ -485,7 +516,7 @@ describe('CodexProvider', () => {
         },
       };
 
-      const toml = provider.generateMcpToml(servers);
+      const toml = localProvider.generateMcpToml(servers);
 
       // Check basic structure
       expect(toml).toContain('[mcp]');
@@ -511,9 +542,9 @@ describe('CodexProvider', () => {
       expect(toml).toContain('command = "simple-cmd"');
     });
 
-    it('should handle empty servers configuration', async () => {
-      const provider = new CodexProvider() as any;
-      const toml = provider.generateMcpToml({});
+    it('should handle empty servers configuration', () => {
+      const localProvider = new CodexProvider() as CodexProviderWithPrivates;
+      const toml = localProvider.generateMcpToml({});
 
       expect(toml).toContain('[mcp]');
       expect(toml).toContain('enabled = true');

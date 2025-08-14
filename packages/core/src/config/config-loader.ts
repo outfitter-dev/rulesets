@@ -48,6 +48,119 @@ export class ConfigLoader implements IConfigLoader {
   }
 
   /**
+   * Load global configuration if available
+   */
+  private async loadGlobalConfig(
+    opts: ConfigLoadOptions,
+    logger?: Logger
+  ): Promise<{ config?: RulesetConfig; source?: ConfigFileResult }> {
+    try {
+      const globalConfigDir = getGlobalConfigDir();
+      const globalConfig = await findConfigFile(globalConfigDir, {
+        ...opts,
+        searchParents: false,
+      });
+
+      if (!globalConfig) {
+        return {};
+      }
+
+      const parsedConfig = this.parseConfigFile(
+        globalConfig.filePath,
+        globalConfig.content
+      );
+
+      logger?.debug(`Loaded global config from: ${globalConfig.filePath}`);
+      return { config: parsedConfig, source: globalConfig };
+    } catch (error) {
+      logger?.debug(
+        `No global configuration found: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+      return {};
+    }
+  }
+
+  /**
+   * Load project configuration if available
+   */
+  private async loadProjectConfig(
+    projectPath: string,
+    opts: ConfigLoadOptions,
+    logger?: Logger
+  ): Promise<{ config?: RulesetConfig; source?: ConfigFileResult }> {
+    const projectConfig = await findConfigFile(projectPath, opts);
+
+    if (!projectConfig) {
+      logger?.debug('No project configuration file found');
+      return {};
+    }
+
+    const parsedConfig = this.parseConfigFile(
+      projectConfig.filePath,
+      projectConfig.content
+    );
+
+    logger?.debug(`Loaded project config from: ${projectConfig.filePath}`);
+    return { config: parsedConfig, source: projectConfig };
+  }
+
+  /**
+   * Filter environment variables to remove undefined values
+   */
+  private filterEnvironmentVariables(
+    env: Record<string, string | undefined>
+  ): Record<string, string> {
+    const filtered: Record<string, string> = {};
+    for (const [key, value] of Object.entries(env)) {
+      if (value !== undefined) {
+        filtered[key] = value;
+      }
+    }
+    return filtered;
+  }
+
+  /**
+   * Perform configuration validation if enabled
+   */
+  private performValidation(
+    config: RulesetConfig,
+    opts: ConfigLoadOptions
+  ): { errors: string[]; warnings: string[] } {
+    if (!opts.validate) {
+      return { errors: [], warnings: [] };
+    }
+
+    try {
+      const validation = this.validateConfig(config);
+      return validation;
+    } catch (error) {
+      return {
+        errors: [
+          `Validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
+        warnings: [],
+      };
+    }
+  }
+
+  /**
+   * Log validation results
+   */
+  private logValidationResults(
+    errors: string[],
+    warnings: string[],
+    logger?: Logger
+  ): void {
+    for (const error of errors) {
+      logger?.error(`Config validation error: ${error}`);
+    }
+
+    for (const warning of warnings) {
+      logger?.warn(`Config validation warning: ${warning}`);
+    }
+  }
+
+  /**
    * Load configuration with hierarchical discovery and merging
    */
   async loadConfig(
@@ -63,55 +176,29 @@ export class ConfigLoader implements IConfigLoader {
     const sources: ConfigFileResult[] = [];
     const configs: RulesetConfig[] = [DEFAULT_CONFIG];
 
-    // Global configuration (only load if global config directory exists)
-    try {
-      const globalConfigDir = getGlobalConfigDir();
-      const globalConfig = await findConfigFile(globalConfigDir, {
-        ...opts,
-        searchParents: false,
-      });
-      if (globalConfig) {
-        sources.push(globalConfig);
-        const parsedConfig = await this.parseConfigFile(
-          globalConfig.filePath,
-          globalConfig.content
-        );
-        configs.push(parsedConfig);
-        logger?.debug(`Loaded global config from: ${globalConfig.filePath}`);
-      }
-    } catch (error) {
-      // Global config is optional, don't warn unless debug logging
-      logger?.debug(
-        `No global configuration found: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
+    // Load global configuration
+    const globalResult = await this.loadGlobalConfig(opts, logger);
+    if (globalResult.config && globalResult.source) {
+      configs.push(globalResult.config);
+      sources.push(globalResult.source);
     }
 
-    // Project configuration (with parent directory search)
-    const projectConfig = await findConfigFile(projectPath, opts);
-    if (projectConfig) {
-      sources.push(projectConfig);
-      const parsedConfig = await this.parseConfigFile(
-        projectConfig.filePath,
-        projectConfig.content
-      );
-      configs.push(parsedConfig);
-      logger?.debug(`Loaded project config from: ${projectConfig.filePath}`);
-    } else {
-      logger?.debug('No project configuration file found');
+    // Load project configuration
+    const projectResult = await this.loadProjectConfig(
+      projectPath,
+      opts,
+      logger
+    );
+    if (projectResult.config && projectResult.source) {
+      configs.push(projectResult.config);
+      sources.push(projectResult.source);
     }
 
     // Step 2: Merge configurations
     const mergedConfig = mergeConfigs(...configs);
 
     // Step 3: Apply environment overrides
-    // Filter out undefined values from env to match Record<string, string>
-    const filteredEnv: Record<string, string> = {};
-    for (const [key, value] of Object.entries(env)) {
-      if (value !== undefined) {
-        filteredEnv[key] = value;
-      }
-    }
-
+    const filteredEnv = this.filterEnvironmentVariables(env);
     const { config: finalConfig, applied: envOverrides } = applyEnvOverrides(
       mergedConfig,
       filteredEnv,
@@ -125,33 +212,10 @@ export class ConfigLoader implements IConfigLoader {
     }
 
     // Step 4: Validate configuration
-    const errors: string[] = [];
-    const warnings: string[] = [];
-
-    if (opts.validate) {
-      try {
-        const validation = await this.validateConfig(finalConfig);
-        errors.push(...validation.errors);
-        warnings.push(...validation.warnings);
-      } catch (error) {
-        errors.push(
-          `Validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`
-        );
-      }
-    }
+    const { errors, warnings } = this.performValidation(finalConfig, opts);
 
     // Step 5: Log validation results
-    if (errors.length > 0) {
-      for (const error of errors) {
-        logger?.error(`Config validation error: ${error}`);
-      }
-    }
-
-    if (warnings.length > 0) {
-      for (const warning of warnings) {
-        logger?.warn(`Config validation warning: ${warning}`);
-      }
-    }
+    this.logValidationResults(errors, warnings, logger);
 
     logger?.info(
       `Configuration loaded successfully from ${sources.length} source(s)`
@@ -167,18 +231,12 @@ export class ConfigLoader implements IConfigLoader {
   }
 
   /**
-   * Validate configuration against JSON schema
+   * Validate basic schema structure
    */
-  async validateConfig(config: unknown): Promise<{
-    valid: boolean;
-    errors: string[];
-    warnings: string[];
-  }> {
+  private validateSchema(config: unknown): string[] {
     const errors: string[] = [];
-    const warnings: string[] = [];
-
-    // Basic structure validation
     const validate = this.ajv.getSchema('ruleset-config');
+
     if (!validate) {
       throw new Error('Configuration schema not found');
     }
@@ -193,53 +251,121 @@ export class ConfigLoader implements IConfigLoader {
       }
     }
 
-    // Enhanced validation with warnings
-    if (isValid && config && typeof config === 'object') {
-      const cfg = config as RulesetConfig;
+    return errors;
+  }
 
-      // Check for unknown providers
-      if (cfg.providers) {
-        const knownProviders = [
-          'cursor',
-          'claude-code',
-          'windsurf',
-          'roo-code',
-          'cline',
-          'codex-cli',
-          'codex-agent',
-        ];
-        for (const providerId of Object.keys(cfg.providers)) {
-          if (!knownProviders.includes(providerId)) {
-            warnings.push(
-              `Unknown provider '${providerId}'. ${ValidationMessages.UNKNOWN_PROVIDER}`
-            );
-          }
-        }
-      }
+  /**
+   * Check for unknown providers
+   */
+  private checkUnknownProviders(cfg: RulesetConfig): string[] {
+    const warnings: string[] = [];
 
-      // Check for empty default providers
-      if (cfg.defaultProviders && cfg.defaultProviders.length === 0) {
-        warnings.push(ValidationMessages.EMPTY_DEFAULT_PROVIDERS);
-      }
+    if (!cfg.providers) {
+      return warnings;
+    }
 
-      // Check for invalid output paths
-      if (cfg.providers) {
-        for (const [providerId, providerConfig] of Object.entries(
-          cfg.providers
-        )) {
-          if (providerConfig.outputPath === '') {
-            errors.push(
-              `Provider '${providerId}': ${ValidationMessages.INVALID_OUTPUT_PATH}`
-            );
-          }
-        }
-      }
+    const knownProviders = [
+      'cursor',
+      'claude-code',
+      'windsurf',
+      'roo-code',
+      'cline',
+      'codex-cli',
+      'codex-agent',
+    ];
 
-      // Check output directory
-      if (cfg.outputDirectory === '') {
-        errors.push(ValidationMessages.INVALID_OUTPUT_PATH);
+    for (const providerId of Object.keys(cfg.providers)) {
+      if (!knownProviders.includes(providerId)) {
+        warnings.push(
+          `Unknown provider '${providerId}'. ${ValidationMessages.UNKNOWN_PROVIDER}`
+        );
       }
     }
+
+    return warnings;
+  }
+
+  /**
+   * Validate provider output paths
+   */
+  private validateProviderOutputPaths(cfg: RulesetConfig): string[] {
+    const errors: string[] = [];
+
+    if (!cfg.providers) {
+      return errors;
+    }
+
+    for (const [providerId, providerConfig] of Object.entries(cfg.providers)) {
+      if (providerConfig.outputPath === '') {
+        errors.push(
+          `Provider '${providerId}': ${ValidationMessages.INVALID_OUTPUT_PATH}`
+        );
+      }
+    }
+
+    return errors;
+  }
+
+  /**
+   * Perform enhanced validation checks
+   */
+  private performEnhancedValidation(cfg: RulesetConfig): {
+    errors: string[];
+    warnings: string[];
+  } {
+    const errors: string[] = [];
+    const warnings: string[] = [];
+
+    // Check for unknown providers
+    warnings.push(...this.checkUnknownProviders(cfg));
+
+    // Check for empty default providers
+    if (cfg.defaultProviders && cfg.defaultProviders.length === 0) {
+      warnings.push(ValidationMessages.EMPTY_DEFAULT_PROVIDERS);
+    }
+
+    // Check for invalid output paths
+    errors.push(...this.validateProviderOutputPaths(cfg));
+
+    // Check output directory
+    if (cfg.outputDirectory === '') {
+      errors.push(ValidationMessages.INVALID_OUTPUT_PATH);
+    }
+
+    return { errors, warnings };
+  }
+
+  /**
+   * Validate configuration against JSON schema
+   */
+  validateConfig(config: unknown): {
+    valid: boolean;
+    errors: string[];
+    warnings: string[];
+  } {
+    // Basic structure validation
+    const schemaErrors = this.validateSchema(config);
+
+    // If schema validation failed, return early
+    if (schemaErrors.length > 0) {
+      return {
+        valid: false,
+        errors: schemaErrors,
+        warnings: [],
+      };
+    }
+
+    // Perform enhanced validation only if config is valid object
+    if (!config || typeof config !== 'object') {
+      return {
+        valid: true,
+        errors: [],
+        warnings: [],
+      };
+    }
+
+    const cfg = config as RulesetConfig;
+    const { errors, warnings } = this.performEnhancedValidation(cfg);
 
     return {
       valid: errors.length === 0,
@@ -255,13 +381,16 @@ export class ConfigLoader implements IConfigLoader {
     startPath: string,
     options: ConfigLoadOptions = {}
   ): Promise<ConfigFileResult | null> {
-    return await findConfigFile(startPath, { ...DEFAULT_LOAD_OPTIONS, ...options });
+    return await findConfigFile(startPath, {
+      ...DEFAULT_LOAD_OPTIONS,
+      ...options,
+    });
   }
 
   /**
    * Parse configuration file content
    */
-  async parseConfigFile(filePath: string, content: string): Promise<RulesetConfig> {
+  parseConfigFile(filePath: string, content: string): RulesetConfig {
     const format = filePath.endsWith('.toml') ? 'toml' : 'jsonc';
     return parseConfigContent(content, format, filePath);
   }
@@ -304,7 +433,7 @@ export function getConfigLoader(logger?: Logger): ConfigLoader {
 /**
  * Convenience function to load configuration
  */
-export async function loadConfig(
+export function loadConfig(
   projectPath: string,
   options: ConfigLoadOptions = {},
   logger?: Logger
@@ -324,10 +453,10 @@ export async function loadConfig(
 /**
  * Convenience function to validate configuration
  */
-export async function validateConfig(
+export function validateConfig(
   config: unknown,
   logger?: Logger
-): Promise<{ valid: boolean; errors: string[]; warnings: string[] }> {
+): { valid: boolean; errors: string[]; warnings: string[] } {
   const loader = getConfigLoader(logger);
   return loader.validateConfig(config);
 }

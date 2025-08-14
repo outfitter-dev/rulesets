@@ -41,15 +41,25 @@ describe('Error Handling Integration Tests', () => {
     // Clean up test directory
     try {
       await fs.rm(TEST_DIR, { recursive: true, force: true });
-    } catch (_error) {}
+    } catch (_error) {
+      // Ignore errors during cleanup
+    }
   });
 
   beforeEach(async () => {
     mockLogger = new ConsoleLogger();
-    vi.spyOn(mockLogger, 'info').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'error').mockImplementation(() => {});
+    vi.spyOn(mockLogger, 'info').mockImplementation(() => {
+      // Mock implementation for testing
+    });
+    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {
+      // Mock implementation for testing
+    });
+    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {
+      // Mock implementation for testing
+    });
+    vi.spyOn(mockLogger, 'error').mockImplementation(() => {
+      // Mock implementation for testing
+    });
 
     // Create unique test project directory for each test
     testProjectDir = path.join(

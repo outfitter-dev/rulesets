@@ -48,7 +48,9 @@ describe('Backwards Compatibility', () => {
   let consoleSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {
+      // Mock implementation for testing
+    });
   });
 
   afterEach(() => {

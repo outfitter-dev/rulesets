@@ -36,15 +36,25 @@ describe('Basic Integration Tests', () => {
     // Clean up test directory
     try {
       await fs.rm(TEST_DIR, { recursive: true, force: true });
-    } catch (_error) {}
+    } catch (_error) {
+      // Ignore errors when removing test directory
+    }
   });
 
   beforeEach(async () => {
     mockLogger = new ConsoleLogger();
-    vi.spyOn(mockLogger, 'info').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'error').mockImplementation(() => {});
+    vi.spyOn(mockLogger, 'info').mockImplementation(() => {
+      // Suppress log output during tests
+    });
+    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {
+      // Suppress log output during tests
+    });
+    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {
+      // Suppress log output during tests
+    });
+    vi.spyOn(mockLogger, 'error').mockImplementation(() => {
+      // Suppress log output during tests
+    });
 
     // Create unique test project directory for each test
     testProjectDir = path.join(
@@ -101,19 +111,29 @@ function hello(): string {
         '.ruleset/dist/windsurf/my-rules.md',
       ];
 
-      for (const outputPath of expectedOutputs) {
-        const fullPath = path.join(testProjectDir, outputPath);
-        const exists = await fs
-          .access(fullPath)
-          .then(() => true)
-          .catch(() => false);
-        expect(exists).toBe(true);
+      const fileChecks = await Promise.all(
+        expectedOutputs.map(async (outputPath) => {
+          const fullPath = path.join(testProjectDir, outputPath);
+          const exists = await fs
+            .access(fullPath)
+            .then(() => true)
+            .catch(() => false);
 
-        if (exists) {
+          if (!exists) {
+            return { path: outputPath, exists, content: null };
+          }
+
           const content = await fs.readFile(fullPath, 'utf8');
-          expect(content).toContain('Basic Integration Test');
-          expect(content).toContain('{{instructions}}');
-          expect(content).toContain('TypeScript');
+          return { path: outputPath, exists, content };
+        })
+      );
+
+      for (const check of fileChecks) {
+        expect(check.exists).toBe(true);
+        if (check.content) {
+          expect(check.content).toContain('Basic Integration Test');
+          expect(check.content).toContain('{{instructions}}');
+          expect(check.content).toContain('TypeScript');
         }
       }
 
@@ -154,17 +174,27 @@ Content for frontmatter destination test.
         '.windsurf/frontmatter-test.md',
       ];
 
-      for (const outputPath of expectedOutputs) {
-        const fullPath = path.join(testProjectDir, outputPath);
-        const exists = await fs
-          .access(fullPath)
-          .then(() => true)
-          .catch(() => false);
-        expect(exists).toBe(true);
+      const fileChecks = await Promise.all(
+        expectedOutputs.map(async (outputPath) => {
+          const fullPath = path.join(testProjectDir, outputPath);
+          const exists = await fs
+            .access(fullPath)
+            .then(() => true)
+            .catch(() => false);
 
-        if (exists) {
+          if (!exists) {
+            return { path: outputPath, exists, content: null };
+          }
+
           const content = await fs.readFile(fullPath, 'utf8');
-          expect(content).toContain('Frontmatter Test');
+          return { path: outputPath, exists, content };
+        })
+      );
+
+      for (const check of fileChecks) {
+        expect(check.exists).toBe(true);
+        if (check.content) {
+          expect(check.content).toContain('Frontmatter Test');
         }
       }
 

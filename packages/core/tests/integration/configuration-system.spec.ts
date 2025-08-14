@@ -59,11 +59,11 @@ describe('Configuration System Integration Tests', () => {
     originalEnv = { ...process.env };
 
     // Clean RULESETS_ environment variables
-    Object.keys(process.env).forEach((key) => {
+    for (const key of Object.keys(process.env)) {
       if (key.startsWith('RULESETS_')) {
         delete process.env[key];
       }
-    });
+    }
 
     // Create unique test project directory for each test
     testProjectDir = path.join(

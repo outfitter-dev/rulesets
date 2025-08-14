@@ -173,7 +173,8 @@ export function migrateDestinationConfig(
         type: 'data-loss',
         message:
           'Legacy validation properties not directly supported in new format',
-        suggestion: 'Consider implementing validation through provider capabilities',
+        suggestion:
+          'Consider implementing validation through provider capabilities',
         field: 'validation',
       });
       fieldsSkipped.push('validation');
@@ -183,7 +184,12 @@ export function migrateDestinationConfig(
     const migratedConfig: ProviderConfig = {
       outputPath: configBuilder.outputPath!,
       format: configBuilder.format || 'markdown',
-      fileNaming: configBuilder.fileNaming as 'preserve' | 'transform' | 'template' | 'custom' | undefined,
+      fileNaming: configBuilder.fileNaming as
+        | 'preserve'
+        | 'transform'
+        | 'template'
+        | 'custom'
+        | undefined,
       template: configBuilder.template as ProviderConfig['template'],
       validation: undefined, // Legacy validation not supported in provider config
     };

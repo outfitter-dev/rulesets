@@ -2,6 +2,8 @@
 // Implements Provider terminology while maintaining backwards compatibility
 
 import type { DestinationPlugin, Provider } from '@rulesets/types';
+
+// Import classes for instantiation
 import { AmpProvider } from './amp-provider';
 import { ClaudeCodeProvider } from './claude-code-provider';
 import { CodexProvider } from './codex-provider';
@@ -66,15 +68,12 @@ export const codexPlugin = codexProvider;
 export const ampPlugin = ampProvider;
 export const openCodePlugin = openCodeProvider;
 
-// Export classes for testing and extension
-export {
-  CursorProvider,
-  WindsurfProvider,
-  ClaudeCodeProvider,
-  CodexProvider,
-  AmpProvider,
-  OpenCodeProvider,
-};
-
 // Export types for modern usage
 export type { Provider } from '@rulesets/types';
+// Export classes for testing and extension
+export { AmpProvider } from './amp-provider';
+export { ClaudeCodeProvider } from './claude-code-provider';
+export { CodexProvider } from './codex-provider';
+export { CursorProvider } from './cursor-provider';
+export { OpenCodeProvider } from './opencode-provider';
+export { WindsurfProvider } from './windsurf-provider';

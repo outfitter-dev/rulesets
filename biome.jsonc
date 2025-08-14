@@ -17,6 +17,56 @@
         "rules": {
           "suspicious": {
             "noConsole": "off"
+          },
+          "nursery": {
+            "noAwaitInLoop": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.test.ts", "**/*.spec.ts", "**/tests/**/*.ts"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noAwaitInLoop": "off"
+          },
+          "suspicious": {
+            "noEmptyBlockStatements": "off",
+            "noExplicitAny": "off",
+            "useAwait": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off"
+          },
+          "correctness": {
+            "noUndeclaredVariables": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/scripts/**/*.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noEmptyBlockStatements": "off",
+            "useAwait": "off",
+            "noEvolvingTypes": "off"
+          },
+          "complexity": {
+            "noForEach": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["**/examples.ts", "**/brands-legacy.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noParameterProperties": "off",
+            "useConsistentMemberAccessibility": "off"
           }
         }
       }

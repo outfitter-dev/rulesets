@@ -17,6 +17,10 @@ import { CONFIG_FILE_NAMES, DEFAULT_LOAD_OPTIONS } from './types';
 
 const logger = getChildLogger('config');
 
+// Top-level regex patterns for better performance
+const INTEGER_PATTERN = /^-?\d+$/;
+const FLOAT_PATTERN = /^-?\d*\.\d+$/;
+
 /**
  * Check if a file exists and is readable
  */
@@ -46,27 +50,40 @@ export async function findConfigFile(
     const filePaths = CONFIG_FILE_NAMES.map((fileName) =>
       join(currentPath, fileName)
     );
+    // biome-ignore lint/nursery/noAwaitInLoop: Sequential directory search is intentional
     const existenceResults = await Promise.all(filePaths.map(fileExists));
 
-    for (let i = 0; i < CONFIG_FILE_NAMES.length; i++) {
-      if (existenceResults[i]) {
+    // Read all existing files in parallel
+    const readPromises = filePaths.map(async (filePath, i) => {
+      if (!existenceResults[i]) {
+        return null;
+      }
+
+      try {
+        const content = await fs.readFile(filePath, 'utf8');
         const fileName = CONFIG_FILE_NAMES[i];
-        const filePath = filePaths[i];
+        const format = getConfigFormat(fileName);
 
-        try {
-          const content = await fs.readFile(filePath, 'utf8');
-          const format = getConfigFormat(fileName);
+        return {
+          filePath,
+          format,
+          content,
+          directory: currentPath,
+          index: i, // Keep track of precedence order
+        };
+      } catch (error) {
+        logger.warn({ filePath, error }, 'Failed to read config file');
+        return null;
+      }
+    });
 
-          return {
-            filePath,
-            format,
-            content,
-            directory: currentPath,
-          };
-        } catch (error) {
-          // Continue searching if file read fails
-          logger.warn({ filePath, error }, 'Failed to read config file');
-        }
+    const readResults = await Promise.all(readPromises);
+
+    // Return the first successful read result in order of precedence
+    for (const readResult of readResults) {
+      if (readResult !== null) {
+        const { index: _, ...result } = readResult;
+        return result;
       }
     }
 
@@ -141,6 +158,84 @@ export function parseConfigContent(
 }
 
 /**
+ * Merge scalar configuration values
+ */
+function mergeScalarValues(result: RulesetConfig, config: RulesetConfig): void {
+  if (config.strict !== undefined) {
+    result.strict = config.strict;
+  }
+  if (config.outputDirectory !== undefined) {
+    result.outputDirectory = config.outputDirectory;
+  }
+  if (config.defaultProviders !== undefined) {
+    result.defaultProviders = [...config.defaultProviders];
+  }
+}
+
+/**
+ * Merge provider configurations with deep option merging
+ */
+function mergeProviders(result: RulesetConfig, config: RulesetConfig): void {
+  if (!config.providers) {
+    return;
+  }
+
+  result.providers = { ...result.providers };
+
+  for (const [providerId, providerConfig] of Object.entries(config.providers)) {
+    result.providers[providerId] = {
+      ...result.providers[providerId],
+      ...providerConfig,
+      options: {
+        ...result.providers[providerId]?.options,
+        ...providerConfig.options,
+      },
+    };
+  }
+}
+
+/**
+ * Merge gitignore configurations with array concatenation
+ */
+function mergeGitignore(result: RulesetConfig, config: RulesetConfig): void {
+  if (!config.gitignore) {
+    return;
+  }
+
+  result.gitignore = {
+    ...result.gitignore,
+    ...config.gitignore,
+    keep: config.gitignore.keep
+      ? [...(result.gitignore?.keep || []), ...config.gitignore.keep]
+      : result.gitignore?.keep,
+    ignore: config.gitignore.ignore
+      ? [...(result.gitignore?.ignore || []), ...config.gitignore.ignore]
+      : result.gitignore?.ignore,
+    options: {
+      ...result.gitignore?.options,
+      ...config.gitignore.options,
+    },
+  };
+}
+
+/**
+ * Merge global options
+ */
+function mergeGlobalOptions(
+  result: RulesetConfig,
+  config: RulesetConfig
+): void {
+  if (!config.options) {
+    return;
+  }
+
+  result.options = {
+    ...result.options,
+    ...config.options,
+  };
+}
+
+/**
  * Deep merge configuration objects with proper precedence
  * Later configs override earlier ones
  */
@@ -154,62 +249,10 @@ export function mergeConfigs(
       continue;
     }
 
-    // Merge scalar values
-    if (config.strict !== undefined) {
-      result.strict = config.strict;
-    }
-    if (config.outputDirectory !== undefined) {
-      result.outputDirectory = config.outputDirectory;
-    }
-    if (config.defaultProviders !== undefined) {
-      result.defaultProviders = [...config.defaultProviders];
-    }
-
-    // Deep merge providers
-    if (config.providers) {
-      result.providers = { ...result.providers };
-      for (const [providerId, providerConfig] of Object.entries(
-        config.providers
-      )) {
-        result.providers[providerId] = {
-          ...result.providers[providerId],
-          ...providerConfig,
-          // Deep merge options
-          options: {
-            ...result.providers[providerId]?.options,
-            ...providerConfig.options,
-          },
-        };
-      }
-    }
-
-    // Deep merge gitignore config
-    if (config.gitignore) {
-      result.gitignore = {
-        ...result.gitignore,
-        ...config.gitignore,
-        // Merge arrays properly
-        keep: config.gitignore.keep
-          ? [...(result.gitignore?.keep || []), ...config.gitignore.keep]
-          : result.gitignore?.keep,
-        ignore: config.gitignore.ignore
-          ? [...(result.gitignore?.ignore || []), ...config.gitignore.ignore]
-          : result.gitignore?.ignore,
-        // Deep merge options
-        options: {
-          ...result.gitignore?.options,
-          ...config.gitignore.options,
-        },
-      };
-    }
-
-    // Deep merge global options
-    if (config.options) {
-      result.options = {
-        ...result.options,
-        ...config.options,
-      };
-    }
+    mergeScalarValues(result, config);
+    mergeProviders(result, config);
+    mergeGitignore(result, config);
+    mergeGlobalOptions(result, config);
   }
 
   return result;
@@ -249,6 +292,114 @@ export function applyEnvOverrides(
 }
 
 /**
+ * Extract provider name from key parts starting at given index
+ */
+function extractProviderName(
+  keyParts: string[],
+  startIndex: number
+): { providerName: string; endIndex: number } {
+  const providerParts: string[] = [];
+  let j = startIndex;
+
+  // Collect provider name parts until we hit a known setting
+  while (j < keyParts.length) {
+    const nextPart = keyParts[j];
+
+    // Check for known provider settings that indicate end of provider name
+    if (nextPart === 'enabled') {
+      break;
+    }
+    if (
+      nextPart === 'output' &&
+      j + 1 < keyParts.length &&
+      keyParts[j + 1] === 'path'
+    ) {
+      break;
+    }
+
+    providerParts.push(nextPart);
+    j++;
+  }
+
+  return {
+    providerName: providerParts.join('-'),
+    endIndex: j,
+  };
+}
+
+/**
+ * Handle provider-specific path parsing
+ */
+function parseProviderPath(
+  keyParts: string[],
+  index: number,
+  path: string[]
+): number {
+  path.push('providers');
+
+  const { providerName, endIndex } = extractProviderName(keyParts, index + 1);
+  path.push(providerName);
+
+  // Check for OUTPUT_PATH -> outputPath conversion
+  if (
+    endIndex < keyParts.length &&
+    keyParts[endIndex] === 'output' &&
+    endIndex + 1 < keyParts.length &&
+    keyParts[endIndex + 1] === 'path'
+  ) {
+    path.push('outputPath');
+    return endIndex + 1; // Skip both 'output' and 'path'
+  }
+
+  return endIndex - 1; // Position for next iteration
+}
+
+/**
+ * Handle output directory path parsing
+ */
+function parseOutputDirectory(
+  keyParts: string[],
+  index: number,
+  path: string[]
+): number {
+  if (index + 1 < keyParts.length && keyParts[index + 1] === 'directory') {
+    path.push('outputDirectory');
+    return index + 1; // Skip 'directory' part
+  }
+  return index;
+}
+
+/**
+ * Convert environment variable key to configuration path
+ */
+function buildConfigPath(keyParts: string[]): string[] {
+  const path: string[] = [];
+
+  for (let i = 0; i < keyParts.length; i++) {
+    const part = keyParts[i];
+
+    // Handle provider paths
+    if (part === 'providers' && i + 1 < keyParts.length) {
+      i = parseProviderPath(keyParts, i, path);
+      continue;
+    }
+
+    // Handle output directory
+    if (part === 'output') {
+      const newIndex = parseOutputDirectory(keyParts, i, path);
+      if (newIndex !== i) {
+        i = newIndex;
+        continue;
+      }
+    }
+
+    path.push(part);
+  }
+
+  return path;
+}
+
+/**
  * Parse a single environment variable override
  */
 export function parseEnvOverride(
@@ -265,71 +416,7 @@ export function parseEnvOverride(
     .toLowerCase()
     .split('_');
 
-  // Convert to config path
-  const path: string[] = [];
-  for (let i = 0; i < keyParts.length; i++) {
-    const part = keyParts[i];
-
-    // Handle special cases
-    if (part === 'providers' && i + 1 < keyParts.length) {
-      path.push('providers');
-
-      // Handle multi-word provider names like CLAUDE_CODE -> claude-code
-      const providerParts = [];
-      let j = i + 1;
-
-      // Collect provider name parts until we hit a known setting
-      while (j < keyParts.length) {
-        const nextPart = keyParts[j];
-        if (nextPart === 'enabled') {
-          break;
-        }
-        if (
-          nextPart === 'output' &&
-          j + 1 < keyParts.length &&
-          keyParts[j + 1] === 'path'
-        ) {
-          break;
-        }
-        providerParts.push(nextPart);
-        j++;
-      }
-
-      // Join provider parts with hyphens
-      const providerName = providerParts.join('-');
-      path.push(providerName);
-
-      // Handle OUTPUT_PATH -> outputPath
-      if (
-        j < keyParts.length &&
-        keyParts[j] === 'output' &&
-        j + 1 < keyParts.length &&
-        keyParts[j + 1] === 'path'
-      ) {
-        path.push('outputPath');
-        i = j + 1; // Skip both 'output' and 'path'
-      } else {
-        // Skip the provider name parts
-        i = j - 1;
-      }
-      continue;
-    }
-
-    // Convert OUTPUT_DIRECTORY to outputDirectory
-    if (
-      part === 'output' &&
-      i + 1 < keyParts.length &&
-      keyParts[i + 1] === 'directory'
-    ) {
-      path.push('outputDirectory');
-      i++; // Skip 'directory' part
-      continue;
-    }
-
-    path.push(part);
-  }
-
-  // Parse value based on type inference
+  const path = buildConfigPath(keyParts);
   const parsedValue = parseEnvValue(value);
 
   return { path, value: parsedValue };
@@ -348,10 +435,10 @@ export function parseEnvValue(value: string): unknown {
   }
 
   // Numeric values
-  if (/^-?\d+$/.test(value)) {
+  if (INTEGER_PATTERN.test(value)) {
     return Number.parseInt(value, 10);
   }
-  if (/^-?\d*\.\d+$/.test(value)) {
+  if (FLOAT_PATTERN.test(value)) {
     return Number.parseFloat(value);
   }
 
@@ -395,7 +482,7 @@ export function setDeepValue(
     current = current[key] as Record<string, unknown>;
   }
 
-  const lastKey = path[path.length - 1];
+  const lastKey = path.at(-1);
   if (lastKey !== undefined) {
     current[lastKey] = value;
   }

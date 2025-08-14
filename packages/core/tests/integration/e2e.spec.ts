@@ -19,10 +19,18 @@ describe('E2E Integration Tests', () => {
 
   beforeEach(() => {
     mockLogger = new ConsoleLogger();
-    vi.spyOn(mockLogger, 'info').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'error').mockImplementation(() => {});
+    vi.spyOn(mockLogger, 'info').mockImplementation(() => {
+      // Suppress log output during tests
+    });
+    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {
+      // Suppress log output during tests
+    });
+    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {
+      // Suppress log output during tests
+    });
+    vi.spyOn(mockLogger, 'error').mockImplementation(() => {
+      // Suppress log output during tests
+    });
     vi.clearAllMocks();
   });
 

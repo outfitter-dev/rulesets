@@ -77,16 +77,20 @@ describe('Provider Registry System', () => {
     test('should provide readonly access to providers', () => {
       // TypeScript ensures readonly at compile time
       // Runtime test for the Map being readonly
+      type MutableMap = Map<string, Provider>;
       expect(() => {
-        (providers as any).set('new-provider', cursorProvider);
+        (providers as unknown as MutableMap).set(
+          'new-provider',
+          cursorProvider
+        );
       }).toThrow();
 
       expect(() => {
-        (providers as any).delete('cursor');
+        (providers as unknown as MutableMap).delete('cursor');
       }).toThrow();
 
       expect(() => {
-        (providers as any).clear();
+        (providers as unknown as MutableMap).clear();
       }).toThrow();
     });
 
@@ -329,8 +333,16 @@ describe('Provider Registry System', () => {
 
     test('should maintain type compatibility', () => {
       // Test that legacy interfaces work with modern providers
-      const legacyCursor = destinations.get('cursor')!;
-      const modernCursor = providers.get('cursor')!;
+      const legacyCursor = destinations.get('cursor');
+      const modernCursor = providers.get('cursor');
+
+      // Ensure both exist before comparing
+      expect(legacyCursor).toBeDefined();
+      expect(modernCursor).toBeDefined();
+
+      if (!(legacyCursor && modernCursor)) {
+        throw new Error('Cursor provider not found');
+      }
 
       expect(legacyCursor).toBe(modernCursor);
       expect(legacyCursor.name).toBe(modernCursor.name);
@@ -373,8 +385,11 @@ describe('Provider Registry System', () => {
       };
     });
 
-    test('should support provider compilation workflow', async () => {
-      const provider = getProvider('cursor')!;
+    test('should support provider compilation workflow', () => {
+      const provider = getProvider('cursor');
+      if (!provider) {
+        throw new Error('Cursor provider not found');
+      }
 
       // Test provider can be used in compilation context
       expect(provider.id).toBe('cursor');
@@ -399,19 +414,26 @@ describe('Provider Registry System', () => {
     });
 
     test('should support write operations through legacy interface', async () => {
-      const provider = destinations.get('cursor')! as DestinationPlugin;
+      const provider = destinations.get('cursor');
+      if (!provider) {
+        throw new Error('Cursor provider not found');
+      }
+      const destinationPlugin = provider as DestinationPlugin;
 
       // Mock the write operation
-      const originalWrite = provider.write;
+      const originalWrite = destinationPlugin.write;
       const mockWrite = vi.fn().mockResolvedValue({
         generatedPaths: ['.cursor/rules/test.mdc'],
         metadata: { provider: 'cursor' },
       } as WriteResult);
 
-      (provider as any).write = mockWrite;
+      const providerWithWrite = destinationPlugin as Provider & {
+        write: typeof mockWrite;
+      };
+      providerWithWrite.write = mockWrite;
 
       try {
-        const result = await provider.write({
+        const result = await destinationPlugin.write({
           compiled: mockCompiledDoc,
           destPath: '.cursor/rules/test.mdc',
           config: {},
@@ -431,7 +453,11 @@ describe('Provider Registry System', () => {
         }
       } finally {
         // Restore original method
-        (provider as any).write = originalWrite;
+        const restoredProviderWithWrite =
+          destinationPlugin as DestinationPlugin & {
+            write: typeof originalWrite;
+          };
+        restoredProviderWithWrite.write = originalWrite;
       }
     });
   });
@@ -522,7 +548,9 @@ describe('Provider Registry System', () => {
     test('should handle provider enumeration consistently', () => {
       const allProviders1 = getAllProviders();
       const allProviders2 = Array.from(providers.values());
-      const allProviders3 = getProviderIds().map((id) => getProvider(id)!);
+      const allProviders3 = getProviderIds()
+        .map((id) => getProvider(id))
+        .filter((p): p is Provider => p !== undefined);
 
       // All methods should return the same providers
       expect(allProviders1.length).toBe(allProviders2.length);

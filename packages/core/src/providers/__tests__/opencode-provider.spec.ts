@@ -1,4 +1,3 @@
-import { join } from 'node:path';
 import type { CompiledDoc, Logger } from '@rulesets/types';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { OpenCodeProvider } from '../opencode-provider';
@@ -240,7 +239,7 @@ describe('OpenCodeProvider', () => {
         },
       };
 
-      const result = await provider.write({
+      const _result = await provider.write({
         compiled: mockCompiledDoc,
         destPath,
         config,
