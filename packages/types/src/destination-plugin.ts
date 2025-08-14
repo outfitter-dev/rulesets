@@ -1,10 +1,17 @@
 // TLDR: Defines the DestinationPlugin interface for Rulesets (mixd-v0)
 // TLDR: v0.1.0 Basic plugin contract for writing compiled rules to destinations
-import type { JSONSchema7 } from 'json-schema';
 import type { CompiledDoc } from './compiled-doc';
 import type { Logger } from './logger';
 
-export type { JSONSchema7 }; // Re-export for convenience
+// Basic JSONSchema7 type definition
+export interface JSONSchema7 {
+  type?: string | string[];
+  properties?: Record<string, JSONSchema7>;
+  required?: string[];
+  additionalProperties?: boolean | JSONSchema7;
+  items?: JSONSchema7 | JSONSchema7[];
+  [key: string]: any;
+}
 
 /**
  * Result of a write operation, including generated file paths for gitignore management

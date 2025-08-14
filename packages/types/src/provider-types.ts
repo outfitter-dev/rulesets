@@ -1,7 +1,7 @@
 // Provider type definitions for AI coding tools
 // Comprehensive type system for defining AI tool providers and their capabilities
 
-import type { JSONSchema7 } from 'json-schema';
+import type { JSONSchema7 } from './destination-plugin';
 
 export type ProviderType =
   | 'cursor'
