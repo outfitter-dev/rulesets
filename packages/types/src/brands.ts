@@ -436,7 +436,7 @@ export function createRawContent(
   if (value.length > maxLength) {
     throw new BrandValidationError(
       'RawContent',
-      value.slice(0, 100) + '...',
+      `${value.slice(0, 100)}...`,
       `content too long (max ${maxLength} characters)`,
       { actualLength: value.length, maxLength }
     );
@@ -472,7 +472,7 @@ export function createCompiledContent(
   if (value.length > maxLength) {
     throw new BrandValidationError(
       'CompiledContent',
-      value.slice(0, 100) + '...',
+      `${value.slice(0, 100)}...`,
       `content too long (max ${maxLength} characters)`,
       { actualLength: value.length, maxLength }
     );
@@ -510,7 +510,9 @@ export function createVersion(value: string): Version {
  */
 export function isProviderId(value: unknown): value is ProviderId {
   try {
-    if (typeof value !== 'string') return false;
+    if (typeof value !== 'string') {
+      return false;
+    }
     createProviderId(value);
     return true;
   } catch {
@@ -520,7 +522,9 @@ export function isProviderId(value: unknown): value is ProviderId {
 
 export function isSourcePath(value: unknown): value is SourcePath {
   try {
-    if (typeof value !== 'string') return false;
+    if (typeof value !== 'string') {
+      return false;
+    }
     createSourcePath(value);
     return true;
   } catch {
@@ -530,7 +534,9 @@ export function isSourcePath(value: unknown): value is SourcePath {
 
 export function isOutputPath(value: unknown): value is OutputPath {
   try {
-    if (typeof value !== 'string') return false;
+    if (typeof value !== 'string') {
+      return false;
+    }
     createOutputPath(value);
     return true;
   } catch {
@@ -540,7 +546,9 @@ export function isOutputPath(value: unknown): value is OutputPath {
 
 export function isBlockName(value: unknown): value is BlockName {
   try {
-    if (typeof value !== 'string') return false;
+    if (typeof value !== 'string') {
+      return false;
+    }
     createBlockName(value);
     return true;
   } catch {
@@ -550,7 +558,9 @@ export function isBlockName(value: unknown): value is BlockName {
 
 export function isVariableName(value: unknown): value is VariableName {
   try {
-    if (typeof value !== 'string') return false;
+    if (typeof value !== 'string') {
+      return false;
+    }
     createVariableName(value);
     return true;
   } catch {
@@ -560,7 +570,9 @@ export function isVariableName(value: unknown): value is VariableName {
 
 export function isPropertyName(value: unknown): value is PropertyName {
   try {
-    if (typeof value !== 'string') return false;
+    if (typeof value !== 'string') {
+      return false;
+    }
     createPropertyName(value);
     return true;
   } catch {
@@ -570,7 +582,9 @@ export function isPropertyName(value: unknown): value is PropertyName {
 
 export function isMarkerContent(value: unknown): value is MarkerContent {
   try {
-    if (typeof value !== 'string') return false;
+    if (typeof value !== 'string') {
+      return false;
+    }
     createMarkerContent(value);
     return true;
   } catch {
@@ -580,7 +594,9 @@ export function isMarkerContent(value: unknown): value is MarkerContent {
 
 export function isVersion(value: unknown): value is Version {
   try {
-    if (typeof value !== 'string') return false;
+    if (typeof value !== 'string') {
+      return false;
+    }
     createVersion(value);
     return true;
   } catch {

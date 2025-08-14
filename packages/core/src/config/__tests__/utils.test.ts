@@ -3,8 +3,8 @@
  */
 
 import { promises as fs } from 'node:fs';
-import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { RulesetConfig } from '../types';
 import {
@@ -335,9 +335,9 @@ describe('Configuration Utilities', () => {
 
       expect(result.strict).toBe(true);
       expect((result as any).providers.cursor.enabled).toBe(true);
-      expect(applied['RULESETS_STRICT']).toBe(true);
-      expect(applied['RULESETS_PROVIDERS_CURSOR_ENABLED']).toBe(true);
-      expect(applied['OTHER_VAR']).toBeUndefined();
+      expect(applied.RULESETS_STRICT).toBe(true);
+      expect(applied.RULESETS_PROVIDERS_CURSOR_ENABLED).toBe(true);
+      expect(applied.OTHER_VAR).toBeUndefined();
     });
   });
 });

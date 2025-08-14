@@ -43,7 +43,7 @@ export interface DestinationPlugin {
    * specific to the destination's format or requirements.
    * // TLDR: Writes the compiled document to the target destination (mixd-v0)
    * // TLDR: v0.1.0 Basic file writing without destination-specific transformations
-   *    * // TODO(v0.2.0): Added optional WriteResult return for gitignore management
+   * // TODO(v0.2.0): Added optional WriteResult return for gitignore management
    *
    * @param ctx - The context object for the write operation.
    * @param ctx.compiled - The compiled document to write.
@@ -59,7 +59,7 @@ export interface DestinationPlugin {
     destPath: string;
     config: Record<string, unknown>; // Validated via schema from configSchema()
     logger: Logger;
-  }): Promise<void | WriteResult>;
+  }): Promise<undefined | WriteResult>;
 }
 
 /**

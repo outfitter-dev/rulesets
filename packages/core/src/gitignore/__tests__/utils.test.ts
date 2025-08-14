@@ -3,7 +3,6 @@
  */
 
 import {
-  DEFAULT_MANAGED_BLOCK_CONFIG,
   generateManagedBlock,
   matchesAnyPattern,
   matchesPattern,

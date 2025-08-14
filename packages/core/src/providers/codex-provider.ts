@@ -362,7 +362,7 @@ export class CodexProvider implements Provider, DestinationPlugin {
       }
 
       if (serverConfig.env && typeof serverConfig.env === 'object') {
-        lines.push('[mcp.servers.' + serverName + '.env]');
+        lines.push(`[mcp.servers.${serverName}.env]`);
         for (const [envKey, envValue] of Object.entries(serverConfig.env)) {
           lines.push(`${envKey} = "${envValue}"`);
         }

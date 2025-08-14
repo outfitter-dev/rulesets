@@ -6,8 +6,8 @@
  */
 
 import { promises as fs } from 'node:fs';
-import path from 'node:path';
 import { tmpdir } from 'node:os';
+import path from 'node:path';
 import {
   afterAll,
   afterEach,
@@ -19,10 +19,8 @@ import {
   vi,
 } from 'vitest';
 import {
-  applyEnvOverrides,
   ConsoleLogger,
   DEFAULT_CONFIG,
-  findConfigFile,
   loadConfig,
   mergeConfigs,
   parseConfigContent,
@@ -47,10 +45,7 @@ describe('Configuration System Integration Tests', () => {
     // Clean up test directory
     try {
       await fs.rm(TEST_DIR, { recursive: true, force: true });
-    } catch (error) {
-      // Ignore cleanup errors
-      console.warn('Failed to cleanup test directory:', error);
-    }
+    } catch (_error) {}
   });
 
   beforeEach(async () => {
@@ -167,8 +162,8 @@ describe('Configuration System Integration Tests', () => {
 
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
-      expect(result.errors![0]).toContain('JSON parsing error');
+      expect(result.errors?.length).toBeGreaterThan(0);
+      expect(result.errors?.[0]).toContain('JSON parsing error');
     });
 
     it('should validate configuration against schema', async () => {
@@ -191,10 +186,10 @@ describe('Configuration System Integration Tests', () => {
 
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
+      expect(result.errors?.length).toBeGreaterThan(0);
 
       // Should contain validation errors for invalid version, unknown provider, and wrong type
-      const errorText = result.errors!.join(' ');
+      const errorText = result.errors?.join(' ');
       expect(errorText).toContain('version');
       expect(errorText).toMatch(/outputDirectory|type/);
     });
@@ -275,8 +270,8 @@ invalid-key-format = value  # Invalid key format
 
       expect(result.success).toBe(false);
       expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBeGreaterThan(0);
-      expect(result.errors![0]).toContain('TOML parsing error');
+      expect(result.errors?.length).toBeGreaterThan(0);
+      expect(result.errors?.[0]).toContain('TOML parsing error');
     });
   });
 
@@ -422,9 +417,9 @@ invalid-key-format = value  # Invalid key format
 
       expect(result.success).toBe(true);
       expect(result.warnings).toBeDefined();
-      expect(result.warnings!.length).toBeGreaterThan(0);
+      expect(result.warnings?.length).toBeGreaterThan(0);
 
-      const warningText = result.warnings!.join(' ');
+      const warningText = result.warnings?.join(' ');
       expect(warningText).toContain('environment variable');
     });
 
@@ -520,7 +515,7 @@ invalid-key-format = value  # Invalid key format
       );
 
       // Mock global config discovery to use our test global config
-      const originalGetGlobalConfigDir =
+      const _originalGetGlobalConfigDir =
         require('../../src/config/utils').getGlobalConfigDir;
       vi.doMock('../../src/config/utils', () => ({
         ...require('../../src/config/utils'),
@@ -676,9 +671,7 @@ invalid-key-format = value  # Invalid key format
       const validation = validateConfig(config);
 
       if (!validation.isValid) {
-        const errorText = validation.errors.join(' ');
-        // May contain warnings about glob patterns or empty comments
-        console.log('Validation errors:', validation.errors);
+        const _errorText = validation.errors.join(' ');
       }
 
       // The validation should still pass for basic structure

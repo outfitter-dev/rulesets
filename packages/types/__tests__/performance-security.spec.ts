@@ -3,7 +3,7 @@
  * Tests for memory leaks, performance benchmarks, security vulnerabilities, and edge cases
  */
 
-import { afterEach, beforeEach, describe, expect, test, vi } from 'bun:test';
+import { describe, expect, test } from 'bun:test';
 import {
   // Error types
   BrandValidationError,
@@ -27,30 +27,20 @@ import {
   isSourcePath,
   isVariableName,
   isVersion,
-  // Constants
-  VALID_PROVIDERS,
-  type ValidProviderId,
 } from '../src/brands';
 
 import {
   batchMigrateConfigs,
-  isLegacyConfig,
   // Migration types
   type LegacyDestinationConfig,
   type MigrationResult,
   // Migration functions
   migrateDestinationConfig,
-  migrateLinterConfig,
-  migratePropertyScope,
   summarizeMigrationResults,
 } from '../src/migration';
 
 import {
-  BUILT_IN_PROVIDERS,
   getProviderById,
-  getProvidersByType,
-  // Provider types
-  type Provider,
   type ProviderConfig,
   // Provider utilities
   validateProviderConfig,
@@ -91,9 +81,6 @@ describe('Performance and Security Validation', () => {
 
         // Should be less than 0.01ms per operation (very fast)
         expect(timePerOperation).toBeLessThan(0.01);
-        console.log(
-          `Branded type creation: ${timePerOperation.toFixed(6)}ms per operation`
-        );
       });
 
       test('should validate types efficiently', () => {
@@ -127,9 +114,6 @@ describe('Performance and Security Validation', () => {
 
         // Type guards should be very fast (less than 0.005ms each)
         expect(timePerValidation).toBeLessThan(0.005);
-        console.log(
-          `Type validation: ${timePerValidation.toFixed(6)}ms per operation`
-        );
       });
 
       test('should handle large content efficiently', () => {
@@ -149,9 +133,6 @@ describe('Performance and Security Validation', () => {
           expect(timePerSize).toBeLessThan(size / 10_000); // More generous scaling expectation
 
           if (size === 1_000_000) {
-            console.log(
-              `Large content (${size} chars): ${timePerSize.toFixed(3)}ms`
-            );
           }
         }
       });
@@ -177,7 +158,6 @@ describe('Performance and Security Validation', () => {
 
         const timePerMigration = (end - start) / iterations;
         expect(timePerMigration).toBeLessThan(10); // Less than 10ms per migration
-        console.log(`Migration: ${timePerMigration.toFixed(3)}ms per config`);
       });
 
       test('should handle batch migrations efficiently', () => {
@@ -197,7 +177,6 @@ describe('Performance and Security Validation', () => {
         const totalTime = end - start;
         expect(totalTime).toBeLessThan(100); // Less than 100ms for 100 configs
         expect(Object.keys(results)).toHaveLength(100);
-        console.log(`Batch migration (100 configs): ${totalTime.toFixed(2)}ms`);
       });
 
       test('should summarize large result sets efficiently', () => {
@@ -232,9 +211,6 @@ describe('Performance and Security Validation', () => {
         const summarizationTime = end - start;
         expect(summarizationTime).toBeLessThan(50); // Less than 50ms for 1000 results
         expect(summary.totalConfigs).toBe(1000);
-        console.log(
-          `Result summarization (1000 results): ${summarizationTime.toFixed(2)}ms`
-        );
       });
     });
 
@@ -256,9 +232,6 @@ describe('Performance and Security Validation', () => {
 
         const timePerValidation = (end - start) / iterations;
         expect(timePerValidation).toBeLessThan(0.1); // Less than 0.1ms per validation
-        console.log(
-          `Provider config validation: ${timePerValidation.toFixed(6)}ms per config`
-        );
       });
 
       test('should lookup providers efficiently', () => {
@@ -281,9 +254,6 @@ describe('Performance and Security Validation', () => {
 
         const timePerLookup = (end - start) / iterations;
         expect(timePerLookup).toBeLessThan(0.01); // Less than 0.01ms per lookup
-        console.log(
-          `Provider lookup: ${timePerLookup.toFixed(6)}ms per lookup`
-        );
       });
     });
   });
@@ -325,9 +295,6 @@ describe('Performance and Security Validation', () => {
 
       // Should not use more than 1MB of heap
       expect(memoryUsage.heapUsed).toBeLessThan(1024 * 1024);
-      console.log(
-        `Memory usage (10k type creations): ${(memoryUsage.heapUsed / 1024).toFixed(2)} KB`
-      );
     });
 
     test('should not leak memory during validation', () => {
@@ -341,9 +308,6 @@ describe('Performance and Security Validation', () => {
 
       // Type guards should use minimal memory
       expect(memoryUsage.heapUsed).toBeLessThan(512 * 1024); // Less than 512KB
-      console.log(
-        `Memory usage (10k validations): ${(memoryUsage.heapUsed / 1024).toFixed(2)} KB`
-      );
     });
 
     test('should not leak memory during migrations', () => {
@@ -359,25 +323,19 @@ describe('Performance and Security Validation', () => {
 
       // Migrations should not accumulate significant memory
       expect(memoryUsage.heapUsed).toBeLessThan(2 * 1024 * 1024); // Less than 2MB
-      console.log(
-        `Memory usage (1k migrations): ${(memoryUsage.heapUsed / 1024).toFixed(2)} KB`
-      );
     });
 
     test('should handle large content without excessive memory usage', () => {
       const largeContent = 'x'.repeat(1_000_000); // 1MB of content
 
       const memoryUsage = measureMemory(() => {
-        const raw = createRawContent(largeContent);
-        const compiled = createCompiledContent(largeContent);
+        const _raw = createRawContent(largeContent);
+        const _compiled = createCompiledContent(largeContent);
         // Content should be eligible for GC after this
       }, 10);
 
       // Should not use more than 30MB (allowing for some overhead)
       expect(memoryUsage.heapUsed).toBeLessThan(30 * 1024 * 1024);
-      console.log(
-        `Memory usage (10x 1MB content): ${(memoryUsage.heapUsed / 1024 / 1024).toFixed(2)} MB`
-      );
     });
   });
 
@@ -547,7 +505,7 @@ describe('Performance and Security Validation', () => {
 
     describe('Prototype Pollution Prevention', () => {
       test('should prevent prototype pollution in property names', () => {
-        const pollutionAttempts = [
+        const _pollutionAttempts = [
           '__proto__',
           'constructor',
           'prototype',
@@ -686,12 +644,12 @@ describe('Performance and Security Validation', () => {
         const excessiveLengths = {
           path: 'a'.repeat(300), // Over 255 char limit
           blockName: 'a'.repeat(60), // Over 50 char limit
-          variableName: '$' + 'a'.repeat(100), // Over 100 char limit including $
+          variableName: `$${'a'.repeat(100)}`, // Over 100 char limit including $
           propertyName: 'a'.repeat(60), // Over 50 char limit
           markerContent: 'a'.repeat(6000), // Over 5000 char limit
         };
 
-        expect(() => createSourcePath(excessiveLengths.path + '.md')).toThrow();
+        expect(() => createSourcePath(`${excessiveLengths.path}.md`)).toThrow();
         expect(() => createOutputPath(excessiveLengths.path)).toThrow();
         expect(() => createBlockName(excessiveLengths.blockName)).toThrow();
         expect(() =>
@@ -708,9 +666,9 @@ describe('Performance and Security Validation', () => {
       test('should handle regex DoS attempts', () => {
         // Test patterns that could cause regex DoS (ReDoS)
         const redosPatterns = [
-          'a'.repeat(1000) + '!', // Potential exponential backtracking
-          '(' + 'a'.repeat(100) + ')*b', // Nested quantifiers
-          'a' + 'a?'.repeat(100) + 'a', // Catastrophic backtracking
+          `${'a'.repeat(1000)}!`, // Potential exponential backtracking
+          `(${'a'.repeat(100)})*b`, // Nested quantifiers
+          `a${'a?'.repeat(100)}a`, // Catastrophic backtracking
         ];
 
         // Our validation should either reject these quickly or handle them safely
@@ -719,7 +677,7 @@ describe('Performance and Security Validation', () => {
 
           try {
             createMarkerContent(pattern);
-          } catch (error) {
+          } catch (_error) {
             // Expected to fail
           }
 
@@ -749,9 +707,9 @@ describe('Performance and Security Validation', () => {
     test('should handle maximum valid inputs', () => {
       // Maximum lengths that should still work
       const maxValidInputs = {
-        path: 'a'.repeat(250) + '.md', // Just under 255 limit
+        path: `${'a'.repeat(250)}.md`, // Just under 255 limit
         blockName: 'a'.repeat(49), // Just under 50 limit
-        variableName: '$' + 'a'.repeat(95), // Just under 100 limit total
+        variableName: `$${'a'.repeat(95)}`, // Just under 100 limit total
         propertyName: 'a'.repeat(49), // Just under 50 limit
         markerContent: 'a'.repeat(4999), // Just under 5000 limit
       };

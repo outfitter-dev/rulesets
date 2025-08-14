@@ -43,10 +43,10 @@ describe('WindsurfProvider', () => {
       const schema = provider.configSchema();
       expect(schema.type).toBe('object');
       expect(schema.properties).toBeDefined();
-      expect(schema.properties!.outputPath).toBeDefined();
-      expect(schema.properties!.format).toBeDefined();
+      expect(schema.properties?.outputPath).toBeDefined();
+      expect(schema.properties?.format).toBeDefined();
 
-      const formatProp = schema.properties!.format as {
+      const formatProp = schema.properties?.format as {
         enum: string[];
         default: string;
       };

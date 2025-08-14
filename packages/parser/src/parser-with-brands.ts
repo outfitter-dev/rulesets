@@ -126,7 +126,9 @@ export class BrandedParser {
 
     while ((match = blockRegex.exec(content)) !== null) {
       const innerContent = match[1]; // Guaranteed by regex pattern [^}]+
-      if (!innerContent) continue; // Extra safety check
+      if (!innerContent) {
+        continue; // Extra safety check
+      }
 
       const line = this.getLineNumber(content, match.index);
       const column = this.getColumnNumber(content, match.index);
@@ -328,7 +330,9 @@ export class BrandedParser {
     const properties: Array<{ name: PropertyName; value?: string }> = [];
     for (let i = 1; i < parts.length; i++) {
       const prop = parts[i];
-      if (!prop) continue;
+      if (!prop) {
+        continue;
+      }
 
       if (prop.includes('=')) {
         const [propName, propValue] = prop.split('=');
@@ -369,7 +373,7 @@ export class BrandedParser {
     let blockName: string | undefined;
 
     // Check for block selector
-    if (path && path.includes('#')) {
+    if (path?.includes('#')) {
       const [basePath, selector] = path.split('#');
       path = basePath || '';
       blockName = selector;
@@ -379,7 +383,9 @@ export class BrandedParser {
     const properties: Array<{ name: PropertyName; value?: string }> = [];
     for (let i = 1; i < parts.length; i++) {
       const prop = parts[i];
-      if (!prop) continue;
+      if (!prop) {
+        continue;
+      }
 
       if (prop.includes('=')) {
         const [propName, propValue] = prop.split('=');
@@ -425,7 +431,7 @@ export class BrandedParser {
 
     // Add $ prefix if not present (for the branded type)
     if (!name.startsWith('$')) {
-      name = '$' + name;
+      name = `$${name}`;
     }
 
     // Check if it's a system variable
@@ -482,9 +488,15 @@ export class BrandedParser {
    * Detect marker type - aligns with ruleset-context.ts Marker type
    */
   private detectMarkerType(content: string): Marker['type'] {
-    if (content.startsWith('>')) return 'import';
-    if (content.startsWith('$')) return 'variable';
-    if (content.includes('{') || content.includes('}')) return 'raw';
+    if (content.startsWith('>')) {
+      return 'import';
+    }
+    if (content.startsWith('$')) {
+      return 'variable';
+    }
+    if (content.includes('{') || content.includes('}')) {
+      return 'raw';
+    }
     return 'block';
   }
 
@@ -517,7 +529,7 @@ export class BrandedParser {
    */
   private getColumnNumber(content: string, index: number): number {
     const lines = content.substring(0, index).split('\n');
-    const lastLine = lines[lines.length - 1];
+    const lastLine = lines.at(-1);
     return (lastLine?.length ?? 0) + 1;
   }
 

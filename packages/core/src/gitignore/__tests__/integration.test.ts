@@ -3,7 +3,6 @@
  */
 
 import { promises as fs } from 'node:fs';
-import * as path from 'node:path';
 import { runRulesetsV0 } from '../../index';
 import { ConsoleLogger } from '../../logger';
 import { GitignoreManager } from '../GitignoreManager';

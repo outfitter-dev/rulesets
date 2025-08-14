@@ -237,7 +237,9 @@ interface Example {
 
     for (let i = 0; i < repetitions; i++) {
       content += baseContent;
-      if (content.length >= size) break;
+      if (content.length >= size) {
+        break;
+      }
     }
 
     return content.slice(0, size);
@@ -255,7 +257,9 @@ interface Example {
     const groups = this.results.reduce(
       (acc, result) => {
         const category = result.operation.split(' ')[0] || 'unknown';
-        if (!acc[category]) acc[category] = [];
+        if (!acc[category]) {
+          acc[category] = [];
+        }
         acc[category].push(result);
         return acc;
       },

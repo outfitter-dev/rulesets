@@ -472,11 +472,15 @@ export function validateMigrationCompleteness(
 
   const missingKeys = originalKeys.filter((key) => {
     // Check if key exists directly
-    if (migratedKeys.includes(key)) return false;
+    if (migratedKeys.includes(key)) {
+      return false;
+    }
 
     // Check if key has a known mapping
     const mappedKey = (fieldMappings as any)[key];
-    if (mappedKey && migratedKeys.includes(mappedKey)) return false;
+    if (mappedKey && migratedKeys.includes(mappedKey)) {
+      return false;
+    }
 
     // Key is truly missing
     return true;

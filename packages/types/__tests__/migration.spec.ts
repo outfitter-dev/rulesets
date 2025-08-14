@@ -3,14 +3,11 @@
  * Tests configuration migration, batch operations, error handling, and analytics
  */
 
-import { beforeEach, describe, expect, test } from 'bun:test';
+import { describe, expect, test } from 'bun:test';
 import {
-  createOutputPath,
   createPropertyName,
-  createProviderId,
   type DestinationId,
   type DestPath,
-  type OutputPath,
   type ProviderId,
 } from '../src/brands';
 import {
@@ -19,11 +16,6 @@ import {
   isLegacyConfig,
   // Migration interfaces
   type LegacyDestinationConfig,
-  type MigrationError,
-  type MigrationMetadata,
-  type MigrationResult,
-  type MigrationSummary,
-  type MigrationWarning,
   // Migration functions
   migrateDestinationConfig,
   migrateLinterConfig,
@@ -217,7 +209,7 @@ describe('Migration System', () => {
           (w) => w.type === 'deprecated' && w.field === 'includeXml'
         );
         expect(deprecatedWarning).toBeDefined();
-        expect(deprecatedWarning!.suggestion).toContain('format configuration');
+        expect(deprecatedWarning?.suggestion).toContain('format configuration');
       });
 
       test('should track migration metadata accurately', () => {
@@ -327,7 +319,7 @@ describe('Migration System', () => {
         const result = migratePropertyScope(property);
 
         expect(result.success).toBe(true);
-        expect(result.result!.scope).toBe('cursor'); // Uses legacyScope
+        expect(result.result?.scope).toBe('cursor'); // Uses legacyScope
       });
 
       test('should generate migration warnings', () => {

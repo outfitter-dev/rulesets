@@ -2,6 +2,7 @@
 // Implements the Provider interface with branded types and modern architecture
 
 import { promises as fs } from 'node:fs';
+import * as os from 'node:os';
 import * as path from 'node:path';
 import type {
   CompilationStats,
@@ -26,7 +27,6 @@ import {
   createProviderId,
   createVersion,
 } from '@rulesets/types';
-import * as os from 'node:os';
 
 export class OpenCodeProvider implements Provider, DestinationPlugin {
   readonly id: ProviderId = createProviderId('opencode');

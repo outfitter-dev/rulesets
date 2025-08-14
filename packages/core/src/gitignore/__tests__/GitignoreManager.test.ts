@@ -100,7 +100,7 @@ describe('GitignoreManager', () => {
         (call) => call[0] === path.join(testBasePath, '.gitignore')
       );
       expect(writeCall).toBeDefined();
-      const writtenContent = writeCall![1] as string;
+      const writtenContent = writeCall?.[1] as string;
       expect(writtenContent).toContain('# Existing content');
       expect(writtenContent).toContain('# START Rulesets Generated Files');
       expect(writtenContent).toContain('.cursor/rules/test.mdc');
@@ -133,7 +133,7 @@ dist/`;
       const writeCall = mockFs.writeFile.mock.calls.find(
         (call) => call[0] === path.join(testBasePath, '.gitignore')
       );
-      const writtenContent = writeCall![1] as string;
+      const writtenContent = writeCall?.[1] as string;
       expect(writtenContent).toContain('.cursor/rules/old.mdc');
       expect(writtenContent).toContain('.cursor/rules/new.mdc');
     });
@@ -330,7 +330,7 @@ dist/`;
       const writeCall = mockFs.writeFile.mock.calls.find(
         (call) => call[0] === path.join(testBasePath, '.gitignore')
       );
-      const writtenContent = writeCall![1] as string;
+      const writtenContent = writeCall?.[1] as string;
       expect(writtenContent).toContain('# START MyTool Generated Files');
       expect(writtenContent).toContain('# END MyTool Generated Files');
     });

@@ -1,7 +1,6 @@
 // TLDR: Unit tests for the Codex provider (Rulesets v1)
 
 import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test';
-import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import type {
   CompiledDoc,
@@ -121,7 +120,7 @@ describe('CodexProvider', () => {
 
     it('should define outputPath property with AGENTS.md default', () => {
       const schema = provider.configSchema();
-      const outputPathProp = schema.properties!.outputPath as any;
+      const outputPathProp = schema.properties?.outputPath as any;
       expect(outputPathProp.type).toBe('string');
       expect(outputPathProp.default).toBe('AGENTS.md');
       expect(outputPathProp.description).toContain('AGENTS.md');
@@ -129,14 +128,14 @@ describe('CodexProvider', () => {
 
     it('should define codexHome property for CODEX_HOME support', () => {
       const schema = provider.configSchema();
-      const codexHomeProp = schema.properties!.codexHome as any;
+      const codexHomeProp = schema.properties?.codexHome as any;
       expect(codexHomeProp.type).toBe('string');
       expect(codexHomeProp.description).toContain('CODEX_HOME');
     });
 
     it('should define MCP configuration schema for TOML output', () => {
       const schema = provider.configSchema();
-      const mcpConfigProp = schema.properties!.mcpConfig as any;
+      const mcpConfigProp = schema.properties?.mcpConfig as any;
       expect(mcpConfigProp.type).toBe('object');
       expect(mcpConfigProp.properties.enabled).toBeDefined();
       expect(mcpConfigProp.properties.outputPath).toBeDefined();
@@ -148,23 +147,23 @@ describe('CodexProvider', () => {
 
     it('should enforce priority enum values', () => {
       const schema = provider.configSchema();
-      const priorityProp = schema.properties!.priority as any;
+      const priorityProp = schema.properties?.priority as any;
       expect(priorityProp.type).toBe('string');
       expect(priorityProp.enum).toEqual(['low', 'medium', 'high']);
     });
 
     it('should include layered instructions option', () => {
       const schema = provider.configSchema();
-      const layeredInstructionsProp = schema.properties!
-        .layeredInstructions as any;
+      const layeredInstructionsProp = schema.properties
+        ?.layeredInstructions as any;
       expect(layeredInstructionsProp.type).toBe('boolean');
       expect(layeredInstructionsProp.default).toBe(true);
     });
 
     it('should include project context option', () => {
       const schema = provider.configSchema();
-      const includeProjectContextProp = schema.properties!
-        .includeProjectContext as any;
+      const includeProjectContextProp = schema.properties
+        ?.includeProjectContext as any;
       expect(includeProjectContextProp.type).toBe('boolean');
       expect(includeProjectContextProp.default).toBe(true);
     });
@@ -297,7 +296,7 @@ describe('CodexProvider', () => {
         if (originalCodexHome !== undefined) {
           process.env.CODEX_HOME = originalCodexHome;
         } else {
-          delete process.env.CODEX_HOME;
+          process.env.CODEX_HOME = undefined;
         }
       }
     });
@@ -409,7 +408,7 @@ describe('CodexProvider', () => {
       );
       expect(tomlCall).toBeDefined();
 
-      const tomlContent = tomlCall![1] as string;
+      const tomlContent = tomlCall?.[1] as string;
       expect(tomlContent).toContain('[mcp]');
       expect(tomlContent).toContain('enabled = true');
       expect(tomlContent).toContain('[mcp.servers.filesystem]');
