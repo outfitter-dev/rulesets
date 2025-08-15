@@ -12,9 +12,35 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["!**/*.{md,mdx,mdc,css,scss,less,yaml,yml}"]
+    "includes": ["**/*.{js,jsx,ts,tsx,json,jsonc}"]
   },
   "vcs": {
     "useIgnoreFile": true
+  },
+  "linter": {
+    "rules": {
+      "complexity": {
+        "noExcessiveLinesPerFunction": "off",
+        "noExcessiveCognitiveComplexity": "off"
+      },
+      "nursery": {
+        "useConsistentTypeDefinitions": "off",
+        "useMaxParams": "off",
+        "noUnnecessaryConditions": "off"
+      },
+      "suspicious": {
+        "noConsole": "off",
+        "noExplicitAny": "warn"
+      },
+      "style": {
+        "noExportedImports": "off",
+        "noMagicNumbers": "off",
+        "useReadonlyClassProperties": "warn"
+      },
+      "correctness": {
+        "noUndeclaredVariables": "warn",
+        "noUnusedVariables": "warn"
+      }
+    }
   }
 }
