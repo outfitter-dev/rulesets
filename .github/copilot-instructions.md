@@ -48,7 +48,7 @@ We're implementing **Rulesets v0.1-beta** with these limitations:
 - Parser handles frontmatter and raw body only
 - Compiler is pass-through (no marker processing)
 - Linter validates basic frontmatter schema
-- Architecture designed for easy v0.1+ enhancement
+- Architecture designed for easy ruleset-v0.1-beta+ enhancement
 
 Reference `docs/project/plans/PLAN-rulesets-v0.md` for complete implementation details.
 

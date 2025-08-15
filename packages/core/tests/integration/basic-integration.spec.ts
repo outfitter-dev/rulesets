@@ -140,7 +140,7 @@ function hello(): string {
 
       // Verify success was logged
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!'
+        'Rulesets ruleset-v0.1-beta processing completed successfully!'
       );
     });
 
@@ -200,7 +200,7 @@ Content for frontmatter destination test.
       }
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!'
+        'Rulesets ruleset-v0.1-beta processing completed successfully!'
       );
     });
 
@@ -358,7 +358,7 @@ ${'Instruction content. '.repeat(200)}
       expect(duration).toBeLessThan(10_000);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!'
+        'Rulesets ruleset-v0.1-beta processing completed successfully!'
       );
     });
   });

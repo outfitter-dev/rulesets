@@ -18,7 +18,7 @@
 
 Rulesets is a Markdown-previewable rules compiler that allows authoring a single source rules file (source rules) in Markdown and compiling it into compiled rules for various destinations (e.g., AI assistants, IDEs). Rulesets v0 aims to establish a production-ready monorepo, ship the initial `@rulesets/core` package (including a basic parser, a pass-through compiler, and a frontmatter linter), and prove the end-to-end flow by processing a `my-rules.rule.md` file, writing compiled rules to `.ruleset/dist/`, and invoking stubbed destination plugins for Cursor and Windsurf.
 
-While v0 will not process Rulesets notation markers (`{{...}}`) within the content body, the architecture will be laid to easily incorporate this functionality in subsequent v0.x releases (e.g., v0.1 for `{{block}}` parsing, v0.2 for variables, etc.).
+While v0 will not process Rulesets notation markers (`{{...}}`) within the content body, the architecture will be laid to easily incorporate this functionality in subsequent v0.x releases (e.g., ruleset-v0.1-beta for `{{block}}` parsing, ruleset-v0.2-beta for variables, etc.).
 
 ## Implementation Checklist
 
@@ -204,7 +204,7 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
 
 - [ ] **Task 1: Draft Initial `README.md` for `@rulesets/core`**
   - Include basic usage, purpose, and how to contribute.
-  - Explain the v0 limitations (no marker processing) and the roadmap for v0.1.
+  - Explain the v0 limitations (no marker processing) and the roadmap for ruleset-v0.1-beta.
   - **Acceptance Criteria**: `README.md` for `@rulesets/core` is created.
   - **Dependencies**: None.
 - [ ] **Task 2: Draft Root `README.md`**
@@ -331,7 +331,7 @@ rulesets/
     "lint": "turbo lint",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo build --filter=@rulesets/core && changeset publish"
+    "release": "turbo build --filter=@rulesets/core && changeset publish",
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1", // Example version, use latest
@@ -339,8 +339,8 @@ rulesets/
     "typescript": "^5.4.5", // Example version, use latest 5.x
     "eslint": "^8.57.0", // Example version, use latest
     "prettier": "^3.2.5", // Example version, use latest
-    "markdownlint-cli": "^0.41.0" // Example version, use latest
-  }
+    "markdownlint-cli": "^0.41.0", // Example version, use latest
+  },
 }
 ```
 
@@ -396,9 +396,9 @@ packages:
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true, // Base config should not emit, individual packages will.
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "vitest/globals"],
   },
-  "exclude": ["node_modules", "**/dist", "**/coverage"]
+  "exclude": ["node_modules", "**/dist", "**/coverage"],
 }
 ```
 
@@ -471,7 +471,7 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  splitting: false, // Keep it simple for now (ruleset-v0)
+  splitting: false, // Keep it simple for now (ruleset-v0.1-beta)
 });
 ```
 

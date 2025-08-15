@@ -26,7 +26,8 @@ const VARIABLE_REST_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_.]*$/;
 const PROPERTY_NAME_PATTERN = /^[a-z][a-z0-9]*(-[a-z0-9][a-z0-9]*)*$/;
 // biome-ignore lint/suspicious/noControlCharactersInRegex: Intentionally detecting control characters for validation
 const CONTROL_CHARS_PATTERN = /[\x00-\x1f\x7f]/;
-const VERSION_PATTERN = /^\d+\.\d+\.\d+(-[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?(\+[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?$/;
+const VERSION_PATTERN =
+  /^\d+\.\d+\.\d+(-[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?(\+[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*)?$/;
 
 /**
  * Brand validation errors with rich context

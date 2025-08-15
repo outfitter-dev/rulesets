@@ -1,4 +1,4 @@
-// TLDR: Handlebars-based compiler for Rulesets (v0.2.0+)
+// TLDR: Handlebars-based compiler for Rulesets (ruleset-v0.2-beta+)
 // TLDR: Implements full marker processing with Handlebars templating engine
 
 import Handlebars from 'handlebars';

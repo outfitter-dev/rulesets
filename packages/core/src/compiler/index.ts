@@ -1,5 +1,5 @@
-// TLDR: Compiler implementation for Rulesets notation (mixd-v0)
-// TLDR: v0.1.0 Pass-through implementation without marker processing
+// TLDR: Compiler implementation for Rulesets notation (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Pass-through implementation without marker processing
 import type { CompiledDoc, ParsedDoc } from '../interfaces';
 import { getChildLogger } from '../utils/logger';
 
@@ -7,7 +7,7 @@ const pinoLogger = getChildLogger('compiler');
 
 /**
  * Compiles a parsed Rulesets document for a specific provider.
- * v0.1.0 behavior: pass-through body content; preserves markers.
+ * ruleset-v0.1-beta behavior: pass-through body content; preserves markers.
  */
 export function compile(
   parsedDoc: ParsedDoc,
@@ -91,4 +91,4 @@ export function compile(
   }
 }
 
-// TODO: Add compileWithProvider function for v0.2.0 when Provider interface compilation is implemented
+// TODO: Add compileWithProvider function for ruleset-v0.2-beta when Provider interface compilation is implemented

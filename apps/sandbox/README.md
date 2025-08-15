@@ -112,7 +112,7 @@ Modern React development best practices covering:
 
 ### `complete-example.ruleset.md`
 
-Comprehensive showcase of all Rulesets v0.1 features including:
+Comprehensive showcase of all Rulesets ruleset-v0.1-beta features including:
 
 - Multiple block types
 - Provider-specific configuration

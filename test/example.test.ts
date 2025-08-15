@@ -2,7 +2,7 @@
  * Example test file demonstrating Bun's built-in test runner
  */
 
-import { describe, expect, it, test, mock, spyOn } from 'bun:test';
+import { describe, expect, it, mock, spyOn, test } from 'bun:test';
 
 // Define a top-level regex to satisfy Biome's performance rule
 const BUN_REGEX = /^B/;

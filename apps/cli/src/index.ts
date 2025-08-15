@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-// TLDR: CLI for Rulesets compiler (mixd-v0)
-// TLDR: v0.1.0 Basic CLI implementation
+// TLDR: CLI for Rulesets compiler (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Basic CLI implementation
 
 import { Command } from 'commander';
 

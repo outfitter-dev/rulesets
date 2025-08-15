@@ -100,7 +100,7 @@ This is a test document with {{blocks}} and {{$variables}} that should pass thro
 
       // Verify logging
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!'
+        'Rulesets ruleset-v0.1-beta processing completed successfully!'
       );
     });
 

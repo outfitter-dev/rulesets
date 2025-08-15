@@ -430,7 +430,7 @@ ${'// Large code example\n'.repeat(5000)}
 
         // Should succeed and log completion
         expect(mockLogger.info).toHaveBeenCalledWith(
-          'Rulesets v0.1.0 processing completed successfully!'
+          'Rulesets ruleset-v0.1-beta processing completed successfully!'
         );
       } catch (error) {
         // If memory/performance issues occur, ensure proper error handling
@@ -611,7 +611,7 @@ Variables with edge cases: {{$destination}} and {{$file.with.dots}}
       }
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!'
+        'Rulesets ruleset-v0.1-beta processing completed successfully!'
       );
     });
   });
@@ -714,7 +714,7 @@ ruleset:
 
       // May have warnings about invalid patterns
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!'
+        'Rulesets ruleset-v0.1-beta processing completed successfully!'
       );
     });
   });
@@ -798,7 +798,7 @@ ${'// Code example line\n'.repeat(100)}
       }
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!'
+        'Rulesets ruleset-v0.1-beta processing completed successfully!'
       );
     });
 
@@ -846,7 +846,7 @@ ${Array.from({ length: 500 }, (_, i) => `## Section ${i}\n\nContent for section 
         expect(duration).toBeLessThan(120_000); // 2 minutes max
 
         expect(mockLogger.info).toHaveBeenCalledWith(
-          'Rulesets v0.1.0 processing completed successfully!'
+          'Rulesets ruleset-v0.1-beta processing completed successfully!'
         );
       } catch (error) {
         // If memory issues occur, should handle gracefully

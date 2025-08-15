@@ -1,5 +1,5 @@
-// TLDR: Cursor plugin for Rulesets (mixd-v0)
-// TLDR: v0.1.0 Placeholder implementation
+// TLDR: Cursor plugin for Rulesets (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Placeholder implementation
 
 export const name = 'rulesets-plugin-cursor';
 export const version = '0.1.0';
