@@ -56,7 +56,7 @@ rulesets/
 | **Tasks Orchestrator** | Turborepo                          | Cached pipelines                        |
 | **Build**              | tsup (→ `esbuild`)                 | Generates ESM + CJS + d.ts              |
 | **Tests**              | Vitest + TDD cycle                 | Watch mode in `pnpm test -- --watch`    |
-| **Lint**               | eslint + prettier (+ markdownlint) | Use shareable configs                   |
+| **Lint**               | biome (+ markdownlint)              | Use Biome for TypeScript linting       |
 | **Release**            | changesets + SemVer                | Automated via GitHub Actions            |
 | **CI**                 | GitHub Actions                     | Install → lint → test → build → release |
 

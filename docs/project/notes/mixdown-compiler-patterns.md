@@ -200,7 +200,7 @@ This project is a React application with a Node.js backend.
 # Coding Standards
 
 - Use functional components for all new React code
-- Follow ESLint rules in .eslintrc
+- Follow Biome configuration
 ```
 
 ### Markdown with Front-matter (.mdc)

@@ -51,8 +51,7 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
   - **Acceptance Criteria**: CI pipeline runs successfully on GitHub for PRs.
   - **Dependencies**: Task 1, Task 2.
 - [ ] **Task 5: Setup Linting and Formatting**
-  - Configure ESLint with shareable configs (e.g., Airbnb, Standard, or similar, plus TypeScript support).
-  - Configure Prettier to work with ESLint.
+  - Configure Biome for TypeScript linting and formatting.
   - Add `markdownlint` configuration.
   - Add linting scripts to `package.json` files.
   - **Acceptance Criteria**: `pnpm turbo lint` runs successfully across the monorepo.
@@ -337,7 +336,7 @@ rulesets/
     "@changesets/cli": "^2.27.1", // Example version, use latest
     "turbo": "^2.0.6", // Example version, use latest ^2
     "typescript": "^5.4.5", // Example version, use latest 5.x
-    "eslint": "^8.57.0", // Example version, use latest
+    "@biomejs/biome": "^2.2.0", // Example version, use latest
     "prettier": "^3.2.5", // Example version, use latest
     "markdownlint-cli": "^0.41.0", // Example version, use latest
   },
@@ -441,7 +440,7 @@ packages:
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest --coverage",
-    "lint": "eslint src --ext .ts",
+    "lint": "biome check src",
     "typecheck": "tsc --noEmit"
   },
   "keywords": ["rulesets", "markdown", "rules", "compiler"],
@@ -455,7 +454,7 @@ packages:
     "tsup": "^8.0.2",
     "vitest": "^1.4.0",
     "typescript": "^5.4.5",
-    "eslint": "^8.57.0"
+    "@biomejs/biome": "^2.2.0"
   }
 }
 ```
