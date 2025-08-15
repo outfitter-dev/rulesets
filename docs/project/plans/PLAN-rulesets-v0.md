@@ -5,7 +5,7 @@
 >
 > ```typescript
 > : Simple pass-through implementation that doesn't process markers
-> // TODO (mixd-v0.1-beta): Add support for block parsing
+> // TODO (ruleset-v0.1-beta): Add support for block parsing
 > function parseContent(content: string) {
 >   // Simple implementation for v0
 >   return { body: content };
@@ -18,7 +18,7 @@
 
 Rulesets is a Markdown-previewable rules compiler that allows authoring a single source rules file (source rules) in Markdown and compiling it into compiled rules for various destinations (e.g., AI assistants, IDEs). Rulesets v0 aims to establish a production-ready monorepo, ship the initial `@rulesets/core` package (including a basic parser, a pass-through compiler, and a frontmatter linter), and prove the end-to-end flow by processing a `my-rules.rule.md` file, writing compiled rules to `.ruleset/dist/`, and invoking stubbed destination plugins for Cursor and Windsurf.
 
-While v0 will not process Rulesets notation markers (`{{...}}`) within the content body, the architecture will be laid to easily incorporate this functionality in subsequent v0.x releases (e.g., mixd-v0.1-beta for `{{block}}` parsing, mixd-v0.2-beta for variables, etc.).
+While v0 will not process Rulesets notation markers (`{{...}}`) within the content body, the architecture will be laid to easily incorporate this functionality in subsequent v0.x releases (e.g., ruleset-v0.1-beta for `{{block}}` parsing, ruleset-v0.2-beta for variables, etc.).
 
 ## Implementation Checklist
 
@@ -204,7 +204,7 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
 
 - [ ] **Task 1: Draft Initial `README.md` for `@rulesets/core`**
   - Include basic usage, purpose, and how to contribute.
-  - Explain the v0 limitations (no marker processing) and the roadmap for mixd-v0.1-beta.
+  - Explain the v0 limitations (no marker processing) and the roadmap for ruleset-v0.1-beta.
   - **Acceptance Criteria**: `README.md` for `@rulesets/core` is created.
   - **Dependencies**: None.
 - [ ] **Task 2: Draft Root `README.md`**
@@ -471,7 +471,7 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  splitting: false, // Keep it simple for now (mixd-v0.1-beta)
+  splitting: false, // Keep it simple for now (ruleset-v0.1-beta)
 });
 ```
 
@@ -567,9 +567,9 @@ export interface Logger {
 #### `packages/core/src/parser/index.ts`
 
 ```typescript
-// TLDR: Simple parser implementation that extracts frontmatter and body (mixd-v0)
-// TODO (mixd-v0.1-beta): Add support for block parsing
-// TODO (mixd-v0.2-beta): Add variable substitution
+// TLDR: Simple parser implementation that extracts frontmatter and body (ruleset-v0.1-beta)
+// TODO (ruleset-v0.1-beta): Add support for block parsing
+// TODO (ruleset-v0.2-beta): Add variable substitution
 
 import matter from 'gray-matter';
 
@@ -655,4 +655,4 @@ This is the body.`;
 
 - This plan establishes the foundation for Rulesets while keeping v0 scope minimal and achievable.
 - The architecture is designed to easily accommodate v0.x enhancements (block parsing, variables, imports).
-- All code includes `mixd-v*` markers for tracking implementation maturity.
+- All code includes `ruleset-v*` markers for tracking implementation maturity.
