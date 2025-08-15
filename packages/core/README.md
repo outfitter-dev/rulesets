@@ -16,8 +16,8 @@ yarn add @rulesets/core
 
 Rulesets v0 provides the foundational architecture for processing Markdown-based rules files. This initial version focuses on:
 
-- **Parser**: Extracts frontmatter and body content from Markdown files
-- **Linter**: Validates frontmatter structure and content
+- **Parser**: Extracts front matter and body content from Markdown files
+- **Linter**: Validates front matter structure and content
 - **Compiler**: Pass-through compilation (no marker processing in v0)
 - **Destination Plugins**: Stub implementations for Cursor and Windsurf
 
@@ -58,7 +58,7 @@ Main orchestration function that processes a Rulesets source file.
 import { parse } from '@rulesets/core';
 
 const parsedDoc = await parse(markdownContent);
-// Returns: ParsedDoc with frontmatter and AST
+// Returns: ParsedDoc with front matter and AST
 ```
 
 ### Linter
@@ -98,7 +98,7 @@ await cursorPlugin.write({
 
 ## Source Rules Format
 
-Create a `.rules.md` file with frontmatter and content:
+Create a `.rules.md` file with front matter and content:
 
 ```markdown
 ---

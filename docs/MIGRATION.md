@@ -183,7 +183,7 @@ import { describe, expect, it } from 'bun:test';
 
 // Test logic stays the same
 describe('parser', () => {
-  it('should parse frontmatter', () => {
+  it('should parse front matter', () => {
     expect(parse('---\ntitle: test\n---')).toEqual({ title: 'test' });
   });
 });
@@ -324,7 +324,7 @@ You should see significant improvements:
 
 ```bash
 # Nuclear option - clean everything
-rm -rf node_modules bun.lockb dist .turbo
+rm -rf node_modules bun.lock dist .turbo
 bun install
 bun run build
 bun run test

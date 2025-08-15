@@ -6,6 +6,8 @@ This document outlines the tools used in the Rulesets monorepo and their specifi
 
 Rulesets uses a modern, fast toolchain centered around **Bun** with clear separation of concerns. Each tool has a specific, non-overlapping purpose to ensure consistency and avoid conflicts.
 
+> Project scripts wrap these tools for daily use. Prefer the root scripts in README → Developer Scripts (bun run build/test/typecheck/lint/format) rather than calling individual CLIs directly.
+
 ## Tool Responsibilities
 
 | Tool                  | Purpose                                  | File Types                                      | Notes                           |
@@ -233,7 +235,7 @@ We use a **hybrid testing approach** based on test complexity:
 import { describe, expect, it } from 'bun:test';
 
 describe('parser', () => {
-  it('should parse frontmatter', () => {
+  it('should parse front matter', () => {
     expect(parse('---\ntitle: test\n---')).toEqual({ title: 'test' });
   });
 });

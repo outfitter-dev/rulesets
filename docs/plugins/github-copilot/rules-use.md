@@ -81,10 +81,10 @@ GitHub Copilot rules can include various types of guidance:
 
 | Type                    | Purpose                                    | Example                                        |
 | ----------------------- | ------------------------------------------ | ---------------------------------------------- |
-| **Project Context**     | Tooling, frameworks, directory conventions | "Use pnpm for all Node package management"     |
+| **Project Context**     | Tooling, frameworks, directory conventions | "Use Bun for all Node package management"      |
 | **Coding Standards**    | Style guides, formatting, banned APIs      | "Always format JavaScript with double quotes"  |
 | **Workflow Guidelines** | Branch naming, PR processes                | "Reference Jira issue keys in commit messages" |
-| **Tooling Notes**       | CLI preferences, configurations            | "Run `pnpm test` before every commit"          |
+| **Tooling Notes**       | CLI preferences, configurations            | "Run `bun run test` before every commit"       |
 
 ## Character Limits
 

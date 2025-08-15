@@ -28,7 +28,7 @@ const { values } = parseArgs({
 const commands = {
   async clean() {
     console.log('🧹 Cleaning build artifacts...');
-    await $`rm -rf dist .turbo node_modules bun.lockb`;
+    await $`rm -rf dist .turbo node_modules bun.lock`;
     console.log('✅ Clean complete');
   },
 

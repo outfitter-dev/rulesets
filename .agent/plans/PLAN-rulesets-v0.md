@@ -16,7 +16,7 @@
 
 ## Overview
 
-Rulesets is a Markdown-previewable rules compiler that allows authoring a single source rules file (source rules) in Markdown and compiling it into compiled rules for various destinations (e.g., AI assistants, IDEs). Rulesets v0 aims to establish a production-ready monorepo, ship the initial `@rulesets/core` package (including a basic parser, a pass-through compiler, and a frontmatter linter), and prove the end-to-end flow by processing a `my-rules.rule.md` file, writing compiled rules to `.ruleset/dist/`, and invoking stubbed destination plugins for Cursor and Windsurf.
+Rulesets is a Markdown-previewable rules compiler that allows authoring a single source rules file (source rules) in Markdown and compiling it into compiled rules for various destinations (e.g., AI assistants, IDEs). Rulesets v0 aims to establish a production-ready monorepo, ship the initial `@rulesets/core` package (including a basic parser, a pass-through compiler, and a front matter linter), and prove the end-to-end flow by processing a `my-rules.rule.md` file, writing compiled rules to `.ruleset/dist/`, and invoking stubbed destination plugins for Cursor and Windsurf.
 
 While v0 will not process Rulesets notation markers (`{{...}}`) within the content body, the architecture will be laid to easily incorporate this functionality in subsequent v0.x releases (e.g., ruleset-v0.1-beta for `{{block}}` parsing, ruleset-v0.2-beta for variables, etc.).
 
@@ -24,12 +24,12 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
 
 ### Phase 1: Repository & Core Package Foundation (Toolchain & Structure)
 
-- [ ] **Task 1: Setup Monorepo with pnpm and Turborepo**
-  - Initialize pnpm workspace.
+- [ ] **Task 1: Setup Monorepo with Bun and Turborepo**
+  - Initialize Bun workspace.
   - Configure Turborepo with `turbo.json`.
   - Set up root `package.json` with workspace scripts.
   - Initialize Git repository with a `.gitignore` file.
-  - **Acceptance Criteria**: `pnpm install` succeeds; `turbo build`, `turbo lint`, `turbo test` commands are runnable.
+  - **Acceptance Criteria**: `bun install` succeeds; `turbo build`, `turbo test`, `turbo typecheck` commands are runnable; `bun run lint` works at root.
   - **Dependencies**: None.
 - [ ] **Task 2: Create `@rulesets/core` Package**
   - Create `packages/core` directory.
@@ -54,12 +54,12 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
   - Configure Biome for TypeScript linting and formatting.
   - Add `markdownlint` configuration.
   - Add linting scripts to `package.json` files.
-  - **Acceptance Criteria**: `pnpm turbo lint` runs successfully across the monorepo.
+  - **Acceptance Criteria**: `bun run lint` runs successfully across the monorepo.
   - **Dependencies**: Task 1.
 - [ ] **Task 6: Setup Release Management with Changesets**
-  - Initialize Changesets with `pnpm changeset init`.
+  - Initialize Changesets with `bun run changeset init`.
   - Configure `.changeset/config.json`.
-  - Add `pnpm changeset version` and `pnpm release` scripts.
+  - Add `bun run version-packages` and `bun run release` scripts.
   - Ensure CI workflow can publish packages.
   - **Acceptance Criteria**: Changesets can version packages and prepare releases; CI can publish.
   - **Dependencies**: Task 4.
@@ -76,11 +76,11 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
 
   - Create `packages/core/src/parser/index.ts`.
   - Implement `parse(content: string): Promise<ParsedDoc>` function.
-    - For v0, `ParsedDoc` will be a simplified version of `CompiledDoc.source` and `CompiledDoc.ast` (primarily frontmatter and raw body).
-    - It should parse YAML frontmatter from a Markdown string.
+    - For v0, `ParsedDoc` will be a simplified version of `CompiledDoc.source` and `CompiledDoc.ast` (primarily front matter and raw body).
+    - It should parse YAML front matter from a Markdown string.
     - It should separate the raw Markdown body.
     - `ParsedDoc.ast` will be minimal for v0 (e.g., `blocks: [], imports: [], variables: [], markers: []`).
-  - Add unit tests for frontmatter parsing and body extraction (including edge cases like missing frontmatter).
+  - Add unit tests for front matter parsing and body extraction (including edge cases like missing front matter).
   - **File Structure**:
 
   ```text
@@ -90,16 +90,16 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
      └─ parser.spec.ts
   ```
 
-  - **Acceptance Criteria**: Parser correctly extracts frontmatter and raw body. All unit tests pass.
+  - **Acceptance Criteria**: Parser correctly extracts front matter and raw body. All unit tests pass.
   - **Dependencies**: Phase 2/Task 1.
 
 - [ ] **Task 3: Implement v0 Linter Module**
 
   - Create `packages/core/src/linter/index.ts`.
   - Implement `lint(parsedDoc: ParsedDoc, config?: LinterConfig): Promise<LintResult[]>`.
-    - For v0, it validates the parsed frontmatter against a basic schema (e.g., presence of a `ruleset` key or specific expected fields).
+    - For v0, it validates the parsed front matter against a basic schema (e.g., presence of a `ruleset` key or specific expected fields).
     - `LintResult` should define structure for errors (e.g., `message`, `line`, `column`, `severity`).
-  - Add unit tests for frontmatter validation.
+  - Add unit tests for front matter validation.
   - **File Structure**:
 
   ```text
@@ -109,7 +109,7 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
      └─ linter.spec.ts
   ```
 
-  - **Acceptance Criteria**: Linter correctly validates frontmatter based on a predefined schema. All unit tests pass.
+  - **Acceptance Criteria**: Linter correctly validates front matter based on a predefined schema. All unit tests pass.
   - **Dependencies**: Phase 2/Task 2.
 
 - [ ] **Task 4: Implement v0 Compiler Module**
@@ -120,7 +120,7 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
     - `CompiledDoc.source` will be populated from `ParsedDoc`.
     - `CompiledDoc.ast` will be populated from `ParsedDoc.ast` (which is minimal in v0).
     - `CompiledDoc.output.content` will be the raw Markdown body from `ParsedDoc`.
-    - `CompiledDoc.output.metadata` can be empty or include basic source frontmatter.
+    - `CompiledDoc.output.metadata` can be empty or include basic source front matter.
     - `CompiledDoc.context` will include `destinationId` and any relevant `projectConfig`.
   - Add unit tests to verify the pass-through behavior.
   - **File Structure**:
@@ -321,16 +321,18 @@ rulesets/
 {
   "name": "rulesets",
   "private": true,
-  "packageManager": "pnpm@8",
-  "workspaces": ["packages/*"],
+  "packageManager": "bun@1",
+  "workspaces": ["apps/*", "packages/*"],
   "scripts": {
     "dev": "turbo dev",
     "build": "turbo build",
     "test": "turbo test",
-    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "lint": "ultracite lint",
+    "lint:fix": "ultracite format",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo build --filter=@rulesets/core && changeset publish",
+    "release": "bun run build:clean && changeset publish"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1", // Example version, use latest
@@ -338,16 +340,17 @@ rulesets/
     "typescript": "^5.4.5", // Example version, use latest 5.x
     "@biomejs/biome": "^2.2.0", // Example version, use latest
     "prettier": "^3.2.5", // Example version, use latest
-    "markdownlint-cli": "^0.41.0", // Example version, use latest
+    "markdownlint-cli2": "^0.18.1", // Example version, use latest
   },
 }
 ```
 
-#### `pnpm-workspace.yaml`
+#### `bunfig.toml`
 
-```yaml
-packages:
-  - 'packages/*'
+```toml
+[install]
+linkWorkspacePackages = true
+frozenLockfile = true
 ```
 
 #### `turbo.json`
@@ -516,7 +519,7 @@ export interface CompiledDoc {
   source: {
     path: string;
     content: string;
-    frontmatter: Record<string, any>;
+    front matter: Record<string, any>;
   };
   ast: {
     blocks: any[]; // Empty for v0
@@ -566,14 +569,14 @@ export interface Logger {
 #### `packages/core/src/parser/index.ts`
 
 ```typescript
-// TLDR: Simple parser implementation that extracts frontmatter and body (ruleset-v0.1-beta)
+// TLDR: Simple parser implementation that extracts front matter and body (ruleset-v0.1-beta)
 // TODO (ruleset-v0.1-beta): Add support for block parsing
 // TODO (ruleset-v0.2-beta): Add variable substitution
 
 import matter from 'gray-matter';
 
 export interface ParsedDoc {
-  frontmatter: Record<string, any>;
+  front matter: Record<string, any>;
   body: string;
   ast: {
     blocks: any[];
@@ -585,10 +588,10 @@ export interface ParsedDoc {
 
 // TLDR: Parse source rules file into structured document
 export async function parse(content: string): Promise<ParsedDoc> {
-  const { data: frontmatter, content: body } = matter(content);
+  const { data: front matter, content: body } = matter(content);
 
   return {
-    frontmatter,
+    front matter,
     body,
     ast: {
       blocks: [], // Not implemented in v0
@@ -610,7 +613,7 @@ import { describe, it, expect } from 'vitest';
 import { parse } from '../index';
 
 describe('Parser', () => {
-  it('should extract frontmatter and body', async () => {
+  it('should extract front matter and body', async () => {
     const content = `---
 ruleset: v0
 title: Test Rule
@@ -622,7 +625,7 @@ This is the body.`;
 
     const result = await parse(content);
 
-    expect(result.frontmatter).toEqual({
+    expect(result.front matter).toEqual({
       ruleset: 'v0',
       title: 'Test Rule',
     });
@@ -630,13 +633,13 @@ This is the body.`;
     expect(result.ast.blocks).toEqual([]);
   });
 
-  it('should handle missing frontmatter', async () => {
-    const content = '# No Frontmatter\n\nJust content.';
+  it('should handle missing front matter', async () => {
+    const content = '# No Front matter\n\nJust content.';
 
     const result = await parse(content);
 
-    expect(result.frontmatter).toEqual({});
-    expect(result.body).toBe('# No Frontmatter\n\nJust content.');
+    expect(result.front matter).toEqual({});
+    expect(result.body).toBe('# No Front matter\n\nJust content.');
   });
 });
 ```
@@ -645,7 +648,7 @@ This is the body.`;
 
 1. **Monorepo Setup**: Functional pnpm workspace with Turborepo, TypeScript, linting, and testing configured.
 2. **Core Package**: `@rulesets/core` package with parser, linter, compiler, and destination plugin modules.
-3. **Basic Functionality**: Parse frontmatter, validate it, pass through body content, and invoke destination plugins.
+3. **Basic Functionality**: Parse front matter, validate it, pass through body content, and invoke destination plugins.
 4. **Testing**: Unit tests for all modules and integration test for end-to-end flow.
 5. **Documentation**: README files for root and core package explaining the project and v0 limitations.
 6. **Release Ready**: Changesets configured and package can be published to npm.

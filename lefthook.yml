@@ -4,33 +4,33 @@
 pre-commit:
   parallel: false
   commands:
+    format-lint:
+      run: |
+        bun run format {staged_files} &&
+        bun run lint:fix {staged_files}
+      stage_fixed: true
+
     lockfile-check:
       glob: "package.json"
       run: |
         echo "📦 Checking if lockfile is up to date..."
         bun install --dry-run 2>&1 | grep -q "lockfile had changes" && {
           echo "❌ Lockfile is out of sync with package.json!"
-          echo "   Run 'bun run update-lockfile' to fix this."
+          echo "   Run 'bun run lockfile:update' to fix this."
           exit 1
         } || echo "✅ Lockfile is in sync"
 
-    prettier:
-      glob: "*.{yaml,yml,md,mdx,mdc}"
-      run: prettier --write {staged_files} --ignore-path .gitignore
-
-    markdownlint:
-      glob: "*.{md,mdx,mdc}"
-      run: bun run lint:md:fix
-
-    lint:
-      glob: "*.{js,ts,tsx}"
-      run: bun run lint
-
     typecheck:
-      glob: "*.{ts,tsx}"
-      run: bun run typecheck
+      run: bun run typecheck {staged_files}
 
 commit-msg:
   commands:
     commitlint:
-      run: bunx commitlint --edit {1}
+      run: bun run commitlint --edit {1}
+
+pre-push:
+  commands:
+    types:
+      run: bun run typecheck:turbo --affected
+    test:
+      run: bun run test:turbo --affected
