@@ -17,8 +17,7 @@ This documentation provides comprehensive information about how different AI cod
 ### CLI Tools
 
 - [Claude Code Memory System](./plugins/claude-code/rules-use.md) - Hierarchical with @file imports
-- [OpenAI Codex CLI System](./plugins/codex-cli/rules-use.md) - Layered instructions for terminal use
-- [OpenAI Codex AGENTS System](./plugins/codex-agent/rules-use.md) - Section-based merging with hierarchical loading
+- [OpenAI Codex System](./plugins/openai-codex/rules-use.md) - Layered instructions with hierarchical loading
 
 ### Other Implementations
 
