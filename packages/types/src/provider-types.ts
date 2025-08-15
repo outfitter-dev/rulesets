@@ -288,8 +288,7 @@ export type Provider =
   | ClaudeCodeProvider
   | ClineProvider
   | RooCodeProvider
-  | CodexCliProvider
-  | CodexAgentProvider
+  | CodexProvider
   | BoltProvider
   | V0Provider
   | ReplitProvider
