@@ -17,20 +17,21 @@
     "dist"
   ],
   "scripts": {
-    "build": "rm -rf dist && bun build src/index.ts --outdir dist --target node --minify && tsc --declaration --emitDeclarationOnly --outDir dist --skipLibCheck src/index.ts",
+    "build": "rimraf dist && bun build src/index.ts --outdir dist --target node --minify && tsc --declaration --emitDeclarationOnly --outDir dist --skipLibCheck src/index.ts",
     "dev": "bun build src/index.ts --outdir dist --target node --watch & tsc --declaration --emitDeclarationOnly --outDir dist --skipLibCheck --watch src/index.ts",
     "test": "bun test",
     "test:watch": "bun test --watch",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "typecheck": "tsc --noEmit",
-    "clean": "rm -rf dist"
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "@rulesets/types": "workspace:*"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.20"
+    "@types/bun": "^1.2.20",
+    "rimraf": "^6.0.1"
   },
   "publishConfig": {
     "access": "public"
