@@ -5,7 +5,7 @@
 >
 > ```typescript
 > : Simple pass-through implementation that doesn't process markers
-> // TODO (ruleset-v0.1): Add support for block parsing
+> // TODO (mixd-v0.1): Add support for block parsing
 > function parseContent(content: string) {
 >   // Simple implementation for v0
 >   return { body: content };
@@ -331,7 +331,7 @@ rulesets/
     "lint": "turbo lint",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo build --filter=@rulesets/core && changeset publish"
+    "release": "turbo build --filter=@rulesets/core && changeset publish",
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1", // Example version, use latest
@@ -339,8 +339,8 @@ rulesets/
     "typescript": "^5.4.5", // Example version, use latest 5.x
     "eslint": "^8.57.0", // Example version, use latest
     "prettier": "^3.2.5", // Example version, use latest
-    "markdownlint-cli": "^0.41.0" // Example version, use latest
-  }
+    "markdownlint-cli": "^0.41.0", // Example version, use latest
+  },
 }
 ```
 
@@ -396,9 +396,9 @@ packages:
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true, // Base config should not emit, individual packages will.
-    "types": ["node", "vitest/globals"]
+    "types": ["node", "vitest/globals"],
   },
-  "exclude": ["node_modules", "**/dist", "**/coverage"]
+  "exclude": ["node_modules", "**/dist", "**/coverage"],
 }
 ```
 
@@ -471,7 +471,7 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  splitting: false, // Keep it simple for now (ruleset-v0)
+  splitting: false, // Keep it simple for now (mixd-v0)
 });
 ```
 
@@ -567,9 +567,9 @@ export interface Logger {
 #### `packages/core/src/parser/index.ts`
 
 ```typescript
-// TLDR: Simple parser implementation that extracts frontmatter and body (ruleset-v0)
-// TODO (ruleset-v0.1): Add support for block parsing
-// TODO (ruleset-v0.2): Add variable substitution
+// TLDR: Simple parser implementation that extracts frontmatter and body (mixd-v0)
+// TODO (mixd-v0.1): Add support for block parsing
+// TODO (mixd-v0.2): Add variable substitution
 
 import matter from 'gray-matter';
 
@@ -655,4 +655,4 @@ This is the body.`;
 
 - This plan establishes the foundation for Rulesets while keeping v0 scope minimal and achievable.
 - The architecture is designed to easily accommodate v0.x enhancements (block parsing, variables, imports).
-- All code includes `ruleset-v*` markers for tracking implementation maturity.
+- All code includes `mixd-v*` markers for tracking implementation maturity.
