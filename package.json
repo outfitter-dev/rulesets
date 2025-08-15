@@ -1,7 +1,7 @@
 {
   "name": "rulesets",
   "version": "0.1.0",
-  "description": "A Markdown-based rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files",
+  "description": "A CommonMark-compliant rules compiler that lets you author a single source rules file in Markdown and compile it into destination-specific rules files",
   "type": "module",
   "private": true,
   "keywords": [
