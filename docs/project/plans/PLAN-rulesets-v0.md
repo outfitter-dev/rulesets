@@ -5,7 +5,7 @@
 >
 > ```typescript
 > : Simple pass-through implementation that doesn't process markers
-> // TODO (ruleset-v0.1): Add support for block parsing
+> // TODO (ruleset-v0.1-beta): Add support for block parsing
 > function parseContent(content: string) {
 >   // Simple implementation for v0
 >   return { body: content };
@@ -568,8 +568,8 @@ export interface Logger {
 
 ```typescript
 // TLDR: Simple parser implementation that extracts frontmatter and body (ruleset-v0)
-// TODO (ruleset-v0.1): Add support for block parsing
-// TODO (ruleset-v0.2): Add variable substitution
+// TODO (ruleset-v0.1-beta): Add support for block parsing
+// TODO (ruleset-v0.2-beta): Add variable substitution
 
 import matter from 'gray-matter';
 
