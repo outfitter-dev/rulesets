@@ -9,12 +9,17 @@
 export interface GitignoreConfig {
   /** Enable automatic .gitignore management */
   readonly enabled: boolean;
-  /** Custom comment prefix for managed blocks */
-  readonly commentPrefix?: string;
-  /** Additional patterns to always ignore */
-  readonly alwaysIgnore?: readonly string[];
   /** Patterns to keep even if they would normally be ignored */
-  readonly alwaysKeep?: readonly string[];
+  readonly keep?: readonly string[];
+  /** Additional patterns to always ignore */
+  readonly ignore?: readonly string[];
+  /** Options for managed block behavior */
+  readonly options?: {
+    /** Header comment text above managed block */
+    readonly comment?: string;
+    /** Whether to sort entries (default true) */
+    readonly sort?: boolean;
+  };
 }
 
 /**

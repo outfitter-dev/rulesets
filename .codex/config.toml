@@ -1,0 +1,12 @@
+[mcp]
+enabled = true
+
+[mcp.servers.filesystem]
+command = "npx"
+args = ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/project"]
+
+[mcp.servers.database]
+command = "mcp-db-server"
+args = ["--db", "postgres://localhost:5432/mydb"]
+[mcp.servers.database.env]
+DB_PASSWORD = "secret"

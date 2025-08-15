@@ -1,0 +1,47 @@
+{
+  // Sandbox Ruleset Configuration
+  // This demonstrates a realistic project setup
+  
+  "sourceDirectory": "./src",
+  "outputDirectory": "../",
+  
+  "providers": {
+    "cursor": {
+      "enabled": true,
+      "outputPath": "./.cursor/rules"
+    },
+    "claude-code": {
+      "enabled": true,
+      "outputPath": "./CLAUDE.md"
+    },
+    "windsurf": {
+      "enabled": true, 
+      "outputPath": "./.windsurf/rules.md"
+    },
+    "amp": {
+      "enabled": true,
+      "outputPath": "./AMP.md"
+    },
+    "codex": {
+      "enabled": true,
+      "outputPath": "./CODEX.md"
+    }
+  },
+  
+  "defaultProviders": ["cursor", "claude-code"],
+  
+  // Realistic project settings
+  "gitignore": {
+    "enabled": true,
+    "options": {
+      "comment": "Rulesets Sandbox - Generated Rules",
+      "sort": true
+    }
+  },
+  
+  "strict": true,
+  
+  "logging": {
+    "level": "info"
+  }
+}

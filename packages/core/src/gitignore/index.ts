@@ -3,7 +3,7 @@
  * Provides automatic .gitignore management for Rulesets with override mechanisms
  */
 
-export { createGitignoreManager, GitignoreManager } from './GitignoreManager';
+export { createGitignoreManager, GitignoreManager } from './gitignore-manager';
 export type {
   GitignoreConfig,
   GitignoreManager as IGitignoreManager,

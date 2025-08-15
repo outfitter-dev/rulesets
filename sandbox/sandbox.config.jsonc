@@ -1,0 +1,48 @@
+{
+  "$schema": "../packages/core/src/config/schema.json",
+  
+  // Sandbox Configuration for Rulesets
+  // This configuration is used by the sandbox environment
+  
+  "outputDirectory": "./sandbox/output",
+  
+  "providers": {
+    "cursor": {
+      "enabled": true,
+      "outputPath": "./sandbox/output/cursor/rules.mdc"
+    },
+    "claude-code": {
+      "enabled": true,
+      "outputPath": "./sandbox/output/claude-code/RULES.md"
+    },
+    "windsurf": {
+      "enabled": true,
+      "outputPath": "./sandbox/output/windsurf/rules.md"
+    },
+    "amp": {
+      "enabled": true,
+      "outputPath": "./sandbox/output/amp/rules.md"
+    },
+    "codex": {
+      "enabled": true,
+      "outputPath": "./sandbox/output/codex/rules.md"
+    }
+  },
+  
+  "defaultProviders": ["cursor", "claude-code"],
+  
+  "gitignore": {
+    "enabled": false,
+    "options": {
+      "comment": "Rulesets Sandbox Generated Files",
+      "sort": true
+    }
+  },
+  
+  "logging": {
+    "level": "info",
+    "timestamp": true
+  },
+  
+  "strict": false
+}

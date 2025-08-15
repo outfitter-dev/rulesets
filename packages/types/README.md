@@ -34,7 +34,9 @@ const destination: DestinationId = createDestinationId('cursor');
 const block: BlockName = createBlockName('user-instructions');
 
 // ❌ Compile-time error - can't mix types
-function processBlock(name: BlockName) { /* ... */ }
+function processBlock(name: BlockName) {
+  /* ... */
+}
 processBlock(destination); // Error: Argument of type 'DestinationId' is not assignable to parameter of type 'BlockName'
 ```
 
@@ -67,7 +69,7 @@ function processUserInput(input: unknown) {
     // TypeScript knows input is DestinationId here
     console.log('Processing destination:', input);
   }
-  
+
   if (isBlockName(input)) {
     // TypeScript knows input is BlockName here
     console.log('Processing block:', input);
@@ -79,18 +81,18 @@ function processUserInput(input: unknown) {
 
 ### Domain Types
 
-| Type | Purpose | Validation |
-|------|---------|------------|
-| `DestinationId` | AI tool identifiers | Enum validation against known destinations |
-| `SourcePath` | Source file paths | Extension check, path traversal prevention |
-| `DestPath` | Output file paths | Path traversal prevention, permission checks |
-| `BlockName` | Block identifiers | Kebab-case validation, reserved word checking |
-| `VariableName` | Variable identifiers | JavaScript naming rules, reserved word checking |
-| `PropertyName` | Property identifiers | Kebab-case with optional values |
-| `MarkerContent` | Marker content | Security scanning, size limits |
-| `RawContent` | Source content | Size limits, malicious pattern detection |
-| `CompiledContent` | Compiled output | Size limits, security validation |
-| `Version` | Semantic versions | Semantic versioning format validation |
+| Type              | Purpose              | Validation                                      |
+| ----------------- | -------------------- | ----------------------------------------------- |
+| `DestinationId`   | AI tool identifiers  | Enum validation against known destinations      |
+| `SourcePath`      | Source file paths    | Extension check, path traversal prevention      |
+| `DestPath`        | Output file paths    | Path traversal prevention, permission checks    |
+| `BlockName`       | Block identifiers    | Kebab-case validation, reserved word checking   |
+| `VariableName`    | Variable identifiers | JavaScript naming rules, reserved word checking |
+| `PropertyName`    | Property identifiers | Kebab-case with optional values                 |
+| `MarkerContent`   | Marker content       | Security scanning, size limits                  |
+| `RawContent`      | Source content       | Size limits, malicious pattern detection        |
+| `CompiledContent` | Compiled output      | Size limits, security validation                |
+| `Version`         | Semantic versions    | Semantic versioning format validation           |
 
 ### Context Types
 
@@ -118,7 +120,7 @@ import {
   createSourcePath,
   createBlockName,
   createRawContent,
-  type CompilationContext
+  type CompilationContext,
 } from '@rulesets/types';
 
 // Create validated types
@@ -137,11 +139,7 @@ Follow TypeScript best practices and write comprehensive tests.
 ### Validation with Error Handling
 
 ```typescript
-import {
-  createBlockName,
-  InvalidBlockNameError,
-  RulesetValidationError
-} from '@rulesets/types';
+import { createBlockName, InvalidBlockNameError, RulesetValidationError } from '@rulesets/types';
 
 function validateBlockName(input: string) {
   try {
@@ -200,7 +198,7 @@ import {
   type WriteContext,
   createDestinationId,
   createSourcePath,
-  createVersion
+  createVersion,
 } from '@rulesets/types';
 
 const context: CompilationContext = {
@@ -208,8 +206,8 @@ const context: CompilationContext = {
     path: createSourcePath('./src/rules.rule.md'),
     content: createRawContent('# Rules...'),
     frontmatter: {
-      ruleset: { version: createVersion('0.1.0') }
-    }
+      ruleset: { version: createVersion('0.1.0') },
+    },
   },
   destination: {
     id: createDestinationId('cursor'),
@@ -219,8 +217,8 @@ const context: CompilationContext = {
       output: { createDirectory: true },
       plugin: { options: {} },
       transform: { enabled: true, rules: [] },
-      validation: { enabled: true }
-    }
+      validation: { enabled: true },
+    },
   },
   // ... rest of context
 };
@@ -257,11 +255,11 @@ Enforces reasonable size limits:
 ```typescript
 // Default limits (configurable)
 const LIMITS = {
-  MAX_FILE_SIZE: 10 * 1024 * 1024,      // 10MB
-  MAX_CONTENT_SIZE: 5 * 1024 * 1024,     // 5MB
-  MAX_PATH_LENGTH: 4096,                 // 4KB
-  MAX_BLOCK_NAME_LENGTH: 128,            // 128 chars
-  MAX_VARIABLE_NAME_LENGTH: 64,          // 64 chars
+  MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
+  MAX_CONTENT_SIZE: 5 * 1024 * 1024, // 5MB
+  MAX_PATH_LENGTH: 4096, // 4KB
+  MAX_BLOCK_NAME_LENGTH: 128, // 128 chars
+  MAX_VARIABLE_NAME_LENGTH: 64, // 64 chars
 };
 ```
 
@@ -273,7 +271,7 @@ const LIMITS = {
 RulesetValidationError (base)
 ├── SecurityValidationError
 │   └── PathTraversalError
-├── InvalidDestinationError  
+├── InvalidDestinationError
 ├── InvalidBlockNameError
 ├── InvalidVariableNameError
 └── ContentSizeError
@@ -291,7 +289,7 @@ try {
     console.log(error.toJSON());
     // {
     //   name: 'InvalidBlockNameError',
-    //   code: 'INVALID_FORMAT', 
+    //   code: 'INVALID_FORMAT',
     //   category: 'syntax',
     //   message: 'Block name must be in kebab-case format...',
     //   context: { blockName: 'Invalid Name!', reason: '...' }
@@ -317,8 +315,8 @@ class MyPlugin implements DestinationPlugin {
   get name(): string {
     return 'my-plugin';
   }
-  
-  async write(ctx: { destPath: string; /* ... */ }) {
+
+  async write(ctx: { destPath: string /* ... */ }) {
     // Convert to branded type for validation
     const safePath = createDestPath(ctx.destPath, process.cwd());
     // Now safePath is validated and secure
@@ -335,7 +333,7 @@ function getProviderConfig(providerId: unknown) {
   if (!isDestinationId(providerId)) {
     throw new Error('Invalid provider ID');
   }
-  
+
   // TypeScript knows providerId is DestinationId here
   return getConfig(providerId);
 }
@@ -346,28 +344,31 @@ function getProviderConfig(providerId: unknown) {
 ### From Existing Types
 
 1. **Replace string literals with branded types:**
+
    ```typescript
    // Before
-   function processDestination(id: string) { }
-   
-   // After  
-   function processDestination(id: DestinationId) { }
+   function processDestination(id: string) {}
+
+   // After
+   function processDestination(id: DestinationId) {}
    ```
 
 2. **Add validation at boundaries:**
+
    ```typescript
    // Before
    const destId = userInput;
-   
+
    // After
    const destId = createDestinationId(userInput);
    ```
 
 3. **Use type guards for unknown inputs:**
+
    ```typescript
    // Before
    if (typeof input === 'string' && validDestinations.includes(input)) {
-   
+
    // After
    if (isDestinationId(input)) {
    ```

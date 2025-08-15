@@ -1,7 +1,6 @@
 // Provider implementation for OpenAI Codex CLI
 // Implements the Provider interface with branded types and modern architecture
 
-import { promises as fs } from 'node:fs';
 import { dirname, isAbsolute, join, normalize, resolve, sep } from 'node:path';
 import type {
   CompilationStats,
@@ -134,9 +133,7 @@ export class CodexProvider implements Provider, DestinationPlugin {
    * Compiles content for Codex provider
    * New Provider interface method for modern compilation pipeline
    */
-  async compile(
-    _context: ProviderCompilationContext
-  ): Promise<ProviderCompilationResult> {
+  compile(_context: ProviderCompilationContext): ProviderCompilationResult {
     const startTime = Date.now();
     const errors: ProviderError[] = [];
     const warnings: ProviderWarning[] = [];
@@ -212,15 +209,43 @@ export class CodexProvider implements Provider, DestinationPlugin {
 
     logger.info('Writing Codex rules to: AGENTS.md');
 
-    // Codex always uses AGENTS.md as filename - ignore destPath for naming
+    const resolvedPath = this.prepareOutputPath(config, logger);
+    const content = compiled.output.content;
+    this.validateFileSize(content);
+
+    const generatedPaths: string[] = [];
+
+    try {
+      await this.writeMainFile(resolvedPath, content, logger);
+      generatedPaths.push(resolvedPath);
+
+      this.logDebugInfo(config, compiled, logger);
+
+      const mcpPath = await this.handleMcpConfiguration(config, logger);
+      if (mcpPath) {
+        generatedPaths.push(mcpPath);
+      }
+
+      return this.createWriteResult(generatedPaths, content, config);
+    } catch (error) {
+      logger.error(`Failed to write file: ${resolvedPath}`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Prepares and validates the output path for AGENTS.md
+   */
+  private prepareOutputPath(
+    config: Record<string, unknown>,
+    logger: Logger
+  ): string {
     const outputPath =
       (typeof config.outputPath === 'string' ? config.outputPath : undefined) ||
       'AGENTS.md';
 
-    // Security: Validate and sanitize the path to prevent directory traversal
     const resolvedPath = this.sanitizePath(outputPath, process.cwd());
 
-    // Ensure the resolved path ends with AGENTS.md for security
     if (!resolvedPath.endsWith('AGENTS.md')) {
       logger.warn(
         `Output path ${resolvedPath} should end with AGENTS.md. Adjusting...`
@@ -229,64 +254,89 @@ export class CodexProvider implements Provider, DestinationPlugin {
       const adjustedPath = join(dir, 'AGENTS.md');
       const sanitizedPath = this.sanitizePath(adjustedPath, process.cwd());
       logger.info(`Adjusted output path to: ${sanitizedPath}`);
+      return sanitizedPath;
     }
 
-    // Security: Check file size before writing
-    const content = compiled.output.content;
+    return resolvedPath;
+  }
+
+  /**
+   * Validates file size before writing
+   */
+  private validateFileSize(content: string): void {
     if (content.length > (this.capabilities.maxFileSize || 10 * 1024 * 1024)) {
       throw new Error(
         `File too large: ${content.length} bytes (max ${this.capabilities.maxFileSize} bytes)`
       );
     }
+  }
 
-    const generatedPaths: string[] = [];
+  /**
+   * Writes the main AGENTS.md file
+   */
+  private async writeMainFile(
+    resolvedPath: string,
+    content: string,
+    logger: Logger
+  ): Promise<void> {
+    await Bun.write(resolvedPath, content);
+    logger.info(`Successfully wrote Codex rules to: ${resolvedPath}`);
+  }
 
-    // Write the main AGENTS.md file
-    try {
-      await fs.writeFile(resolvedPath, content, {
-        encoding: 'utf8',
-      });
-      logger.info(`Successfully wrote Codex rules to: ${resolvedPath}`);
-      generatedPaths.push(resolvedPath);
-
-      // Log additional context for debugging
-      logger.debug(`Provider: ${this.id}`);
-      logger.debug(`Config: ${JSON.stringify(config)}`);
-      if (compiled.output.metadata?.priority) {
-        logger.debug(`Priority: ${compiled.output.metadata.priority}`);
-      }
-
-      // Handle MCP configuration if enabled
-      if (config.mcpConfig && typeof config.mcpConfig === 'object') {
-        const mcpConfig = config.mcpConfig as any;
-        if (mcpConfig.enabled && mcpConfig.servers) {
-          const mcpPath = await this.writeMcpTomlConfig(
-            mcpConfig,
-            config,
-            logger
-          );
-          if (mcpPath) {
-            generatedPaths.push(mcpPath);
-          }
-        }
-      }
-
-      // Return write result with generated file paths for gitignore management
-      return {
-        generatedPaths,
-        metadata: {
-          provider: this.id,
-          format: this.config.format,
-          size: content.length,
-          outputFile: 'AGENTS.md',
-          mcpEnabled: !!(config.mcpConfig as any)?.enabled,
-          codexHome: config.codexHome || process.env.CODEX_HOME,
-        },
-      };
-    } catch (error) {
-      logger.error(`Failed to write file: ${resolvedPath}`, error);
-      throw error;
+  /**
+   * Logs debug information about the compilation
+   */
+  private logDebugInfo(
+    config: Record<string, unknown>,
+    compiled: CompiledDoc,
+    logger: Logger
+  ): void {
+    logger.debug(`Provider: ${this.id}`);
+    logger.debug(`Config: ${JSON.stringify(config)}`);
+    if (compiled.output.metadata?.priority) {
+      logger.debug(`Priority: ${compiled.output.metadata.priority}`);
     }
+  }
+
+  /**
+   * Handles MCP configuration if enabled
+   */
+  private async handleMcpConfiguration(
+    config: Record<string, unknown>,
+    logger: Logger
+  ): Promise<string | null> {
+    if (config.mcpConfig && typeof config.mcpConfig === 'object') {
+      const mcpConfig = config.mcpConfig as {
+        enabled?: boolean;
+        servers?: unknown;
+      };
+      if (mcpConfig.enabled && mcpConfig.servers) {
+        return await this.writeMcpTomlConfig(mcpConfig, config, logger);
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Creates the WriteResult object
+   */
+  private createWriteResult(
+    generatedPaths: string[],
+    content: string,
+    config: Record<string, unknown>
+  ): WriteResult {
+    const mcpConfig = config.mcpConfig as { enabled?: boolean } | undefined;
+    return {
+      generatedPaths,
+      metadata: {
+        provider: this.id,
+        format: this.config.format,
+        size: content.length,
+        outputFile: 'AGENTS.md',
+        mcpEnabled: !!mcpConfig?.enabled,
+        codexHome: config.codexHome || process.env.CODEX_HOME,
+      },
+    };
   }
 
   /**
@@ -303,7 +353,18 @@ export class CodexProvider implements Provider, DestinationPlugin {
    * Supports both default .codex/config.toml and custom CODEX_HOME location
    */
   private async writeMcpTomlConfig(
-    mcpConfig: any,
+    mcpConfig: {
+      enabled?: boolean;
+      outputPath?: string;
+      servers?: Record<
+        string,
+        {
+          command?: string;
+          args?: string[];
+          env?: Record<string, string>;
+        }
+      >;
+    },
     globalConfig: Record<string, unknown>,
     logger: Logger
   ): Promise<string | null> {
@@ -322,12 +383,12 @@ export class CodexProvider implements Provider, DestinationPlugin {
 
       // Ensure the directory exists
       const mcpDir = dirname(resolvedMcpPath);
-      await fs.mkdir(mcpDir, { recursive: true });
+      await import('node:fs').then(fs => fs.promises.mkdir(mcpDir, { recursive: true }));
 
       // Generate TOML content for MCP configuration
       const tomlContent = this.generateMcpToml(mcpConfig.servers || {});
 
-      await fs.writeFile(resolvedMcpPath, tomlContent, { encoding: 'utf8' });
+      await Bun.write(resolvedMcpPath, tomlContent);
 
       logger.info(
         `Successfully wrote MCP TOML configuration to: ${resolvedMcpPath}`
@@ -343,7 +404,16 @@ export class CodexProvider implements Provider, DestinationPlugin {
    * Generates TOML content for MCP server configuration
    * Based on the expected format for Codex CLI's .codex/config.toml
    */
-  private generateMcpToml(servers: Record<string, any>): string {
+  private generateMcpToml(
+    servers: Record<
+      string,
+      {
+        command?: string;
+        args?: string[];
+        env?: Record<string, string>;
+      }
+    >
+  ): string {
     const lines: string[] = [];
 
     lines.push('[mcp]');

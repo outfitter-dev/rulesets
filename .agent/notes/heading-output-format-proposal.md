@@ -42,16 +42,16 @@ Content here
 
 Multiple ways to specify heading levels:
 
-| Syntax | Description | Example Output |
-|--------|-------------|----------------|
-| `heading` | Auto-calculate based on nesting | `## Block Name` |
-| `heading="3"` | Explicit level | `### Block Name` |
-| `heading="inc"` | Increment from parent | Parent h2 → h3 |
-| `heading="dec"` | Decrement from parent | Parent h3 → h2 |
-| `heading="same"` | Keep parent level | Parent h2 → h2 |
-| `heading="replace"` | Replace first heading in content | Replaces existing |
-| `h-1` to `h-6` | Shorthand for levels | `# Block Name` |
-| `h-inc`, `h-dec`, `h-same` | Shorthand modifiers | Relative adjustments |
+| Syntax                     | Description                      | Example Output       |
+| -------------------------- | -------------------------------- | -------------------- |
+| `heading`                  | Auto-calculate based on nesting  | `## Block Name`      |
+| `heading="3"`              | Explicit level                   | `### Block Name`     |
+| `heading="inc"`            | Increment from parent            | Parent h2 → h3       |
+| `heading="dec"`            | Decrement from parent            | Parent h3 → h2       |
+| `heading="same"`           | Keep parent level                | Parent h2 → h2       |
+| `heading="replace"`        | Replace first heading in content | Replaces existing    |
+| `h-1` to `h-6`             | Shorthand for levels             | `# Block Name`       |
+| `h-inc`, `h-dec`, `h-same` | Shorthand modifiers              | Relative adjustments |
 
 ### 3. Sequential Numbering
 
@@ -71,9 +71,11 @@ Output:
 
 ```markdown
 ## 1. Chapter
+
 Chapter content
 
 ## 2. Chapter
+
 Next chapter content
 ```
 
@@ -81,11 +83,11 @@ Next chapter content
 
 ```markdown
 {{chapter numbering}}
-  {{section numbering}}
-    {{subsection numbering}}
-    Content
-    {{/subsection}}
-  {{/section}}
+{{section numbering}}
+{{subsection numbering}}
+Content
+{{/subsection}}
+{{/section}}
 {{/chapter}}
 ```
 
@@ -109,9 +111,11 @@ Output:
 
 ```markdown
 ## Example 1
+
 First example content
 
 ## Example 2
+
 Second example content
 ```
 
@@ -141,21 +145,21 @@ This automatically:
   "ruleset": {
     "heading": {
       "level": {
-        "min": 2,    // Minimum heading level (default: 2)
-        "max": 5     // Maximum heading level (default: 5)
+        "min": 2, // Minimum heading level (default: 2)
+        "max": 5 // Maximum heading level (default: 5)
       },
-      "case": "title",  // Text transformation
+      "case": "title", // Text transformation
       "line_breaks": {
-        "before": true,  // Blank line before heading
-        "after": true    // Blank line after heading
+        "before": true, // Blank line before heading
+        "after": true // Blank line after heading
       }
     },
     "block": {
       "numbering": {
-        "heading": "before",  // Number placement for headings
-        "tag": "after",       // Number placement for tags
-        "children": 3,        // Max hierarchical depth
-        "separator": "."      // Number separator
+        "heading": "before", // Number placement for headings
+        "tag": "after", // Number placement for tags
+        "children": 3, // Max hierarchical depth
+        "separator": "." // Number separator
       }
     }
   }
@@ -263,10 +267,10 @@ function compileAsHeading(block: BlockNode, context: CompilerContext): string {
   const text = transformBlockName(block.name, block.heading.case);
   const number = getBlockNumber(block, context);
 
-  const heading = number 
+  const heading = number
     ? `${'#'.repeat(level)} ${number}. ${text}`
     : `${'#'.repeat(level)} ${text}`;
-  
+
   return `${heading}\n\n${block.content}`;
 }
 ```
@@ -282,11 +286,11 @@ function compileAsHeading(block: BlockNode, context: CompilerContext): string {
 ### Mixed Format Handling
 
 ```markdown
-{{outer heading}}       <!-- Renders as heading -->
-  {{inner}}            <!-- Renders as XML -->
-    {{nested h-4}}     <!-- Renders as h4 heading -->
-    {{/nested}}
-  {{/inner}}
+{{outer heading}} <!-- Renders as heading -->
+{{inner}} <!-- Renders as XML -->
+{{nested h-4}} <!-- Renders as h4 heading -->
+{{/nested}}
+{{/inner}}
 {{/outer}}
 ```
 
@@ -304,14 +308,14 @@ function compileAsHeading(block: BlockNode, context: CompilerContext): string {
 
 ## Provider Compatibility Matrix
 
-| Provider | Heading Support | XML Support | Preferred Format | Notes |
-|----------|----------------|-------------|------------------|-------|
-| Cursor | ✅ | ❌ | heading | Markdown only |
-| Claude Code | ✅ | ✅ | mixed | Supports both |
-| Windsurf | ✅ | ❌ | heading | Markdown only |
-| Codex CLI | ✅ | ❌ | heading | Markdown only |
-| Cline | ✅ | ❌ | heading | Markdown only |
-| Roo Code | ✅ | ❌ | heading | Markdown only |
+| Provider    | Heading Support | XML Support | Preferred Format | Notes         |
+| ----------- | --------------- | ----------- | ---------------- | ------------- |
+| Cursor      | ✅              | ❌          | heading          | Markdown only |
+| Claude Code | ✅              | ✅          | mixed            | Supports both |
+| Windsurf    | ✅              | ❌          | heading          | Markdown only |
+| Codex CLI   | ✅              | ❌          | heading          | Markdown only |
+| Cline       | ✅              | ❌          | heading          | Markdown only |
+| Roo Code    | ✅              | ❌          | heading          | Markdown only |
 
 ## Benefits
 
@@ -324,12 +328,12 @@ function compileAsHeading(block: BlockNode, context: CompilerContext): string {
 
 ## Risks and Mitigations
 
-| Risk | Mitigation |
-|------|------------|
-| Breaking changes for existing rules | Feature is opt-in via properties |
-| Complex nesting edge cases | Comprehensive test suite with edge cases |
-| Performance impact | Caching heading level calculations |
-| Provider incompatibility | Capability flags for feature detection |
+| Risk                                | Mitigation                               |
+| ----------------------------------- | ---------------------------------------- |
+| Breaking changes for existing rules | Feature is opt-in via properties         |
+| Complex nesting edge cases          | Comprehensive test suite with edge cases |
+| Performance impact                  | Caching heading level calculations       |
+| Provider incompatibility            | Capability flags for feature detection   |
 
 ## Success Metrics
 
@@ -343,7 +347,7 @@ function compileAsHeading(block: BlockNode, context: CompilerContext): string {
 
 ### Documentation Ruleset
 
-```markdown
+````markdown
 ---
 ruleset:
   heading:
@@ -364,6 +368,7 @@ First, install the dependencies:
 ```bash
 npm install
 ```
+````
 
 {{/\"Installation\"}}
 
@@ -376,13 +381,13 @@ Set these required variables:
 
 - `API_KEY`: Your API key
 - `API_URL`: The API endpoint
-{{/\"Environment Variables\"}}
+  {{/\"Environment Variables\"}}
 
 {{/\"Configuration\"}}
 
 {{/\"Getting Started\"}}
 
-```
+````
 
 ### Mixed Format Example
 
@@ -406,7 +411,7 @@ Set these required variables:
 {{/requirements}}
 
 {{/project-overview}}
-```
+````
 
 ## References
 
@@ -427,4 +432,4 @@ Set these required variables:
 
 ---
 
-*This proposal aims to enhance Rulesets' flexibility and user experience by providing an alternative to XML-based output that better aligns with Markdown standards and provider capabilities.*
+_This proposal aims to enhance Rulesets' flexibility and user experience by providing an alternative to XML-based output that better aligns with Markdown standards and provider capabilities._

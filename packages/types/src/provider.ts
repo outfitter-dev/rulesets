@@ -155,8 +155,8 @@ export interface ProviderPlugin {
  */
 export interface ProviderHooks {
   readonly beforeParse?: (content: RawContent) => RawContent;
-  readonly afterParse?: (ast: any) => any;
-  readonly beforeCompile?: (ast: any) => any;
+  readonly afterParse?: (ast: unknown) => unknown;
+  readonly beforeCompile?: (ast: unknown) => unknown;
   readonly afterCompile?: (content: CompiledContent) => CompiledContent;
   readonly beforeWrite?: (content: CompiledContent, path: OutputPath) => void;
   readonly afterWrite?: (path: OutputPath) => void;

@@ -38,7 +38,7 @@ import { createGitignoreManager } from '@rulesets/core';
 const gitignoreManager = createGitignoreManager();
 const result = await gitignoreManager.updateGitignore([
   '.cursor/rules/my-rules.mdc',
-  '.windsurf/rules/my-rules.md'
+  '.windsurf/rules/my-rules.md',
 ]);
 
 console.log(`Added ${result.added.length} files to .gitignore`);
@@ -84,18 +84,18 @@ const manager = new GitignoreManager({
   enabled: true,
   commentPrefix: 'MyTool',
   alwaysIgnore: ['*.log', 'temp/'],
-  alwaysKeep: ['important.txt']
+  alwaysKeep: ['important.txt'],
 });
 ```
 
 ### Configuration Options
 
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `enabled` | `boolean` | `true` | Enable/disable gitignore management |
-| `commentPrefix` | `string` | `'Rulesets'` | Custom prefix for managed block comments |
-| `alwaysIgnore` | `string[]` | `[]` | Patterns to always ignore |
-| `alwaysKeep` | `string[]` | `[]` | Patterns to always keep |
+| Option          | Type       | Default      | Description                              |
+| --------------- | ---------- | ------------ | ---------------------------------------- |
+| `enabled`       | `boolean`  | `true`       | Enable/disable gitignore management      |
+| `commentPrefix` | `string`   | `'Rulesets'` | Custom prefix for managed block comments |
+| `alwaysIgnore`  | `string[]` | `[]`         | Patterns to always ignore                |
+| `alwaysKeep`    | `string[]` | `[]`         | Patterns to always keep                  |
 
 ## Generated .gitignore Format
 
@@ -127,6 +127,7 @@ Override rules are applied in the following priority order (highest to lowest):
 ## Path Handling
 
 GitignoreManager normalizes all paths to:
+
 - **Relative paths** from project root
 - **POSIX-style separators** (`/` instead of `\`)
 - **No leading `./`** (e.g., `src/file.ts` not `./src/file.ts`)
@@ -134,6 +135,7 @@ GitignoreManager normalizes all paths to:
 ## Error Handling
 
 GitignoreManager is designed to fail gracefully:
+
 - **Non-critical errors** are logged as warnings
 - **Compilation continues** even if gitignore updates fail
 - **Invalid patterns** are skipped with warnings
@@ -145,13 +147,13 @@ GitignoreManager is designed to fail gracefully:
 
 ```typescript
 class GitignoreManager {
-  constructor(config?: Partial<GitignoreConfig>, basePath?: string)
-  
-  updateGitignore(generatedPaths: readonly string[]): Promise<GitignoreResult>
-  readOverrides(): Promise<GitignoreOverrides>
-  shouldIgnore(path: string): boolean
-  isEnabled(): boolean
-  clearCache(): void
+  constructor(config?: Partial<GitignoreConfig>, basePath?: string);
+
+  updateGitignore(generatedPaths: readonly string[]): Promise<GitignoreResult>;
+  readOverrides(): Promise<GitignoreOverrides>;
+  shouldIgnore(path: string): boolean;
+  isEnabled(): boolean;
+  clearCache(): void;
 }
 ```
 
@@ -159,9 +161,9 @@ class GitignoreManager {
 
 ```typescript
 function createGitignoreManager(
-  config?: Partial<GitignoreConfig>, 
+  config?: Partial<GitignoreConfig>,
   basePath?: string
-): GitignoreManager
+): GitignoreManager;
 ```
 
 ### Types
@@ -194,7 +196,7 @@ interface GitignoreOverrides {
 
 ```typescript
 const manager = new GitignoreManager({
-  commentPrefix: 'MyCompiler'
+  commentPrefix: 'MyCompiler',
 });
 // Generates: # START MyCompiler Generated Files
 ```
@@ -203,7 +205,7 @@ const manager = new GitignoreManager({
 
 ```typescript
 const manager = new GitignoreManager({
-  enabled: false
+  enabled: false,
 });
 // No gitignore operations will be performed
 ```
@@ -211,6 +213,7 @@ const manager = new GitignoreManager({
 ### Complex Override Patterns
 
 **.rulesetkeep**:
+
 ```
 # Keep all cursor rules
 .cursor/rules/*
@@ -221,6 +224,7 @@ const manager = new GitignoreManager({
 ```
 
 **.rulesetignore**:
+
 ```
 # Ignore all temporary files
 *.tmp

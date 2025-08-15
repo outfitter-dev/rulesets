@@ -1,19 +1,27 @@
 // TLDR: Unit tests for the Claude Code provider (Rulesets v1)
 
-import { promises as fs } from 'node:fs';
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import path from 'node:path';
 import type {
   CompiledDoc,
   Logger,
+  OutputPath,
   ProviderCompilationContext,
+  SourcePath,
 } from '@rulesets/types';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createCompiledContent } from '@rulesets/types';
 import { ClaudeCodeProvider } from '../claude-code-provider';
 
-vi.mock('fs', () => ({
+// Create mocks for file operations
+const mockMkdir = mock();
+const mockWriteFile = mock();
+const mockBunWrite = mock();
+
+// Mock node:fs module
+mock.module('node:fs', () => ({
   promises: {
-    mkdir: vi.fn(),
-    writeFile: vi.fn(),
+    mkdir: mockMkdir,
+    writeFile: mockWriteFile,
   },
 }));
 
@@ -24,16 +32,28 @@ describe('ClaudeCodeProvider', () => {
   beforeEach(() => {
     provider = new ClaudeCodeProvider();
     mockLogger = {
-      debug: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn(),
+      debug: mock(),
+      info: mock(),
+      warn: mock(),
+      error: mock(),
     };
-    vi.clearAllMocks();
+
+    // Clear mock call history
+    mockMkdir.mockClear();
+    mockWriteFile.mockClear();
+    mockBunWrite.mockClear();
+
+    // Set up mocks
+    mockMkdir.mockResolvedValue(undefined);
+    mockWriteFile.mockResolvedValue(undefined);
+    mockBunWrite.mockResolvedValue(10);
+
+    // Mock Bun.write using spyOn
+    spyOn(Bun, 'write').mockImplementation(mockBunWrite);
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    // Bun test automatically restores spies after each test
   });
 
   describe('Provider interface properties', () => {
@@ -119,7 +139,11 @@ describe('ClaudeCodeProvider', () => {
 
     it('should define outputPath property with CLAUDE.md default', () => {
       const schema = provider.configSchema();
-      const outputPathProp = schema.properties?.outputPath as any;
+      const outputPathProp = schema.properties?.outputPath as {
+        type: string;
+        default: string;
+        description: string;
+      };
       expect(outputPathProp.type).toBe('string');
       expect(outputPathProp.default).toBe('CLAUDE.md');
       expect(outputPathProp.description).toContain('CLAUDE.md');
@@ -127,7 +151,14 @@ describe('ClaudeCodeProvider', () => {
 
     it('should define MCP configuration schema', () => {
       const schema = provider.configSchema();
-      const mcpConfigProp = schema.properties?.mcpConfig as any;
+      const mcpConfigProp = schema.properties?.mcpConfig as {
+        type: string;
+        properties: {
+          enabled: object;
+          outputPath: object;
+          servers: object;
+        };
+      };
       expect(mcpConfigProp.type).toBe('object');
       expect(mcpConfigProp.properties.enabled).toBeDefined();
       expect(mcpConfigProp.properties.outputPath).toBeDefined();
@@ -136,7 +167,10 @@ describe('ClaudeCodeProvider', () => {
 
     it('should enforce priority enum values', () => {
       const schema = provider.configSchema();
-      const priorityProp = schema.properties?.priority as any;
+      const priorityProp = schema.properties?.priority as {
+        type: string;
+        enum: string[];
+      };
       expect(priorityProp.type).toBe('string');
       expect(priorityProp.enum).toEqual(['low', 'medium', 'high']);
     });
@@ -144,7 +178,10 @@ describe('ClaudeCodeProvider', () => {
     it('should include project context option', () => {
       const schema = provider.configSchema();
       const includeProjectContextProp = schema.properties
-        ?.includeProjectContext as any;
+        ?.includeProjectContext as {
+        type: string;
+        default: boolean;
+      };
       expect(includeProjectContextProp.type).toBe('boolean');
       expect(includeProjectContextProp.default).toBe(true);
     });
@@ -152,9 +189,9 @@ describe('ClaudeCodeProvider', () => {
 
   describe('compile', () => {
     const mockContext: ProviderCompilationContext = {
-      provider: provider as any,
-      sourcePath: 'test.rule.md' as any,
-      outputPath: 'CLAUDE.md' as any,
+      provider,
+      sourcePath: 'test.rule.md' as SourcePath,
+      outputPath: 'CLAUDE.md' as OutputPath,
       variables: {},
       metadata: {},
     };
@@ -191,7 +228,7 @@ describe('ClaudeCodeProvider', () => {
     it('should handle compilation errors gracefully', async () => {
       // Mock an error scenario by overriding the method temporarily
       const originalCompile = provider.compile;
-      provider.compile = vi.fn().mockImplementation(async () => {
+      provider.compile = mock().mockImplementation(() => {
         return {
           success: false,
           errors: [
@@ -232,20 +269,22 @@ describe('ClaudeCodeProvider', () => {
         content:
           '---\nruleset:\n  version: 1.0.0\n---\n\n# Claude Code Rules\n\nThis is test content.',
         frontmatter: { ruleset: { version: '1.0.0' } },
-      },
-      ast: {
         blocks: [],
         imports: [],
         variables: [],
         markers: [],
+        errors: [],
+        warnings: [],
       },
       output: {
-        content: '# Claude Code Rules\n\nThis is test content for Claude Code.',
+        content: createCompiledContent('# Claude Code Rules\n\nThis is test content for Claude Code.'),
+        format: 'markdown',
         metadata: { priority: 'high' },
       },
-      context: {
-        destinationId: 'claude-code',
-        config: {},
+      metadata: {
+        compiledAt: new Date().toISOString(),
+        compiler: 'test',
+        version: '1.0.0',
       },
     };
 
@@ -262,12 +301,9 @@ describe('ClaudeCodeProvider', () => {
 
       const resolvedPath = path.resolve('CLAUDE.md');
 
-      expect(fs.writeFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Writing Claude Code rules to: CLAUDE.md'
@@ -294,12 +330,9 @@ describe('ClaudeCodeProvider', () => {
       });
 
       const resolvedPath = path.resolve('custom/CLAUDE.md');
-      expect(fs.writeFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
     });
 
@@ -344,7 +377,7 @@ describe('ClaudeCodeProvider', () => {
     it('should handle writeFile errors', async () => {
       const destPath = 'test.md';
       const error = new Error('Permission denied');
-      vi.mocked(fs.writeFile).mockRejectedValueOnce(error);
+      mockBunWrite.mockRejectedValueOnce(error);
 
       await expect(
         provider.write({
@@ -381,20 +414,22 @@ describe('ClaudeCodeProvider', () => {
       source: {
         content: '# Test',
         frontmatter: {},
-      },
-      ast: {
         blocks: [],
         imports: [],
         variables: [],
         markers: [],
+        errors: [],
+        warnings: [],
       },
       output: {
-        content: '# Test content',
+        content: createCompiledContent('# Test content'),
+        format: 'markdown',
         metadata: {},
       },
-      context: {
-        destinationId: 'claude-code',
-        config: {},
+      metadata: {
+        compiledAt: new Date().toISOString(),
+        compiler: 'test',
+        version: '1.0.0',
       },
     };
 
@@ -429,7 +464,7 @@ describe('ClaudeCodeProvider', () => {
       expect(result.generatedPaths).toEqual([claudePath, mcpPath]);
       expect(result.metadata.mcpEnabled).toBe(true);
 
-      expect(fs.writeFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         mcpPath,
         JSON.stringify(
           {
@@ -446,8 +481,7 @@ describe('ClaudeCodeProvider', () => {
           },
           null,
           2
-        ),
-        { encoding: 'utf8' }
+        )
       );
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -483,7 +517,7 @@ describe('ClaudeCodeProvider', () => {
         },
       };
 
-      vi.mocked(fs.writeFile).mockImplementation((filepath) => {
+      mockBunWrite.mockImplementation((filepath) => {
         if (filepath.toString().includes('.mcp.json')) {
           return Promise.reject(new Error('Permission denied'));
         }
@@ -505,23 +539,27 @@ describe('ClaudeCodeProvider', () => {
   });
 
   describe('sanitizePath', () => {
+    type ProviderWithPrivates = ClaudeCodeProvider & {
+      sanitizePath(filePath: string, basePath: string): string;
+    };
+
     it('should prevent path traversal with relative paths', () => {
-      const provider = new ClaudeCodeProvider() as any;
+      const localProvider = new ClaudeCodeProvider() as ProviderWithPrivates;
       expect(() => {
-        provider.sanitizePath('../../../etc/passwd', process.cwd());
+        localProvider.sanitizePath('../../../etc/passwd', process.cwd());
       }).toThrow('Path traversal detected');
     });
 
     it('should allow valid relative paths', () => {
-      const provider = new ClaudeCodeProvider() as any;
-      const result = provider.sanitizePath('CLAUDE.md', process.cwd());
+      const localProvider = new ClaudeCodeProvider() as ProviderWithPrivates;
+      const result = localProvider.sanitizePath('CLAUDE.md', process.cwd());
       expect(result).toBe(path.resolve(process.cwd(), 'CLAUDE.md'));
     });
 
     it('should allow valid absolute paths within project', () => {
-      const provider = new ClaudeCodeProvider() as any;
+      const localProvider = new ClaudeCodeProvider() as ProviderWithPrivates;
       const validPath = path.join(process.cwd(), 'docs', 'CLAUDE.md');
-      const result = provider.sanitizePath(validPath, process.cwd());
+      const result = localProvider.sanitizePath(validPath, process.cwd());
       expect(result).toBe(validPath);
     });
   });

@@ -1,0 +1,128 @@
+# react-best-practices
+
+## Component Architecture
+
+- **Functional components only** - Use hooks instead of class components
+- **Single responsibility** - Each component should have one clear purpose
+- **Props interface first** - Define props interface before component implementation
+- **Composition over inheritance** - Use component composition patterns
+
+## Performance Guidelines
+
+- **Memoize expensive calculations** - Use `useMemo` for heavy computations
+- **Optimize re-renders** - Use `React.memo`, `useCallback` strategically
+- **Lazy load components** - Use `React.lazy` for code splitting
+- **Avoid inline objects/functions** - Extract to avoid unnecessary re-renders
+
+## State Management
+
+- **useState for local state** - Keep component state local when possible
+- **useReducer for complex state** - When state logic becomes complex
+- **Context sparingly** - Only for truly global state (theme, auth)
+- **External state managers** - Zustand/Redux for complex app state
+
+## Examples
+
+### Component Architecture Examples
+
+```typescript
+// ✅ Good: Well-defined props interface
+interface UserCardProps {
+  user: User;
+  onUserClick: (userId: string) => void;
+  showActions?: boolean;
+}
+
+const UserCard: React.FC<UserCardProps> = ({ 
+  user, 
+  onUserClick, 
+  showActions = false 
+}) => {
+  return (
+    <div className="user-card">
+      <img src={user.avatar} alt={`${user.name} avatar`} />
+      <h3>{user.name}</h3>
+      <p>{user.email}</p>
+      {showActions && (
+        <button onClick={() => onUserClick(user.id)}>
+          View Profile
+        </button>
+      )}
+    </div>
+  );
+};
+```
+
+```typescript
+// ✅ Good: Performance optimized component
+interface ExpensiveListProps {
+  items: Item[];
+  onItemSelect: (item: Item) => void;
+}
+
+const ExpensiveList = React.memo<ExpensiveListProps>(({ items, onItemSelect }) => {
+  const sortedItems = useMemo(
+    () => items.sort((a, b) => a.priority - b.priority),
+    [items]
+  );
+  
+  const handleItemClick = useCallback(
+    (item: Item) => {
+      onItemSelect(item);
+    },
+    [onItemSelect]
+  );
+  
+  return (
+    <ul>
+      {sortedItems.map(item => (
+        <ExpensiveListItem 
+          key={item.id}
+          item={item}
+          onClick={handleItemClick}
+        />
+      ))}
+    </ul>
+  );
+});
+```
+
+```typescript
+// ✅ Good: Custom hook for logic reuse
+function useUserData(userId: string) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+  
+  useEffect(() => {
+    let cancelled = false;
+    
+    async function fetchUser() {
+      try {
+        setLoading(true);
+        const userData = await api.getUser(userId);
+        if (!cancelled) {
+          setUser(userData);
+          setError(null);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          setError(err as Error);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+    
+    fetchUser();
+    
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
+  
+  return { user, loading, error };
+}
+```

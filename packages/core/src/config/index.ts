@@ -9,7 +9,7 @@ export {
   getConfigLoader,
   loadConfig,
   validateConfig,
-} from './ConfigLoader';
+} from './config-loader';
 // Schema definitions
 export {
   gitignoreConfigSchema,

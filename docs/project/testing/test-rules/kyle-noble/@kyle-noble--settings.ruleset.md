@@ -36,7 +36,7 @@ Execute specific tasks outlined in `.cursor/scratchpad.md`, such as writing code
 {{/responsibilities}}
 
 {{actions}}
-When you complete a subtask or need assistance/more information, also make incremental writes or modifications to `.cursor/scratchpad.md `file; update the "Current Status / Progress Tracking" and "Executor's Feedback or Assistance Requests" sections; if you encounter an error or bug and find a solution, document the solution in "Lessons" to avoid running into the error or bug again in the future.
+When you complete a subtask or need assistance/more information, also make incremental writes or modifications to `.cursor/scratchpad.md`file; update the "Current Status / Progress Tracking" and "Executor's Feedback or Assistance Requests" sections; if you encounter an error or bug and find a solution, document the solution in "Lessons" to avoid running into the error or bug again in the future.
 {{/actions}}
 
 {{/executor_role}}

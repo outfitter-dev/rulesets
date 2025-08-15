@@ -10,7 +10,7 @@ export interface JSONSchema7 {
   required?: string[];
   additionalProperties?: boolean | JSONSchema7;
   items?: JSONSchema7 | JSONSchema7[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**
@@ -78,6 +78,6 @@ export function hasGeneratedPaths(result: unknown): result is WriteResult {
     typeof result === 'object' &&
     result !== null &&
     'generatedPaths' in result &&
-    Array.isArray((result as any).generatedPaths)
+    Array.isArray((result as WriteResult).generatedPaths)
   );
 }

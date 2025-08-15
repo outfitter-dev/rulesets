@@ -2,7 +2,87 @@
 // TLDR: v0.1.0 Basic frontmatter extraction without marker processing
 
 import type { ParsedDoc } from '@rulesets/types';
-import * as yaml from 'js-yaml';
+import { JSON_SCHEMA, load } from 'js-yaml';
+
+interface ParseError {
+  message: string;
+  line?: number;
+  column?: number;
+}
+
+// Helper functions to reduce complexity
+function findFrontmatterBounds(lines: string[]): {
+  start: number;
+  end: number;
+} {
+  if (lines[0]?.trim() !== '---') {
+    return { start: -1, end: -1 };
+  }
+
+  const start = 0;
+  for (let i = 1; i < lines.length; i++) {
+    if (lines[i]?.trim() === '---') {
+      return { start, end: i };
+    }
+  }
+
+  return { start, end: -1 };
+}
+
+function parseFrontmatterContent(
+  content: string
+): Record<string, unknown> | undefined {
+  const parsed = load(content, {
+    schema: JSON_SCHEMA, // Use JSON_SCHEMA which is safer than DEFAULT_SCHEMA
+    json: true,
+  }) as Record<string, unknown> | null;
+
+  if (!parsed) {
+    return;
+  }
+
+  // Security: Validate frontmatter size
+  const serializedSize = JSON.stringify(parsed).length;
+  if (serializedSize > 1024 * 1024) {
+    // 1MB limit
+    throw new Error('Frontmatter too large (max 1MB)');
+  }
+
+  // Security: Validate frontmatter structure
+  validateFrontmatter(parsed);
+
+  return parsed;
+}
+
+function createYamlErrorMessage(error: unknown): string {
+  let friendlyMessage = 'Invalid YAML syntax in frontmatter. ';
+
+  if (!(error instanceof Error)) {
+    return `${friendlyMessage}Please check your frontmatter formatting.`;
+  }
+
+  const message = error.message.toLowerCase();
+
+  // Add user-friendly context based on common YAML errors
+  if (message.includes('unexpected end')) {
+    friendlyMessage += 'Make sure all strings are properly quoted and closed.';
+  } else if (message.includes('bad indentation')) {
+    friendlyMessage +=
+      'Check that your indentation is consistent (use spaces, not tabs).';
+  } else if (message.includes('duplicate key')) {
+    friendlyMessage += 'You have duplicate keys in your frontmatter.';
+  } else if (
+    message.includes('unexpected token') ||
+    message.includes('unexpected character')
+  ) {
+    friendlyMessage +=
+      'Check for special characters that need to be quoted or escaped.';
+  } else {
+    friendlyMessage += `Details: ${error.message}`;
+  }
+
+  return friendlyMessage;
+}
 
 /**
  * Parses a Rulesets source rules file to extract frontmatter and body content.
@@ -15,89 +95,30 @@ import * as yaml from 'js-yaml';
 // TLDR: v0.1.0 Simple YAML frontmatter extraction only
 // TODO(v0.2.0): Add support for block parsing
 // TODO(v0.3.0): Add variable substitution
-export async function parse(
-  content: string,
-  sourcePath?: string
-): Promise<ParsedDoc> {
+export function parse(content: string, sourcePath?: string): ParsedDoc {
   const lines = content.split('\n');
-  let frontmatterStart = -1;
-  let frontmatterEnd = -1;
+  const errors: ParseError[] = [];
   let frontmatter: Record<string, unknown> | undefined;
-  const errors: Array<{ message: string; line?: number; column?: number }> = [];
 
-  // Check for frontmatter
-  if (lines[0]?.trim() === '---') {
-    frontmatterStart = 0;
-    // Find the closing frontmatter delimiter
-    for (let i = 1; i < lines.length; i++) {
-      if (lines[i]?.trim() === '---') {
-        frontmatterEnd = i;
-        break;
-      }
-    }
+  const { start: frontmatterStart, end: frontmatterEnd } =
+    findFrontmatterBounds(lines);
 
+  if (frontmatterStart >= 0) {
     if (frontmatterEnd > 0) {
       // Extract and parse frontmatter
       const frontmatterContent = lines
         .slice(frontmatterStart + 1, frontmatterEnd)
         .join('\n');
+
       try {
-        // Security: Use safe YAML parsing with schema validation
-        const parsed = yaml.load(frontmatterContent, {
-          schema: yaml.JSON_SCHEMA, // Use JSON_SCHEMA which is safer than DEFAULT_SCHEMA
-          json: true,
-        }) as Record<string, unknown> | null;
-
-        frontmatter = parsed || undefined;
-
-        if (frontmatter) {
-          // Security: Validate frontmatter size
-          const serializedSize = JSON.stringify(frontmatter).length;
-          if (serializedSize > 1024 * 1024) {
-            // 1MB limit
-            throw new Error('Frontmatter too large (max 1MB)');
-          }
-
-          // Security: Validate frontmatter structure
-          validateFrontmatter(frontmatter);
-        }
+        frontmatter = parseFrontmatterContent(frontmatterContent);
       } catch (error) {
-        let friendlyMessage = 'Invalid YAML syntax in frontmatter. ';
-
-        if (error instanceof Error) {
-          const message = error.message.toLowerCase();
-
-          // Add user-friendly context based on common YAML errors
-          if (message.includes('unexpected end')) {
-            friendlyMessage +=
-              'Make sure all strings are properly quoted and closed.';
-          } else if (message.includes('bad indentation')) {
-            friendlyMessage +=
-              'Check that your indentation is consistent (use spaces, not tabs).';
-          } else if (message.includes('duplicate key')) {
-            friendlyMessage += 'You have duplicate keys in your frontmatter.';
-          } else if (
-            message.includes('unexpected token') ||
-            message.includes('unexpected character')
-          ) {
-            friendlyMessage +=
-              'Check for special characters that need to be quoted or escaped.';
-          } else {
-            friendlyMessage += `Details: ${error.message}`;
-          }
-        } else {
-          friendlyMessage += 'Please check your frontmatter formatting.';
-        }
-
         errors.push({
-          message: friendlyMessage,
+          message: createYamlErrorMessage(error),
           line: frontmatterStart + 1,
           column: 1,
         });
       }
-
-      // Extract body (everything after frontmatter)
-      // Body extraction happens in the compiler for v0
     } else {
       // Unclosed frontmatter
       errors.push({
@@ -129,45 +150,69 @@ export async function parse(
   return parsedDoc;
 }
 
+// Check for suspicious keys that might indicate malicious intent
+const SUSPICIOUS_KEYS = ['__proto__', 'constructor', 'prototype'];
+const MAX_NESTING_DEPTH = 20;
+const MAX_STRING_LENGTH = 10_000;
+
+function validateKeyName(key: string, fullPath: string): void {
+  if (SUSPICIOUS_KEYS.includes(key)) {
+    throw new Error(
+      `Security violation: Suspicious key "${fullPath}" detected`
+    );
+  }
+}
+
+function validateNestingDepth(path: string): void {
+  if (path.split('.').length > MAX_NESTING_DEPTH) {
+    throw new Error(
+      `Frontmatter too deeply nested (max ${MAX_NESTING_DEPTH} levels)`
+    );
+  }
+}
+
+function validateStringLength(value: unknown, fullPath: string): void {
+  if (typeof value === 'string' && value.length > MAX_STRING_LENGTH) {
+    throw new Error(`String value too long at "${fullPath}" (max 10KB)`);
+  }
+}
+
+function checkKeys(obj: unknown, path = ''): void {
+  if (obj === null || typeof obj !== 'object') {
+    return;
+  }
+
+  const record = obj as Record<string, unknown>;
+
+  for (const key in record) {
+    // Guard against prototype chain properties
+    if (!Object.prototype.hasOwnProperty.call(record, key)) {
+      continue;
+    }
+
+    const fullPath = path ? `${path}.${key}` : key;
+
+    // Validate the key name
+    validateKeyName(key, fullPath);
+
+    // Check for excessively nested objects (DoS protection)
+    validateNestingDepth(path);
+
+    const value = record[key];
+
+    // Check for excessively long strings
+    validateStringLength(value, fullPath);
+
+    // Recursively check nested objects
+    if (typeof value === 'object' && value !== null) {
+      checkKeys(value, fullPath);
+    }
+  }
+}
+
 /**
  * Security validation for frontmatter to prevent malicious content
  */
 function validateFrontmatter(frontmatter: Record<string, unknown>): void {
-  // Check for suspicious keys that might indicate malicious intent
-  const suspiciousKeys = ['__proto__', 'constructor', 'prototype'];
-
-  function checkKeys(obj: unknown, path = ''): void {
-    if (obj === null || typeof obj !== 'object') {
-      return;
-    }
-
-    for (const key in obj as Record<string, unknown>) {
-      const fullPath = path ? `${path}.${key}` : key;
-
-      // Check for prototype pollution attempts
-      if (suspiciousKeys.includes(key)) {
-        throw new Error(
-          `Security violation: Suspicious key "${fullPath}" detected`
-        );
-      }
-
-      // Check for excessively nested objects (DoS protection)
-      if (path.split('.').length > 20) {
-        throw new Error('Frontmatter too deeply nested (max 20 levels)');
-      }
-
-      // Recursively check nested objects
-      const value = (obj as Record<string, unknown>)[key];
-      if (typeof value === 'object' && value !== null) {
-        checkKeys(value, fullPath);
-      }
-
-      // Check for excessively long strings
-      if (typeof value === 'string' && value.length > 10_000) {
-        throw new Error(`String value too long at "${fullPath}" (max 10KB)`);
-      }
-    }
-  }
-
   checkKeys(frontmatter);
 }

@@ -4,7 +4,7 @@
  */
 
 import type { DestinationId, DestPath, OutputPath, ProviderId } from './brands';
-import type { ProviderConfig } from './provider';
+import type { ProviderConfig, ValidationConfig } from './provider';
 import type { LinterConfig, Property } from './ruleset-context';
 
 /**
@@ -106,10 +106,12 @@ export function migrateDestinationConfig(
     // Start migration - build new config object instead of mutating
     const configBuilder: {
       outputPath?: OutputPath;
-      fileNaming?: any;
-      format?: any;
-      template?: any;
-      validation?: any;
+      fileNaming?: string;
+      format?: 'markdown' | 'xml' | 'json' | 'yaml' | 'text' | 'html' | 'mixed';
+      template?: {
+        readonly format: 'markdown' | 'xml' | 'json';
+      };
+      validation?: unknown;
     } = {};
 
     // Migrate ID: DestinationId -> ProviderId (direct mapping)
@@ -141,7 +143,7 @@ export function migrateDestinationConfig(
     // Migrate fileNaming
     if ('fileNaming' in legacyConfig) {
       fieldsProcessed.push('fileNaming');
-      configBuilder.fileNaming = legacyConfig.fileNaming as any;
+      configBuilder.fileNaming = legacyConfig.fileNaming;
       fieldsMigrated.push('fileNaming');
     }
 
@@ -166,19 +168,26 @@ export function migrateDestinationConfig(
     // Migrate validation settings
     if (legacyConfig.validation) {
       fieldsProcessed.push('validation');
+      // Legacy validation settings are partially mapped to new format
       configBuilder.validation = {
-        strictMode: true, // Enable strict mode by default for migrated configs
-        customRules: [], // Empty rules array for now
+        strictMode: true, // Default to strict mode when legacy validation was present
       };
-      fieldsMigrated.push('validation');
-
-      if (legacyConfig.validation.maxLength) {
-        // Note: maxLength doesn't directly map, add as warning
+      
+      // Generate specific warnings for lost validation properties
+      if (legacyConfig.validation.allowedFormats) {
         warnings.push({
           type: 'data-loss',
-          message:
-            'maxLength validation property not directly supported in new format',
-          suggestion: 'Consider implementing as custom validation rule',
+          message: 'allowedFormats validation not supported in new format',
+          suggestion: 'Use provider-specific format configuration instead',
+          field: 'validation.allowedFormats',
+        });
+      }
+      
+      if (legacyConfig.validation.maxLength) {
+        warnings.push({
+          type: 'data-loss',
+          message: 'maxLength validation not supported in new format',
+          suggestion: 'Consider implementing length validation at the provider level',
           field: 'validation.maxLength',
         });
       }
@@ -188,9 +197,14 @@ export function migrateDestinationConfig(
     const migratedConfig: ProviderConfig = {
       outputPath: configBuilder.outputPath!,
       format: configBuilder.format || 'markdown',
-      fileNaming: configBuilder.fileNaming,
-      template: configBuilder.template,
-      validation: configBuilder.validation,
+      fileNaming: configBuilder.fileNaming as
+        | 'preserve'
+        | 'transform'
+        | 'template'
+        | 'custom'
+        | undefined,
+      template: configBuilder.template as ProviderConfig['template'],
+      validation: configBuilder.validation as ValidationConfig | undefined,
     };
 
     // Check for includeXml (deprecated feature)

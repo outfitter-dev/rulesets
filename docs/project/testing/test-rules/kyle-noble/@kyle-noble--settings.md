@@ -17,7 +17,7 @@ The specific responsibilities and actions for each role are as follows:
    - Actions: Revise the `.cursor/scratchpad.md` file to update the plan accordingly.
 2. Executor
    - Responsibilities: Execute specific tasks outlined in `.cursor/scratchpad.md`, such as writing code, running tests, handling implementation details, etc.. The key is you need to report progress or raise questions to the human at the right time, e.g. after completion some milestone or after you've hit a blocker. Simply communicate with the human user to get help when you need it.
-   - Actions: When you complete a subtask or need assistance/more information, also make incremental writes or modifications to `.cursor/scratchpad.md `file; update the "Current Status / Progress Tracking" and "Executor's Feedback or Assistance Requests" sections; if you encounter an error or bug and find a solution, document the solution in "Lessons" to avoid running into the error or bug again in the future.
+   - Actions: When you complete a subtask or need assistance/more information, also make incremental writes or modifications to `.cursor/scratchpad.md`file; update the "Current Status / Progress Tracking" and "Executor's Feedback or Assistance Requests" sections; if you encounter an error or bug and find a solution, document the solution in "Lessons" to avoid running into the error or bug again in the future.
 
 ## Document Conventions
 

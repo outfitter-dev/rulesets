@@ -1,5 +1,5 @@
 // TLDR: Unit tests for the Rulesets parser module
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from 'bun:test';
 import { parse } from '../index';
 
 describe('parser', () => {

@@ -2,11 +2,10 @@
  * Integration tests for the complete configuration system
  */
 
-import { promises as fs } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { loadConfig } from '../ConfigLoader';
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { loadConfig } from '../config-loader';
 
 describe('Configuration System Integration', () => {
   let tempDir: string;
@@ -14,18 +13,21 @@ describe('Configuration System Integration', () => {
   let subProjectDir: string;
 
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(
-      join(tmpdir(), 'rulesets-config-integration-test-')
-    );
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 8);
+    tempDir = join(tmpdir(), `rulesets-config-integration-test-${timestamp}-${random}`);
     projectDir = join(tempDir, 'project');
     subProjectDir = join(projectDir, 'subproject');
 
-    await fs.mkdir(projectDir);
-    await fs.mkdir(subProjectDir);
+    await Bun.spawn(['mkdir', '-p', subProjectDir]).exited;
   });
 
   afterEach(async () => {
-    await fs.rm(tempDir, { recursive: true, force: true });
+    try {
+      await Bun.spawn(['rm', '-rf', tempDir]).exited;
+    } catch (error) {
+      // Ignore cleanup errors
+    }
   });
 
   describe('JSONC Configuration Files', () => {
@@ -64,7 +66,7 @@ describe('Configuration System Integration', () => {
         "outputDirectory": ".ruleset/dist"
       }`;
 
-      await fs.writeFile(join(tempDir, 'ruleset.config.jsonc'), rootConfig);
+      await Bun.write(join(tempDir, 'ruleset.config.jsonc'), rootConfig);
 
       const projectConfig = `{
         // Override for this project
@@ -77,7 +79,7 @@ describe('Configuration System Integration', () => {
         }
       }`;
 
-      await fs.writeFile(
+      await Bun.write(
         join(projectDir, 'ruleset.config.jsonc'),
         projectConfig
       );
@@ -131,7 +133,7 @@ describe('Configuration System Integration', () => {
       outputPath = "CLAUDE.md"
       `;
 
-      await fs.writeFile(join(tempDir, 'ruleset.config.toml'), rootConfig);
+      await Bun.write(join(tempDir, 'ruleset.config.toml'), rootConfig);
 
       const projectConfig = `
       # Project-specific overrides
@@ -145,7 +147,7 @@ describe('Configuration System Integration', () => {
       format = "markdown"
       `;
 
-      await fs.writeFile(
+      await Bun.write(
         join(projectDir, 'ruleset.config.toml'),
         projectConfig
       );
@@ -173,7 +175,7 @@ describe('Configuration System Integration', () => {
       enabled = true
       `;
 
-      await fs.writeFile(join(tempDir, 'ruleset.config.toml'), rootConfig);
+      await Bun.write(join(tempDir, 'ruleset.config.toml'), rootConfig);
 
       // Project config in JSONC (should take precedence due to file name order)
       const projectConfig = `{
@@ -185,7 +187,7 @@ describe('Configuration System Integration', () => {
         }
       }`;
 
-      await fs.writeFile(
+      await Bun.write(
         join(projectDir, 'ruleset.config.jsonc'),
         projectConfig
       );
@@ -211,7 +213,7 @@ describe('Configuration System Integration', () => {
         }
       }`;
 
-      await fs.writeFile(join(projectDir, 'ruleset.config.jsonc'), config);
+      await Bun.write(join(projectDir, 'ruleset.config.jsonc'), config);
 
       const env = {
         RULESETS_STRICT: 'true',
@@ -228,7 +230,7 @@ describe('Configuration System Integration', () => {
       // Manually apply env overrides for testing
 
       // Test that our env override parsing works
-      const loader = (await import('../ConfigLoader')).getConfigLoader();
+      const loader = (await import('../config-loader')).getConfigLoader();
       const overriddenConfig = loader.applyEnvOverrides(result.config, env);
 
       expect(overriddenConfig.strict).toBe(true);
@@ -252,7 +254,7 @@ describe('Configuration System Integration', () => {
         "defaultProviders": []
       }`;
 
-      await fs.writeFile(
+      await Bun.write(
         join(projectDir, 'ruleset.config.jsonc'),
         invalidConfig
       );
@@ -277,7 +279,7 @@ describe('Configuration System Integration', () => {
         }
       }`;
 
-      await fs.writeFile(join(projectDir, 'ruleset.config.jsonc'), config);
+      await Bun.write(join(projectDir, 'ruleset.config.jsonc'), config);
 
       const result = await loadConfig(projectDir);
 
@@ -317,7 +319,7 @@ describe('Configuration System Integration', () => {
         }
       }`;
 
-      await fs.writeFile(join(tempDir, 'ruleset.config.jsonc'), teamConfig);
+      await Bun.write(join(tempDir, 'ruleset.config.jsonc'), teamConfig);
 
       // Project-specific overrides
       const projectConfig = `{
@@ -334,7 +336,7 @@ describe('Configuration System Integration', () => {
         }
       }`;
 
-      await fs.writeFile(
+      await Bun.write(
         join(projectDir, 'ruleset.config.jsonc'),
         projectConfig
       );

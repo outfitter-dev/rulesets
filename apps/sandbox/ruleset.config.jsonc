@@ -1,0 +1,46 @@
+{
+  // Sandbox Configuration for Rulesets
+  // This keeps the sandbox isolated from the main project
+  
+  "outputDirectory": "./output",
+  
+  "providers": {
+    "cursor": {
+      "enabled": true,
+      "outputPath": "./output/cursor/rules.mdc"
+    },
+    "claude-code": {
+      "enabled": true,
+      "outputPath": "./output/claude-code/RULES.md"
+    },
+    "windsurf": {
+      "enabled": true,
+      "outputPath": "./output/windsurf/rules.md"
+    },
+    "amp": {
+      "enabled": true,
+      "outputPath": "./output/amp/rules.md"
+    },
+    "codex": {
+      "enabled": true,
+      "outputPath": "./output/codex/rules.md"
+    }
+  },
+  
+  "defaultProviders": ["cursor", "claude-code"],
+  
+  // Sandbox-specific settings
+  "gitignore": {
+    "enabled": false,
+    "options": {
+      "comment": "Rulesets Sandbox - Gitignore Disabled",
+      "sort": true
+    }
+  },
+  
+  "strict": false,
+  
+  "logging": {
+    "level": "info"
+  }
+}
