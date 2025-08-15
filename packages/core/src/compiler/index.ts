@@ -31,7 +31,10 @@ export function compile(
           }
         }
         if (frontmatterEnd > 0) {
-          bodyContent = lines.slice(frontmatterEnd + 1).join('\n').trim();
+          bodyContent = lines
+            .slice(frontmatterEnd + 1)
+            .join('\n')
+            .trim();
         }
       }
     }

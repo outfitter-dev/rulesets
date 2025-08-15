@@ -47,8 +47,18 @@ export type KnownProviderID = (typeof KNOWN_PROVIDERS)[number];
  * Configuration result discriminated union for strict success/failure handling
  */
 export type ConfigResult<T> =
-  | { readonly success: true; readonly data: T; readonly errors?: never; readonly warnings?: string[] }
-  | { readonly success: false; readonly data?: never; readonly errors: readonly string[]; readonly warnings?: readonly string[] };
+  | {
+      readonly success: true;
+      readonly data: T;
+      readonly errors?: never;
+      readonly warnings?: string[];
+    }
+  | {
+      readonly success: false;
+      readonly data?: never;
+      readonly errors: readonly string[];
+      readonly warnings?: readonly string[];
+    };
 
 /**
  * Provider-specific configuration settings
@@ -104,9 +114,12 @@ export interface RulesetConfig {
 /**
  * Type-safe provider configuration with strict known providers
  */
-export interface TypeSafeRulesetConfig extends Omit<RulesetConfig, 'providers'> {
+export interface TypeSafeRulesetConfig
+  extends Omit<RulesetConfig, 'providers'> {
   /** Type-safe provider settings */
-  readonly providers?: Readonly<Partial<Record<KnownProviderID, ProviderConfig>>>;
+  readonly providers?: Readonly<
+    Partial<Record<KnownProviderID, ProviderConfig>>
+  >;
 }
 
 /**
@@ -191,9 +204,7 @@ export interface ConfigLoader {
   /**
    * Validate configuration against schema with strict return type
    */
-  validateConfig(
-    config: unknown
-  ): ConfigValidationResult;
+  validateConfig(config: unknown): ConfigValidationResult;
 
   /**
    * Find configuration file starting from given path
@@ -286,8 +297,10 @@ export const DEFAULT_LOAD_OPTIONS: Required<ConfigLoadOptions> = {
 /**
  * Type guards and helper functions for branded types
  */
-export const createConfigFilePath = (path: string): ConfigFilePath => path as ConfigFilePath;
-export const createConfigDirectoryPath = (path: string): ConfigDirectoryPath => path as ConfigDirectoryPath;
+export const createConfigFilePath = (path: string): ConfigFilePath =>
+  path as ConfigFilePath;
+export const createConfigDirectoryPath = (path: string): ConfigDirectoryPath =>
+  path as ConfigDirectoryPath;
 export const createProviderID = (id: string): ProviderID => id as ProviderID;
 
 /**
@@ -302,7 +315,11 @@ export const isKnownProviderID = (id: string): id is KnownProviderID => {
  */
 export const isConfigSuccess = <T>(
   result: ConfigResult<T>
-): result is { readonly success: true; readonly data: T; readonly warnings?: string[] } => {
+): result is {
+  readonly success: true;
+  readonly data: T;
+  readonly warnings?: string[];
+} => {
   return result.success === true;
 };
 
@@ -311,16 +328,24 @@ export const isConfigSuccess = <T>(
  */
 export const isConfigFailure = <T>(
   result: ConfigResult<T>
-): result is { readonly success: false; readonly errors: readonly string[]; readonly warnings?: readonly string[] } => {
+): result is {
+  readonly success: false;
+  readonly errors: readonly string[];
+  readonly warnings?: readonly string[];
+} => {
   return result.success === false;
 };
 
 /**
  * Assert that a provider ID is known at compile time
  */
-export const assertKnownProvider = (id: string): asserts id is KnownProviderID => {
+export const assertKnownProvider = (
+  id: string
+): asserts id is KnownProviderID => {
   if (!isKnownProviderID(id)) {
-    throw new TypeError(`Unknown provider ID: ${id}. Known providers: ${KNOWN_PROVIDERS.join(', ')}`);
+    throw new TypeError(
+      `Unknown provider ID: ${id}. Known providers: ${KNOWN_PROVIDERS.join(', ')}`
+    );
   }
 };
 
@@ -333,7 +358,10 @@ export const createConfigResult = {
     data,
     warnings,
   }),
-  failure: <T>(errors: readonly string[], warnings?: readonly string[]): ConfigResult<T> => ({
+  failure: <T>(
+    errors: readonly string[],
+    warnings?: readonly string[]
+  ): ConfigResult<T> => ({
     success: false as const,
     errors,
     warnings,
@@ -352,8 +380,13 @@ export interface ConfigValidationResult {
 /**
  * Assertion for non-null configuration access
  */
-export const assertConfigExists = <T>(config: T | undefined, context: string): asserts config is T => {
+export const assertConfigExists = <T>(
+  config: T | undefined,
+  context: string
+): asserts config is T => {
   if (config === undefined) {
-    throw new TypeError(`Configuration assertion failed: ${context} is undefined`);
+    throw new TypeError(
+      `Configuration assertion failed: ${context} is undefined`
+    );
   }
 };

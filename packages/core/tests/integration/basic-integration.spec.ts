@@ -5,9 +5,6 @@
  * This replaces the complex tests until we fix the API mismatches.
  */
 
-import { promises as fs } from 'node:fs';
-import { tmpdir } from 'node:os';
-import path from 'node:path';
 import {
   afterAll,
   afterEach,
@@ -19,6 +16,9 @@ import {
   mock,
   spyOn,
 } from 'bun:test';
+import { promises as fs } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { ConsoleLogger, runRulesetsV0 } from '../../src';
 
 // Create real temporary directory for integration tests

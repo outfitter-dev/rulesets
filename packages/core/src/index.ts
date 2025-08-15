@@ -5,7 +5,7 @@ import { dirname } from 'node:path';
 import { compile } from '@rulesets/compiler';
 import { lint } from '@rulesets/linter';
 import { parse } from '@rulesets/parser';
-import type { Logger, ParsedDoc, CompiledDoc } from '@rulesets/types';
+import type { CompiledDoc, Logger, ParsedDoc } from '@rulesets/types';
 import { hasGeneratedPaths } from '@rulesets/types';
 import type { RulesetConfig } from './config';
 import { loadConfig } from './config';
@@ -408,10 +408,7 @@ function buildGitignoreConfig(config: RulesetConfig) {
 /**
  * Log gitignore update results
  */
-function logGitignoreResults(
-  result: any,
-  logger: Logger
-): void {
+function logGitignoreResults(result: any, logger: Logger): void {
   if (!result.success) {
     logger.warn('Failed to update .gitignore:');
     if (result.messages) {
@@ -460,7 +457,10 @@ async function updateGitignore(
 
   try {
     const gitignoreConfig = buildGitignoreConfig(config);
-    const gitignoreManager = createGitignoreManager(gitignoreConfig, projectPath);
+    const gitignoreManager = createGitignoreManager(
+      gitignoreConfig,
+      projectPath
+    );
     const gitignoreResult =
       await gitignoreManager.updateGitignore(allGeneratedPaths);
 

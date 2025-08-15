@@ -2,9 +2,17 @@
  * Tests for GitignoreManager class
  */
 
+import {
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  mock,
+  spyOn,
+} from 'bun:test';
 import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
-import { beforeEach, describe, expect, it, type Mock, mock, spyOn } from 'bun:test';
 import { createGitignoreManager, GitignoreManager } from '../gitignore-manager';
 import type { GitignoreConfig } from '../types';
 
@@ -80,7 +88,7 @@ describe('GitignoreManager', () => {
         '',
         'utf8'
       );
-      
+
       // Should update with content
       expect(mockFs.writeFile).toHaveBeenCalledWith(
         join(testBasePath, '.gitignore'),

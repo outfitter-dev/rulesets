@@ -1,6 +1,14 @@
 // TLDR: Unit tests for the Windsurf provider
 
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from 'bun:test';
 import path from 'node:path';
 import type { CompiledDoc, Logger } from '@rulesets/types';
 import { createCompiledContent } from '@rulesets/types';
@@ -83,7 +91,9 @@ describe('WindsurfProvider', () => {
         warnings: [],
       },
       output: {
-        content: createCompiledContent('# Test Content\n\nThis is test content.'),
+        content: createCompiledContent(
+          '# Test Content\n\nThis is test content.'
+        ),
         format: 'markdown',
         metadata: {},
       },
@@ -117,7 +127,7 @@ describe('WindsurfProvider', () => {
       expect(mockLogger.info).toHaveBeenCalledWith(
         `Successfully wrote Windsurf rules to: ${resolvedPath}`
       );
-      
+
       // Check return value
       expect(result.generatedPaths).toEqual([resolvedPath]);
       expect(result.metadata.provider).toBe('windsurf');

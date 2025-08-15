@@ -1,6 +1,14 @@
 // TLDR: Unit tests for the Claude Code provider (Rulesets v1)
 
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from 'bun:test';
 import path from 'node:path';
 import type {
   CompiledDoc,
@@ -277,7 +285,9 @@ describe('ClaudeCodeProvider', () => {
         warnings: [],
       },
       output: {
-        content: createCompiledContent('# Claude Code Rules\n\nThis is test content for Claude Code.'),
+        content: createCompiledContent(
+          '# Claude Code Rules\n\nThis is test content for Claude Code.'
+        ),
         format: 'markdown',
         metadata: { priority: 'high' },
       },

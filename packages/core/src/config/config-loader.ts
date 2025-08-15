@@ -12,21 +12,22 @@ import {
 } from './schema';
 import type {
   ConfigContext,
+  ConfigDirectoryPath,
+  ConfigFilePath,
   ConfigFileResult,
   ConfigLoadOptions,
   ConfigLoadResult,
-  ConfigLoader as IConfigLoader,
   ConfigValidationResult,
+  ConfigLoader as IConfigLoader,
   RulesetConfig,
-  ConfigFilePath,
-  ConfigDirectoryPath,
 } from './types';
 import {
   createConfigDirectoryPath,
+  DEFAULT_CONFIG,
+  DEFAULT_LOAD_OPTIONS,
   isKnownProviderID,
   KNOWN_PROVIDERS,
 } from './types';
-import { DEFAULT_CONFIG, DEFAULT_LOAD_OPTIONS } from './types';
 import {
   applyEnvOverrides,
   findConfigFile,
@@ -156,7 +157,7 @@ export class ConfigLoader implements IConfigLoader {
       const validation = this.validateConfig(config);
       return {
         errors: validation.errors,
-        warnings: validation.warnings
+        warnings: validation.warnings,
       };
     } catch (error) {
       return {
@@ -242,12 +243,13 @@ export class ConfigLoader implements IConfigLoader {
     if (Object.keys(envOverrides).length > 0 && errors.length > 0) {
       // Validate the base configuration (without env overrides) to see if it was valid
       const baseValidation = this.performValidation(mergedConfig, opts);
-      
+
       if (baseValidation.errors.length === 0) {
         // Base config was valid, so errors must be from env overrides
         // Convert errors to warnings with helpful context
-        const envErrorWarnings = errors.map(error => 
-          `Environment variable override caused validation issue: ${error}`
+        const envErrorWarnings = errors.map(
+          (error) =>
+            `Environment variable override caused validation issue: ${error}`
         );
         warnings = [...warnings, ...envErrorWarnings];
         errors = []; // Clear errors since they're now warnings
@@ -258,7 +260,7 @@ export class ConfigLoader implements IConfigLoader {
     this.logValidationResults(errors, warnings, logger);
 
     const success = errors.length === 0;
-    
+
     logger?.info(
       `Configuration loaded ${success ? 'successfully' : 'with errors'} from ${sources.length} source(s)`
     );
@@ -432,7 +434,11 @@ export class ConfigLoader implements IConfigLoader {
     env: Readonly<Record<string, string>>,
     prefix = 'RULESETS'
   ): RulesetConfig {
-    const { config: result } = applyEnvOverrides(config, env as Record<string, string>, prefix);
+    const { config: result } = applyEnvOverrides(
+      config,
+      env as Record<string, string>,
+      prefix
+    );
     return result;
   }
 }
@@ -469,11 +475,14 @@ export function loadConfig(
     }
   }
 
-  return loader.loadConfig({ 
-    projectPath: createConfigDirectoryPath(projectPath), 
-    env: filteredEnv, 
-    logger 
-  }, options);
+  return loader.loadConfig(
+    {
+      projectPath: createConfigDirectoryPath(projectPath),
+      env: filteredEnv,
+      logger,
+    },
+    options
+  );
 }
 
 /**

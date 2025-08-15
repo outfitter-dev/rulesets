@@ -1,8 +1,16 @@
 // TLDR: End-to-end integration tests for Rulesets v0
 
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from 'bun:test';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import { ConsoleLogger, runRulesetsV0 } from '../../src';
 
 // Mock fs to avoid actual file I/O in tests

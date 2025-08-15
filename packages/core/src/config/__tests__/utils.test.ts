@@ -2,9 +2,9 @@
  * Tests for configuration utilities
  */
 
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import type { RulesetConfig } from '../types';
 import {
   applyEnvOverrides,
@@ -29,7 +29,8 @@ describe('Configuration Utilities', () => {
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 8);
     tempDir = join(tmpdir(), `rulesets-config-test-${timestamp}-${random}`);
-    await Bun.file(tempDir).exists() || await Bun.spawn(['mkdir', '-p', tempDir]).exited;
+    (await Bun.file(tempDir).exists()) ||
+      (await Bun.spawn(['mkdir', '-p', tempDir]).exited);
   });
 
   afterEach(async () => {
@@ -149,10 +150,7 @@ describe('Configuration Utilities', () => {
 
     it('should respect file precedence order', async () => {
       // Create multiple config files
-      await Bun.write(
-        join(tempDir, 'ruleset.config.toml'),
-        'strict = false'
-      );
+      await Bun.write(join(tempDir, 'ruleset.config.toml'), 'strict = false');
       await Bun.write(
         join(tempDir, 'ruleset.config.jsonc'),
         '{"strict": true}'

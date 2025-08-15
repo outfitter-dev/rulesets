@@ -1,6 +1,14 @@
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from 'bun:test';
 import type { CompiledDoc, Logger } from '@rulesets/types';
 import { createCompiledContent } from '@rulesets/types';
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import { OpenCodeProvider } from '../opencode-provider';
 
 // Mock fs promises and Bun API
@@ -63,14 +71,14 @@ describe('OpenCodeProvider', () => {
     mockMkdir.mockClear();
     mockBunWrite.mockClear();
     mockHomedir.mockClear();
-    
+
     // Set up mock return values
     mockBunWrite.mockResolvedValue(10);
     mockMkdir.mockResolvedValue(undefined);
-    
+
     // Mock Bun.write using spyOn
     spyOn(Bun, 'write').mockImplementation(mockBunWrite);
-    
+
     // Mock fs.promises.mkdir directly to handle dynamic imports
     const fs = await import('node:fs');
     spyOn(fs.promises, 'mkdir').mockImplementation(mockMkdir);
@@ -88,7 +96,8 @@ describe('OpenCodeProvider', () => {
       expect(schema.properties?.outputPath).toEqual({
         type: 'string',
         default: 'AGENTS.md',
-        description: 'Path where the compiled rules file should be written (typically AGENTS.md)',
+        description:
+          'Path where the compiled rules file should be written (typically AGENTS.md)',
       });
     });
   });

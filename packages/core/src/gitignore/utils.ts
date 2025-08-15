@@ -31,9 +31,10 @@ export function normalizeGitignorePath(
   basePath?: string
 ): string {
   // Convert to relative path only if basePath is provided and filePath is absolute
-  const relativePath = path.isAbsolute(filePath) && basePath !== undefined
-    ? path.relative(basePath, filePath)
-    : filePath;
+  const relativePath =
+    path.isAbsolute(filePath) && basePath !== undefined
+      ? path.relative(basePath, filePath)
+      : filePath;
 
   // Convert to POSIX-style path separators and normalize backslashes
   let posixPath = relativePath.split(path.sep).join('/');
@@ -125,14 +126,17 @@ export function parseOverrideContent(content: string): string[] {
  * @param pathOrContent - File path or content string to parse
  * @returns Object with success status, patterns array, and any errors
  */
-export function parseOverrideFile(
-  pathOrContent: string
-): { success: boolean; patterns: string[]; errors: string[] } {
+export function parseOverrideFile(pathOrContent: string): {
+  success: boolean;
+  patterns: string[];
+  errors: string[];
+} {
   try {
     // If argument looks like a filepath, try to read it. Otherwise treat as content
-    const isFileInput = pathOrContent.includes('/') || pathOrContent.includes('\\');
+    const isFileInput =
+      pathOrContent.includes('/') || pathOrContent.includes('\\');
     let content: string;
-    
+
     if (isFileInput) {
       // Try to read as file
       try {
@@ -154,7 +158,9 @@ export function parseOverrideFile(
       success: false,
       patterns: [],
       errors: [
-        error instanceof Error ? error.message : 'Failed to parse override file',
+        error instanceof Error
+          ? error.message
+          : 'Failed to parse override file',
       ],
     };
   }

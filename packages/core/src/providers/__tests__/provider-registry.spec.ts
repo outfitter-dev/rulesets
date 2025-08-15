@@ -3,6 +3,7 @@
  * Tests modern provider exports, backwards compatibility, and provider interactions
  */
 
+import { beforeEach, describe, expect, mock, spyOn, test } from 'bun:test';
 import type {
   CompiledDoc,
   DestinationPlugin,
@@ -10,7 +11,6 @@ import type {
   WriteResult,
 } from '@rulesets/types';
 import { createCompiledContent } from '@rulesets/types';
-import { beforeEach, describe, expect, test, mock, spyOn } from 'bun:test';
 import {
   AmpProvider,
   ampPlugin,
