@@ -34,8 +34,7 @@ export const KNOWN_PROVIDERS = [
   'windsurf',
   'roo-code',
   'cline',
-  'codex-cli',
-  'codex-agent',
+  'codex',
 ] as const;
 
 /**

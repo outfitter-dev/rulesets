@@ -9,8 +9,7 @@ export type ProviderType =
   | 'claude-code'
   | 'cline'
   | 'roo-code'
-  | 'codex-cli'
-  | 'codex-agent'
+  | 'codex'
   | 'bolt'
   | 'v0'
   | 'replit'
@@ -217,29 +216,16 @@ export interface RooCodeProvider extends ProviderConfiguration {
   };
 }
 
-export interface CodexCliProvider extends ProviderConfiguration {
+export interface CodexProvider extends ProviderConfiguration {
   metadata: ProviderMetadata & {
-    id: 'codex-cli';
-    name: 'OpenAI Codex CLI';
-    type: 'cli';
+    id: 'codex';
+    name: 'OpenAI Codex';
+    type: 'cli' | 'agent';
   };
   capabilities: ProviderCapabilities & {
-    ruleTypes: ['manual', 'model-decision'];
+    ruleTypes: ['manual', 'model-decision', 'auto-attached'];
     scopingMechanisms: ['global', 'project'];
-    fileFormats: ['markdown', 'json'];
-  };
-}
-
-export interface CodexAgentProvider extends ProviderConfiguration {
-  metadata: ProviderMetadata & {
-    id: 'codex-agent';
-    name: 'OpenAI Codex Agent';
-    type: 'agent';
-  };
-  capabilities: ProviderCapabilities & {
-    ruleTypes: ['model-decision', 'auto-attached'];
-    scopingMechanisms: ['global', 'project'];
-    fileFormats: ['json', 'yaml'];
+    fileFormats: ['markdown', 'json', 'yaml'];
   };
 }
 

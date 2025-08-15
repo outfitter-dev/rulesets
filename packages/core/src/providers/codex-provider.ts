@@ -29,9 +29,9 @@ import {
 } from '@rulesets/types';
 
 export class CodexProvider implements Provider, DestinationPlugin {
-  readonly id: ProviderId = createProviderId('codex-cli');
+  readonly id: ProviderId = createProviderId('codex');
   readonly version: Version = createVersion('1.0.0');
-  readonly description = 'OpenAI Codex CLI assistant';
+  readonly description = 'OpenAI Codex assistant with CLI and web agent support';
   readonly website = 'https://github.com/openai/codex';
   readonly type = 'cli' as const;
 

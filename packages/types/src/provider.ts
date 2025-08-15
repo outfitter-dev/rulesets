@@ -291,11 +291,11 @@ export const BUILT_IN_PROVIDERS: Record<string, Provider> = {
       allowedFormats: ['markdown'],
     },
   },
-  'codex-cli': {
-    id: 'codex-cli' as ProviderId,
-    name: 'OpenAI Codex CLI',
+  codex: {
+    id: 'codex' as ProviderId,
+    name: 'OpenAI Codex',
     version: '1.0.0' as Version,
-    description: 'OpenAI Codex CLI assistant',
+    description: 'OpenAI Codex assistant with CLI and web agent support',
     website: 'https://github.com/openai/codex',
     type: 'cli',
     config: {
@@ -492,7 +492,7 @@ export const DEFAULT_PROVIDER_CONFIGS: Record<
     format: 'markdown',
     fileNaming: 'transform',
   },
-  'codex-cli': {
+  codex: {
     outputPath: 'AGENTS.md' as OutputPath,
     format: 'markdown',
     fileNaming: 'preserve',

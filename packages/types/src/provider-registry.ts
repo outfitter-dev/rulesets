@@ -293,11 +293,11 @@ export const DEFAULT_PROVIDERS: Record<ProviderType, Provider> = {
     },
   } as RooCodeProvider,
 
-  'codex-cli': {
+  codex: {
     metadata: {
-      id: 'codex-cli',
-      name: 'OpenAI Codex CLI',
-      description: 'Command-line interface for OpenAI Codex',
+      id: 'codex',
+      name: 'OpenAI Codex',
+      description: 'AI-powered code assistant with CLI and web agent support',
       version: '0.1.0',
       type: 'cli',
       website: 'https://openai.com/codex',
@@ -307,49 +307,9 @@ export const DEFAULT_PROVIDERS: Record<ProviderType, Provider> = {
       license: 'MIT',
     },
     capabilities: {
-      ruleTypes: ['manual', 'model-decision'],
+      ruleTypes: ['manual', 'model-decision', 'auto-attached'],
       scopingMechanisms: ['global', 'project'],
-      fileFormats: ['markdown', 'json'],
-      features: {
-        streaming: true,
-        multiFile: false,
-        realTime: false,
-        collaboration: false,
-        versioning: false,
-        templates: false,
-      },
-    },
-    configSchema: {
-      type: 'object',
-      properties: {
-        outputPath: {
-          type: 'string',
-          default: 'codex-rules.md',
-        },
-      },
-    },
-    defaultConfig: {
-      outputPath: 'codex-rules.md',
-    },
-  } as CodexCliProvider,
-
-  'codex-agent': {
-    metadata: {
-      id: 'codex-agent',
-      name: 'OpenAI Codex Agent',
-      description: 'Autonomous coding agent powered by OpenAI Codex',
-      version: '0.1.0',
-      type: 'agent',
-      website: 'https://openai.com/codex',
-      maintainer: {
-        name: 'OpenAI',
-      },
-      license: 'MIT',
-    },
-    capabilities: {
-      ruleTypes: ['model-decision', 'auto-attached'],
-      scopingMechanisms: ['global', 'project'],
-      fileFormats: ['json', 'yaml'],
+      fileFormats: ['markdown', 'json', 'yaml'],
       features: {
         streaming: true,
         multiFile: true,
@@ -364,14 +324,14 @@ export const DEFAULT_PROVIDERS: Record<ProviderType, Provider> = {
       properties: {
         outputPath: {
           type: 'string',
-          default: 'codex-config.json',
+          default: 'AGENTS.md',
         },
       },
     },
     defaultConfig: {
-      outputPath: 'codex-config.json',
+      outputPath: 'AGENTS.md',
     },
-  } as CodexAgentProvider,
+  } as CodexProvider,
 
   bolt: {
     metadata: {
