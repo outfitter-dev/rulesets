@@ -69,7 +69,7 @@ This document tracks performance metrics for the Rulesets monorepo across differ
 
 #### Linting Details
 
-- **Speed**: ~100x faster than previous ESLint setup
+- **Speed**: ~100x faster than traditional ESLint-based setups
 - **Coverage**: All JavaScript, TypeScript, and JSON files
 - **Issues**: Primarily style improvements (non-null assertions, complexity)
 
@@ -104,7 +104,7 @@ This document tracks performance metrics for the Rulesets monorepo across differ
 
 ### Linting Performance
 
-- **Previous (ESLint + Prettier)**: ~2-3 seconds
+- **Previous (Traditional ESLint + Prettier)**: ~2-3 seconds
 - **Current (Biome)**: ~28ms
 - **Improvement**: ~100x faster
 

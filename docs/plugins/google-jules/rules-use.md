@@ -50,7 +50,7 @@ This is a TypeScript React application using Next.js and Tailwind CSS.
 ## Coding Standards
 
 - Use TypeScript for all new code
-- Follow ESLint configuration in .eslintrc.js
+- Follow Biome configuration
 - Use Prettier for formatting
 - Conventional commits for Git messages
 
@@ -99,7 +99,7 @@ This is a full-stack TypeScript application with React frontend and Node.js back
 ## Coding Standards
 
 - Use TypeScript strict mode
-- Follow Airbnb ESLint configuration
+- Follow Biome configuration
 - Implement proper error handling
 - Write unit tests for business logic
 - Use meaningful variable and function names

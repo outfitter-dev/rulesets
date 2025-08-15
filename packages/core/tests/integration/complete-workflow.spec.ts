@@ -118,7 +118,7 @@ These are comprehensive rules that should be compiled for all 6 providers.
 ## Code Standards
 
 - Always use TypeScript
-- Follow ESLint rules
+- Follow Biome rules
 - Write comprehensive tests
 
 {{examples}}

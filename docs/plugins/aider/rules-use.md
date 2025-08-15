@@ -47,7 +47,7 @@ This project is a React application with a Node.js backend.
 # Coding Standards
 
 - Use functional components for all new React code
-- Follow ESLint rules in .eslintrc
+- Follow Biome configuration
 - Test all components with React Testing Library
 
 # Database Schema
@@ -98,7 +98,7 @@ A microservice-based e-commerce platform with React frontend and Node.js microse
 
 - Functional React components with hooks
 - Jest and React Testing Library for tests
-- ESLint with Airbnb config
+- Biome configuration
 ```
 
 ## Best Practices for Aider Memory

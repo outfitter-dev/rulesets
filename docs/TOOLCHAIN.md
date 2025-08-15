@@ -72,7 +72,7 @@ timeout = 10000
 
 **Key Features**:
 
-- **Ultra-fast**: 100x faster than ESLint
+- **Ultra-fast**: Faster than traditional ESLint-based toolchains
 - **All-in-one**: Combines linting + formatting in one tool
 - **ultracite preset**: Enforces consistent, high-quality standards
 - **IDE Integration**: Works with VS Code, Cursor, etc.
@@ -311,7 +311,7 @@ cd packages/parser
 bun add js-yaml
 
 # Build tool (shared across workspace)
-bun add -D eslint  # Would go to root package.json
+bun add -D @biomejs/biome  # Would go to root package.json
 
 # Package-specific types
 cd packages/parser
@@ -329,7 +329,7 @@ bun add -D @types/js-yaml
 ### Linting
 
 - **Biome**: ~28ms for entire codebase
-- **ESLint**: ~2-3 seconds for same codebase
+- **Traditional ESLint**: ~2-3 seconds for same codebase
 - **Improvement**: ~100x faster
 
 ### Testing
@@ -367,9 +367,9 @@ bun add -D @types/js-yaml
 
 ## Migration Guide
 
-### From ESLint + Prettier
+### From ESLint + Prettier (Legacy)
 
-1. **Remove**: `.eslintrc.js`, eslint dependencies
+1. **Remove**: `.eslintrc.js`, ESLint dependencies
 2. **Add**: `biome.jsonc` with ultracite preset
 3. **Update scripts**: `eslint` → `biome check`
 4. **Configure IDE**: Switch default formatter to Biome

@@ -153,7 +153,7 @@ They should be preserved exactly as-is in the output.
 ## Code Standards
 
 - Use TypeScript exclusively
-- Follow ESLint configuration
+- Follow Biome configuration
 - Write comprehensive tests
 - Document all public APIs
 

@@ -342,7 +342,7 @@ async function processOrder(orderId: OrderId): Promise<ProcessResult> {
 
 ### Tools and Libraries
 
-- **Linting**: ESLint with TypeScript rules
+- **Linting**: Biome with TypeScript rules
 - **Formatting**: Prettier with consistent configuration
 - **Testing**: Vitest for unit tests, Playwright for E2E
 - **Type Checking**: TypeScript in strict mode

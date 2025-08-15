@@ -9,7 +9,7 @@
 
 ## Code Quality
 
-- **Linting and formatting** - Use ESLint, Prettier, and Biome consistently
+- **Linting and formatting** - Use Biome for linting and formatting consistently
 - **Type safety first** - TypeScript strict mode required
 - **No console.log in production** - Use proper logging libraries
 - **Documentation inline** - JSDoc for public APIs
