@@ -149,8 +149,7 @@ Result: _Write rules once, compile destination-specific rules, zero drift._
 | `claude-code` | Claude Code        | CLI               |
 | `roo-code`    | Roo Code           | VS Code Extension |
 | `cline`       | Cline              | VS Code Extension |
-| `codex-cli`   | OpenAI Codex CLI   | CLI               |
-| `codex-agent` | OpenAI Codex Agent | Web agent         |
+| `openai-codex` | OpenAI Codex      | CLI/Web agent     |
 
 ## Getting Started
 

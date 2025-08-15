@@ -243,7 +243,7 @@ export class HandlebarsRulesetCompiler {
       'claude-code': 'Claude Code',
       'roo-code': 'Roo Code',
       cline: 'Cline',
-      'codex-cli': 'OpenAI Codex CLI',
+      'codex-cli': 'OpenAI Codex',
     };
     return displayNames[providerId] || providerId;
   }

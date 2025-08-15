@@ -26,8 +26,7 @@ Different AI tools use different file locations and naming conventions:
 | **[Cursor](./plugins/cursor/rules-use.md)**                   | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based)             | Markdown with YAML front-matter and `@filename` imports |
 | **[Windsurf](./plugins/windsurf/rules-use.md)**               | `.windsurf/rules/*.md` files (v1.9+)                                      | `~/.config/windsurf/global_rules.md` | Markdown with YAML-ish front-matter and `@path` imports |
 | **[Roo Code](./plugins/roo-code/rules-use.md)**               | `.roo/rules/` and `.roo/rules-{mode}/` folders                            | No built-in global file              | Markdown files in folders                               |
-| **[OpenAI Codex CLI](./plugins/codex-cli/rules-use.md)**      | `codex.md` in root                                                        | `~/.codex/instructions.md`           | Markdown text                                           |
-| **[OpenAI Codex AGENTS](./plugins/codex-agent/rules-use.md)** | `AGENTS.md` in root and/or subdirs                                        | `~/.codex/AGENTS.md`                 | Pure Markdown with section headings                     |
+| **[OpenAI Codex](./plugins/openai-codex/rules-use.md)**       | `AGENTS.md` in root                                                        | `~/.codex/AGENTS.md`                 | Markdown text                                           |
 | **[Cline](./plugins/cline/rules-use.md)**                     | `.clinerules` in root                                                     | None                                 | Plain text                                              |
 | **[Aider](./plugins/aider/rules-use.md)**                     | `.aider.memory.md` (manually included)                                    | None                                 | Markdown                                                |
 
@@ -57,8 +56,7 @@ project/
 │   │       └── component-style.mdc  # Component-specific coding style
 │   ├── CLAUDE.md                 # Component-specific Claude rules
 │   └── AGENTS.md                 # Component-specific Codex AGENTS rules
-├── codex.md                      # OpenAI Codex CLI - project instructions
-├── AGENTS.md                     # OpenAI Codex AGENTS - project rules file
+├── AGENTS.md                     # OpenAI Codex - project rules file
 └── README.md                     # Regular project files
 ```
 
@@ -91,7 +89,7 @@ sequenceDiagram
    - [Windsurf](./plugins/windsurf/rules-use.md): Trigger types (`always_on`, `glob`, `model_decision`, `manual`) with char limits
    - [Claude Code](./plugins/claude-code/rules-use.md): Directory-based (subdirectory CLAUDE.md files)
    - [Roo Code](./plugins/roo-code/rules-use.md): Mode-specific folders (rules-{mode}/)
-   - [OpenAI Codex AGENTS](./plugins/codex-agent/rules-use.md): Directory-based loading (upward path walking) with section merging
+   - [OpenAI Codex](./plugins/openai-codex/rules-use.md): Directory-based loading with hierarchical instructions
 3. **Format:** Most use Markdown for human-readability and structure
 4. **Import/Reference Mechanisms:**
    - [Claude Code](./plugins/claude-code/rules-use.md): Uses `@file` syntax to import content from other files
@@ -149,8 +147,7 @@ flowchart TD
     A --> C[Claude Code]
     A --> D[Windsurf]
     A --> E[Roo Code]
-    A --> F[OpenAI Codex AGENTS]
-    A --> G[OpenAI Codex CLI]
+    A --> F[OpenAI Codex]
 
     B --> B1[Always Apply]
     B --> B2[Auto-Attach by glob]
@@ -197,7 +194,7 @@ flowchart LR
     B --> E[.windsurf/rules/]
     B --> F[.roo/rules/*.md]
     B --> G[AGENTS.md]
-    B --> H[codex.md]
+    B --> H[AGENTS.md]
 
     style A fill:#bbf,stroke:#333
     style B fill:#f9f,stroke:#333
@@ -215,8 +212,7 @@ graph TB
 
     subgraph "CLI Tools"
         D[Claude Code] --- D1[Hierarchical with imports]
-        E[OpenAI Codex CLI] --- E1[Layered instructions]
-        H[OpenAI Codex AGENTS] --- H1[Section-based merging]
+        H[OpenAI Codex] --- H1[Hierarchical loading]
     end
 
     subgraph "Simple Approaches"
@@ -250,6 +246,4 @@ For detailed information about each AI tool's rules implementation, see:
 - [Claude Code Memory System](./plugins/claude-code/rules-use.md)
 - [Windsurf Rules System](./plugins/windsurf/rules-use.md)
 - [Roo Code Rules System](./plugins/roo-code/rules-use.md)
-- [OpenAI Codex AGENTS System](./plugins/codex-agent/rules-use.md)
-- [OpenAI Codex CLI System](./plugins/codex-cli/rules-use.md)
-- [Simpler Implementations](./plugins/simpler-tools/rules-use.md)
+- [OpenAI Codex System](./plugins/openai-codex/rules-use.md)
