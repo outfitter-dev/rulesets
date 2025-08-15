@@ -825,7 +825,7 @@ ${'More content sections follow. '.repeat(300)}
       }
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!'
+        'Rulesets ruleset-v0.1-beta processing completed successfully!'
       );
     });
   });

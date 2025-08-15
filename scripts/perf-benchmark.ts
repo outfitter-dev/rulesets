@@ -144,9 +144,11 @@ class PerformanceBenchmarker {
     } catch (error) {
       console.warn('Full pipeline test failed:', error);
     } finally {
-      await import('node:fs').then(fs => fs.promises.unlink(testFile)).catch(() => {
-        // Ignore cleanup errors
-      });
+      await import('node:fs')
+        .then((fs) => fs.promises.unlink(testFile))
+        .catch(() => {
+          // Ignore cleanup errors
+        });
     }
   }
 

@@ -262,7 +262,9 @@ function exampleErrorHandling() {
           category: string;
           toJSON: () => object;
         };
-        console.log(`Error: ${structuredError.code} in ${structuredError.category}`);
+        console.log(
+          `Error: ${structuredError.code} in ${structuredError.category}`
+        );
       }
     }
   }

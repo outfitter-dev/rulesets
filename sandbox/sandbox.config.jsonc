@@ -1,11 +1,11 @@
 {
   "$schema": "../packages/core/src/config/schema.json",
-  
+
   // Sandbox Configuration for Rulesets
   // This configuration is used by the sandbox environment
-  
+
   "outputDirectory": "./sandbox/output",
-  
+
   "providers": {
     "cursor": {
       "enabled": true,
@@ -28,9 +28,9 @@
       "outputPath": "./sandbox/output/codex/rules.md"
     }
   },
-  
+
   "defaultProviders": ["cursor", "claude-code"],
-  
+
   "gitignore": {
     "enabled": false,
     "options": {
@@ -38,11 +38,11 @@
       "sort": true
     }
   },
-  
+
   "logging": {
     "level": "info",
     "timestamp": true
   },
-  
+
   "strict": false
 }

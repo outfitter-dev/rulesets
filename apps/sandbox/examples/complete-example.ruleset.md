@@ -3,7 +3,7 @@ ruleset:
   version: 0.1.0
 
 title: 'Complete Rulesets Feature Demo'
-description: 'Demonstrates all Rulesets v0.1 features and syntax'
+description: 'Demonstrates all Rulesets ruleset-v0.1-beta features and syntax'
 
 # Provider-specific configuration
 providers:
@@ -32,7 +32,7 @@ category: 'examples'
 
 ## Complete Rulesets Feature Demo
 
-This example showcases all the features available in Rulesets v0.1.0.
+This example showcases all the features available in Rulesets ruleset-v0.1-beta.
 
 {{instructions}}
 

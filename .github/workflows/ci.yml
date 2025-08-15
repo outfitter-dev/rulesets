@@ -109,10 +109,10 @@ jobs:
         if: always()
         run: |
           echo "## 📊 CI Results Summary" >> $GITHUB_STEP_SUMMARY
-          
+
           # Check each step and provide detailed feedback
           FAILED=false
-          
+
           if [[ "${{ steps.lint.outcome }}" == "failure" || "${{ steps.lint.outputs.lint_failed }}" == "true" ]]; then
             echo "❌ Linting failed"
             echo "- ❌ **Linting**: Failed" >> $GITHUB_STEP_SUMMARY
@@ -121,7 +121,7 @@ jobs:
             echo "✅ Linting passed"
             echo "- ✅ **Linting**: Passed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [[ "${{ steps.typecheck.outcome }}" == "failure" || "${{ steps.typecheck.outputs.typecheck_failed }}" == "true" ]]; then
             echo "❌ Type checking failed"
             echo "- ❌ **Type Check**: Failed" >> $GITHUB_STEP_SUMMARY
@@ -130,7 +130,7 @@ jobs:
             echo "✅ Type checking passed"
             echo "- ✅ **Type Check**: Passed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [[ "${{ steps.test.outcome }}" == "failure" || "${{ steps.test.outputs.test_failed }}" == "true" ]]; then
             echo "❌ Tests failed"
             echo "- ❌ **Tests**: Failed" >> $GITHUB_STEP_SUMMARY
@@ -139,7 +139,7 @@ jobs:
             echo "✅ Tests passed"
             echo "- ✅ **Tests**: Passed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           if [[ "${{ steps.build.outcome }}" == "failure" || "${{ steps.build.outputs.build_failed }}" == "true" ]]; then
             echo "❌ Build failed"
             echo "- ❌ **Build**: Failed" >> $GITHUB_STEP_SUMMARY
@@ -148,7 +148,7 @@ jobs:
             echo "✅ Build passed"
             echo "- ✅ **Build**: Passed" >> $GITHUB_STEP_SUMMARY
           fi
-          
+
           echo "" >> $GITHUB_STEP_SUMMARY
           if [[ "$FAILED" == "true" ]]; then
             echo "💡 **Next Steps**: Check the uploaded CI logs artifact for detailed error information." >> $GITHUB_STEP_SUMMARY

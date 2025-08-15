@@ -3,23 +3,23 @@
  * Centralized settings for consistent builds across all packages
  */
 
-import type { BuildConfig } from "bun";
+import type { BuildConfig } from 'bun';
 
 /**
  * Base build configuration for all packages
  */
 export const baseBuildConfig: Partial<BuildConfig> = {
-  target: "node",
-  format: "esm",
-  sourcemap: "none",
+  target: 'node',
+  format: 'esm',
+  sourcemap: 'none',
   minify: true,
   // Use tree shaking for smaller bundles
   treeShaking: true,
   // External common dependencies to avoid bundling
   external: [
-    "bun",
-    "node:*",
-    "@rulesets/*", // Don't bundle workspace packages
+    'bun',
+    'node:*',
+    '@rulesets/*', // Don't bundle workspace packages
   ],
 };
 
@@ -29,7 +29,7 @@ export const baseBuildConfig: Partial<BuildConfig> = {
 export const devBuildConfig: Partial<BuildConfig> = {
   ...baseBuildConfig,
   minify: false,
-  sourcemap: "inline",
+  sourcemap: 'inline',
 };
 
 /**
@@ -38,7 +38,7 @@ export const devBuildConfig: Partial<BuildConfig> = {
 export const prodBuildConfig: Partial<BuildConfig> = {
   ...baseBuildConfig,
   minify: true,
-  sourcemap: "external",
+  sourcemap: 'external',
 };
 
 /**
@@ -47,25 +47,23 @@ export const prodBuildConfig: Partial<BuildConfig> = {
 export const testBuildConfig: Partial<BuildConfig> = {
   ...baseBuildConfig,
   minify: false,
-  sourcemap: "inline",
+  sourcemap: 'inline',
   // Include test utilities
-  external: [
-    ...baseBuildConfig.external!,
-    "vitest",
-    "bun:test",
-  ],
+  external: [...baseBuildConfig.external!, 'vitest', 'bun:test'],
 };
 
 /**
  * Get build configuration based on environment
  */
-export function getBuildConfig(env: "development" | "production" | "test" = "production"): Partial<BuildConfig> {
+export function getBuildConfig(
+  env: 'development' | 'production' | 'test' = 'production'
+): Partial<BuildConfig> {
   switch (env) {
-    case "development":
+    case 'development':
       return devBuildConfig;
-    case "test":
+    case 'test':
       return testBuildConfig;
-    case "production":
+    case 'production':
     default:
       return prodBuildConfig;
   }
@@ -75,17 +73,17 @@ export function getBuildConfig(env: "development" | "production" | "test" = "pro
  * Package-specific overrides
  */
 export const packageOverrides: Record<string, Partial<BuildConfig>> = {
-  "@rulesets/cli": {
+  '@rulesets/cli': {
     // CLI needs to be executable
-    platform: "node",
-    format: "esm",
+    platform: 'node',
+    format: 'esm',
   },
-  "@rulesets/core": {
+  '@rulesets/core': {
     // Core might need to bundle some dependencies
     external: [
-      "bun",
-      "node:*",
-      "handlebars", // Keep handlebars external for template flexibility
+      'bun',
+      'node:*',
+      'handlebars', // Keep handlebars external for template flexibility
     ],
   },
 };
@@ -95,11 +93,11 @@ export const packageOverrides: Record<string, Partial<BuildConfig>> = {
  */
 export function getPackageBuildConfig(
   packageName: string,
-  env: "development" | "production" | "test" = "production"
+  env: 'development' | 'production' | 'test' = 'production'
 ): Partial<BuildConfig> {
   const baseConfig = getBuildConfig(env);
   const overrides = packageOverrides[packageName] || {};
-  
+
   return {
     ...baseConfig,
     ...overrides,

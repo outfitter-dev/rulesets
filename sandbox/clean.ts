@@ -2,12 +2,12 @@
 
 /**
  * Clean Sandbox Output
- * 
+ *
  * Removes all generated files from the sandbox output directory
  * while preserving the directory structure.
  */
 
-import { rmSync, existsSync, mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
 
 const OUTPUT_DIR = './sandbox/output';
 

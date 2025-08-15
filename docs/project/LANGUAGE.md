@@ -157,9 +157,9 @@ Rulesets uses specific delimiters consistently throughout the syntax:
 
 When referring to compilation versions:
 
-- Full version format: "Rulesets v0.1.0"
+- Full version format: "Rulesets ruleset-v0.1-beta"
 - Major version format: "Rulesets v0"
-- Release candidate format: "Rulesets v0.1.0-rc1"
+- Release candidate format: "Rulesets ruleset-v0.1-beta-rc1"
 
 ## Terminology Best Practices
 

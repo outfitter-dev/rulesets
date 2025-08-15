@@ -1,9 +1,9 @@
 {
   // Sandbox Configuration for Rulesets
   // This keeps the sandbox isolated from the main project
-  
+
   "outputDirectory": "./output",
-  
+
   "providers": {
     "cursor": {
       "enabled": true,
@@ -26,9 +26,9 @@
       "outputPath": "./output/codex/rules.md"
     }
   },
-  
+
   "defaultProviders": ["cursor", "claude-code"],
-  
+
   // Sandbox-specific settings
   "gitignore": {
     "enabled": false,
@@ -37,9 +37,9 @@
       "sort": true
     }
   },
-  
+
   "strict": false,
-  
+
   "logging": {
     "level": "info"
   }

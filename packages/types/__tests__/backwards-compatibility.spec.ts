@@ -3,7 +3,15 @@
  * Ensures legacy APIs continue working while deprecated warnings are shown
  */
 
-import { afterEach, beforeEach, describe, expect, test, mock, spyOn } from 'bun:test';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  mock,
+  spyOn,
+  test,
+} from 'bun:test';
 
 // Test both legacy and modern imports to ensure compatibility
 import {

@@ -3,7 +3,15 @@
  * Following TDD principles with security, validation, and backwards compatibility focus
  */
 
-import { afterEach, beforeEach, describe, expect, test, mock, spyOn } from 'bun:test';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  mock,
+  spyOn,
+  test,
+} from 'bun:test';
 import {
   // Error class
   BrandValidationError,
@@ -1030,7 +1038,7 @@ describe('Branded Types System', () => {
       // In Bun/JavaScript, const objects are mutable but the reference is immutable
       expect(UnsafeBrands).toBeDefined();
       expect(typeof UnsafeBrands).toBe('object');
-      
+
       // Verify all expected methods exist (type safety check)
       expect(typeof UnsafeBrands.providerId).toBe('function');
       expect(typeof UnsafeBrands.sourcePath).toBe('function');

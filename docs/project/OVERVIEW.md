@@ -1,4 +1,4 @@
-# 📏 Rulesets – v0.1.0 Overview
+# 📏 Rulesets – ruleset-v0.1-beta Overview
 
 > _Write rules once, compile destination-specific rules, zero drift._
 

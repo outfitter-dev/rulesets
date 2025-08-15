@@ -1,5 +1,5 @@
-// TLDR: Main entry point and CLI orchestration for Rulesets (mixd-v0)
-// TLDR: v0.1.0 Basic orchestration for single file processing with minimal features
+// TLDR: Main entry point and CLI orchestration for Rulesets (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Basic orchestration for single file processing with minimal features
 
 import { dirname } from 'node:path';
 import { compile } from '@rulesets/compiler';
@@ -81,7 +81,7 @@ export {
 } from './providers';
 
 /**
- * Orchestrates the Rulesets v0.1.0 build process for a single file.
+ * Orchestrates the Rulesets ruleset-v0.1-beta build process for a single file.
  * Reads, parses, lints, compiles, and writes to destinations with configuration support.
  *
  * @example
@@ -93,9 +93,9 @@ export {
  *   const logger = new ConsoleLogger();
  *   try {
  *     await runRulesetsV0('./my-rules.ruleset.md', logger);
- *     logger.info('Rulesets v0.1.0 process completed.');
+ *     logger.info('Rulesets ruleset-v0.1-beta process completed.');
  *   } catch (error) {
- *     logger.error('Rulesets v0.1.0 process failed:', error);
+ *     logger.error('Rulesets ruleset-v0.1-beta process failed:', error);
  *   }
  * }
  *
@@ -473,14 +473,16 @@ async function updateGitignore(
   }
 }
 
-// TLDR: Main orchestration logic for reading, parsing, linting, compiling, and writing a Rulesets file (mixd-v0)
-// TLDR: v0.1.0 Sequential processing of parse → lint → compile → write for each destination
+// TLDR: Main orchestration logic for reading, parsing, linting, compiling, and writing a Rulesets file (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Sequential processing of parse → lint → compile → write for each destination
 export async function runRulesetsV0(
   sourceFilePath: string,
   logger: Logger = new ConsoleLogger(),
   configOverride?: Partial<RulesetConfig>
 ): Promise<void> {
-  logger.info(`Starting Rulesets v0.1.0 processing for: ${sourceFilePath}`);
+  logger.info(
+    `Starting Rulesets ruleset-v0.1-beta processing for: ${sourceFilePath}`
+  );
 
   // Step 1: Load configuration
   logger.info('Loading configuration...');
@@ -517,7 +519,7 @@ export async function runRulesetsV0(
   // Step 7: Update .gitignore with generated file paths
   await updateGitignore(allGeneratedPaths, config, logger, projectPath);
 
-  logger.info('Rulesets v0.1.0 processing completed successfully!');
+  logger.info('Rulesets ruleset-v0.1-beta processing completed successfully!');
   if (allGeneratedPaths.length > 0) {
     logger.info(
       `Generated ${allGeneratedPaths.length} files across ${destinationIds.length} destinations`
@@ -526,9 +528,9 @@ export async function runRulesetsV0(
 }
 
 // CLI entry point for testing
-// TLDR: Simple CLI wrapper for testing the orchestration logic (mixd-v0)
-// TLDR: v0.1.0 Basic CLI for development testing only
-// TODO(v0.2.0): Replace with proper CLI using commander or yargs
+// TLDR: Simple CLI wrapper for testing the orchestration logic (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Basic CLI for development testing only
+// TODO(ruleset-v0.2-beta): Replace with proper CLI using commander or yargs
 if (require.main === module) {
   const logger = new ConsoleLogger();
   const sourceFile = process.argv[2] || './my-rules.ruleset.md';
