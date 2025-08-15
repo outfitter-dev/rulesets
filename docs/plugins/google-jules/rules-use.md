@@ -116,7 +116,7 @@ This is a full-stack TypeScript application with React frontend and Node.js back
 
 1. Create feature branch from main
 2. Implement changes with tests
-3. Run `npm run build` and `npm test` before committing
+3. Run `bun run build` and `bun run test` before committing
 4. Use conventional commit messages
 5. Create PR with description and testing notes
 

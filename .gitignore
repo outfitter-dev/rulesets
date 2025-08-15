@@ -37,7 +37,6 @@ bun-debug.log*
 
 # Editor directories and files
 .idea/
-.vscode/
 *.swp
 *.swo
 
@@ -53,7 +52,9 @@ Thumbs.db
 docs_archive/
 
 # .agent
-.agent/
+!.agent/
+.agent/**/archive/
+.agent/research/
 
 # Archived/deprecated code
 .archive/

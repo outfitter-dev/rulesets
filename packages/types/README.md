@@ -104,7 +104,7 @@ function processUserInput(input: unknown) {
 
 ### Configuration Types
 
-- `FrontmatterData` - Typed frontmatter structure
+- `Front matterData` - Typed front matter structure
 - `GlobalConfig` - System-wide configuration
 - `ProjectConfig` - Project-specific settings
 - `DestinationConfig` - Destination-specific configuration
@@ -205,7 +205,7 @@ const context: CompilationContext = {
   source: {
     path: createSourcePath('./src/rules.rule.md'),
     content: createRawContent('# Rules...'),
-    frontmatter: {
+    front matter: {
       ruleset: { version: createVersion('0.1.0') },
     },
   },

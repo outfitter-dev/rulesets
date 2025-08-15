@@ -6,7 +6,7 @@ Rulesets simplifies rules management for tools like Cursor, Claude Code, Codex, 
 
 ## What is Rulesets?
 
-If you're reading this, you're probably already familiar with at least one of the AI coding tools that Rulesets is [designed to work with](#supported-providers). Each tool has its own unique way of being provided context, guidance, and operational instructions for your projects e.g. Cursor's rules (`.cursor/rules`), OpenAI Codex instructions (`codex.md`), Claude Code's instructions (`CLAUDE.md`), etc.
+If you're reading this, you're probably already familiar with at least one of the AI coding tools that Rulesets is [designed to work with](#supported-providers). Each tool has its own unique way of being provided context, guidance, and operational instructions for your projects e.g. Cursor's rules (`.cursor/rules`), OpenAI Codex instructions (`AGENTS.md`), Claude Code's instructions (`CLAUDE.md`), etc.
 
 The problem is, they all have different formats, behavior, and capabilities, which can become a huge pain to manage. This can be frustrating, and might even lead you to just sticking to one tool. But that's no fun, and you'll be missing out on all the awesome capabilities and differences each tool has to offer! That's where Rulesets comes in…
 
@@ -27,7 +27,7 @@ The app consists of:
 1. A Node.js app with a compiler (featuring a plugin architecture for different tools), an API, CLI, and Model Context Protocol implementation for managing prompts and instructions.
 2. A CommonMark-compliant markup specification for creating effective and reusable rules, processed by the compiler to generate destination-specific rules files.
 
-Result: _author once, distribute everywhere, zero drift._
+Result: *author once, distribute everywhere, zero drift.*
 
 ## What's with the name?
 
@@ -48,7 +48,7 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 : A reference to another source rules file, block, partial, or template (`{{> my-rule}}`). Embeds content from another source.
 
 **Variable**
-: Dynamic value replaced inline at compile time (e.g., `{{$key}}` for aliases, `{{$.frontmatter.key}}` for frontmatter data, `{{$provider}}` for the current provider name).
+: Dynamic value replaced inline at compile time (e.g., `{{$key}}` for aliases, `{{$.front matter.key}}` for front matter data, `{{$provider}}` for the current provider name).
 
 **Notation Marker**
 : Element using `{{...}}` notation, used throughout Rulesets to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
@@ -74,7 +74,7 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 | `openai-codex` | [OpenAI Codex](https://github.com/openai/codex)                                         | CLI         | 🔵 Planned     |
 | `windsurf`     | [Windsurf](https://windsurf.dev/)                                                       | IDE         | 🟡 In Progress |
 
-_Want a new provider? Implement `RulesetProvider` and publish `@rulesets/plugin-<your-tool>`. See existing plugin examples and general development guidelines._
+*Want a new provider? Implement `RulesetProvider` and publish `@rulesets/plugin-<your-tool>`. See existing plugin examples and general development guidelines.*
 
 ## Key Features
 
@@ -82,7 +82,7 @@ _Want a new provider? Implement `RulesetProvider` and publish `@rulesets/plugin-
 
 - **100% Preview-able Markdown** – Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
 - **Granular Blocks** – Filter blocks within a single source rules file for per-provider inclusion/exclusion.
-- **Build-time Variables** – Aliases and frontmatter data injection.
+- **Build-time Variables** – Aliases and front matter data injection.
 
 ### Compiler & Integration
 
@@ -160,7 +160,7 @@ main();
 
 The current v0 release provides foundational functionality:
 
-- ✅ Frontmatter parsing and validation
+- ✅ Front matter parsing and validation
 - ✅ Basic file compilation and writing
 - ✅ Destination plugin architecture
 - ❌ Rulesets syntax markers (`{{...}}`) are not processed (passed through as-is)
@@ -182,6 +182,20 @@ project/
 └── package.json
 ```
 
+## Developer Scripts
+
+Common development scripts at the repo root:
+
+- Install deps: `bun install`
+- Build all: `bun run build` (or `bun run build:clean` first)
+- Dev mode: `bun run dev` (Turbo)
+- Test suite: `bun run test` | watch: `bun run test:watch` | coverage: `bun run test:coverage`
+- Typecheck: `bun run typecheck` | watch: `bun run typecheck:watch` | turbo: `bun run typecheck:turbo`
+- Lint: `bun run lint` | fix: `bun run lint:fix`
+- Format prose: `bun run format` | check: `bun run format:check`
+- Update lockfile: `bun run lockfile:update`
+- Git hooks: `bun run pre:commit` | `bun run pre:push` (installed via `prepare`)
+
 ## Notation Cheatsheet
 
 | Token / Feature             | Example                                                    | Notes                                             |
@@ -193,7 +207,7 @@ project/
 | **Internal Link**           | `[Read more](rules.md)`                                    | Standard Markdown links.                          |
 | **Project File Link**       | `@path/to/file.txt` or `@path/to/file.txt("Custom Title")` | Links to project files, optionally with an alias. |
 | **Alias Variable**          | `{{$project}}`                                             | Resolved via `aliases` in config.                 |
-| **Data Variable**           | `{{$.key}}`                                                | Injects YAML frontmatter data.                    |
+| **Data Variable**           | `{{$.key}}`                                                | Injects YAML front matter data.                    |
 | **Provider Variable**       | `{{$provider}}` / `{{$provider.id}}`                       | Injects current provider name/ID.                 |
 | **Instruction Placeholder** | `[fill this in]`                                           | Marker for LLM to complete.                       |
 

@@ -6,7 +6,7 @@
 
 ## Overview
 
-Rulesets is a compiler that transforms _source rules_ files into destination-specific rules files for various AI tools & coding agents. It follows the "write once, compile for many destinations" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
+Rulesets is a compiler that transforms *source rules* files into destination-specific rules files for various AI tools & coding agents. It follows the "write once, compile for many destinations" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
 
 The compiler processes multiple source files simultaneously and can output to multiple destinations in a single compilation run, ensuring that all source rules files are consistently applied across all enabled destinations.
 
@@ -113,7 +113,7 @@ rulesets/
                          |
                          v
 +------------+  +-------------+  +------------+
-| Frontmatter|->|  Process    |<-| Variables  |
+| Front matter|->|  Process    |<-| Variables  |
 +------------+  |  Directives |  +------------+
                 +------+------+
                          |

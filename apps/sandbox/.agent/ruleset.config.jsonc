@@ -1,10 +1,10 @@
 {
   // Sandbox Ruleset Configuration
   // This demonstrates a realistic project setup
-  
+
   "sourceDirectory": "./src",
   "outputDirectory": "../",
-  
+
   "providers": {
     "cursor": {
       "enabled": true,
@@ -15,21 +15,21 @@
       "outputPath": "./CLAUDE.md"
     },
     "windsurf": {
-      "enabled": true, 
+      "enabled": true,
       "outputPath": "./.windsurf/rules.md"
     },
     "amp": {
       "enabled": true,
-      "outputPath": "./AMP.md"
+      "outputPath": "./AGENT.md"
     },
     "codex": {
       "enabled": true,
-      "outputPath": "./CODEX.md"
+      "outputPath": "./AGENTS.md"
     }
   },
-  
+
   "defaultProviders": ["cursor", "claude-code"],
-  
+
   // Realistic project settings
   "gitignore": {
     "enabled": true,
@@ -38,9 +38,9 @@
       "sort": true
     }
   },
-  
+
   "strict": true,
-  
+
   "logging": {
     "level": "info"
   }

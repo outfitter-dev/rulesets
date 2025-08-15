@@ -20,15 +20,15 @@ flowchart TD
 
 Different AI tools use different file locations and naming conventions:
 
-| Tool                                                          | Project Rules                                                             | Global/User Rules                    | Format                                                  |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------- |
-| **[Claude Code](./plugins/claude-code/rules-use.md)**         | `CLAUDE.md` in root and/or subdirs                                        | `~/.claude/CLAUDE.md`                | Markdown with `@file` imports                           |
-| **[Cursor](./plugins/cursor/rules-use.md)**                   | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based)             | Markdown with YAML front-matter and `@filename` imports |
-| **[Windsurf](./plugins/windsurf/rules-use.md)**               | `.windsurf/rules/*.md` files (v1.9+)                                      | `~/.config/windsurf/global_rules.md` | Markdown with YAML-ish front-matter and `@path` imports |
-| **[Roo Code](./plugins/roo-code/rules-use.md)**               | `.roo/rules/` and `.roo/rules-{mode}/` folders                            | No built-in global file              | Markdown files in folders                               |
-| **[OpenAI Codex](./plugins/openai-codex/rules-use.md)**       | `AGENTS.md` in root                                                        | `~/.codex/AGENTS.md`                 | Markdown text                                           |
-| **[Cline](./plugins/cline/rules-use.md)**                     | `.clinerules` in root                                                     | None                                 | Plain text                                              |
-| **[Aider](./plugins/aider/rules-use.md)**                     | `.aider.memory.md` (manually included)                                    | None                                 | Markdown                                                |
+| Tool                                                    | Project Rules                                                             | Global/User Rules                    | Format                                                  |
+| ------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------ | ------------------------------------------------------- |
+| **[Claude Code](./plugins/claude-code/rules-use.md)**   | `CLAUDE.md` in root and/or subdirs                                        | `~/.claude/CLAUDE.md`                | Markdown with `@file` imports                           |
+| **[Cursor](./plugins/cursor/rules-use.md)**             | `.cursor/rules/*.mdc` files + nested `.cursor/rules/` in subdirs (v0.50+) | User settings (UI-based)             | Markdown with YAML front-matter and `@filename` imports |
+| **[Windsurf](./plugins/windsurf/rules-use.md)**         | `.windsurf/rules/*.md` files (v1.9+)                                      | `~/.config/windsurf/global_rules.md` | Markdown with YAML-ish front-matter and `@path` imports |
+| **[Roo Code](./plugins/roo-code/rules-use.md)**         | `.roo/rules/` and `.roo/rules-{mode}/` folders                            | No built-in global file              | Markdown files in folders                               |
+| **[OpenAI Codex](./plugins/openai-codex/rules-use.md)** | `AGENTS.md` in root                                                       | `~/.codex/AGENTS.md`                 | Markdown text                                           |
+| **[Cline](./plugins/cline/rules-use.md)**               | `.clinerules` in root                                                     | None                                 | Plain text                                              |
+| **[Aider](./plugins/aider/rules-use.md)**               | `.aider.memory.md` (manually included)                                    | None                                 | Markdown                                                |
 
 ## Directory Structure Comparison
 
