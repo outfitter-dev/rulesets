@@ -2,9 +2,9 @@
  * Integration tests for the complete configuration system
  */
 
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { loadConfig } from '../config-loader';
 
 describe('Configuration System Integration', () => {
@@ -15,7 +15,10 @@ describe('Configuration System Integration', () => {
   beforeEach(async () => {
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 8);
-    tempDir = join(tmpdir(), `rulesets-config-integration-test-${timestamp}-${random}`);
+    tempDir = join(
+      tmpdir(),
+      `rulesets-config-integration-test-${timestamp}-${random}`
+    );
     projectDir = join(tempDir, 'project');
     subProjectDir = join(projectDir, 'subproject');
 
@@ -79,10 +82,7 @@ describe('Configuration System Integration', () => {
         }
       }`;
 
-      await Bun.write(
-        join(projectDir, 'ruleset.config.jsonc'),
-        projectConfig
-      );
+      await Bun.write(join(projectDir, 'ruleset.config.jsonc'), projectConfig);
 
       const result = await loadConfig(subProjectDir);
 
@@ -147,10 +147,7 @@ describe('Configuration System Integration', () => {
       format = "markdown"
       `;
 
-      await Bun.write(
-        join(projectDir, 'ruleset.config.toml'),
-        projectConfig
-      );
+      await Bun.write(join(projectDir, 'ruleset.config.toml'), projectConfig);
 
       const result = await loadConfig(subProjectDir);
 
@@ -187,10 +184,7 @@ describe('Configuration System Integration', () => {
         }
       }`;
 
-      await Bun.write(
-        join(projectDir, 'ruleset.config.jsonc'),
-        projectConfig
-      );
+      await Bun.write(join(projectDir, 'ruleset.config.jsonc'), projectConfig);
 
       const result = await loadConfig(subProjectDir);
 
@@ -254,10 +248,7 @@ describe('Configuration System Integration', () => {
         "defaultProviders": []
       }`;
 
-      await Bun.write(
-        join(projectDir, 'ruleset.config.jsonc'),
-        invalidConfig
-      );
+      await Bun.write(join(projectDir, 'ruleset.config.jsonc'), invalidConfig);
 
       const result = await loadConfig(projectDir);
 
@@ -336,10 +327,7 @@ describe('Configuration System Integration', () => {
         }
       }`;
 
-      await Bun.write(
-        join(projectDir, 'ruleset.config.jsonc'),
-        projectConfig
-      );
+      await Bun.write(join(projectDir, 'ruleset.config.jsonc'), projectConfig);
 
       const result = await loadConfig(subProjectDir);
 

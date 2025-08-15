@@ -51,8 +51,16 @@ class ReadOnlyProviderMap implements ReadonlyMap<string, Provider> {
     return this._map.entries() as MapIterator<[string, Provider]>;
   }
 
-  forEach(callbackfn: (value: Provider, key: string, map: ReadonlyMap<string, Provider>) => void): void {
-    this._map.forEach((value, key) => callbackfn(value, key, this as ReadonlyMap<string, Provider>));
+  forEach(
+    callbackfn: (
+      value: Provider,
+      key: string,
+      map: ReadonlyMap<string, Provider>
+    ) => void
+  ): void {
+    this._map.forEach((value, key) =>
+      callbackfn(value, key, this as ReadonlyMap<string, Provider>)
+    );
   }
 
   [Symbol.iterator](): MapIterator<[string, Provider]> {
@@ -60,14 +68,16 @@ class ReadOnlyProviderMap implements ReadonlyMap<string, Provider> {
   }
 }
 
-export const providers: ReadonlyMap<string, Provider> = new ReadOnlyProviderMap([
-  ['cursor', cursorProvider],
-  ['windsurf', windsurfProvider],
-  ['claude-code', claudeCodeProvider],
-  ['codex-cli', codexProvider],
-  ['amp', ampProvider],
-  ['opencode', openCodeProvider],
-]);
+export const providers: ReadonlyMap<string, Provider> = new ReadOnlyProviderMap(
+  [
+    ['cursor', cursorProvider],
+    ['windsurf', windsurfProvider],
+    ['claude-code', claudeCodeProvider],
+    ['codex-cli', codexProvider],
+    ['amp', ampProvider],
+    ['opencode', openCodeProvider],
+  ]
+);
 
 // Provider lookup utilities for modern code
 export function getProvider(id: string): Provider | undefined {
@@ -115,23 +125,34 @@ class ReadOnlyDestinationMap implements ReadonlyMap<string, DestinationPlugin> {
     return this._map.entries() as MapIterator<[string, DestinationPlugin]>;
   }
 
-  forEach(callbackfn: (value: DestinationPlugin, key: string, map: ReadonlyMap<string, DestinationPlugin>) => void): void {
-    this._map.forEach((value, key) => callbackfn(value, key, this as ReadonlyMap<string, DestinationPlugin>));
+  forEach(
+    callbackfn: (
+      value: DestinationPlugin,
+      key: string,
+      map: ReadonlyMap<string, DestinationPlugin>
+    ) => void
+  ): void {
+    this._map.forEach((value, key) =>
+      callbackfn(value, key, this as ReadonlyMap<string, DestinationPlugin>)
+    );
   }
 
   [Symbol.iterator](): MapIterator<[string, DestinationPlugin]> {
-    return this._map[Symbol.iterator]() as MapIterator<[string, DestinationPlugin]>;
+    return this._map[Symbol.iterator]() as MapIterator<
+      [string, DestinationPlugin]
+    >;
   }
 }
 
-export const destinations: ReadonlyMap<string, DestinationPlugin> = new ReadOnlyDestinationMap([
-  ['cursor', cursorProvider as unknown as DestinationPlugin],
-  ['windsurf', windsurfProvider as unknown as DestinationPlugin],
-  ['claude-code', claudeCodeProvider as unknown as DestinationPlugin],
-  ['codex-cli', codexProvider as unknown as DestinationPlugin],
-  ['amp', ampProvider as unknown as DestinationPlugin],
-  ['opencode', openCodeProvider as unknown as DestinationPlugin],
-]);
+export const destinations: ReadonlyMap<string, DestinationPlugin> =
+  new ReadOnlyDestinationMap([
+    ['cursor', cursorProvider as unknown as DestinationPlugin],
+    ['windsurf', windsurfProvider as unknown as DestinationPlugin],
+    ['claude-code', claudeCodeProvider as unknown as DestinationPlugin],
+    ['codex-cli', codexProvider as unknown as DestinationPlugin],
+    ['amp', ampProvider as unknown as DestinationPlugin],
+    ['opencode', openCodeProvider as unknown as DestinationPlugin],
+  ]);
 
 // Legacy aliases for backwards compatibility
 // @deprecated - Use provider functions instead. Will be removed in v1.0

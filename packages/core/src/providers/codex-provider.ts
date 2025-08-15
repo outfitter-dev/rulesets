@@ -308,7 +308,10 @@ export class CodexProvider implements Provider, DestinationPlugin {
     if (config.mcpConfig && typeof config.mcpConfig === 'object') {
       const mcpConfig = config.mcpConfig as {
         enabled?: boolean;
-        servers?: Record<string, { command?: string; args?: string[]; env?: Record<string, string> }>;
+        servers?: Record<
+          string,
+          { command?: string; args?: string[]; env?: Record<string, string> }
+        >;
       };
       if (mcpConfig.enabled && mcpConfig.servers) {
         return await this.writeMcpTomlConfig(mcpConfig, config, logger);
@@ -383,7 +386,9 @@ export class CodexProvider implements Provider, DestinationPlugin {
 
       // Ensure the directory exists
       const mcpDir = dirname(resolvedMcpPath);
-      await import('node:fs').then(fs => fs.promises.mkdir(mcpDir, { recursive: true }));
+      await import('node:fs').then((fs) =>
+        fs.promises.mkdir(mcpDir, { recursive: true })
+      );
 
       // Generate TOML content for MCP configuration
       const tomlContent = this.generateMcpToml(mcpConfig.servers || {});

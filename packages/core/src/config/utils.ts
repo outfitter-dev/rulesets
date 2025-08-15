@@ -13,10 +13,11 @@ import type {
   RulesetConfig,
 } from './types';
 import {
-  createConfigFilePath,
+  CONFIG_FILE_NAMES,
   createConfigDirectoryPath,
+  createConfigFilePath,
+  DEFAULT_LOAD_OPTIONS,
 } from './types';
-import { CONFIG_FILE_NAMES, DEFAULT_LOAD_OPTIONS } from './types';
 
 const logger = getChildLogger('config');
 
@@ -298,10 +299,7 @@ function mergeGitignore(result: any, config: RulesetConfig): void {
 /**
  * Merge global options
  */
-function mergeGlobalOptions(
-  result: any,
-  config: RulesetConfig
-): void {
+function mergeGlobalOptions(result: any, config: RulesetConfig): void {
   if (!config.options) {
     return;
   }

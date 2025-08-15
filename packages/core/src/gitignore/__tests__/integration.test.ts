@@ -3,9 +3,10 @@
  * Uses real temporary files instead of mocking for better integration testing
  */
 
+import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
+import { mkdir } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { runRulesetsV0 } from '../../index';
 import { ConsoleLogger } from '../../logger';
 
@@ -26,10 +27,10 @@ describe('GitignoreManager Integration', () => {
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 8);
     tempDir = join(tmpdir(), `rulesets-test-${timestamp}-${random}`);
-    await Bun.file(tempDir).exists() || await Bun.spawn(['mkdir', '-p', tempDir]).exited;
+    await mkdir(tempDir, { recursive: true });
     sourceFilePath = join(tempDir, 'my-rules.ruleset.md');
     logger = new ConsoleLogger();
-    
+
     // Suppress logger output during tests
     logger.debug = () => {};
     logger.info = () => {};

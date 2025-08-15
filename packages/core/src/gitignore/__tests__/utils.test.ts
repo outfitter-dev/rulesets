@@ -39,9 +39,9 @@ describe('normalizeGitignorePath', () => {
   });
 
   it('should handle complex paths', () => {
-    expect(normalizeGitignorePath('/test/base/./src/../dist/file.js', base)).toBe(
-      'dist/file.js'
-    );
+    expect(
+      normalizeGitignorePath('/test/base/./src/../dist/file.js', base)
+    ).toBe('dist/file.js');
   });
 });
 

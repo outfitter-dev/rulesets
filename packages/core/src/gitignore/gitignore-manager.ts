@@ -55,9 +55,10 @@ export class GitignoreManager implements IGitignoreManager {
     // Create managed block config with custom prefix if provided
     this.managedBlockConfig = {
       ...DEFAULT_MANAGED_BLOCK_CONFIG,
-      startComment: `# START Rulesets Generated Files`,
-      endComment: `# END Rulesets Generated Files`,
-      headerText: this.config.options?.comment || DEFAULT_MANAGED_BLOCK_CONFIG.headerText,
+      startComment: '# START Rulesets Generated Files',
+      endComment: '# END Rulesets Generated Files',
+      headerText:
+        this.config.options?.comment || DEFAULT_MANAGED_BLOCK_CONFIG.headerText,
     };
   }
 
@@ -114,9 +115,13 @@ export class GitignoreManager implements IGitignoreManager {
 
       // Include patterns from .rulesetignore and config
       const forcedIgnorePatterns = [...overrides.ignore, ...overrides.config];
-      
+
       // Combine existing managed paths with new paths and forced patterns
-      let allManagedPaths = [...state.managedPaths, ...pathsToAdd, ...forcedIgnorePatterns];
+      let allManagedPaths = [
+        ...state.managedPaths,
+        ...pathsToAdd,
+        ...forcedIgnorePatterns,
+      ];
       if (this.config.options?.sort !== false) {
         allManagedPaths = sortAndDedupePaths(allManagedPaths);
       } else {
@@ -196,9 +201,7 @@ export class GitignoreManager implements IGitignoreManager {
     // Add configuration-based overrides
     if (this.config.keep) {
       keep.push(
-        ...this.config.keep.map((p) =>
-          normalizeGitignorePath(p, this.basePath)
-        )
+        ...this.config.keep.map((p) => normalizeGitignorePath(p, this.basePath))
       );
     }
     if (this.config.ignore) {

@@ -157,7 +157,8 @@ export class WindsurfProvider implements Provider, DestinationPlugin {
       destPath;
 
     // Security: Validate and sanitize the path to prevent directory traversal
-    const baseDir = typeof config.baseDir === 'string' ? config.baseDir : process.cwd();
+    const baseDir =
+      typeof config.baseDir === 'string' ? config.baseDir : process.cwd();
     const resolvedPath = this.sanitizePath(outputPath, baseDir);
 
     logger.info(`Writing Windsurf rules to: ${resolvedPath}`);
@@ -165,7 +166,9 @@ export class WindsurfProvider implements Provider, DestinationPlugin {
     // Ensure directory exists (Bun supports Node.js fs.mkdir)
     const dir = dirname(resolvedPath);
     try {
-      await import('node:fs').then(fs => fs.promises.mkdir(dir, { recursive: true }));
+      await import('node:fs').then((fs) =>
+        fs.promises.mkdir(dir, { recursive: true })
+      );
     } catch (error) {
       logger.error(`Failed to create directory: ${dir}`, error);
       throw error;

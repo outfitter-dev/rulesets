@@ -245,7 +245,10 @@ export class ClaudeCodeProvider implements Provider, DestinationPlugin {
       if (config.mcpConfig && typeof config.mcpConfig === 'object') {
         const mcpConfig = config.mcpConfig as {
           enabled?: boolean;
-          servers?: Record<string, { command?: string; args?: string[]; env?: Record<string, string> }>;
+          servers?: Record<
+            string,
+            { command?: string; args?: string[]; env?: Record<string, string> }
+          >;
         };
         if (mcpConfig.enabled && mcpConfig.servers) {
           const mcpPath = await this.writeMcpConfig(mcpConfig, logger);

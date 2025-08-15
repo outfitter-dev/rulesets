@@ -1,9 +1,9 @@
 // TLDR: Defines the DestinationPlugin interface for Rulesets (mixd-v0)
 // TLDR: v0.1.0 Basic plugin contract for writing compiled rules to destinations
-import type { CompiledDoc } from './compiled-doc';
-import type { Logger } from './logger';
 
 import type { JSONSchema7 } from 'json-schema';
+import type { CompiledDoc } from './compiled-doc';
+import type { Logger } from './logger';
 
 export type { JSONSchema7 }; // Re-export for convenience
 

@@ -1,12 +1,20 @@
 // TLDR: Unit tests for the Codex provider (Rulesets v1)
 
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from 'bun:test';
 import { dirname, join, resolve } from 'node:path';
 import type {
   CompiledDoc,
   Logger,
   ProviderCompilationContext,
 } from '@rulesets/types';
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import { CodexProvider } from '../codex-provider';
 
 // Mock fs and Bun API using Bun's mock API
@@ -44,10 +52,10 @@ describe('CodexProvider', () => {
     mockWriteFile.mockClear();
     mockMkdir.mockClear();
     mockBunWrite.mockClear();
-    
+
     // Set up mock return values
     mockBunWrite.mockResolvedValue(10);
-    
+
     // Mock Bun.write using spyOn
     spyOn(Bun, 'write').mockImplementation(mockBunWrite);
   });

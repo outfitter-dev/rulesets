@@ -1,6 +1,14 @@
 // TLDR: Unit tests for the Cursor provider (Rulesets v0)
 
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  mock,
+  spyOn,
+} from 'bun:test';
 import path from 'node:path';
 import type { CompiledDoc, Logger } from '@rulesets/types';
 import { createCompiledContent } from '@rulesets/types';
@@ -97,7 +105,9 @@ describe('CursorProvider', () => {
         warnings: [],
       },
       output: {
-        content: createCompiledContent('# Test Content\n\nThis is test content.'),
+        content: createCompiledContent(
+          '# Test Content\n\nThis is test content.'
+        ),
         format: 'markdown',
         metadata: { priority: 'high' },
       },
@@ -131,7 +141,7 @@ describe('CursorProvider', () => {
       expect(mockLogger.info).toHaveBeenCalledWith(
         `Successfully wrote Cursor rules to: ${resolvedPath}`
       );
-      
+
       // Check return value
       expect(result.generatedPaths).toEqual([resolvedPath]);
       expect(result.metadata.provider).toBe('cursor');
@@ -176,7 +186,7 @@ describe('CursorProvider', () => {
     it('should handle mkdir errors', async () => {
       const destPath = '.cursor/rules/test.mdc';
       const error = new Error('Permission denied');
-      
+
       // Mock mkdir to reject
       mockMkdir.mockRejectedValueOnce(error);
 
@@ -198,7 +208,7 @@ describe('CursorProvider', () => {
     it('should handle writeFile errors', async () => {
       const destPath = '.cursor/rules/test.mdc';
       const error = new Error('Disk full');
-      
+
       // Mock Bun.write to reject
       mockBunWrite.mockRejectedValueOnce(error);
 

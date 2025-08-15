@@ -328,7 +328,9 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
 
       // Ensure the directory exists
       const localDir = dirname(resolvedLocalPath);
-      await import('node:fs').then(fs => fs.promises.mkdir(localDir, { recursive: true }));
+      await import('node:fs').then((fs) =>
+        fs.promises.mkdir(localDir, { recursive: true })
+      );
 
       await Bun.write(resolvedLocalPath, jsonContent);
 
@@ -346,7 +348,9 @@ export class OpenCodeProvider implements Provider, DestinationPlugin {
 
         // Ensure the global directory exists
         const globalDir = dirname(globalMcpPath);
-        await import('node:fs').then(fs => fs.promises.mkdir(globalDir, { recursive: true }));
+        await import('node:fs').then((fs) =>
+          fs.promises.mkdir(globalDir, { recursive: true })
+        );
 
         await Bun.write(globalMcpPath, jsonContent);
 

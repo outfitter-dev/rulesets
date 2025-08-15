@@ -5,9 +5,6 @@
  * Validates JSONC and TOML support, environment overrides, and config inheritance.
  */
 
-import { promises as fs } from 'node:fs';
-import { tmpdir } from 'node:os';
-import path from 'node:path';
 import {
   afterAll,
   afterEach,
@@ -19,6 +16,9 @@ import {
   mock,
   spyOn,
 } from 'bun:test';
+import { promises as fs } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import {
   ConsoleLogger,
   DEFAULT_CONFIG,
@@ -519,194 +519,192 @@ invalid-key-format = value  # Invalid key format
       const _originalGetGlobalConfigDir =
         require('../../src/config/utils').getGlobalConfigDir;
       // vi.doMock('../../src/config/utils', () => ({ // TODO: Implement Bun module mocking
-        ...require('../../src/config/utils'),
+      ...require('../../src/config/utils'),
         getGlobalConfigDir: () => globalConfigDir,
-      }));
-
-      const result = await loadConfig(testProjectDir, {}, mockLogger);
-
-      expect(result.success).toBe(true);
-
-      // Should use global version (required field)
-      expect(result.config.rulesets.version).toBe('0.1.0');
-
-      // Should use project outputDirectory (overrides global)
-      expect(result.config.outputDirectory).toBe('.project/output');
-
-      // Providers should be merged
-      expect(result.config.providers?.cursor?.enabled).toBe(true); // From global
-      expect(result.config.providers?.cursor?.outputPath).toBe(
-        '.cursor/project.mdc'
-      ); // From project
-      expect(result.config.providers?.windsurf?.enabled).toBe(true); // From global
-      expect(result.config.providers?.windsurf?.outputPath).toBe(
-        '.windsurf/global.md'
-      ); // From global
-      expect(result.config.providers?.['claude-code']?.enabled).toBe(true); // From project
-      expect(result.config.providers?.['claude-code']?.outputPath).toBe(
-        '.claude/project.md'
-      ); // From project
-      expect(result.config.providers?.amp?.enabled).toBe(true); // From project
-
-      // Gitignore should be merged
-      expect(result.config.gitignore?.enabled).toBe(true); // From global
-      expect(result.config.gitignore?.keep).toEqual(['.project/**']); // From project (array replacement)
-      expect(result.config.gitignore?.options?.comment).toBe('Project Files'); // From project
-      expect(result.config.gitignore?.options?.sort).toBe(true); // From global
-
-      expect(result.sources).toHaveLength(2);
-      expect(result.sources).toContain(projectConfigPath);
-      expect(result.sources).toContain(globalConfigPath);
-
-      // Restore original function
-      // vi.unmock('../../src/config/utils'); // TODO: Implement Bun module mocking
     });
+    )
 
-    it('should handle configuration validation across merged configs', async () => {
-      // Create base config with valid structure
-      const baseConfig = {
-        rulesets: { version: '0.1.0' },
-        providers: {
-          cursor: { enabled: true },
-        },
-      };
+    const result = await loadConfig(testProjectDir, {}, mockLogger);
 
-      const baseConfigPath = path.join(testProjectDir, 'base.config.jsonc');
-      await fs.writeFile(baseConfigPath, JSON.stringify(baseConfig, null, 2));
+    expect(result.success).toBe(true);
 
-      // Create override config with invalid values
-      const overrideConfig = {
-        outputDirectory: 123, // Invalid type
-        providers: {
-          'invalid-provider': { enabled: true }, // Unknown provider
-        },
-        gitignore: {
-          enabled: 'not-boolean', // Invalid type
-        },
-      };
+    // Should use global version (required field)
+    expect(result.config.rulesets.version).toBe('0.1.0');
 
-      const overrideConfigPath = path.join(
-        testProjectDir,
-        'override.config.jsonc'
-      );
-      await fs.writeFile(
-        overrideConfigPath,
-        JSON.stringify(overrideConfig, null, 2)
-      );
+    // Should use project outputDirectory (overrides global)
+    expect(result.config.outputDirectory).toBe('.project/output');
 
-      // Parse configs individually
-      const baseResult = parseConfigContent(
-        JSON.stringify(baseConfig),
-        'jsonc'
-      );
-      const overrideResult = parseConfigContent(
-        JSON.stringify(overrideConfig),
-        'jsonc'
-      );
+    // Providers should be merged
+    expect(result.config.providers?.cursor?.enabled).toBe(true); // From global
+    expect(result.config.providers?.cursor?.outputPath).toBe(
+      '.cursor/project.mdc'
+    ); // From project
+    expect(result.config.providers?.windsurf?.enabled).toBe(true); // From global
+    expect(result.config.providers?.windsurf?.outputPath).toBe(
+      '.windsurf/global.md'
+    ); // From global
+    expect(result.config.providers?.['claude-code']?.enabled).toBe(true); // From project
+    expect(result.config.providers?.['claude-code']?.outputPath).toBe(
+      '.claude/project.md'
+    ); // From project
+    expect(result.config.providers?.amp?.enabled).toBe(true); // From project
 
-      expect(baseResult.success).toBe(true);
-      expect(overrideResult.success).toBe(true);
+    // Gitignore should be merged
+    expect(result.config.gitignore?.enabled).toBe(true); // From global
+    expect(result.config.gitignore?.keep).toEqual(['.project/**']); // From project (array replacement)
+    expect(result.config.gitignore?.options?.comment).toBe('Project Files'); // From project
+    expect(result.config.gitignore?.options?.sort).toBe(true); // From global
 
-      // Merge configs
-      const merged = mergeConfigs([baseResult.config!, overrideResult.config!]);
+    expect(result.sources).toHaveLength(2);
+    expect(result.sources).toContain(projectConfigPath);
+    expect(result.sources).toContain(globalConfigPath);
 
-      // Validate merged config
-      const validation = validateConfig(merged);
-
-      expect(validation.isValid).toBe(false);
-      expect(validation.errors.length).toBeGreaterThan(0);
-
-      const errorText = validation.errors.join(' ');
-      expect(errorText).toMatch(/outputDirectory.*type/);
-      expect(errorText).toContain('invalid-provider');
-      expect(errorText).toMatch(/gitignore.*enabled.*type/);
-    });
+    // Restore original function
+    // vi.unmock('../../src/config/utils'); // TODO: Implement Bun module mocking
   });
 
-  describe('Configuration Validation', () => {
-    it('should validate provider configurations comprehensively', async () => {
-      const config: RulesetConfig = {
-        rulesets: { version: '0.1.0' },
-        providers: {
-          cursor: {
-            enabled: true,
-            outputPath: '.cursor/test.mdc',
-            // Add provider-specific valid properties
-          },
-          windsurf: {
-            enabled: false,
-            outputPath: '.windsurf/test.md',
-          },
-          'claude-code': {
-            enabled: true,
-            // Missing outputPath is valid (uses default)
-          },
-          'invalid-provider': {
-            enabled: true,
-          },
-        },
-      };
+  it('should handle configuration validation across merged configs', async () => {
+    // Create base config with valid structure
+    const baseConfig = {
+      rulesets: { version: '0.1.0' },
+      providers: {
+        cursor: { enabled: true },
+      },
+    };
 
-      const validation = validateConfig(config);
+    const baseConfigPath = path.join(testProjectDir, 'base.config.jsonc');
+    await fs.writeFile(baseConfigPath, JSON.stringify(baseConfig, null, 2));
 
-      expect(validation.isValid).toBe(false);
-      expect(validation.errors).toContain(
-        expect.stringMatching(/invalid-provider.*not.*supported/)
-      );
-    });
+    // Create override config with invalid values
+    const overrideConfig = {
+      outputDirectory: 123, // Invalid type
+      providers: {
+        'invalid-provider': { enabled: true }, // Unknown provider
+      },
+      gitignore: {
+        enabled: 'not-boolean', // Invalid type
+      },
+    };
 
-    it('should validate gitignore configuration thoroughly', async () => {
-      const config: RulesetConfig = {
-        rulesets: { version: '0.1.0' },
-        gitignore: {
-          enabled: true,
-          keep: ['.valid/**', 'invalid-pattern-without-glob'],
-          ignore: ['.temp/**'],
-          options: {
-            comment: '', // Empty comment
-            sort: true,
-          },
-        },
-      };
+    const overrideConfigPath = path.join(
+      testProjectDir,
+      'override.config.jsonc'
+    );
+    await fs.writeFile(
+      overrideConfigPath,
+      JSON.stringify(overrideConfig, null, 2)
+    );
 
-      const validation = validateConfig(config);
+    // Parse configs individually
+    const baseResult = parseConfigContent(JSON.stringify(baseConfig), 'jsonc');
+    const overrideResult = parseConfigContent(
+      JSON.stringify(overrideConfig),
+      'jsonc'
+    );
 
-      if (!validation.isValid) {
-        const _errorText = validation.errors.join(' ');
-      }
+    expect(baseResult.success).toBe(true);
+    expect(overrideResult.success).toBe(true);
 
-      // The validation should still pass for basic structure
-      expect(
-        validation.errors.filter((err) => err.includes('required')).length
-      ).toBe(0);
-    });
+    // Merge configs
+    const merged = mergeConfigs([baseResult.config!, overrideResult.config!]);
 
-    it('should provide helpful error messages for common mistakes', async () => {
-      const invalidConfigs = [
-        {
-          name: 'missing version',
-          config: { providers: { cursor: { enabled: true } } },
-          expectedError: 'version',
-        },
-        {
-          name: 'invalid version format',
-          config: { rulesets: { version: '1.0' }, providers: {} },
-          expectedError: 'version',
-        },
-        {
-          name: 'invalid outputDirectory type',
-          config: { rulesets: { version: '0.1.0' }, outputDirectory: 123 },
-          expectedError: 'outputDirectory',
-        },
-      ];
+    // Validate merged config
+    const validation = validateConfig(merged);
 
-      for (const testCase of invalidConfigs) {
-        const validation = validateConfig(testCase.config as RulesetConfig);
+    expect(validation.isValid).toBe(false);
+    expect(validation.errors.length).toBeGreaterThan(0);
 
-        expect(validation.isValid).toBe(false);
-        const errorText = validation.errors.join(' ');
-        expect(errorText).toContain(testCase.expectedError);
-      }
-    });
+    const errorText = validation.errors.join(' ');
+    expect(errorText).toMatch(/outputDirectory.*type/);
+    expect(errorText).toContain('invalid-provider');
+    expect(errorText).toMatch(/gitignore.*enabled.*type/);
   });
 });
+
+describe('Configuration Validation', () => {
+  it('should validate provider configurations comprehensively', async () => {
+    const config: RulesetConfig = {
+      rulesets: { version: '0.1.0' },
+      providers: {
+        cursor: {
+          enabled: true,
+          outputPath: '.cursor/test.mdc',
+          // Add provider-specific valid properties
+        },
+        windsurf: {
+          enabled: false,
+          outputPath: '.windsurf/test.md',
+        },
+        'claude-code': {
+          enabled: true,
+          // Missing outputPath is valid (uses default)
+        },
+        'invalid-provider': {
+          enabled: true,
+        },
+      },
+    };
+
+    const validation = validateConfig(config);
+
+    expect(validation.isValid).toBe(false);
+    expect(validation.errors).toContain(
+      expect.stringMatching(/invalid-provider.*not.*supported/)
+    );
+  });
+
+  it('should validate gitignore configuration thoroughly', async () => {
+    const config: RulesetConfig = {
+      rulesets: { version: '0.1.0' },
+      gitignore: {
+        enabled: true,
+        keep: ['.valid/**', 'invalid-pattern-without-glob'],
+        ignore: ['.temp/**'],
+        options: {
+          comment: '', // Empty comment
+          sort: true,
+        },
+      },
+    };
+
+    const validation = validateConfig(config);
+
+    if (!validation.isValid) {
+      const _errorText = validation.errors.join(' ');
+    }
+
+    // The validation should still pass for basic structure
+    expect(
+      validation.errors.filter((err) => err.includes('required')).length
+    ).toBe(0);
+  });
+
+  it('should provide helpful error messages for common mistakes', async () => {
+    const invalidConfigs = [
+      {
+        name: 'missing version',
+        config: { providers: { cursor: { enabled: true } } },
+        expectedError: 'version',
+      },
+      {
+        name: 'invalid version format',
+        config: { rulesets: { version: '1.0' }, providers: {} },
+        expectedError: 'version',
+      },
+      {
+        name: 'invalid outputDirectory type',
+        config: { rulesets: { version: '0.1.0' }, outputDirectory: 123 },
+        expectedError: 'outputDirectory',
+      },
+    ];
+
+    for (const testCase of invalidConfigs) {
+      const validation = validateConfig(testCase.config as RulesetConfig);
+
+      expect(validation.isValid).toBe(false);
+      const errorText = validation.errors.join(' ');
+      expect(errorText).toContain(testCase.expectedError);
+    }
+  });
+});
+})

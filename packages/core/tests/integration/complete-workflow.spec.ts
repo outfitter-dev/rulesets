@@ -5,9 +5,6 @@
  * Validates that all components (configuration, providers, gitignore) integrate correctly.
  */
 
-import { promises as fs } from 'node:fs';
-import { tmpdir } from 'node:os';
-import path from 'node:path';
 import {
   afterAll,
   afterEach,
@@ -19,6 +16,9 @@ import {
   mock,
   spyOn,
 } from 'bun:test';
+import { promises as fs } from 'node:fs';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { ConsoleLogger, type RulesetConfig, runRulesetsV0 } from '../../src';
 
 // Test constants

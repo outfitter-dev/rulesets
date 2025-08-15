@@ -2,9 +2,9 @@
  * Tests for ConfigLoader class
  */
 
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
 import {
   ConfigLoader,
   getConfigLoader,
@@ -20,8 +20,12 @@ describe('ConfigLoader', () => {
   beforeEach(async () => {
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 8);
-    tempDir = join(tmpdir(), `rulesets-config-loader-test-${timestamp}-${random}`);
-    await Bun.file(tempDir).exists() || await Bun.spawn(['mkdir', '-p', tempDir]).exited;
+    tempDir = join(
+      tmpdir(),
+      `rulesets-config-loader-test-${timestamp}-${random}`
+    );
+    (await Bun.file(tempDir).exists()) ||
+      (await Bun.spawn(['mkdir', '-p', tempDir]).exited);
     loader = new ConfigLoader();
   });
 
@@ -127,9 +131,7 @@ describe('ConfigLoader', () => {
 
       expect(result.valid).toBe(true);
       expect(result.warnings).toEqual(
-        expect.arrayContaining([
-          expect.stringContaining("unknown-provider")
-        ])
+        expect.arrayContaining([expect.stringContaining('unknown-provider')])
       );
     });
 
@@ -144,9 +146,7 @@ describe('ConfigLoader', () => {
 
       expect(result.valid).toBe(false);
       expect(result.errors).toEqual(
-        expect.arrayContaining([
-          expect.stringContaining("cannot be empty")
-        ])
+        expect.arrayContaining([expect.stringContaining('cannot be empty')])
       );
     });
 
@@ -338,8 +338,12 @@ describe('Configuration convenience functions', () => {
   beforeEach(async () => {
     const timestamp = Date.now();
     const random = Math.random().toString(36).substring(2, 8);
-    tempDir = join(tmpdir(), `rulesets-config-convenience-test-${timestamp}-${random}`);
-    await Bun.file(tempDir).exists() || await Bun.spawn(['mkdir', '-p', tempDir]).exited;
+    tempDir = join(
+      tmpdir(),
+      `rulesets-config-convenience-test-${timestamp}-${random}`
+    );
+    (await Bun.file(tempDir).exists()) ||
+      (await Bun.spawn(['mkdir', '-p', tempDir]).exited);
   });
 
   afterEach(async () => {
