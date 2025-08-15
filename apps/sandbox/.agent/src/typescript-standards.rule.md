@@ -17,6 +17,7 @@ providers:
 # TypeScript Coding Standards
 
 {{instructions}}
+
 ## Type Safety Requirements
 
 - **NEVER use `any`** - Use proper types or `unknown` with type guards
@@ -39,6 +40,7 @@ providers:
 {{/instructions}}
 
 {{examples}}
+
 ### Type Safety Examples
 
 ```typescript
@@ -94,4 +96,5 @@ async function processUserData(userId: UserId): Promise<void> {
   }
 }
 ```
+
 {{/examples}}

@@ -21,6 +21,7 @@ providers:
 # Project Conventions
 
 {{instructions}}
+
 ## File Organization
 
 - **Feature-based structure** - Organize by feature, not by file type
@@ -44,6 +45,7 @@ providers:
 {{/instructions}}
 
 {{examples}}
+
 ### File Structure Example
 
 ```
@@ -131,4 +133,5 @@ async function fetchUserData(
   // Implementation here
 }
 ```
+
 {{/examples}}

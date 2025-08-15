@@ -22,6 +22,7 @@ framework: "React 18+"
 Best practices for building maintainable, performant React applications.
 
 {{instructions}}
+
 ## Component Architecture
 
 - **Prefer function components** - Use hooks instead of class components
@@ -45,6 +46,7 @@ Best practices for building maintainable, performant React applications.
 {{/instructions}}
 
 {{examples}}
+
 ### Well-Structured Components
 
 ```tsx
@@ -142,12 +144,15 @@ function useUserManagement(initialUsers: User[] = []) {
   };
 }
 ```
+
 {{/examples}}
 
 {{patterns}}
+
 ### Component Patterns
 
 #### Compound Components
+
 ```tsx
 // ✅ Good: Flexible composition pattern
 function Card({ children, className }: CardProps) {
@@ -178,6 +183,7 @@ Card.Actions = function CardActions({ children }: { children: React.ReactNode })
 ```
 
 #### Render Props / Children as Function
+
 ```tsx
 // ✅ Good: Maximum flexibility for rendering
 interface DataFetcherProps<T> {
@@ -211,9 +217,11 @@ function DataFetcher<T>({ url, children }: DataFetcherProps<T>) {
   }}
 </DataFetcher>
 ```
+
 {{/patterns}}
 
 {{testing}}
+
 ### Testing Guidelines
 
 ```tsx
@@ -248,4 +256,5 @@ describe('UserCard', () => {
   });
 });
 ```
+
 {{/testing}}

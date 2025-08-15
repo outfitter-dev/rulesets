@@ -28,24 +28,30 @@ bun sandbox/run.ts examples/react-guidelines.ruleset.md
 ## Available Examples
 
 ### `basic-rules.ruleset.md`
+
 Simple example with instructions and examples blocks.
 
-### `complete-example.ruleset.md` 
+### `complete-example.ruleset.md`
+
 Comprehensive example showing all Rulesets features including:
+
 - Multiple block types
 - Provider-specific configuration
 - Variable usage
 - Import statements
 
 ### `typescript-rules.ruleset.md`
+
 Real-world TypeScript coding standards for development teams.
 
 ### `react-guidelines.ruleset.md`
+
 React component development guidelines with examples.
 
 ## Sandbox Configuration
 
 Edit `sandbox.config.jsonc` to customize:
+
 - Enabled providers
 - Output directory
 - Gitignore behavior

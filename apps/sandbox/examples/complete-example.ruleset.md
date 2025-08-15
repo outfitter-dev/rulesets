@@ -35,6 +35,7 @@ category: "examples"
 This example showcases all the features available in Rulesets v0.1.0.
 
 {{instructions}}
+
 ## Core Development Principles
 
 - **Write code that tells a story** - Your code should read like well-written prose
@@ -59,6 +60,7 @@ This example showcases all the features available in Rulesets v0.1.0.
 {{/instructions}}
 
 {{examples}}
+
 ### Clean Function Design
 
 ```typescript
@@ -146,12 +148,15 @@ describe('ShippingCalculator', () => {
   });
 });
 ```
+
 {{/examples}}
 
 {{patterns}}
+
 ### Design Patterns
 
 #### Repository Pattern
+
 ```typescript
 // ✅ Good: Clean separation of data access
 interface UserRepository {
@@ -184,6 +189,7 @@ class InMemoryUserRepository implements UserRepository {
 ```
 
 #### Builder Pattern
+
 ```typescript
 // ✅ Good: Complex object construction made simple
 class ApiRequestBuilder {
@@ -229,9 +235,11 @@ const request = new ApiRequestBuilder()
   .param('include', 'profile')
   .build();
 ```
+
 {{/patterns}}
 
 {{anti-patterns}}
+
 ### Anti-Patterns to Avoid
 
 ```typescript
@@ -288,9 +296,11 @@ async function processOrder(orderId: OrderId): Promise<ProcessResult> {
   return { success: true, paymentResult, inventoryResult, confirmResult };
 }
 ```
+
 {{/anti-patterns}}
 
 {{references}}
+
 ### Useful Resources
 
 - [Clean Code by Robert Martin](https://example.com/clean-code)

@@ -19,6 +19,7 @@ author: "Your Name"
 This is a simple example showing the basic features of Rulesets.
 
 {{instructions}}
+
 - Always write clear, self-documenting code
 - Use TypeScript for type safety
 - Write tests for your functions
@@ -27,6 +28,7 @@ This is a simple example showing the basic features of Rulesets.
 {{/instructions}}
 
 {{examples}}
+
 ```typescript
 // ✅ Good: Clear function name and types
 function calculateDiscountPrice(originalPrice: number, discountRate: number): number {
@@ -48,20 +50,25 @@ function processUserPreferences(user: User): ProcessedPreferences {
   return mergePreferences(defaultPrefs, user.preferences);
 }
 ```
+
 {{/examples}}
 
 {{best-practices}}
+
 ### Code Organization
+
 - Keep functions small and focused (< 20 lines when possible)
 - Use meaningful file and folder names
 - Group related functionality together
 
 ### Error Handling
+
 - Always handle potential errors explicitly
 - Provide helpful error messages to users
 - Log errors appropriately for debugging
 
 ### Performance
+
 - Don't optimize prematurely
 - Profile before making performance changes  
 - Consider readability over micro-optimizations

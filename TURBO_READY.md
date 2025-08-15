@@ -17,11 +17,13 @@ bun run typecheck # 0.80s
 When ready to add Turbo (e.g., for team collaboration or CI caching):
 
 ### 1. Install Turbo
+
 ```bash
 bun add -d turbo
 ```
 
 ### 2. Use Turbo Commands
+
 ```bash
 # Instead of:
 bun run build
@@ -46,14 +48,18 @@ Turbo becomes valuable when you need:
 ## Pre-configured for Turbo
 
 ### ✅ turbo.json
+
 Already configured with:
+
 - Pipeline definitions for all tasks
 - Proper dependency graphs
 - Output caching rules
 - Environment variable handling
 
 ### ✅ Standardized Scripts
+
 All package.json scripts follow Turbo conventions:
+
 - `build` - Build packages
 - `test` - Run tests
 - `typecheck` - Type checking
@@ -61,13 +67,17 @@ All package.json scripts follow Turbo conventions:
 - `dev` - Development mode
 
 ### ✅ Predictable Outputs
+
 All tools output to standard locations:
+
 - `dist/` - Build outputs
 - `coverage/` - Test coverage
 - `*.tsbuildinfo` - TypeScript cache
 
 ### ✅ Dual-Mode Scripts
+
 Scripts work with or without Turbo:
+
 ```json
 {
   "scripts": {

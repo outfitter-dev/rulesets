@@ -77,4 +77,3 @@ async function processUserData(userId: UserId): Promise<void> {
   }
 }
 ```
-

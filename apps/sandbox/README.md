@@ -53,6 +53,7 @@ bun run start clean
 ## Commands
 
 ### `run <file>`
+
 Compile a ruleset file and generate output for all providers.
 
 ```bash
@@ -61,6 +62,7 @@ bun run start run examples/react-guidelines.ruleset.md --output ./custom-output
 ```
 
 ### `examples`
+
 List all available example files.
 
 ```bash
@@ -68,6 +70,7 @@ bun run start examples
 ```
 
 ### `init [name]`
+
 Create a new example ruleset file.
 
 ```bash
@@ -76,6 +79,7 @@ bun run start init my-team-rules
 ```
 
 ### `clean`
+
 Remove all generated output files.
 
 ```bash
@@ -85,24 +89,31 @@ bun run start clean
 ## Available Examples
 
 ### `basic-rules.ruleset.md`
+
 Simple example showing fundamental Rulesets features like instructions and examples blocks.
 
 ### `typescript-rules.ruleset.md`
+
 Professional TypeScript coding standards including:
+
 - Type safety requirements
 - Error handling patterns
 - Code organization guidelines
 - Configuration recommendations
 
 ### `react-guidelines.ruleset.md`
+
 Modern React development best practices covering:
+
 - Component architecture
 - Performance optimization
 - State management patterns
 - Testing strategies
 
 ### `complete-example.ruleset.md`
+
 Comprehensive showcase of all Rulesets v0.1 features including:
+
 - Multiple block types
 - Provider-specific configuration
 - Anti-patterns to avoid
@@ -124,22 +135,26 @@ output/
 ## Creating Custom Examples
 
 1. **Start with a template:**
+
    ```bash
    bun run start init my-experiment
    ```
 
 2. **Edit the generated file:**
+
    ```bash
    # Edit examples/my-experiment.ruleset.md
    # Add your own rules, examples, and configuration
    ```
 
 3. **Test compilation:**
+
    ```bash
    bun run start run examples/my-experiment.ruleset.md
    ```
 
 4. **Check the output:**
+
    ```bash
    ls output/*/
    ```
@@ -155,6 +170,7 @@ output/
 ## Development Workflow
 
 Perfect for:
+
 - **Testing new ruleset ideas** before adding them to your project
 - **Learning Rulesets syntax** with immediate feedback
 - **Demonstrating features** to team members

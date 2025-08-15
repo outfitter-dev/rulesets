@@ -61,6 +61,16 @@ docs_archive/
 
 # START Rulesets Generated Files
 # Rulesets Generated Files
-.ruleset/dist/cursor/my-rules.md
-.ruleset/dist/windsurf/my-rules.md
+.ruleset/dist/**/*
+apps/sandbox/.cursor/rules/**/*
+apps/sandbox/.windsurf/rules/**/*
+test-results.xml
+packages/core/.gitignore
+# Test-generated temporary files (not real project rules)
+.cursor/rules/custom.mdc
+.cursor/rules/test.mdc
+.windsurf/rules/custom.md
+.windsurf/rules/test.md
+.codex/
+custom/
 # END Rulesets Generated Files

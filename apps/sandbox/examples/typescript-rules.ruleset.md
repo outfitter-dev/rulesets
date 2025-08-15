@@ -24,6 +24,7 @@ team: "Engineering"
 These rules ensure consistent, maintainable, and type-safe TypeScript code across our projects.
 
 {{instructions}}
+
 ## Type Safety Requirements
 
 - **NEVER use `any`** - Use proper types or `unknown` with type guards
@@ -46,6 +47,7 @@ These rules ensure consistent, maintainable, and type-safe TypeScript code acros
 {{/instructions}}
 
 {{examples}}
+
 ### Type Safety Examples
 
 ```typescript
@@ -101,9 +103,11 @@ async function processUserData(userId: UserId): Promise<void> {
   }
 }
 ```
+
 {{/examples}}
 
 {{anti-patterns}}
+
 ### Common Anti-Patterns to Avoid
 
 ```typescript
@@ -138,9 +142,11 @@ async function getUserData(id: UserId): Promise<User> {
   return response.json();
 }
 ```
+
 {{/anti-patterns}}
 
 {{configuration}}
+
 ### Required tsconfig.json Settings
 
 ```json
@@ -156,4 +162,5 @@ async function getUserData(id: UserId): Promise<User> {
   }
 }
 ```
+
 {{/configuration}}

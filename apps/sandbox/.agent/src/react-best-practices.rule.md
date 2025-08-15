@@ -17,6 +17,7 @@ providers:
 # React Best Practices
 
 {{instructions}}
+
 ## Component Architecture
 
 - **Functional components only** - Use hooks instead of class components
@@ -40,6 +41,7 @@ providers:
 {{/instructions}}
 
 {{examples}}
+
 ### Component Architecture Examples
 
 ```typescript
@@ -143,4 +145,5 @@ function useUserData(userId: string) {
   return { user, loading, error };
 }
 ```
+
 {{/examples}}
