@@ -22,7 +22,6 @@ import type {
   ConfigDirectoryPath,
 } from './types';
 import {
-  createConfigFilePath,
   createConfigDirectoryPath,
   isKnownProviderID,
   KNOWN_PROVIDERS,
@@ -148,7 +147,7 @@ export class ConfigLoader implements IConfigLoader {
   private performValidation(
     config: RulesetConfig,
     opts: ConfigLoadOptions
-  ): { errors: string[]; warnings: string[] } {
+  ): { errors: readonly string[]; warnings: readonly string[] } {
     if (!opts.validate) {
       return { errors: [], warnings: [] };
     }
@@ -173,8 +172,8 @@ export class ConfigLoader implements IConfigLoader {
    * Log validation results
    */
   private logValidationResults(
-    errors: string[],
-    warnings: string[],
+    errors: readonly string[],
+    warnings: readonly string[],
     logger?: Logger
   ): void {
     for (const error of errors) {

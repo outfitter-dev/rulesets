@@ -556,11 +556,11 @@ Next, configure your environment...
 
 {{/"Getting Started"}}
 
-````
+````text
 
 Renders as:
 
-````markdown
+```markdown
 ## Getting Started
 
 This section explains how to get started with the project.
@@ -568,11 +568,14 @@ This section explains how to get started with the project.
 ### Installation
 
 First, install the dependencies:
+
 ```bash
 npm install
-```
 ````
+
+```text
 
 ### Configuration
 
 Next, configure your environment...
+```

@@ -170,7 +170,7 @@ npx @biomejs/biome check --apply --only=lint/style/useTemplate
 find . -name "*.ts" -exec sed -i '' 's/public //' {} \;
 ```
 
-2. **Rename files**:
+1. **Rename files**:
 
 ```bash
 # Script to rename to kebab-case

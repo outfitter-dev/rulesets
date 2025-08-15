@@ -4,7 +4,7 @@
 
 ### Parser Module
 
-```
+```text
 Implement frontmatter parsing in packages/core/src/parser/index.ts
 
 Requirements:
@@ -19,7 +19,7 @@ Requirements:
 
 ### Compiler Module
 
-```
+```text
 Implement pass-through compiler in packages/core/src/compiler/index.ts
 
 Requirements:
@@ -33,7 +33,7 @@ Requirements:
 
 ### Linter Module
 
-```
+```text
 Implement basic frontmatter validation in packages/core/src/linter/index.ts
 
 Requirements:
@@ -47,7 +47,7 @@ Requirements:
 
 ### Destination Plugins
 
-```
+```text
 Create stub destination plugins in packages/core/src/destinations/
 
 Requirements:
@@ -63,7 +63,7 @@ Requirements:
 
 ### Integration Testing
 
-```
+```text
 Add end-to-end integration tests in packages/core/tests/integration/
 
 Requirements:
@@ -77,7 +77,7 @@ Requirements:
 
 ### TypeScript Configuration
 
-```
+```text
 Enhance TypeScript configuration for strict type checking
 
 Requirements:
@@ -92,7 +92,7 @@ Requirements:
 
 ### Documentation
 
-```
+```text
 Add comprehensive JSDoc documentation to all public interfaces
 
 Requirements:
@@ -105,7 +105,7 @@ Requirements:
 
 ### Error Handling
 
-```
+```text
 Implement robust error handling throughout the codebase
 
 Requirements:
@@ -118,7 +118,7 @@ Requirements:
 
 ## Context Always Include
 
-```
+```text
 Context for all tasks:
 - This is Rulesets v0 implementation in TypeScript monorepo
 - Use bun/Turborepo for package management and building

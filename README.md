@@ -1,6 +1,6 @@
 # 📏 Rulesets: A Compiler for AI Rules Files
 
-> **🚀 v0 Release Now Available!** The initial implementation of Rulesets is ready for testing. See [Installation](#installation) to get started.
+> **🚀 v0 Release Now Available!** The initial implementation of Rulesets is ready for testing. See [CLI Installation](#cli-installation) to get started.
 
 Rulesets simplifies rules management for tools like Cursor, Claude Code, Codex, etc. With Rulesets, you author rules (called "source rules") in previewable Markdown and compile them into compiled rules for each provider (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many providers, your agents, no matter the tool, on the (literal) same page.
 

@@ -14,7 +14,7 @@ providers:
     enabled: true
 ---
 
-# React Best Practices
+## React Best Practices
 
 {{instructions}}
 

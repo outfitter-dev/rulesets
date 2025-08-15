@@ -126,12 +126,12 @@ Copy these rules verbatim into `PLAN-ruleset-v0.md` (under **"Engineering Conven
     "build": "turbo build",
     "test": "turbo test",
     "lint": "turbo lint",
-    "release": "changeset publish"
+    "release": "changeset publish",
   },
   "devDependencies": {
     "turbo": "^2",
-    "changesets": "^2"
-  }
+    "changesets": "^2",
+  },
 }
 ```
 
@@ -160,9 +160,9 @@ Copy these rules verbatim into `PLAN-ruleset-v0.md` (under **"Engineering Conven
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
   },
-  "include": ["packages/**/*"]
+  "include": ["packages/**/*"],
 }
 ```
 
@@ -439,7 +439,7 @@ All public APIs should be documented using this format:
 - [Action 2]
   - [Additional context and details]
 
-````
+````text
 
 ### Review Document
 
@@ -469,8 +469,11 @@ This file should be placed at `docs/project/testing/v0-implementation-review.md`
 - [ ] Check bundle size and dependencies
 - [ ] Confirm publishing configuration
 - [ ] Test installation in a new project
-```
+````
 
 **You now have your mandate.**
 Ask your first clarifying question and proceed.
-````
+
+```text
+
+```

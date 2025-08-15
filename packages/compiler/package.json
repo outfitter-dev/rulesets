@@ -29,6 +29,9 @@
   "dependencies": {
     "@rulesets/types": "workspace:*"
   },
+  "devDependencies": {
+    "@types/bun": "^1.2.20"
+  },
   "publishConfig": {
     "access": "public"
   },

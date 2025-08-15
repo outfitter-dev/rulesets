@@ -18,7 +18,6 @@ import {
   normalizeGitignorePath,
   parseGitignoreContent,
   parseOverrideContent,
-  parseOverrideFile,
   rebuildGitignoreContent,
   sortAndDedupePaths,
 } from './utils';

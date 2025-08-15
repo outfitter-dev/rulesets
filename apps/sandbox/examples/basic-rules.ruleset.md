@@ -1,20 +1,20 @@
 ---
 ruleset:
   version: 0.1.0
-  
-title: "Basic Development Rules"
-description: "Simple example showing Rulesets basics"
+
+title: 'Basic Development Rules'
+description: 'Simple example showing Rulesets basics'
 
 providers:
   cursor:
     enabled: true
   claude-code:
     enabled: true
-    
-author: "Your Name"
+
+author: 'Your Name'
 ---
 
-# Basic Development Rules
+## Basic Development Rules
 
 This is a simple example showing the basic features of Rulesets.
 
@@ -25,7 +25,7 @@ This is a simple example showing the basic features of Rulesets.
 - Write tests for your functions
 - Follow consistent naming conventions
 - Document complex logic with comments
-{{/instructions}}
+  {{/instructions}}
 
 {{examples}}
 
@@ -55,6 +55,8 @@ function processUserPreferences(user: User): ProcessedPreferences {
 
 {{best-practices}}
 
+## Best Practices
+
 ### Code Organization
 
 - Keep functions small and focused (< 20 lines when possible)
@@ -70,6 +72,6 @@ function processUserPreferences(user: User): ProcessedPreferences {
 ### Performance
 
 - Don't optimize prematurely
-- Profile before making performance changes  
+- Profile before making performance changes
 - Consider readability over micro-optimizations
-{{/best-practices}}
+  {{/best-practices}}

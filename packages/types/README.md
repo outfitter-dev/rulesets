@@ -267,7 +267,7 @@ const LIMITS = {
 
 ### Error Hierarchy
 
-```
+```text
 RulesetValidationError (base)
 ├── SecurityValidationError
 │   └── PathTraversalError

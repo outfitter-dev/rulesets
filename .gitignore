@@ -53,8 +53,7 @@ Thumbs.db
 docs_archive/
 
 # .agent
-!.agent/
-.agent/research
+.agent/
 
 # Archived/deprecated code
 .archive/

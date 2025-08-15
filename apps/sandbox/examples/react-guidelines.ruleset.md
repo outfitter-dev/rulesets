@@ -1,23 +1,23 @@
 ---
 ruleset:
   version: 0.1.0
-  
-title: "React Component Guidelines"
-description: "Modern React development best practices"
+
+title: 'React Component Guidelines'
+description: 'Modern React development best practices'
 
 providers:
   cursor:
     enabled: true
-    name: "react_component_rules"
+    name: 'react_component_rules'
   claude-code:
     enabled: true
-    path: "REACT_GUIDELINES.md"
-    
-tags: ["react", "frontend", "components"]
-framework: "React 18+"
+    path: 'REACT_GUIDELINES.md'
+
+tags: ['react', 'frontend', 'components']
+framework: 'React 18+'
 ---
 
-# React Component Guidelines
+## React Component Guidelines
 
 Best practices for building maintainable, performant React applications.
 
@@ -26,7 +26,7 @@ Best practices for building maintainable, performant React applications.
 ## Component Architecture
 
 - **Prefer function components** - Use hooks instead of class components
-- **Single responsibility** - Each component should have one clear purpose  
+- **Single responsibility** - Each component should have one clear purpose
 - **Compose over inheritance** - Build complex UIs through composition
 - **Props interface first** - Define clear TypeScript interfaces for all props
 
@@ -40,10 +40,10 @@ Best practices for building maintainable, performant React applications.
 ## State Management
 
 - **Local state by default** - Use useState for component-local state
-- **Lift state up sparingly** - Only when multiple components need the same state  
+- **Lift state up sparingly** - Only when multiple components need the same state
 - **Context for cross-cutting concerns** - Theme, auth, language, not business data
 - **External state libraries** - Zustand/Redux for complex global state
-{{/instructions}}
+  {{/instructions}}
 
 {{examples}}
 
@@ -87,18 +87,17 @@ export function UserCard({ user, onEdit, showActions = true, className }: UserCa
 ```tsx
 // ✅ Good: Memoized component prevents unnecessary re-renders
 const UserList = React.memo<UserListProps>(({ users, onUserSelect }) => {
-  const handleUserClick = useCallback((user: User) => {
-    onUserSelect(user);
-  }, [onUserSelect]);
+  const handleUserClick = useCallback(
+    (user: User) => {
+      onUserSelect(user);
+    },
+    [onUserSelect]
+  );
 
   return (
     <div className="user-list">
       {users.map((user) => (
-        <UserCard 
-          key={user.id}
-          user={user} 
-          onEdit={handleUserClick}
-        />
+        <UserCard key={user.id} user={user} onEdit={handleUserClick} />
       ))}
     </div>
   );
@@ -117,10 +116,10 @@ function useUserManagement(initialUsers: User[] = []) {
   const addUser = useCallback(async (userData: CreateUserData) => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const newUser = await api.createUser(userData);
-      setUsers(prev => [...prev, newUser]);
+      setUsers((prev) => [...prev, newUser]);
       return newUser;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to add user';
@@ -132,7 +131,7 @@ function useUserManagement(initialUsers: User[] = []) {
   }, []);
 
   const removeUser = useCallback((userId: UserId) => {
-    setUsers(prev => prev.filter(user => user.id !== userId));
+    setUsers((prev) => prev.filter((user) => user.id !== userId));
   }, []);
 
   return {
@@ -179,7 +178,7 @@ Card.Actions = function CardActions({ children }: { children: React.ReactNode })
     <Button>Edit</Button>
     <Button>Delete</Button>
   </Card.Actions>
-</Card>
+</Card>;
 ```
 
 #### Render Props / Children as Function
@@ -198,7 +197,7 @@ function DataFetcher<T>({ url, children }: DataFetcherProps<T>) {
 
   useEffect(() => {
     fetch(url)
-      .then(response => response.json())
+      .then((response) => response.json())
       .then(setData)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -215,7 +214,7 @@ function DataFetcher<T>({ url, children }: DataFetcherProps<T>) {
     if (!users) return <EmptyState />;
     return <UserList users={users} />;
   }}
-</DataFetcher>
+</DataFetcher>;
 ```
 
 {{/patterns}}
@@ -229,9 +228,9 @@ function DataFetcher<T>({ url, children }: DataFetcherProps<T>) {
 describe('UserCard', () => {
   it('displays user information correctly', () => {
     const user = createMockUser({ name: 'John Doe', email: 'john@example.com' });
-    
+
     render(<UserCard user={user} />);
-    
+
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('john@example.com')).toBeInTheDocument();
   });
@@ -239,19 +238,19 @@ describe('UserCard', () => {
   it('calls onEdit when edit button is clicked', async () => {
     const user = createMockUser();
     const onEdit = vi.fn();
-    
+
     render(<UserCard user={user} onEdit={onEdit} />);
-    
+
     await userEvent.click(screen.getByRole('button', { name: /edit/i }));
-    
+
     expect(onEdit).toHaveBeenCalledWith(user);
   });
 
   it('hides actions when showActions is false', () => {
     const user = createMockUser();
-    
+
     render(<UserCard user={user} showActions={false} />);
-    
+
     expect(screen.queryByRole('button', { name: /edit/i })).not.toBeInTheDocument();
   });
 });

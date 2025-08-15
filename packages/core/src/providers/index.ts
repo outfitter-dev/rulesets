@@ -39,24 +39,24 @@ class ReadOnlyProviderMap implements ReadonlyMap<string, Provider> {
     return this._map.has(key);
   }
 
-  keys(): IterableIterator<string> {
-    return this._map.keys();
+  keys(): MapIterator<string> {
+    return this._map.keys() as MapIterator<string>;
   }
 
-  values(): IterableIterator<Provider> {
-    return this._map.values();
+  values(): MapIterator<Provider> {
+    return this._map.values() as MapIterator<Provider>;
   }
 
-  entries(): IterableIterator<[string, Provider]> {
-    return this._map.entries();
+  entries(): MapIterator<[string, Provider]> {
+    return this._map.entries() as MapIterator<[string, Provider]>;
   }
 
   forEach(callbackfn: (value: Provider, key: string, map: ReadonlyMap<string, Provider>) => void): void {
-    this._map.forEach((value, key) => callbackfn(value, key, this));
+    this._map.forEach((value, key) => callbackfn(value, key, this as ReadonlyMap<string, Provider>));
   }
 
-  [Symbol.iterator](): IterableIterator<[string, Provider]> {
-    return this._map[Symbol.iterator]();
+  [Symbol.iterator](): MapIterator<[string, Provider]> {
+    return this._map[Symbol.iterator]() as MapIterator<[string, Provider]>;
   }
 }
 
@@ -103,24 +103,24 @@ class ReadOnlyDestinationMap implements ReadonlyMap<string, DestinationPlugin> {
     return this._map.has(key);
   }
 
-  keys(): IterableIterator<string> {
-    return this._map.keys();
+  keys(): MapIterator<string> {
+    return this._map.keys() as MapIterator<string>;
   }
 
-  values(): IterableIterator<DestinationPlugin> {
-    return this._map.values();
+  values(): MapIterator<DestinationPlugin> {
+    return this._map.values() as MapIterator<DestinationPlugin>;
   }
 
-  entries(): IterableIterator<[string, DestinationPlugin]> {
-    return this._map.entries();
+  entries(): MapIterator<[string, DestinationPlugin]> {
+    return this._map.entries() as MapIterator<[string, DestinationPlugin]>;
   }
 
   forEach(callbackfn: (value: DestinationPlugin, key: string, map: ReadonlyMap<string, DestinationPlugin>) => void): void {
-    this._map.forEach((value, key) => callbackfn(value, key, this));
+    this._map.forEach((value, key) => callbackfn(value, key, this as ReadonlyMap<string, DestinationPlugin>));
   }
 
-  [Symbol.iterator](): IterableIterator<[string, DestinationPlugin]> {
-    return this._map[Symbol.iterator]();
+  [Symbol.iterator](): MapIterator<[string, DestinationPlugin]> {
+    return this._map[Symbol.iterator]() as MapIterator<[string, DestinationPlugin]>;
   }
 }
 

@@ -63,7 +63,7 @@ When the user invokes this command, follow these steps in sequence:
 
 ## PR Body Template
 
-```
+```markdown
 ## Summary
 
 - [Concise description of changes]

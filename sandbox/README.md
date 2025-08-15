@@ -59,10 +59,10 @@ Edit `sandbox.config.jsonc` to customize:
 
 ## Output Structure
 
-```
+```text
 sandbox/output/
 ├── cursor/           # Cursor IDE rules
-├── claude-code/      # Claude Code rules  
+├── claude-code/      # Claude Code rules
 ├── windsurf/         # Windsurf IDE rules
 ├── amp/              # AMP rules
 └── codex/            # OpenAI Codex rules

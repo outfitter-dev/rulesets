@@ -31,7 +31,8 @@
     "js-yaml": "catalog:"
   },
   "devDependencies": {
-    "@types/js-yaml": "catalog:"
+    "@types/js-yaml": "catalog:",
+    "@types/bun": "^1.2.20"
   },
   "publishConfig": {
     "access": "public"

@@ -72,7 +72,7 @@
 <repo-root>/.[provider]/rules/*.md    # Project-specific rules
 <repo>/<subdirectory>/.[provider]/*.md # Nested module rules (if supported)
 (legacy) <repo>/.providerrules        # Single-file fallback (if applicable)
-````
+```
 
 Order of application: [describe precedence order and conflict resolution].
 
@@ -261,3 +261,4 @@ flowchart TD
 
 </template>
 ```
+````

@@ -1,11 +1,11 @@
 // TLDR: Main entry point and CLI orchestration for Rulesets (mixd-v0)
 // TLDR: v0.1.0 Basic orchestration for single file processing with minimal features
 
-import { dirname, resolve } from 'node:path';
-import { compile, compileWithProvider } from '@rulesets/compiler';
+import { dirname } from 'node:path';
+import { compile } from '@rulesets/compiler';
 import { lint } from '@rulesets/linter';
 import { parse } from '@rulesets/parser';
-import type { Logger, ParsedDoc } from '@rulesets/types';
+import type { Logger, ParsedDoc, CompiledDoc } from '@rulesets/types';
 import { hasGeneratedPaths } from '@rulesets/types';
 import type { RulesetConfig } from './config';
 import { loadConfig } from './config';
@@ -259,7 +259,7 @@ function determineDestinationIds(
   // Use default providers from configuration
   if (config.defaultProviders && config.defaultProviders.length > 0) {
     logger.debug('Using default providers from configuration');
-    return config.defaultProviders;
+    return [...config.defaultProviders];
   }
 
   // Fallback to all available destinations
@@ -288,12 +288,10 @@ async function processDestination(
   // Prefer modern provider from registry when available
   const provider = providerRegistry.get(destinationId);
 
-  // Compile using unified provider-aware compiler when possible, else fallback
+  // Use standard compilation for now - provider compilation will be added in v0.2
   let compiledDoc: CompiledDoc;
   try {
-    compiledDoc = provider
-      ? compileWithProvider(parsedDoc, provider, config)
-      : compile(parsedDoc, destinationId, config);
+    compiledDoc = compile(parsedDoc, destinationId, config);
   } catch (error) {
     logger.error(`Failed to compile for destination: ${destinationId}`, error);
     return [];
@@ -309,7 +307,7 @@ async function processDestination(
   // Determine output path
   const destPath = determineOutputPath(
     destConfig,
-    config.providers?.[destinationId],
+    config.providers?.[destinationId] as Record<string, unknown> | undefined,
     destinationId,
     config.outputDirectory,
     provider?.config?.outputPath
@@ -329,7 +327,7 @@ async function processDestination(
       logger.debug(
         `Generated paths from ${destinationId}: ${writeResult.generatedPaths.join(', ')}`
       );
-      return writeResult.generatedPaths;
+      return [...writeResult.generatedPaths];
     }
     return [];
   } catch (error) {
@@ -411,29 +409,33 @@ function buildGitignoreConfig(config: RulesetConfig) {
  * Log gitignore update results
  */
 function logGitignoreResults(
-  result: { success: boolean; added?: string[]; error?: string },
+  result: any,
   logger: Logger
 ): void {
   if (!result.success) {
     logger.warn('Failed to update .gitignore:');
-    for (const message of result.messages) {
-      logger.warn(`  ${message}`);
+    if (result.messages) {
+      for (const message of result.messages) {
+        logger.warn(`  ${message}`);
+      }
     }
     return;
   }
 
-  if (result.added.length > 0) {
+  if (result.added && result.added.length > 0) {
     logger.info(`Added ${result.added.length} files to .gitignore`);
     logger.debug(`Added: ${result.added.join(', ')}`);
   }
 
-  if (result.kept.length > 0) {
+  if (result.kept && result.kept.length > 0) {
     logger.info(`Kept ${result.kept.length} files due to override rules`);
     logger.debug(`Kept: ${result.kept.join(', ')}`);
   }
 
-  for (const message of result.messages) {
-    logger.debug(`GitignoreManager: ${message}`);
+  if (result.messages) {
+    for (const message of result.messages) {
+      logger.debug(`GitignoreManager: ${message}`);
+    }
   }
 }
 

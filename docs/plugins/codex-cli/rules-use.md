@@ -113,7 +113,7 @@ The `.codex/` directory in your working directory can act as a shared workspace 
 - The CLI requires an OpenAI API key with sufficient permissions
 - Set environment variables for proper authentication:
 
-  ```
+  ```bash
   export OPENAI_API_KEY="your-api-key-here"
   ```
 

@@ -6,7 +6,7 @@ Interactive environment for testing and exploring Rulesets compilation in a **re
 
 This sandbox demonstrates a realistic monorepo setup:
 
-```
+```text
 📁 sandbox/
 ├── 🤖 .agent/                    # Rulesets configuration
 │   ├── 📝 src/                   # Source rulesets (.rule.md files)
@@ -123,11 +123,11 @@ Comprehensive showcase of all Rulesets v0.1 features including:
 
 After running examples, check the `output/` directory:
 
-```
+```text
 output/
 ├── cursor/           # Cursor IDE rules (.mdc)
 ├── claude-code/      # Claude Code rules (.md)
-├── windsurf/         # Windsurf IDE rules  
+├── windsurf/         # Windsurf IDE rules
 ├── amp/              # AMP rules
 └── codex/            # OpenAI Codex rules
 ```

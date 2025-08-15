@@ -50,7 +50,7 @@ console.log(`Added ${result.added.length} files to .gitignore`);
 
 Create a `.rulesetkeep` file to specify patterns that should NOT be ignored:
 
-```
+```text
 # Keep important cursor rules in git
 .cursor/rules/important.mdc
 .cursor/rules/shared-*
@@ -63,7 +63,7 @@ Create a `.rulesetkeep` file to specify patterns that should NOT be ignored:
 
 Create a `.rulesetignore` file to specify additional patterns to ignore:
 
-```
+```text
 # Ignore temporary files
 *.tmp
 *.temp
@@ -214,7 +214,7 @@ const manager = new GitignoreManager({
 
 **.rulesetkeep**:
 
-```
+```text
 # Keep all cursor rules
 .cursor/rules/*
 
@@ -225,7 +225,7 @@ const manager = new GitignoreManager({
 
 **.rulesetignore**:
 
-```
+```text
 # Ignore all temporary files
 *.tmp
 

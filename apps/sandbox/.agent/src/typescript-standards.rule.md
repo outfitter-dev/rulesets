@@ -14,7 +14,7 @@ providers:
     enabled: true
 ---
 
-# TypeScript Coding Standards
+## TypeScript Coding Standards
 
 {{instructions}}
 

@@ -308,7 +308,7 @@ export class CodexProvider implements Provider, DestinationPlugin {
     if (config.mcpConfig && typeof config.mcpConfig === 'object') {
       const mcpConfig = config.mcpConfig as {
         enabled?: boolean;
-        servers?: unknown;
+        servers?: Record<string, { command?: string; args?: string[]; env?: Record<string, string> }>;
       };
       if (mcpConfig.enabled && mcpConfig.servers) {
         return await this.writeMcpTomlConfig(mcpConfig, config, logger);

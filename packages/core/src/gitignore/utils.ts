@@ -3,7 +3,7 @@
  * Provides path manipulation, file parsing, and content management utilities
  */
 
-import { isAbsolute, relative, sep } from 'node:path';
+import { isAbsolute, relative } from 'node:path';
 import type { GitignoreState, ManagedBlockConfig } from './types';
 
 // Regex constants at top level for performance
