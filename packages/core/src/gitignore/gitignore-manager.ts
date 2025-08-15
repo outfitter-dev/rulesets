@@ -3,6 +3,7 @@
  * Handles automatic gitignore updates with override mechanisms and configuration support
  */
 
+import { promises as fs } from 'node:fs';
 import { join, resolve } from 'node:path';
 import type {
   GitignoreConfig,
@@ -16,6 +17,7 @@ import {
   matchesAnyPattern,
   normalizeGitignorePath,
   parseGitignoreContent,
+  parseOverrideContent,
   parseOverrideFile,
   rebuildGitignoreContent,
   sortAndDedupePaths,
@@ -26,9 +28,12 @@ import {
  */
 const DEFAULT_CONFIG: GitignoreConfig = {
   enabled: true,
-  commentPrefix: 'Rulesets',
-  alwaysIgnore: [],
-  alwaysKeep: [],
+  keep: [],
+  ignore: [],
+  options: {
+    comment: 'Rulesets Generated Files',
+    sort: true,
+  },
 };
 
 /**
@@ -51,8 +56,9 @@ export class GitignoreManager implements IGitignoreManager {
     // Create managed block config with custom prefix if provided
     this.managedBlockConfig = {
       ...DEFAULT_MANAGED_BLOCK_CONFIG,
-      startComment: `# START ${this.config.commentPrefix || 'Rulesets'} Generated Files`,
-      endComment: `# END ${this.config.commentPrefix || 'Rulesets'} Generated Files`,
+      startComment: `# START Rulesets Generated Files`,
+      endComment: `# END Rulesets Generated Files`,
+      headerText: this.config.options?.comment || DEFAULT_MANAGED_BLOCK_CONFIG.headerText,
     };
   }
 
@@ -80,7 +86,7 @@ export class GitignoreManager implements IGitignoreManager {
 
     try {
       // Read current overrides
-      await this.readOverrides();
+      const overrides = await this.readOverrides();
 
       // Normalize and filter paths
       const normalizedPaths = generatedPaths.map((p) =>
@@ -107,11 +113,16 @@ export class GitignoreManager implements IGitignoreManager {
         this.managedBlockConfig
       );
 
-      // Combine existing managed paths with new paths
-      const allManagedPaths = sortAndDedupePaths([
-        ...state.managedPaths,
-        ...pathsToAdd,
-      ]);
+      // Include patterns from .rulesetignore and config
+      const forcedIgnorePatterns = [...overrides.ignore, ...overrides.config];
+      
+      // Combine existing managed paths with new paths and forced patterns
+      let allManagedPaths = [...state.managedPaths, ...pathsToAdd, ...forcedIgnorePatterns];
+      if (this.config.options?.sort !== false) {
+        allManagedPaths = sortAndDedupePaths(allManagedPaths);
+      } else {
+        allManagedPaths = Array.from(new Set(allManagedPaths));
+      }
 
       // Generate new content
       const newContent = rebuildGitignoreContent(
@@ -122,7 +133,7 @@ export class GitignoreManager implements IGitignoreManager {
 
       // Write only if content changed
       if (newContent !== currentContent) {
-        await Bun.write(gitignorePath, newContent);
+        await fs.writeFile(gitignorePath, newContent, 'utf8');
       }
 
       const messages: string[] = [];
@@ -167,7 +178,7 @@ export class GitignoreManager implements IGitignoreManager {
       // Read .rulesetkeep file
       const keepContent = await this.readOverrideFile('.rulesetkeep');
       if (keepContent) {
-        keep.push(...parseOverrideFile(keepContent));
+        keep.push(...parseOverrideContent(keepContent));
       }
     } catch {
       // File doesn't exist or can't be read - that's OK
@@ -177,23 +188,23 @@ export class GitignoreManager implements IGitignoreManager {
       // Read .rulesetignore file
       const ignoreContent = await this.readOverrideFile('.rulesetignore');
       if (ignoreContent) {
-        ignore.push(...parseOverrideFile(ignoreContent));
+        ignore.push(...parseOverrideContent(ignoreContent));
       }
     } catch {
       // File doesn't exist or can't be read - that's OK
     }
 
     // Add configuration-based overrides
-    if (this.config.alwaysKeep) {
+    if (this.config.keep) {
       keep.push(
-        ...this.config.alwaysKeep.map((p) =>
+        ...this.config.keep.map((p) =>
           normalizeGitignorePath(p, this.basePath)
         )
       );
     }
-    if (this.config.alwaysIgnore) {
+    if (this.config.ignore) {
       config.push(
-        ...this.config.alwaysIgnore.map((p) =>
+        ...this.config.ignore.map((p) =>
           normalizeGitignorePath(p, this.basePath)
         )
       );
@@ -254,15 +265,13 @@ export class GitignoreManager implements IGitignoreManager {
    */
   private async readGitignoreFile(gitignorePath: string): Promise<string> {
     try {
-      const file = Bun.file(gitignorePath);
-      if (await file.exists()) {
-        return await file.text();
-      } else {
+      return await fs.readFile(gitignorePath, 'utf8');
+    } catch (error: any) {
+      if (error.code === 'ENOENT') {
         // Create empty .gitignore if it doesn't exist
-        await Bun.write(gitignorePath, '');
+        await fs.writeFile(gitignorePath, '', 'utf8');
         return '';
       }
-    } catch (error) {
       throw error;
     }
   }
@@ -273,13 +282,11 @@ export class GitignoreManager implements IGitignoreManager {
   private async readOverrideFile(filename: string): Promise<string | null> {
     const filePath = join(this.basePath, filename);
     try {
-      const file = Bun.file(filePath);
-      if (await file.exists()) {
-        return await file.text();
-      } else {
+      return await fs.readFile(filePath, 'utf8');
+    } catch (error: any) {
+      if (error.code === 'ENOENT') {
         return null; // File doesn't exist
       }
-    } catch (error) {
       throw error; // Other errors should be propagated
     }
   }

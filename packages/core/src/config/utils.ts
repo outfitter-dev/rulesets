@@ -12,6 +12,10 @@ import type {
   ConfigLoadOptions,
   RulesetConfig,
 } from './types';
+import {
+  createConfigFilePath,
+  createConfigDirectoryPath,
+} from './types';
 import { CONFIG_FILE_NAMES, DEFAULT_LOAD_OPTIONS } from './types';
 
 const logger = getChildLogger('config');
@@ -63,10 +67,10 @@ export async function findConfigFile(
         const format = getConfigFormat(fileName);
 
         return {
-          filePath,
+          filePath: createConfigFilePath(filePath),
           format,
           content,
-          directory: currentPath,
+          directory: createConfigDirectoryPath(currentPath),
           index: i, // Keep track of precedence order
         };
       } catch (error) {
@@ -103,6 +107,81 @@ export async function findConfigFile(
 }
 
 /**
+ * Find ALL configuration files in hierarchy starting from a directory
+ * Returns configs from root to leaf (parent configs first)
+ */
+export async function findConfigFilesHierarchy(
+  startPath: string,
+  options: ConfigLoadOptions = DEFAULT_LOAD_OPTIONS
+): Promise<ConfigFileResult[]> {
+  const { maxSearchDepth = 10, searchParents = true } = options;
+  const foundConfigs: ConfigFileResult[] = [];
+
+  let currentPath = resolve(startPath);
+  let depth = 0;
+
+  while (depth <= maxSearchDepth) {
+    // Try each config file name in order of precedence
+    const filePaths = CONFIG_FILE_NAMES.map((fileName) =>
+      join(currentPath, fileName)
+    );
+    // biome-ignore lint/nursery/noAwaitInLoop: Sequential directory search is intentional
+    const existenceResults = await Promise.all(filePaths.map(fileExists));
+
+    // Read all existing files in parallel
+    const readPromises = filePaths.map(async (filePath, i) => {
+      if (!existenceResults[i]) {
+        return null;
+      }
+
+      try {
+        const content = await Bun.file(filePath).text();
+        const fileName = CONFIG_FILE_NAMES[i];
+        const format = getConfigFormat(fileName);
+
+        return {
+          filePath: createConfigFilePath(filePath),
+          format,
+          content,
+          directory: createConfigDirectoryPath(currentPath),
+          index: i, // Keep track of precedence order
+        };
+      } catch (error) {
+        logger.warn({ filePath, error }, 'Failed to read config file');
+        return null;
+      }
+    });
+
+    const readResults = await Promise.all(readPromises);
+
+    // Add the first successful read result in order of precedence
+    for (const readResult of readResults) {
+      if (readResult !== null) {
+        const { index: _, ...result } = readResult;
+        foundConfigs.push(result);
+        break; // Only take one config per directory
+      }
+    }
+
+    if (!searchParents) {
+      break;
+    }
+
+    const parentPath = dirname(currentPath);
+    if (parentPath === currentPath) {
+      // Reached filesystem root
+      break;
+    }
+
+    currentPath = parentPath;
+    depth++;
+  }
+
+  // Return configs from root to leaf (parent configs first)
+  return foundConfigs.reverse();
+}
+
+/**
  * Determine configuration format from filename
  */
 export function getConfigFormat(fileName: string): 'jsonc' | 'toml' {
@@ -132,7 +211,7 @@ export function parseConfigContent(
 
         if (errors.length > 0) {
           const errorMessages = errors
-            .map((e) => `Line ${e.offset}: ${e.error}`)
+            .map((e) => `Line ${e.line ?? e.offset}: ${e.error}`)
             .join(', ');
           throw new Error(`JSONC parse errors: ${errorMessages}`);
         }

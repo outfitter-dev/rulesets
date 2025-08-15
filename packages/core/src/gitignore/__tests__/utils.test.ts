@@ -9,6 +9,7 @@ import {
   matchesPattern,
   normalizeGitignorePath,
   parseGitignoreContent,
+  parseOverrideContent,
   parseOverrideFile,
   rebuildGitignoreContent,
   sortAndDedupePaths,
@@ -17,16 +18,10 @@ import {
 describe('normalizeGitignorePath', () => {
   const originalCwd = process.cwd();
 
-  beforeEach(() => {
-    process.chdir('/test/base');
-  });
-
-  afterEach(() => {
-    process.chdir(originalCwd);
-  });
+  const base = '/test/base';
 
   it('should normalize absolute paths to relative', () => {
-    expect(normalizeGitignorePath('/test/base/src/file.ts', '/test/base')).toBe(
+    expect(normalizeGitignorePath('/test/base/src/file.ts', base)).toBe(
       'src/file.ts'
     );
   });
@@ -44,9 +39,9 @@ describe('normalizeGitignorePath', () => {
   });
 
   it('should handle complex paths', () => {
-    expect(
-      normalizeGitignorePath('/test/base/./src/../dist/file.js', '/test/base')
-    ).toBe('dist/file.js');
+    expect(normalizeGitignorePath('/test/base/./src/../dist/file.js', base)).toBe(
+      'dist/file.js'
+    );
   });
 });
 
@@ -97,7 +92,7 @@ describe('matchesAnyPattern', () => {
   });
 });
 
-describe('parseOverrideFile', () => {
+describe('parseOverrideContent', () => {
   it('should parse valid patterns', () => {
     const content = `
 # Comment line
@@ -107,12 +102,12 @@ dist/
 # Another comment
 *.log
 `;
-    const result = parseOverrideFile(content);
+    const result = parseOverrideContent(content);
     expect(result).toEqual(['.cursor/rules/important.mdc', 'dist/', '*.log']);
   });
 
   it('should handle empty file', () => {
-    expect(parseOverrideFile('')).toEqual([]);
+    expect(parseOverrideContent('')).toEqual([]);
   });
 
   it('should filter out comments and empty lines', () => {
@@ -125,7 +120,7 @@ dist/
 
 dist/
 `;
-    const result = parseOverrideFile(content);
+    const result = parseOverrideContent(content);
     expect(result).toEqual(['.cursor/rules/test.mdc', 'dist/']);
   });
 });

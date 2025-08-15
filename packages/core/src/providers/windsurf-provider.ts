@@ -157,7 +157,8 @@ export class WindsurfProvider implements Provider, DestinationPlugin {
       destPath;
 
     // Security: Validate and sanitize the path to prevent directory traversal
-    const resolvedPath = this.sanitizePath(outputPath, process.cwd());
+    const baseDir = typeof config.baseDir === 'string' ? config.baseDir : process.cwd();
+    const resolvedPath = this.sanitizePath(outputPath, baseDir);
 
     logger.info(`Writing Windsurf rules to: ${resolvedPath}`);
 

@@ -5,12 +5,16 @@
 import { promises as fs } from 'node:fs';
 import { join } from 'node:path';
 import { beforeEach, describe, expect, it, type Mock, mock, spyOn } from 'bun:test';
-import { createGitignoreManager, GitignoreManager } from '../GitignoreManager';
+import { createGitignoreManager, GitignoreManager } from '../gitignore-manager';
 import type { GitignoreConfig } from '../types';
 
-// Mock fs module - keeping fs for test mocking
+// Mock fs module
 const mockReadFile = mock(() => Promise.resolve(''));
 const mockWriteFile = mock(() => Promise.resolve());
+
+// Spy on the actual fs module
+spyOn(fs, 'readFile').mockImplementation(mockReadFile);
+spyOn(fs, 'writeFile').mockImplementation(mockWriteFile);
 
 const mockFs = {
   readFile: mockReadFile,
@@ -21,7 +25,9 @@ describe('GitignoreManager', () => {
   const testBasePath = '/test/project';
 
   beforeEach(() => {
-    // Bun test handles mock clearing automatically;
+    // Clear all mocks and reset their behavior
+    mockReadFile.mockClear();
+    mockWriteFile.mockClear();
     mockReadFile.mockResolvedValue('');
     mockWriteFile.mockResolvedValue(undefined);
   });
@@ -68,9 +74,17 @@ describe('GitignoreManager', () => {
       const manager = new GitignoreManager({}, testBasePath);
       const result = await manager.updateGitignore(['.cursor/rules/test.mdc']);
 
+      // Should create .gitignore with managed block
       expect(mockFs.writeFile).toHaveBeenCalledWith(
         join(testBasePath, '.gitignore'),
         '',
+        'utf8'
+      );
+      
+      // Should update with content
+      expect(mockFs.writeFile).toHaveBeenCalledWith(
+        join(testBasePath, '.gitignore'),
+        expect.stringContaining('# START Rulesets Generated Files'),
         'utf8'
       );
       expect(result.success).toBe(true);
@@ -185,13 +199,13 @@ dist/`;
         if (filePath.endsWith('.gitignore')) {
           return existingGitignore;
         }
-        throw new Error('ENOENT');
+        throw { code: 'ENOENT' };
       });
 
       const manager = new GitignoreManager({}, testBasePath);
       await manager.updateGitignore(['.cursor/rules/test.mdc']);
 
-      // Should only be called once to create the file if it doesn't exist
+      // Should not write if content is unchanged
       expect(mockFs.writeFile).toHaveBeenCalledTimes(0);
     });
   });
@@ -233,8 +247,8 @@ dist/`;
       mockFs.readFile.mockRejectedValue({ code: 'ENOENT' });
 
       const config: Partial<GitignoreConfig> = {
-        alwaysKeep: ['important.txt'],
-        alwaysIgnore: ['*.temp'],
+        keep: ['important.txt'],
+        ignore: ['*.temp'],
       };
       const manager = new GitignoreManager(config, testBasePath);
       const overrides = await manager.readOverrides();

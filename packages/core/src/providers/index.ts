@@ -20,10 +20,47 @@ export const ampProvider = new AmpProvider();
 export const openCodeProvider = new OpenCodeProvider();
 
 // Modern provider registry - primary export for new code
-export const providers: ReadonlyMap<string, Provider> = new Map<
-  string,
-  Provider
->([
+class ReadOnlyProviderMap implements ReadonlyMap<string, Provider> {
+  private readonly _map: Map<string, Provider>;
+
+  constructor(entries: [string, Provider][]) {
+    this._map = new Map(entries);
+  }
+
+  get size(): number {
+    return this._map.size;
+  }
+
+  get(key: string): Provider | undefined {
+    return this._map.get(key);
+  }
+
+  has(key: string): boolean {
+    return this._map.has(key);
+  }
+
+  keys(): IterableIterator<string> {
+    return this._map.keys();
+  }
+
+  values(): IterableIterator<Provider> {
+    return this._map.values();
+  }
+
+  entries(): IterableIterator<[string, Provider]> {
+    return this._map.entries();
+  }
+
+  forEach(callbackfn: (value: Provider, key: string, map: ReadonlyMap<string, Provider>) => void): void {
+    this._map.forEach((value, key) => callbackfn(value, key, this));
+  }
+
+  [Symbol.iterator](): IterableIterator<[string, Provider]> {
+    return this._map[Symbol.iterator]();
+  }
+}
+
+export const providers: ReadonlyMap<string, Provider> = new ReadOnlyProviderMap([
   ['cursor', cursorProvider],
   ['windsurf', windsurfProvider],
   ['claude-code', claudeCodeProvider],
@@ -47,10 +84,47 @@ export function getProviderIds(): string[] {
 
 // Backwards compatibility layer for legacy destination terminology
 // @deprecated - Use providers instead. Will be removed in v1.0
-export const destinations: ReadonlyMap<string, DestinationPlugin> = new Map<
-  string,
-  DestinationPlugin
->([
+class ReadOnlyDestinationMap implements ReadonlyMap<string, DestinationPlugin> {
+  private readonly _map: Map<string, DestinationPlugin>;
+
+  constructor(entries: [string, DestinationPlugin][]) {
+    this._map = new Map(entries);
+  }
+
+  get size(): number {
+    return this._map.size;
+  }
+
+  get(key: string): DestinationPlugin | undefined {
+    return this._map.get(key);
+  }
+
+  has(key: string): boolean {
+    return this._map.has(key);
+  }
+
+  keys(): IterableIterator<string> {
+    return this._map.keys();
+  }
+
+  values(): IterableIterator<DestinationPlugin> {
+    return this._map.values();
+  }
+
+  entries(): IterableIterator<[string, DestinationPlugin]> {
+    return this._map.entries();
+  }
+
+  forEach(callbackfn: (value: DestinationPlugin, key: string, map: ReadonlyMap<string, DestinationPlugin>) => void): void {
+    this._map.forEach((value, key) => callbackfn(value, key, this));
+  }
+
+  [Symbol.iterator](): IterableIterator<[string, DestinationPlugin]> {
+    return this._map[Symbol.iterator]();
+  }
+}
+
+export const destinations: ReadonlyMap<string, DestinationPlugin> = new ReadOnlyDestinationMap([
   ['cursor', cursorProvider as unknown as DestinationPlugin],
   ['windsurf', windsurfProvider as unknown as DestinationPlugin],
   ['claude-code', claudeCodeProvider as unknown as DestinationPlugin],

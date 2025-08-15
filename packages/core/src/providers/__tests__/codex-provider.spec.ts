@@ -9,11 +9,13 @@ import type {
 import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import { CodexProvider } from '../codex-provider';
 
-// Mock fs using Bun's mock API
+// Mock fs and Bun API using Bun's mock API
 const mockWriteFile = mock().mockResolvedValue(undefined);
 const mockMkdir = mock().mockResolvedValue(undefined);
+const mockBunWrite = mock().mockResolvedValue(10);
 
-// vi.mock('node:fs', () => ({
+// Mock node:fs for Bun test compatibility
+mock.module('node:fs', () => ({
   promises: {
     mkdir: mockMkdir,
     writeFile: mockWriteFile,
@@ -41,6 +43,13 @@ describe('CodexProvider', () => {
     // Clear mock call counts
     mockWriteFile.mockClear();
     mockMkdir.mockClear();
+    mockBunWrite.mockClear();
+    
+    // Set up mock return values
+    mockBunWrite.mockResolvedValue(10);
+    
+    // Mock Bun.write using spyOn
+    spyOn(Bun, 'write').mockImplementation(mockBunWrite);
   });
 
   afterEach(() => {
@@ -275,12 +284,9 @@ describe('CodexProvider', () => {
 
       const resolvedPath = resolve('AGENTS.md');
 
-      expect(mockWriteFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
 
       expect(result.generatedPaths).toEqual([resolvedPath]);
@@ -301,12 +307,9 @@ describe('CodexProvider', () => {
       });
 
       const resolvedPath = resolve('custom/AGENTS.md');
-      expect(mockWriteFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
     });
 
@@ -433,7 +436,7 @@ describe('CodexProvider', () => {
       });
 
       // Verify TOML content structure
-      const writeFileCalls = mockWriteFile.mock.calls;
+      const writeFileCalls = mockBunWrite.mock.calls;
       const tomlCall = writeFileCalls.find((call) =>
         call[0].toString().includes('config.toml')
       );

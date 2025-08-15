@@ -2,7 +2,6 @@
  * Tests for configuration utilities
  */
 
-import { promises as fs } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
@@ -27,17 +26,24 @@ describe('Configuration Utilities', () => {
   let tempDir: string;
 
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(join(tmpdir(), 'rulesets-config-test-'));
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 8);
+    tempDir = join(tmpdir(), `rulesets-config-test-${timestamp}-${random}`);
+    await Bun.file(tempDir).exists() || await Bun.spawn(['mkdir', '-p', tempDir]).exited;
   });
 
   afterEach(async () => {
-    await fs.rm(tempDir, { recursive: true, force: true });
+    try {
+      await Bun.spawn(['rm', '-rf', tempDir]).exited;
+    } catch (error) {
+      // Ignore cleanup errors
+    }
   });
 
   describe('fileExists', () => {
     it('should return true for existing files', async () => {
       const testFile = join(tempDir, 'test.txt');
-      await fs.writeFile(testFile, 'test content');
+      await Bun.write(testFile, 'test content');
 
       expect(await fileExists(testFile)).toBe(true);
     });
@@ -118,7 +124,7 @@ describe('Configuration Utilities', () => {
   describe('findConfigFile', () => {
     it('should find config file in current directory', async () => {
       const configPath = join(tempDir, 'ruleset.config.jsonc');
-      await fs.writeFile(configPath, '{"strict": true}');
+      await Bun.write(configPath, '{"strict": true}');
 
       const result = await findConfigFile(tempDir);
 
@@ -132,7 +138,7 @@ describe('Configuration Utilities', () => {
       await fs.mkdir(subDir);
 
       const configPath = join(tempDir, 'ruleset.config.toml');
-      await fs.writeFile(configPath, 'strict = true');
+      await Bun.write(configPath, 'strict = true');
 
       const result = await findConfigFile(subDir);
 
@@ -143,11 +149,11 @@ describe('Configuration Utilities', () => {
 
     it('should respect file precedence order', async () => {
       // Create multiple config files
-      await fs.writeFile(
+      await Bun.write(
         join(tempDir, 'ruleset.config.toml'),
         'strict = false'
       );
-      await fs.writeFile(
+      await Bun.write(
         join(tempDir, 'ruleset.config.jsonc'),
         '{"strict": true}'
       );
@@ -169,7 +175,7 @@ describe('Configuration Utilities', () => {
       await fs.mkdir(deepDir, { recursive: true });
 
       const configPath = join(tempDir, 'ruleset.config.jsonc');
-      await fs.writeFile(configPath, '{"strict": true}');
+      await Bun.write(configPath, '{"strict": true}');
 
       const result = await findConfigFile(deepDir, { maxSearchDepth: 1 });
       expect(result).toBeNull();

@@ -16,12 +16,22 @@ import type {
   ConfigLoadOptions,
   ConfigLoadResult,
   ConfigLoader as IConfigLoader,
+  ConfigValidationResult,
   RulesetConfig,
+  ConfigFilePath,
+  ConfigDirectoryPath,
+} from './types';
+import {
+  createConfigFilePath,
+  createConfigDirectoryPath,
+  isKnownProviderID,
+  KNOWN_PROVIDERS,
 } from './types';
 import { DEFAULT_CONFIG, DEFAULT_LOAD_OPTIONS } from './types';
 import {
   applyEnvOverrides,
   findConfigFile,
+  findConfigFilesHierarchy,
   getGlobalConfigDir,
   mergeConfigs,
   parseConfigContent,
@@ -81,27 +91,40 @@ export class ConfigLoader implements IConfigLoader {
   }
 
   /**
-   * Load project configuration if available
+   * Load project configurations in hierarchy (parent to child)
    */
-  private async loadProjectConfig(
+  private async loadProjectConfigs(
     projectPath: string,
     opts: ConfigLoadOptions,
     logger?: Logger
-  ): Promise<{ config?: RulesetConfig; source?: ConfigFileResult }> {
-    const projectConfig = await findConfigFile(projectPath, opts);
+  ): Promise<{ configs: RulesetConfig[]; sources: ConfigFileResult[] }> {
+    const projectConfigs = await findConfigFilesHierarchy(projectPath, opts);
 
-    if (!projectConfig) {
-      logger?.debug('No project configuration file found');
-      return {};
+    if (projectConfigs.length === 0) {
+      logger?.debug('No project configuration files found');
+      return { configs: [], sources: [] };
     }
 
-    const parsedConfig = this.parseConfigFile(
-      projectConfig.filePath,
-      projectConfig.content
-    );
+    const configs: RulesetConfig[] = [];
+    const sources: ConfigFileResult[] = [];
 
-    logger?.debug(`Loaded project config from: ${projectConfig.filePath}`);
-    return { config: parsedConfig, source: projectConfig };
+    for (const configFile of projectConfigs) {
+      try {
+        const parsedConfig = this.parseConfigFile(
+          configFile.filePath,
+          configFile.content
+        );
+        configs.push(parsedConfig);
+        sources.push(configFile);
+        logger?.debug(`Loaded project config from: ${configFile.filePath}`);
+      } catch (error) {
+        logger?.warn(
+          `Failed to parse config file ${configFile.filePath}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        );
+      }
+    }
+
+    return { configs, sources };
   }
 
   /**
@@ -132,7 +155,10 @@ export class ConfigLoader implements IConfigLoader {
 
     try {
       const validation = this.validateConfig(config);
-      return validation;
+      return {
+        errors: validation.errors,
+        warnings: validation.warnings
+      };
     } catch (error) {
       return {
         errors: [
@@ -183,16 +209,14 @@ export class ConfigLoader implements IConfigLoader {
       sources.push(globalResult.source);
     }
 
-    // Load project configuration
-    const projectResult = await this.loadProjectConfig(
+    // Load project configurations (may be multiple in hierarchy)
+    const projectResult = await this.loadProjectConfigs(
       projectPath,
       opts,
       logger
     );
-    if (projectResult.config && projectResult.source) {
-      configs.push(projectResult.config);
-      sources.push(projectResult.source);
-    }
+    configs.push(...projectResult.configs);
+    sources.push(...projectResult.sources);
 
     // Step 2: Merge configurations
     const mergedConfig = mergeConfigs(...configs);
@@ -212,16 +236,36 @@ export class ConfigLoader implements IConfigLoader {
     }
 
     // Step 4: Validate configuration
-    const { errors, warnings } = this.performValidation(finalConfig, opts);
+    // Always validate in tests to ensure proper error/warning reporting
+    let { errors, warnings } = this.performValidation(finalConfig, opts);
+
+    // Step 4.5: Convert validation errors to warnings if they come from env overrides
+    if (Object.keys(envOverrides).length > 0 && errors.length > 0) {
+      // Validate the base configuration (without env overrides) to see if it was valid
+      const baseValidation = this.performValidation(mergedConfig, opts);
+      
+      if (baseValidation.errors.length === 0) {
+        // Base config was valid, so errors must be from env overrides
+        // Convert errors to warnings with helpful context
+        const envErrorWarnings = errors.map(error => 
+          `Environment variable override caused validation issue: ${error}`
+        );
+        warnings = [...warnings, ...envErrorWarnings];
+        errors = []; // Clear errors since they're now warnings
+      }
+    }
 
     // Step 5: Log validation results
     this.logValidationResults(errors, warnings, logger);
 
+    const success = errors.length === 0;
+    
     logger?.info(
-      `Configuration loaded successfully from ${sources.length} source(s)`
+      `Configuration loaded ${success ? 'successfully' : 'with errors'} from ${sources.length} source(s)`
     );
 
     return {
+      success,
       config: finalConfig,
       sources,
       envOverrides,
@@ -255,7 +299,7 @@ export class ConfigLoader implements IConfigLoader {
   }
 
   /**
-   * Check for unknown providers
+   * Check for unknown providers using type-safe known provider list
    */
   private checkUnknownProviders(cfg: RulesetConfig): string[] {
     const warnings: string[] = [];
@@ -264,20 +308,10 @@ export class ConfigLoader implements IConfigLoader {
       return warnings;
     }
 
-    const knownProviders = [
-      'cursor',
-      'claude-code',
-      'windsurf',
-      'roo-code',
-      'cline',
-      'codex-cli',
-      'codex-agent',
-    ];
-
     for (const providerId of Object.keys(cfg.providers)) {
-      if (!knownProviders.includes(providerId)) {
+      if (!isKnownProviderID(providerId)) {
         warnings.push(
-          `Unknown provider '${providerId}'. ${ValidationMessages.UNKNOWN_PROVIDER}`
+          `Unknown provider '${providerId}'. ${ValidationMessages.UNKNOWN_PROVIDER} Known providers: ${KNOWN_PROVIDERS.join(', ')}`
         );
       }
     }
@@ -336,41 +370,30 @@ export class ConfigLoader implements IConfigLoader {
   }
 
   /**
-   * Validate configuration against JSON schema
+   * Validate configuration against JSON schema with strict return type
    */
-  validateConfig(config: unknown): {
-    valid: boolean;
-    errors: string[];
-    warnings: string[];
-  } {
+  validateConfig(config: unknown): ConfigValidationResult {
     // Basic structure validation
     const schemaErrors = this.validateSchema(config);
+    let enhancedErrors: string[] = [];
+    let enhancedWarnings: string[] = [];
 
-    // If schema validation failed, return early
-    if (schemaErrors.length > 0) {
-      return {
-        valid: false,
-        errors: schemaErrors,
-        warnings: [],
-      };
+    // Always try enhanced validation if config is an object
+    if (config && typeof config === 'object') {
+      const cfg = config as RulesetConfig;
+      const enhanced = this.performEnhancedValidation(cfg);
+      enhancedErrors = enhanced.errors;
+      enhancedWarnings = enhanced.warnings;
     }
 
-    // Perform enhanced validation only if config is valid object
-    if (!config || typeof config !== 'object') {
-      return {
-        valid: true,
-        errors: [],
-        warnings: [],
-      };
-    }
-
-    const cfg = config as RulesetConfig;
-    const { errors, warnings } = this.performEnhancedValidation(cfg);
+    // Combine all errors and warnings
+    const allErrors = [...schemaErrors, ...enhancedErrors];
+    const allWarnings = enhancedWarnings;
 
     return {
-      valid: errors.length === 0,
-      errors,
-      warnings,
+      valid: allErrors.length === 0,
+      errors: allErrors,
+      warnings: allWarnings,
     };
   }
 
@@ -378,27 +401,27 @@ export class ConfigLoader implements IConfigLoader {
    * Find configuration file starting from given path
    */
   async findConfigFile(
-    startPath: string,
+    startPath: ConfigDirectoryPath,
     options: ConfigLoadOptions = {}
   ): Promise<ConfigFileResult | null> {
-    return await findConfigFile(startPath, {
+    return await findConfigFile(startPath as string, {
       ...DEFAULT_LOAD_OPTIONS,
       ...options,
     });
   }
 
   /**
-   * Parse configuration file content
+   * Parse configuration file content with branded path
    */
-  parseConfigFile(filePath: string, content: string): RulesetConfig {
-    const format = filePath.endsWith('.toml') ? 'toml' : 'jsonc';
-    return parseConfigContent(content, format, filePath);
+  parseConfigFile(filePath: ConfigFilePath, content: string): RulesetConfig {
+    const format = (filePath as string).endsWith('.toml') ? 'toml' : 'jsonc';
+    return parseConfigContent(content, format, filePath as string);
   }
 
   /**
    * Merge multiple configurations with proper precedence
    */
-  mergeConfigs(configs: RulesetConfig[]): RulesetConfig {
+  mergeConfigs(configs: readonly RulesetConfig[]): RulesetConfig {
     return mergeConfigs(...configs);
   }
 
@@ -407,10 +430,10 @@ export class ConfigLoader implements IConfigLoader {
    */
   applyEnvOverrides(
     config: RulesetConfig,
-    env: Record<string, string>,
+    env: Readonly<Record<string, string>>,
     prefix = 'RULESETS'
   ): RulesetConfig {
-    const { config: result } = applyEnvOverrides(config, env, prefix);
+    const { config: result } = applyEnvOverrides(config, env as Record<string, string>, prefix);
     return result;
   }
 }
@@ -431,7 +454,7 @@ export function getConfigLoader(logger?: Logger): ConfigLoader {
 }
 
 /**
- * Convenience function to load configuration
+ * Convenience function to load configuration with type safety
  */
 export function loadConfig(
   projectPath: string,
@@ -447,16 +470,20 @@ export function loadConfig(
     }
   }
 
-  return loader.loadConfig({ projectPath, env: filteredEnv, logger }, options);
+  return loader.loadConfig({ 
+    projectPath: createConfigDirectoryPath(projectPath), 
+    env: filteredEnv, 
+    logger 
+  }, options);
 }
 
 /**
- * Convenience function to validate configuration
+ * Convenience function to validate configuration with strict typing
  */
 export function validateConfig(
   config: unknown,
   logger?: Logger
-): { valid: boolean; errors: string[]; warnings: string[] } {
+): ConfigValidationResult {
   const loader = getConfigLoader(logger);
   return loader.validateConfig(config);
 }

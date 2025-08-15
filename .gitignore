@@ -58,3 +58,9 @@ docs_archive/
 
 # Archived/deprecated code
 .archive/
+
+# START Rulesets Generated Files
+# Rulesets Generated Files
+.ruleset/dist/cursor/my-rules.md
+.ruleset/dist/windsurf/my-rules.md
+# END Rulesets Generated Files

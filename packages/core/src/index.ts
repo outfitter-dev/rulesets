@@ -1,7 +1,7 @@
 // TLDR: Main entry point and CLI orchestration for Rulesets (mixd-v0)
 // TLDR: v0.1.0 Basic orchestration for single file processing with minimal features
 
-import { dirname } from 'node:path';
+import { dirname, resolve } from 'node:path';
 import { compile, compileWithProvider } from '@rulesets/compiler';
 import { lint } from '@rulesets/linter';
 import { parse } from '@rulesets/parser';
@@ -274,7 +274,8 @@ async function processDestination(
   destinationId: string,
   parsedDoc: ParsedDoc,
   config: RulesetConfig,
-  logger: Logger
+  logger: Logger,
+  projectPath: string
 ): Promise<string[]> {
   const plugin = destinations.get(destinationId);
   if (!plugin) {
@@ -310,7 +311,8 @@ async function processDestination(
     destConfig,
     config.providers?.[destinationId],
     destinationId,
-    config.outputDirectory
+    config.outputDirectory,
+    provider?.config?.outputPath
   );
 
   // Write using the plugin
@@ -318,7 +320,7 @@ async function processDestination(
     const writeResult = await plugin.write({
       compiled: compiledDoc,
       destPath,
-      config: destConfig,
+      config: { ...destConfig, baseDir: projectPath },
       logger,
     });
 
@@ -371,10 +373,11 @@ function determineOutputPath(
   destConfig: Record<string, unknown>,
   providerConfig: Record<string, unknown> | undefined,
   destinationId: string,
-  outputDirectory?: string
+  outputDirectory?: string,
+  providerDefaultPath?: string
 ): string {
   const outputDir = outputDirectory || '.ruleset/dist';
-  const defaultPath = `${outputDir}/${destinationId}/my-rules.md`;
+  const fallbackPath = `${outputDir}/${destinationId}/my-rules.md`;
 
   return (
     (typeof destConfig.outputPath === 'string'
@@ -384,7 +387,8 @@ function determineOutputPath(
     (typeof providerConfig?.outputPath === 'string'
       ? providerConfig.outputPath
       : undefined) ||
-    defaultPath
+    providerDefaultPath ||
+    fallbackPath
   );
 }
 
@@ -397,7 +401,7 @@ function buildGitignoreConfig(config: RulesetConfig) {
     keep: config.gitignore?.keep || [],
     ignore: config.gitignore?.ignore || [],
     options: {
-      comment: config.gitignore?.options?.comment || 'Rulesets Generated Files',
+      comment: config.gitignore?.options?.comment || 'Rulesets Managed',
       sort: config.gitignore?.options?.sort ?? true,
     },
   };
@@ -439,7 +443,8 @@ function logGitignoreResults(
 async function updateGitignore(
   allGeneratedPaths: string[],
   config: RulesetConfig,
-  logger: Logger
+  logger: Logger,
+  projectPath: string
 ): Promise<void> {
   // Skip if no paths or gitignore is disabled
   if (allGeneratedPaths.length === 0 || config.gitignore?.enabled === false) {
@@ -453,7 +458,7 @@ async function updateGitignore(
 
   try {
     const gitignoreConfig = buildGitignoreConfig(config);
-    const gitignoreManager = createGitignoreManager(gitignoreConfig);
+    const gitignoreManager = createGitignoreManager(gitignoreConfig, projectPath);
     const gitignoreResult =
       await gitignoreManager.updateGitignore(allGeneratedPaths);
 
@@ -501,14 +506,14 @@ export async function runRulesetsV0(
 
   // Step 6: Compile and write for each destination
   const destinationPromises = destinationIds.map((destinationId) =>
-    processDestination(destinationId, parsedDoc, config, logger)
+    processDestination(destinationId, parsedDoc, config, logger, projectPath)
   );
 
   const generatedPathsResults = await Promise.all(destinationPromises);
   const allGeneratedPaths = generatedPathsResults.flat();
 
   // Step 7: Update .gitignore with generated file paths
-  await updateGitignore(allGeneratedPaths, config, logger);
+  await updateGitignore(allGeneratedPaths, config, logger, projectPath);
 
   logger.info('Rulesets v0.1.0 processing completed successfully!');
   if (allGeneratedPaths.length > 0) {

@@ -1,6 +1,6 @@
 // TLDR: Unit tests for the Claude Code provider (Rulesets v1)
 
-import { promises as fs } from 'node:fs';
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import path from 'node:path';
 import type {
   CompiledDoc,
@@ -9,13 +9,19 @@ import type {
   ProviderCompilationContext,
   SourcePath,
 } from '@rulesets/types';
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
+import { createCompiledContent } from '@rulesets/types';
 import { ClaudeCodeProvider } from '../claude-code-provider';
 
-// vi.mock('fs', () => ({
+// Create mocks for file operations
+const mockMkdir = mock();
+const mockWriteFile = mock();
+const mockBunWrite = mock();
+
+// Mock node:fs module
+mock.module('node:fs', () => ({
   promises: {
-    mkdir: mock(),
-    writeFile: mock(),
+    mkdir: mockMkdir,
+    writeFile: mockWriteFile,
   },
 }));
 
@@ -31,11 +37,23 @@ describe('ClaudeCodeProvider', () => {
       warn: mock(),
       error: mock(),
     };
-    // Bun test handles mock clearing automatically;
+
+    // Clear mock call history
+    mockMkdir.mockClear();
+    mockWriteFile.mockClear();
+    mockBunWrite.mockClear();
+
+    // Set up mocks
+    mockMkdir.mockResolvedValue(undefined);
+    mockWriteFile.mockResolvedValue(undefined);
+    mockBunWrite.mockResolvedValue(10);
+
+    // Mock Bun.write using spyOn
+    spyOn(Bun, 'write').mockImplementation(mockBunWrite);
   });
 
   afterEach(() => {
-    // Bun test automatically restores mocks after each test;
+    // Bun test automatically restores spies after each test
   });
 
   describe('Provider interface properties', () => {
@@ -251,20 +269,22 @@ describe('ClaudeCodeProvider', () => {
         content:
           '---\nruleset:\n  version: 1.0.0\n---\n\n# Claude Code Rules\n\nThis is test content.',
         frontmatter: { ruleset: { version: '1.0.0' } },
-      },
-      ast: {
         blocks: [],
         imports: [],
         variables: [],
         markers: [],
+        errors: [],
+        warnings: [],
       },
       output: {
-        content: '# Claude Code Rules\n\nThis is test content for Claude Code.',
+        content: createCompiledContent('# Claude Code Rules\n\nThis is test content for Claude Code.'),
+        format: 'markdown',
         metadata: { priority: 'high' },
       },
-      context: {
-        destinationId: 'claude-code',
-        config: {},
+      metadata: {
+        compiledAt: new Date().toISOString(),
+        compiler: 'test',
+        version: '1.0.0',
       },
     };
 
@@ -281,12 +301,9 @@ describe('ClaudeCodeProvider', () => {
 
       const resolvedPath = path.resolve('CLAUDE.md');
 
-      expect(fs.writeFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Writing Claude Code rules to: CLAUDE.md'
@@ -313,12 +330,9 @@ describe('ClaudeCodeProvider', () => {
       });
 
       const resolvedPath = path.resolve('custom/CLAUDE.md');
-      expect(fs.writeFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
     });
 
@@ -363,7 +377,7 @@ describe('ClaudeCodeProvider', () => {
     it('should handle writeFile errors', async () => {
       const destPath = 'test.md';
       const error = new Error('Permission denied');
-      // vi.mocked(fs.writeFile).mockRejectedValueOnce(error);
+      mockBunWrite.mockRejectedValueOnce(error);
 
       await expect(
         provider.write({
@@ -400,20 +414,22 @@ describe('ClaudeCodeProvider', () => {
       source: {
         content: '# Test',
         frontmatter: {},
-      },
-      ast: {
         blocks: [],
         imports: [],
         variables: [],
         markers: [],
+        errors: [],
+        warnings: [],
       },
       output: {
-        content: '# Test content',
+        content: createCompiledContent('# Test content'),
+        format: 'markdown',
         metadata: {},
       },
-      context: {
-        destinationId: 'claude-code',
-        config: {},
+      metadata: {
+        compiledAt: new Date().toISOString(),
+        compiler: 'test',
+        version: '1.0.0',
       },
     };
 
@@ -448,7 +464,7 @@ describe('ClaudeCodeProvider', () => {
       expect(result.generatedPaths).toEqual([claudePath, mcpPath]);
       expect(result.metadata.mcpEnabled).toBe(true);
 
-      expect(fs.writeFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         mcpPath,
         JSON.stringify(
           {
@@ -465,8 +481,7 @@ describe('ClaudeCodeProvider', () => {
           },
           null,
           2
-        ),
-        { encoding: 'utf8' }
+        )
       );
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -502,7 +517,7 @@ describe('ClaudeCodeProvider', () => {
         },
       };
 
-      // vi.mocked(fs.writeFile).mockImplementation((filepath) => {
+      mockBunWrite.mockImplementation((filepath) => {
         if (filepath.toString().includes('.mcp.json')) {
           return Promise.reject(new Error('Permission denied'));
         }

@@ -158,7 +158,8 @@ export class CursorProvider implements Provider, DestinationPlugin {
       destPath;
 
     // Security: Validate and sanitize the path to prevent directory traversal
-    const resolvedPath = this.sanitizePath(outputPath, process.cwd());
+    const baseDir = typeof config.baseDir === 'string' ? config.baseDir : process.cwd();
+    const resolvedPath = this.sanitizePath(outputPath, baseDir);
 
     // Ensure directory exists (Bun supports Node.js fs.mkdir)
     const dir = dirname(resolvedPath);

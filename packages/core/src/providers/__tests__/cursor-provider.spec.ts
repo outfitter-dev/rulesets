@@ -1,15 +1,19 @@
 // TLDR: Unit tests for the Cursor provider (Rulesets v0)
 
-import { promises as fs } from 'node:fs';
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import path from 'node:path';
 import type { CompiledDoc, Logger } from '@rulesets/types';
-import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
+import { createCompiledContent } from '@rulesets/types';
 import { CursorProvider } from '../cursor-provider';
 
-// vi.mock('fs', () => ({
+// Create mocks for file operations
+const mockMkdir = mock();
+const mockBunWrite = mock();
+
+// Mock node:fs module
+mock.module('node:fs', () => ({
   promises: {
-    mkdir: mock(),
-    writeFile: mock(),
+    mkdir: mockMkdir,
   },
 }));
 
@@ -25,11 +29,21 @@ describe('CursorProvider', () => {
       warn: mock(),
       error: mock(),
     };
-    // Bun test handles mock clearing automatically;
+
+    // Clear mock call history
+    mockMkdir.mockClear();
+    mockBunWrite.mockClear();
+
+    // Set up mocks
+    mockMkdir.mockResolvedValue(undefined);
+    mockBunWrite.mockResolvedValue(10); // Mock successful write
+
+    // Mock Bun.write using spyOn
+    spyOn(Bun, 'write').mockImplementation(mockBunWrite);
   });
 
   afterEach(() => {
-    // Bun test automatically restores mocks after each test;
+    // Bun test automatically restores spies after each test
   });
 
   describe('id', () => {
@@ -75,20 +89,22 @@ describe('CursorProvider', () => {
       source: {
         content: '---\nruleset: v0\n---\n\n# Test Content',
         frontmatter: { ruleset: 'v0' },
-      },
-      ast: {
         blocks: [],
         imports: [],
         variables: [],
         markers: [],
+        errors: [],
+        warnings: [],
       },
       output: {
-        content: '# Test Content\n\nThis is test content.',
+        content: createCompiledContent('# Test Content\n\nThis is test content.'),
+        format: 'markdown',
         metadata: { priority: 'high' },
       },
-      context: {
-        destinationId: 'cursor',
-        config: {},
+      metadata: {
+        compiledAt: new Date().toISOString(),
+        compiler: 'test',
+        version: '1.0.0',
       },
     };
 
@@ -96,7 +112,7 @@ describe('CursorProvider', () => {
       const destPath = '.cursor/rules/test.mdc';
       const config = {};
 
-      await provider.write({
+      const result = await provider.write({
         compiled: mockCompiledDoc,
         destPath,
         config,
@@ -104,15 +120,10 @@ describe('CursorProvider', () => {
       });
 
       const resolvedPath = path.resolve(destPath);
-      const dir = path.dirname(resolvedPath);
 
-      expect(fs.mkdir).toHaveBeenCalledWith(dir, { recursive: true });
-      expect(fs.writeFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
       expect(mockLogger.info).toHaveBeenCalledWith(
         `Writing Cursor rules to: ${destPath}`
@@ -120,6 +131,10 @@ describe('CursorProvider', () => {
       expect(mockLogger.info).toHaveBeenCalledWith(
         `Successfully wrote Cursor rules to: ${resolvedPath}`
       );
+      
+      // Check return value
+      expect(result.generatedPaths).toEqual([resolvedPath]);
+      expect(result.metadata.provider).toBe('cursor');
     });
 
     it('should use outputPath from config if provided', async () => {
@@ -134,12 +149,9 @@ describe('CursorProvider', () => {
       });
 
       const resolvedPath = path.resolve(config.outputPath);
-      expect(fs.writeFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
     });
 
@@ -154,7 +166,7 @@ describe('CursorProvider', () => {
         logger: mockLogger,
       });
 
-      expect(mockLogger.debug).toHaveBeenCalledWith('Destination: cursor');
+      expect(mockLogger.debug).toHaveBeenCalledWith('Provider: cursor');
       expect(mockLogger.debug).toHaveBeenCalledWith(
         expect.stringContaining('Config:')
       );
@@ -164,7 +176,9 @@ describe('CursorProvider', () => {
     it('should handle mkdir errors', async () => {
       const destPath = '.cursor/rules/test.mdc';
       const error = new Error('Permission denied');
-      // vi.mocked(fs.mkdir).mockRejectedValueOnce(error);
+      
+      // Mock mkdir to reject
+      mockMkdir.mockRejectedValueOnce(error);
 
       await expect(
         provider.write({
@@ -184,7 +198,9 @@ describe('CursorProvider', () => {
     it('should handle writeFile errors', async () => {
       const destPath = '.cursor/rules/test.mdc';
       const error = new Error('Disk full');
-      // vi.mocked(fs.writeFile).mockRejectedValueOnce(error);
+      
+      // Mock Bun.write to reject
+      mockBunWrite.mockRejectedValueOnce(error);
 
       await expect(
         provider.write({

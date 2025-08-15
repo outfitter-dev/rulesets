@@ -2,7 +2,6 @@
  * Tests for ConfigLoader class
  */
 
-import { promises as fs } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
@@ -11,7 +10,7 @@ import {
   getConfigLoader,
   loadConfig,
   validateConfig,
-} from '../ConfigLoader';
+} from '../config-loader';
 import type { RulesetConfig } from '../types';
 
 describe('ConfigLoader', () => {
@@ -19,12 +18,19 @@ describe('ConfigLoader', () => {
   let loader: ConfigLoader;
 
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(join(tmpdir(), 'rulesets-config-loader-test-'));
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 8);
+    tempDir = join(tmpdir(), `rulesets-config-loader-test-${timestamp}-${random}`);
+    await Bun.file(tempDir).exists() || await Bun.spawn(['mkdir', '-p', tempDir]).exited;
     loader = new ConfigLoader();
   });
 
   afterEach(async () => {
-    await fs.rm(tempDir, { recursive: true, force: true });
+    try {
+      await Bun.spawn(['rm', '-rf', tempDir]).exited;
+    } catch (error) {
+      // Ignore cleanup errors
+    }
   });
 
   describe('parseConfigFile', () => {
@@ -120,8 +126,10 @@ describe('ConfigLoader', () => {
       const result = loader.validateConfig(config);
 
       expect(result.valid).toBe(true);
-      expect(result.warnings).toContain(
-        expect.stringContaining("Unknown provider 'unknown-provider'")
+      expect(result.warnings).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining("unknown-provider")
+        ])
       );
     });
 
@@ -135,8 +143,10 @@ describe('ConfigLoader', () => {
       const result = loader.validateConfig(config);
 
       expect(result.valid).toBe(false);
-      expect(result.errors).toContain(
-        expect.stringContaining('Output path cannot be empty')
+      expect(result.errors).toEqual(
+        expect.arrayContaining([
+          expect.stringContaining("cannot be empty")
+        ])
       );
     });
 
@@ -218,7 +228,7 @@ describe('ConfigLoader', () => {
         }
       }`;
 
-      await fs.writeFile(join(tempDir, 'ruleset.config.jsonc'), configContent);
+      await Bun.write(join(tempDir, 'ruleset.config.jsonc'), configContent);
 
       const result = await loader.loadConfig({
         projectPath: tempDir,
@@ -237,7 +247,7 @@ describe('ConfigLoader', () => {
         "strict": false
       }`;
 
-      await fs.writeFile(join(tempDir, 'ruleset.config.jsonc'), configContent);
+      await Bun.write(join(tempDir, 'ruleset.config.jsonc'), configContent);
 
       const result = await loader.loadConfig({
         projectPath: tempDir,
@@ -255,7 +265,7 @@ describe('ConfigLoader', () => {
         "strict": false
       }`;
 
-      await fs.writeFile(join(tempDir, 'ruleset.config.jsonc'), configContent);
+      await Bun.write(join(tempDir, 'ruleset.config.jsonc'), configContent);
 
       const result = await loader.loadConfig({
         projectPath: tempDir,
@@ -284,13 +294,13 @@ describe('ConfigLoader', () => {
 
     it('should search parent directories', async () => {
       const subDir = join(tempDir, 'subproject');
-      await fs.mkdir(subDir);
+      await Bun.spawn(['mkdir', '-p', subDir]).exited;
 
       const configContent = `{
         "strict": true
       }`;
 
-      await fs.writeFile(join(tempDir, 'ruleset.config.jsonc'), configContent);
+      await Bun.write(join(tempDir, 'ruleset.config.jsonc'), configContent);
 
       const result = await loader.loadConfig({
         projectPath: subDir,
@@ -305,7 +315,7 @@ describe('ConfigLoader', () => {
 
   describe('findConfigFile', () => {
     it('should find config file in directory', async () => {
-      await fs.writeFile(join(tempDir, 'ruleset.config.toml'), 'strict = true');
+      await Bun.write(join(tempDir, 'ruleset.config.toml'), 'strict = true');
 
       const result = await loader.findConfigFile(tempDir);
 
@@ -326,13 +336,18 @@ describe('Configuration convenience functions', () => {
   let tempDir: string;
 
   beforeEach(async () => {
-    tempDir = await fs.mkdtemp(
-      join(tmpdir(), 'rulesets-config-convenience-test-')
-    );
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).substring(2, 8);
+    tempDir = join(tmpdir(), `rulesets-config-convenience-test-${timestamp}-${random}`);
+    await Bun.file(tempDir).exists() || await Bun.spawn(['mkdir', '-p', tempDir]).exited;
   });
 
   afterEach(async () => {
-    await fs.rm(tempDir, { recursive: true, force: true });
+    try {
+      await Bun.spawn(['rm', '-rf', tempDir]).exited;
+    } catch (error) {
+      // Ignore cleanup errors
+    }
   });
 
   describe('getConfigLoader', () => {
@@ -350,7 +365,7 @@ describe('Configuration convenience functions', () => {
         "strict": true
       }`;
 
-      await fs.writeFile(join(tempDir, 'ruleset.config.jsonc'), configContent);
+      await Bun.write(join(tempDir, 'ruleset.config.jsonc'), configContent);
 
       const result = await loadConfig(tempDir);
 

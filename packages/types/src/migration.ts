@@ -4,7 +4,7 @@
  */
 
 import type { DestinationId, DestPath, OutputPath, ProviderId } from './brands';
-import type { ProviderConfig } from './provider';
+import type { ProviderConfig, ValidationConfig } from './provider';
 import type { LinterConfig, Property } from './ruleset-context';
 
 /**
@@ -168,16 +168,29 @@ export function migrateDestinationConfig(
     // Migrate validation settings
     if (legacyConfig.validation) {
       fieldsProcessed.push('validation');
-      // Legacy validation doesn't map directly - skip for now
-      warnings.push({
-        type: 'data-loss',
-        message:
-          'Legacy validation properties not directly supported in new format',
-        suggestion:
-          'Consider implementing validation through provider capabilities',
-        field: 'validation',
-      });
-      fieldsSkipped.push('validation');
+      // Legacy validation settings are partially mapped to new format
+      configBuilder.validation = {
+        strictMode: true, // Default to strict mode when legacy validation was present
+      };
+      
+      // Generate specific warnings for lost validation properties
+      if (legacyConfig.validation.allowedFormats) {
+        warnings.push({
+          type: 'data-loss',
+          message: 'allowedFormats validation not supported in new format',
+          suggestion: 'Use provider-specific format configuration instead',
+          field: 'validation.allowedFormats',
+        });
+      }
+      
+      if (legacyConfig.validation.maxLength) {
+        warnings.push({
+          type: 'data-loss',
+          message: 'maxLength validation not supported in new format',
+          suggestion: 'Consider implementing length validation at the provider level',
+          field: 'validation.maxLength',
+        });
+      }
     }
 
     // Build final config as readonly
@@ -191,7 +204,7 @@ export function migrateDestinationConfig(
         | 'custom'
         | undefined,
       template: configBuilder.template as ProviderConfig['template'],
-      validation: undefined, // Legacy validation not supported in provider config
+      validation: configBuilder.validation as ValidationConfig | undefined,
     };
 
     // Check for includeXml (deprecated feature)
