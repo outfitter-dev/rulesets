@@ -4,11 +4,10 @@
  * Fix critical linting and TypeScript issues in the codebase
  */
 
-import { promises as fs } from 'node:fs';
 import { glob } from 'glob';
 
 async function fixNodeImports(filePath: string) {
-  let content = await fs.readFile(filePath, 'utf-8');
+  let content = await Bun.file(filePath).text();
 
   // Fix Node.js import protocols
   const nodeModules = [
@@ -31,22 +30,22 @@ async function fixNodeImports(filePath: string) {
     );
   }
 
-  await fs.writeFile(filePath, content);
+  await Bun.write(filePath, content);
 }
 
 async function removeSkippedTests(filePath: string) {
-  let content = await fs.readFile(filePath, 'utf-8');
+  let content = await Bun.file(filePath).text();
 
   // Remove .skip from tests
   content = content.replace(/test\.skip\(/g, 'test(');
   content = content.replace(/it\.skip\(/g, 'it(');
   content = content.replace(/describe\.skip\(/g, 'describe(');
 
-  await fs.writeFile(filePath, content);
+  await Bun.write(filePath, content);
 }
 
 async function fixAsyncFunctions(filePath: string) {
-  const content = await fs.readFile(filePath, 'utf-8');
+  const content = await Bun.file(filePath).text();
 
   // This is more complex and would need proper AST parsing
   // For now, just flag files that need manual review

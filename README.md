@@ -230,6 +230,7 @@ Please refer to our general contributing guidelines for information on how to co
 ### Quick Start
 
 1. **Clone and Install**:
+
    ```bash
    git clone https://github.com/your-org/rulesets.git
    cd rulesets
@@ -237,9 +238,10 @@ Please refer to our general contributing guidelines for information on how to co
    ```
 
 2. **Development Commands**:
+
    ```bash
    bun run dev        # Start development mode (watch + rebuild)
-   bun run build      # Build all packages  
+   bun run build      # Build all packages
    bun run test       # Run all tests (Bun test + Vitest hybrid)
    bun run lint       # Lint with Biome + markdownlint
    bun run typecheck  # TypeScript type checking

@@ -5,9 +5,9 @@ export const name = 'rulesets-testing';
 export const version = '0.1.0';
 
 // Placeholder function for testing utilities
-export function createTestFixture(name: string, content: string) {
+export function createTestFixture(fixtureName: string, content: string) {
   return {
-    name,
+    name: fixtureName,
     content,
     timestamp: new Date().toISOString(),
   };

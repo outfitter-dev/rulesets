@@ -1,8 +1,7 @@
 // Provider implementation for Amp AI assistant
 // Implements the new Provider interface with branded types and modern architecture
 
-import { promises as fs } from 'node:fs';
-import * as path from 'node:path';
+import { dirname, isAbsolute, join, normalize, resolve, sep } from 'node:path';
 import type {
   CompilationStats,
   CompiledDoc,
@@ -88,9 +87,7 @@ export class AmpProvider implements Provider, DestinationPlugin {
    * Compiles content for Amp provider
    * New Provider interface method for modern compilation pipeline
    */
-  async compile(
-    _context: ProviderCompilationContext
-  ): Promise<ProviderCompilationResult> {
+  compile(_context: ProviderCompilationContext): ProviderCompilationResult {
     const startTime = Date.now();
     const errors: ProviderError[] = [];
     const warnings: ProviderWarning[] = [];
@@ -175,8 +172,8 @@ export class AmpProvider implements Provider, DestinationPlugin {
       logger.warn(
         `Output path ${resolvedPath} should end with AGENT.md. Adjusting...`
       );
-      const dir = path.dirname(resolvedPath);
-      const adjustedPath = path.join(dir, 'AGENT.md');
+      const dir = dirname(resolvedPath);
+      const adjustedPath = join(dir, 'AGENT.md');
       const sanitizedPath = this.sanitizePath(adjustedPath, process.cwd());
       logger.info(`Adjusted output path to: ${sanitizedPath}`);
     }
@@ -191,9 +188,7 @@ export class AmpProvider implements Provider, DestinationPlugin {
 
     // Write the AGENT.md file
     try {
-      await fs.writeFile(resolvedPath, content, {
-        encoding: 'utf8',
-      });
+      await Bun.write(resolvedPath, content);
       logger.info(`Successfully wrote Amp rules to: ${resolvedPath}`);
 
       // Log additional context for debugging
@@ -233,17 +228,17 @@ export class AmpProvider implements Provider, DestinationPlugin {
    */
   private sanitizePath(userPath: string, baseDir: string): string {
     // Resolve and normalize the path
-    const resolved = path.isAbsolute(userPath)
-      ? path.resolve(userPath)
-      : path.resolve(baseDir, userPath);
+    const resolved = isAbsolute(userPath)
+      ? resolve(userPath)
+      : resolve(baseDir, userPath);
 
     // Normalize to handle . and .. segments
-    const normalized = path.normalize(resolved);
+    const normalized = normalize(resolved);
 
     // Ensure the resolved path is within the base directory or its subdirectories
-    const baseDirResolved = path.resolve(baseDir);
+    const baseDirResolved = resolve(baseDir);
     if (
-      !normalized.startsWith(baseDirResolved + path.sep) &&
+      !normalized.startsWith(baseDirResolved + sep) &&
       normalized !== baseDirResolved
     ) {
       throw new Error(

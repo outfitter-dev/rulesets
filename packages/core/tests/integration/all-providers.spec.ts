@@ -16,8 +16,9 @@ import {
   describe,
   expect,
   it,
-  vi,
-} from 'vitest';
+  mock,
+  spyOn,
+} from 'bun:test';
 import {
   AmpProvider,
   ClaudeCodeProvider,
@@ -49,15 +50,25 @@ describe('All Providers Integration Tests', () => {
     // Clean up test directory
     try {
       await fs.rm(TEST_DIR, { recursive: true, force: true });
-    } catch (_error) {}
+    } catch (_error) {
+      // Ignore errors during cleanup
+    }
   });
 
   beforeEach(async () => {
     mockLogger = new ConsoleLogger();
-    vi.spyOn(mockLogger, 'info').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'debug').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'warn').mockImplementation(() => {});
-    vi.spyOn(mockLogger, 'error').mockImplementation(() => {});
+    spyOn(mockLogger, 'info').mockImplementation(() => {
+      // Mock implementation for testing
+    });
+    spyOn(mockLogger, 'debug').mockImplementation(() => {
+      // Mock implementation for testing
+    });
+    spyOn(mockLogger, 'warn').mockImplementation(() => {
+      // Mock implementation for testing
+    });
+    spyOn(mockLogger, 'error').mockImplementation(() => {
+      // Mock implementation for testing
+    });
 
     // Create unique test project directory for each test
     testProjectDir = path.join(
@@ -71,7 +82,7 @@ describe('All Providers Integration Tests', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    // Bun test automatically restores mocks after each test
   });
 
   describe('Provider Registry and Discovery', () => {
@@ -701,7 +712,7 @@ Testing provider failure scenarios.
           cursor: { enabled: true },
           'unknown-provider': { enabled: true }, // Unknown provider
           windsurf: { enabled: true },
-        } as any, // Type assertion to bypass TypeScript validation
+        } as Record<string, unknown>, // Type assertion to test unknown provider handling
       };
 
       const configPath = path.join(testProjectDir, 'ruleset.config.jsonc');
@@ -762,12 +773,7 @@ ${'## Large Section\n\nThis is a large section with lots of content. '.repeat(20
 \`\`\`typescript
 ${'// Large code example\n'.repeat(100)}
 interface LargeInterface {
-${'  property${i}: string;\n'
-  .split('${i}')
-  .map((part, index, arr) =>
-    index === 0 ? part : `${index}${arr.slice(index + 1).join('${i}')}`
-  )
-  .join('')}
+${Array.from({ length: 100 }, (_, i) => `  property${i}: string;`).join('\n')}
 }
 \`\`\`
 {{/examples}}

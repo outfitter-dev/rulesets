@@ -23,10 +23,19 @@ export function createLogger(options: LoggerOptions = {}): PinoLogger {
   const isDevelopment = process.env.NODE_ENV === 'development';
   const isTest = process.env.NODE_ENV === 'test';
 
+  function getDefaultLogLevel(): string {
+    if (isTest) {
+      return 'silent';
+    }
+    if (isDevelopment) {
+      return 'debug';
+    }
+    return 'info';
+  }
+
   const defaultOptions: pino.LoggerOptions = {
     name: options.name || '@rulesets/core',
-    level:
-      options.level || (isTest ? 'silent' : isDevelopment ? 'debug' : 'info'),
+    level: options.level || getDefaultLogLevel(),
     formatters: {
       level: (label) => {
         return { level: label.toUpperCase() };
@@ -94,8 +103,16 @@ export function toRulesetsLogger(pinoLogger: PinoLogger): RulesetsLogger {
  * Mock logger for testing that doesn't output anything
  */
 export const mockLogger: RulesetsLogger = {
-  info: () => {},
-  error: () => {},
-  warn: () => {},
-  debug: () => {},
+  info: () => {
+    // Mock logger - no implementation needed
+  },
+  error: () => {
+    // Mock logger - no implementation needed
+  },
+  warn: () => {
+    // Mock logger - no implementation needed
+  },
+  debug: () => {
+    // Mock logger - no implementation needed
+  },
 };

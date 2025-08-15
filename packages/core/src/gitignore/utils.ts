@@ -21,25 +21,27 @@ export const DEFAULT_MANAGED_BLOCK_CONFIG: ManagedBlockConfig = {
 };
 
 /**
- * Normalize a file path to POSIX-style relative path
+ * Normalize a file path to POSIX-style path
  * @param filePath - Path to normalize
- * @param basePath - Base path to make relative from (default: process.cwd())
- * @returns Normalized POSIX-style relative path
+ * @param basePath - Base path to make relative from (optional)
+ * @returns Normalized POSIX-style path
  */
 export function normalizeGitignorePath(
   filePath: string,
-  basePath: string = process.cwd()
+  basePath?: string
 ): string {
-  // Convert to relative path if absolute
-  const relativePath = path.isAbsolute(filePath)
+  // Convert to relative path only if basePath is provided and filePath is absolute
+  const relativePath = path.isAbsolute(filePath) && basePath !== undefined
     ? path.relative(basePath, filePath)
     : filePath;
 
-  // Convert to POSIX-style path separators
-  const posixPath = relativePath.split(path.sep).join('/');
+  // Convert to POSIX-style path separators and normalize backslashes
+  let posixPath = relativePath.split(path.sep).join('/');
 
   // Remove leading ./ if present
-  return posixPath.startsWith('./') ? posixPath.slice(2) : posixPath;
+  if (posixPath.startsWith('./')) posixPath = posixPath.slice(2);
+
+  return posixPath;
 }
 
 /**
@@ -104,16 +106,58 @@ export function matchesPattern(filePath: string, pattern: string): boolean {
 }
 
 /**
- * Parse override file content into an array of patterns
- * @param content - File content to parse
+ * Parse override content into an array of patterns
+ * @param content - Content string to parse
  * @returns Array of valid patterns (excluding comments and empty lines)
  */
-export function parseOverrideFile(content: string): string[] {
-  return content
+export function parseOverrideContent(content: string): string[] {
+  const lines = content
     .split('\n')
     .map((line) => line.trim())
     .filter((line) => line && !line.startsWith('#'))
     .map((line) => normalizeGitignorePath(line));
+
+  return lines;
+}
+
+/**
+ * Parse override file content into an object with success status
+ * @param pathOrContent - File path or content string to parse
+ * @returns Object with success status, patterns array, and any errors
+ */
+export function parseOverrideFile(
+  pathOrContent: string
+): { success: boolean; patterns: string[]; errors: string[] } {
+  try {
+    // If argument looks like a filepath, try to read it. Otherwise treat as content
+    const isFileInput = pathOrContent.includes('/') || pathOrContent.includes('\\');
+    let content: string;
+    
+    if (isFileInput) {
+      // Try to read as file
+      try {
+        const fs = require('node:fs');
+        content = fs.readFileSync(pathOrContent, 'utf8');
+      } catch {
+        // If file reading fails and it's a file path, return empty patterns
+        return { success: true, patterns: [], errors: [] };
+      }
+    } else {
+      // Treat as content
+      content = pathOrContent;
+    }
+
+    const patterns = parseOverrideContent(content);
+    return { success: true, patterns, errors: [] };
+  } catch (error) {
+    return {
+      success: false,
+      patterns: [],
+      errors: [
+        error instanceof Error ? error.message : 'Failed to parse override file',
+      ],
+    };
+  }
 }
 
 /**

@@ -14,9 +14,7 @@ concurrency:
 
 # Set environment for all jobs
 env:
-  TURBO_TELEMETRY_DISABLED: 1
-  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+  NODE_ENV: production
 
 jobs:
   build_and_test:
@@ -45,16 +43,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-bun-
 
-      # Cache Turbo
-      - name: Cache Turbo
+      # Cache build artifacts
+      - name: Cache Build Artifacts
         uses: actions/cache@v4
         with:
           path: |
-            .turbo
-            **/.turbo
-          key: ${{ runner.os }}-turbo-${{ github.sha }}
+            **/dist
+            **/.cache
+          key: ${{ runner.os }}-build-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-turbo-
+            ${{ runner.os }}-build-
 
       - name: Install Dependencies
         run: |
@@ -64,25 +62,26 @@ jobs:
             bun install
           fi
 
-      # Run all checks in parallel with fail-fast
+      # Run all checks using new Bun scripts
+      # Note: When Turbo is added, change to: turbo lint
       - name: Lint
         id: lint
-        run: bun turbo lint --concurrency=2
+        run: bun run lint
         continue-on-error: true
 
       - name: Type Check
         id: typecheck
-        run: bun turbo typecheck --concurrency=2
+        run: bun run typecheck
         continue-on-error: true
 
       - name: Test
         id: test
-        run: bun turbo test --concurrency=2
+        run: bun run test
         continue-on-error: true
 
       - name: Build
         id: build
-        run: bun turbo build --concurrency=2
+        run: bun run build
         continue-on-error: true
 
       # Check results and fail if any step failed
@@ -155,7 +154,7 @@ jobs:
 
       # Build only (tests already passed)
       - name: Build for Release
-        run: bun turbo build --concurrency=2
+        run: bun run build
 
       - name: Create Release Pull Request or Publish
         id: changesets

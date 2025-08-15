@@ -70,7 +70,6 @@ async function benchmark() {
   console.log('🔬 Rulesets Performance Benchmark');
   console.log('=================================\n');
 
-  // Test different file sizes
   const testSizes = [
     { name: 'Small (1KB)', size: 1024 },
     { name: 'Medium (10KB)', size: 10_240 },
@@ -78,33 +77,62 @@ async function benchmark() {
     { name: 'XLarge (1MB)', size: 1_048_576 },
   ];
 
+  const parseResults = await runParsingBenchmarks(testSizes);
+  const compileResults = runCompilationBenchmarks(testSizes, parseResults);
+  runLintingBenchmarks(testSizes, parseResults);
+  const concurrentMetrics = await runConcurrentBenchmarks();
+  displayMemoryUsage();
+  analyzePerformance(parseResults, compileResults, concurrentMetrics);
+}
+
+async function runParsingBenchmarks(
+  testSizes: Array<{ name: string; size: number }>
+) {
   console.log('📊 PARSING PERFORMANCE');
   console.log('-'.repeat(40));
 
-  const parseResults = [];
+  const parseResults: Array<{
+    name: string;
+    size: number;
+    duration: number;
+    parsed: unknown;
+  }> = [];
 
   for (const test of testSizes) {
     const content = generateRuleset(test.size);
-
-    // Single parse test
     const startTime = performance.now();
     const parsed = await parse(content);
     const endTime = performance.now();
 
     const duration = endTime - startTime;
     parseResults.push({ ...test, duration, parsed });
-
     console.log(`${test.name.padEnd(15)} ${duration.toFixed(2)}ms`);
   }
 
+  return parseResults;
+}
+
+function runCompilationBenchmarks(
+  testSizes: Array<{ name: string; size: number }>,
+  parseResults: Array<{
+    name: string;
+    size: number;
+    duration: number;
+    parsed: unknown;
+  }>
+) {
   console.log('\n🔧 COMPILATION PERFORMANCE');
   console.log('-'.repeat(40));
 
-  const compileResults = [];
+  const compileResults: Array<{
+    name: string;
+    destination: string;
+    duration: number;
+    compiled: unknown;
+  }> = [];
   const destinations = ['cursor', 'claude-code', 'windsurf'];
 
   for (const test of testSizes.slice(0, 2)) {
-    // Test smaller sizes only
     const parseResult = parseResults.find((r) => r.name === test.name);
     if (!parseResult) {
       continue;
@@ -117,23 +145,35 @@ async function benchmark() {
 
       const duration = endTime - startTime;
       compileResults.push({ ...test, destination: dest, duration, compiled });
-
       console.log(`${test.name} → ${dest.padEnd(12)} ${duration.toFixed(2)}ms`);
     }
   }
 
+  return compileResults;
+}
+
+function runLintingBenchmarks(
+  testSizes: Array<{ name: string; size: number }>,
+  parseResults: Array<{
+    name: string;
+    size: number;
+    duration: number;
+    parsed: unknown;
+  }>
+) {
   console.log('\n🔍 LINTING PERFORMANCE');
   console.log('-'.repeat(40));
 
+  const destinations = ['cursor', 'claude-code', 'windsurf'];
+
   for (const test of testSizes.slice(0, 2)) {
-    // Test smaller sizes only
     const parseResult = parseResults.find((r) => r.name === test.name);
     if (!parseResult) {
       continue;
     }
 
     const startTime = performance.now();
-    const lintResult = await lint(parseResult.parsed, {
+    const lintResult = lint(parseResult.parsed, {
       requireRulesetsVersion: true,
       allowedDestinations: destinations,
     });
@@ -149,14 +189,15 @@ async function benchmark() {
       `${test.name.padEnd(15)} ${duration.toFixed(2)}ms (${errorCount} errors, ${warningCount} warnings)`
     );
   }
+}
 
+async function runConcurrentBenchmarks() {
   console.log('\n⚡ CONCURRENT PROCESSING');
   console.log('-'.repeat(40));
 
   const mediumContent = generateRuleset(10_240);
-
-  // Test concurrent parsing
   const concurrentCount = 100;
+
   const startConcurrent = performance.now();
   const promises = Array.from({ length: concurrentCount }, () =>
     parse(mediumContent)
@@ -172,6 +213,10 @@ async function benchmark() {
   );
   console.log(`Average per parse: ${avgPerParse.toFixed(3)}ms`);
 
+  return { concurrentDuration, concurrentCount };
+}
+
+function displayMemoryUsage() {
   console.log('\n🧠 MEMORY USAGE');
   console.log('-'.repeat(40));
 
@@ -182,22 +227,49 @@ async function benchmark() {
     `Heap Total: ${(memUsage.heapTotal / 1024 / 1024).toFixed(2)} MB`
   );
   console.log(`External: ${(memUsage.external / 1024 / 1024).toFixed(2)} MB`);
+}
 
+function analyzePerformance(
+  parseResults: Array<{
+    name: string;
+    size: number;
+    duration: number;
+    parsed: unknown;
+  }>,
+  compileResults: Array<{
+    name: string;
+    destination: string;
+    duration: number;
+    compiled: unknown;
+  }>,
+  concurrentMetrics: { concurrentDuration: number; concurrentCount: number }
+) {
   console.log('\n📈 PERFORMANCE ANALYSIS');
   console.log('-'.repeat(40));
 
-  // Analyze parsing scalability (time per KB)
+  const scalingFactor = analyzeParsingScalability(parseResults);
+  const avgCompileTime = analyzeCompilationPerformance(compileResults);
+  generateRecommendations(scalingFactor, avgCompileTime, concurrentMetrics);
+}
+
+function analyzeParsingScalability(
+  parseResults: Array<{
+    name: string;
+    size: number;
+    duration: number;
+    parsed: unknown;
+  }>
+) {
   const parseRates = parseResults.map((r) => ({
     name: r.name,
     rate: r.duration / (r.size / 1024), // ms per KB
   }));
 
   console.log('Parsing rates (ms per KB):');
-  parseRates.forEach((r) => {
+  for (const r of parseRates) {
     console.log(`  ${r.name}: ${r.rate.toFixed(3)} ms/KB`);
-  });
+  }
 
-  // Check for O(n²) behavior
   const largeRate = parseRates.at(-1)?.rate || 0;
   const smallRate = parseRates[0]?.rate || 1;
   const scalingFactor = largeRate / smallRate;
@@ -212,7 +284,17 @@ async function benchmark() {
     console.log('🚨 Poor scaling - potential O(n²) behavior');
   }
 
-  // Analyze compilation performance
+  return scalingFactor;
+}
+
+function analyzeCompilationPerformance(
+  compileResults: Array<{
+    name: string;
+    destination: string;
+    duration: number;
+    compiled: unknown;
+  }>
+) {
   const avgCompileTime =
     compileResults.reduce((sum, r) => sum + r.duration, 0) /
     compileResults.length;
@@ -226,10 +308,19 @@ async function benchmark() {
     console.log('⚠️  Compilation could be optimized');
   }
 
+  return avgCompileTime;
+}
+
+function generateRecommendations(
+  scalingFactor: number,
+  avgCompileTime: number,
+  concurrentMetrics: { concurrentDuration: number; concurrentCount: number }
+) {
   console.log('\n💡 RECOMMENDATIONS');
   console.log('-'.repeat(40));
 
-  const recommendations = [];
+  const recommendations: string[] = [];
+  const memUsage = process.memoryUsage();
 
   if (scalingFactor > 3) {
     recommendations.push(
@@ -245,11 +336,13 @@ async function benchmark() {
   }
 
   if (memUsage.heapUsed > 100 * 1024 * 1024) {
-    // > 100MB
     recommendations.push('Consider memory pooling for large file processing');
   }
 
-  if (concurrentDuration / concurrentCount > 0.1) {
+  if (
+    concurrentMetrics.concurrentDuration / concurrentMetrics.concurrentCount >
+    0.1
+  ) {
     recommendations.push('Investigate opportunity for parser caching');
   }
 
@@ -259,9 +352,9 @@ async function benchmark() {
       '✅ Current implementation shows good performance characteristics'
     );
   } else {
-    recommendations.forEach((rec, index) => {
+    for (const [index, rec] of recommendations.entries()) {
       console.log(`${index + 1}. ${rec}`);
-    });
+    }
   }
 }
 

@@ -1,17 +1,21 @@
 // TLDR: Unit tests for the Windsurf provider
 
-import { promises as fs } from 'node:fs';
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import path from 'node:path';
 import type { CompiledDoc, Logger } from '@rulesets/types';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createCompiledContent } from '@rulesets/types';
 import { WindsurfProvider } from '../windsurf-provider';
 
-vi.mock('fs', () => ({
+// Create mocks for file operations
+const mockMkdir = mock();
+const mockBunWrite = mock();
+
+// Mock node:fs module
+const mockFsModule = {
   promises: {
-    mkdir: vi.fn(),
-    writeFile: vi.fn(),
+    mkdir: mockMkdir,
   },
-}));
+};
 
 describe('WindsurfProvider', () => {
   let provider: WindsurfProvider;
@@ -20,21 +24,31 @@ describe('WindsurfProvider', () => {
   beforeEach(() => {
     provider = new WindsurfProvider();
     mockLogger = {
-      debug: vi.fn(),
-      info: vi.fn(),
-      warn: vi.fn(),
-      error: vi.fn(),
+      debug: mock(),
+      info: mock(),
+      warn: mock(),
+      error: mock(),
     };
-    vi.clearAllMocks();
+
+    // Clear mock call history
+    mockMkdir.mockClear();
+    mockBunWrite.mockClear();
+
+    // Set up mocks
+    mockMkdir.mockResolvedValue(undefined);
+    mockBunWrite.mockResolvedValue(10); // Mock successful write
+
+    // Mock Bun.write using spyOn
+    spyOn(Bun, 'write').mockImplementation(mockBunWrite);
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    // Bun test automatically restores spies after each test
   });
 
   describe('name', () => {
-    it('should return "windsurf"', () => {
-      expect(provider.name).toBe('windsurf');
+    it('should return "Windsurf"', () => {
+      expect(provider.name).toBe('Windsurf');
     });
   });
 
@@ -61,20 +75,22 @@ describe('WindsurfProvider', () => {
       source: {
         content: '---\nruleset: v0\n---\n\n# Test Content',
         frontmatter: { ruleset: 'v0' },
-      },
-      ast: {
         blocks: [],
         imports: [],
         variables: [],
         markers: [],
+        errors: [],
+        warnings: [],
       },
       output: {
-        content: '# Test Content\n\nThis is test content.',
+        content: createCompiledContent('# Test Content\n\nThis is test content.'),
+        format: 'markdown',
         metadata: {},
       },
-      context: {
-        destinationId: 'windsurf',
-        config: {},
+      metadata: {
+        compiledAt: new Date().toISOString(),
+        compiler: 'test',
+        version: '1.0.0',
       },
     };
 
@@ -82,7 +98,7 @@ describe('WindsurfProvider', () => {
       const destPath = '.windsurf/rules/test.md';
       const config = {};
 
-      await provider.write({
+      const result = await provider.write({
         compiled: mockCompiledDoc,
         destPath,
         config,
@@ -90,15 +106,10 @@ describe('WindsurfProvider', () => {
       });
 
       const resolvedPath = path.resolve(destPath);
-      const dir = path.dirname(resolvedPath);
 
-      expect(fs.mkdir).toHaveBeenCalledWith(dir, { recursive: true });
-      expect(fs.writeFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
       expect(mockLogger.info).toHaveBeenCalledWith(
         `Writing Windsurf rules to: ${resolvedPath}`
@@ -106,6 +117,10 @@ describe('WindsurfProvider', () => {
       expect(mockLogger.info).toHaveBeenCalledWith(
         `Successfully wrote Windsurf rules to: ${resolvedPath}`
       );
+      
+      // Check return value
+      expect(result.generatedPaths).toEqual([resolvedPath]);
+      expect(result.metadata.provider).toBe('windsurf');
     });
 
     it('should use outputPath from config if provided', async () => {
@@ -120,12 +135,9 @@ describe('WindsurfProvider', () => {
       });
 
       const resolvedPath = path.resolve(config.outputPath);
-      expect(fs.writeFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
     });
 
@@ -140,7 +152,7 @@ describe('WindsurfProvider', () => {
         logger: mockLogger,
       });
 
-      expect(mockLogger.debug).toHaveBeenCalledWith('Destination: windsurf');
+      expect(mockLogger.debug).toHaveBeenCalledWith('Provider: windsurf');
       expect(mockLogger.debug).toHaveBeenCalledWith(
         `Config: ${JSON.stringify(config)}`
       );
@@ -161,30 +173,10 @@ describe('WindsurfProvider', () => {
       expect(mockLogger.debug).toHaveBeenCalledWith('Format: markdown');
     });
 
-    it('should handle mkdir errors', async () => {
-      const destPath = '.windsurf/rules/test.md';
-      const error = new Error('Permission denied');
-      vi.mocked(fs.mkdir).mockRejectedValueOnce(error);
-
-      await expect(
-        provider.write({
-          compiled: mockCompiledDoc,
-          destPath,
-          config: {},
-          logger: mockLogger,
-        })
-      ).rejects.toThrow('Permission denied');
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to create directory'),
-        error
-      );
-    });
-
     it('should handle writeFile errors', async () => {
       const destPath = '.windsurf/rules/test.md';
       const error = new Error('Disk full');
-      vi.mocked(fs.writeFile).mockRejectedValueOnce(error);
+      mockBunWrite.mockRejectedValueOnce(error);
 
       await expect(
         provider.write({

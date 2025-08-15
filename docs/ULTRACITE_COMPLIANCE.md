@@ -22,6 +22,7 @@ As of 2025-01-13, the Rulesets project has **970 Ultracite violations** (down fr
 **Issue**: Ultracite forbids explicit `public` modifiers on class members.
 
 **Files Affected**:
+
 - `packages/core/src/logger.ts`
 - `packages/core/src/interfaces/logger.ts`
 - `packages/types/src/logger.ts`
@@ -29,6 +30,7 @@ As of 2025-01-13, the Rulesets project has **970 Ultracite violations** (down fr
 - All test files with class definitions
 
 **Fix Required**:
+
 ```typescript
 // Before
 public method(): void { }
@@ -44,6 +46,7 @@ method(): void { }
 **Issue**: Files must use kebab-case naming.
 
 **Files to Rename**:
+
 - `GitignoreManager.ts` → `gitignore-manager.ts`
 - `ConfigLoader.ts` → `config-loader.ts`
 - `ConfigValidator.ts` → `config-validator.ts`
@@ -57,11 +60,13 @@ method(): void { }
 **Issue**: Console methods are not allowed, even in tests.
 
 **Files Affected**:
+
 - All files in `__tests__/` directories
 - Example files in `packages/types/src/examples.ts`
 - Integration tests
 
 **Fix Options**:
+
 1. Use a test-specific logger
 2. Add biome-ignore comments for each console usage in tests
 3. Create a test utility that wraps console methods
@@ -71,11 +76,13 @@ method(): void { }
 **Rule**: `lint/correctness/noUnusedVariables`
 
 **Common Patterns**:
+
 - Unused imports in test files
 - Destructured variables where only some are used
 - Function parameters in interface implementations
 
 **Fix Required**:
+
 - Remove unused imports
 - Prefix intentionally unused vars with `_`
 - Use `_` for unused destructured values
@@ -87,9 +94,10 @@ method(): void { }
 **Issue**: String concatenation should use template literals.
 
 **Fix Required**:
+
 ```typescript
 // Before
-const message = "Error: " + error.message;
+const message = 'Error: ' + error.message;
 
 // After
 const message = `Error: ${error.message}`;
@@ -100,6 +108,7 @@ const message = `Error: ${error.message}`;
 **Rules**: Various formatting rules
 
 **Common Issues**:
+
 - Line length exceeding limits
 - Incorrect indentation
 - Missing or extra blank lines
@@ -114,13 +123,14 @@ const message = `Error: ${error.message}`;
 **Issue**: Prefer `as` over angle brackets, avoid unnecessary assertions.
 
 **Fix Required**:
+
 ```typescript
 // Before
-<Type>value
-value as any
+<Type>value;
+value as any;
 
 // After
-value as Type
+value as Type;
 // Or refactor to avoid assertion
 ```
 
@@ -129,6 +139,7 @@ value as Type
 **Rule**: `lint/complexity/noExcessiveCognitiveComplexity`
 
 **Files Affected**:
+
 - `packages/core/src/compiler/index.ts`
 - Complex provider implementations
 - Large test suites
@@ -138,6 +149,7 @@ value as Type
 ## Implementation Plan
 
 ### Phase 1: Automated Fixes (1-2 hours)
+
 ```bash
 # Fix formatting issues
 bun run format
@@ -152,12 +164,14 @@ npx @biomejs/biome check --apply --only=lint/style/useTemplate
 ### Phase 2: Semi-Automated Fixes (2-3 hours)
 
 1. **Remove public modifiers**:
+
 ```bash
 # Find and replace regex
 find . -name "*.ts" -exec sed -i '' 's/public //' {} \;
 ```
 
 2. **Rename files**:
+
 ```bash
 # Script to rename to kebab-case
 for file in $(find . -name "*[A-Z]*.ts"); do
@@ -169,11 +183,13 @@ done
 ### Phase 3: Manual Fixes (4-6 hours)
 
 1. **Console in Tests**:
+
    - Create test logger utility
    - Replace console calls with test logger
    - Or add biome-ignore comments with justification
 
 2. **Cognitive Complexity**:
+
    - Refactor complex functions
    - Extract helper functions
    - Simplify conditional logic

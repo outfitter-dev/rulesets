@@ -12,17 +12,20 @@ Welcome! We're excited you're interested in contributing to Rulesets. This guide
 ### Getting Started
 
 1. **Fork and Clone**:
+
    ```bash
    git clone https://github.com/your-username/rulesets.git
    cd rulesets
    ```
 
 2. **Install Dependencies**:
+
    ```bash
    bun install  # Installs all dependencies (~300ms)
    ```
 
 3. **Verify Setup**:
+
    ```bash
    bun run build     # Build all packages
    bun run test      # Run all tests
@@ -44,7 +47,7 @@ bun run test         # Run all tests (hybrid: Bun test + Vitest)
 bun run test:watch   # Run tests in watch mode
 bun run test:coverage # Run tests with coverage
 
-# Code Quality  
+# Code Quality
 bun run lint         # Lint with Biome + markdownlint
 bun run lint:fix     # Auto-fix linting issues
 bun run format       # Format code with Biome + Prettier
@@ -57,13 +60,13 @@ bun run release      # Publish new versions
 
 ### Our Toolchain
 
-| Tool | Purpose | File Types |
-|------|---------|------------|
-| **Bun** | Package manager, script runner, bundling | All |
-| **Biome 2.1.2** | Linting & formatting | `.ts`, `.tsx`, `.js`, `.jsx`, `.json`, `.jsonc` |
-| **Prettier** | Formatting only | `.md`, `.yml`, `.yaml` |
-| **markdownlint-cli2** | Linting only | `.md` |
-| **TypeScript** | Type checking & declaration generation | `.d.ts` files |
+| Tool                  | Purpose                                  | File Types                                      |
+| --------------------- | ---------------------------------------- | ----------------------------------------------- |
+| **Bun**               | Package manager, script runner, bundling | All                                             |
+| **Biome 2.1.2**       | Linting & formatting                     | `.ts`, `.tsx`, `.js`, `.jsx`, `.json`, `.jsonc` |
+| **Prettier**          | Formatting only                          | `.md`, `.yml`, `.yaml`                          |
+| **markdownlint-cli2** | Linting only                             | `.md`                                           |
+| **TypeScript**        | Type checking & declaration generation   | `.d.ts` files                                   |
 
 ### Testing Strategy
 
@@ -73,6 +76,7 @@ We use a **hybrid testing approach**:
 - **Vitest**: For complex tests requiring mocking (advanced features)
 
 **Examples:**
+
 - Simple function tests → Bun test
 - E2E tests with filesystem mocking → Vitest
 
@@ -110,6 +114,7 @@ bun changeset add
 ```
 
 Follow the prompts to:
+
 - Select affected packages
 - Choose version bump type (patch/minor/major)
 - Write a clear changelog entry
@@ -140,7 +145,7 @@ rulesets/
 ├── packages/
 │   ├── core/            # Core orchestration (Vitest - complex e2e)
 │   ├── compiler/        # Compilation logic (Bun test - simple)
-│   ├── parser/          # Markdown parsing (Bun test - simple)  
+│   ├── parser/          # Markdown parsing (Bun test - simple)
 │   ├── linter/          # Rule validation (Bun test - simple)
 │   ├── types/           # Shared TypeScript types
 │   └── testing/         # Testing utilities
@@ -175,6 +180,7 @@ All packages use a **two-step build process**:
 ### Formatting
 
 Code is automatically formatted with:
+
 - **Biome** for JavaScript/TypeScript/JSON
 - **Prettier** for Markdown/YAML
 
@@ -219,7 +225,7 @@ bun add -D @types/new-tool
 ### Types of Documentation
 
 - **README.md**: Project overview and quick start
-- **docs/**: Detailed documentation and specifications  
+- **docs/**: Detailed documentation and specifications
 - **Code comments**: For complex logic and public APIs
 - **Changesets**: For version history
 

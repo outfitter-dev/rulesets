@@ -9,6 +9,7 @@ This guide demonstrates the migration from "Destination" to "Provider" terminolo
 The Rulesets project has completed a comprehensive refactoring from "Destination" to "Provider" terminology:
 
 **Key Changes:**
+
 - All TypeScript interfaces updated (`DestinationPlugin` → `RulesetProvider`)
 - System variables updated (`$destination` → `$provider`)
 - Configuration frontmatter updated (`destination:` → `provider:`)
@@ -20,6 +21,7 @@ The Rulesets project has completed a comprehensive refactoring from "Destination
 #### TypeScript Interfaces
 
 **Before:**
+
 ```typescript
 interface DestinationPlugin {
   id: DestinationId;
@@ -29,6 +31,7 @@ interface DestinationPlugin {
 ```
 
 **After:**
+
 ```typescript
 interface RulesetProvider {
   id: ProviderId;
@@ -40,6 +43,7 @@ interface RulesetProvider {
 #### Configuration Frontmatter
 
 **Before:**
+
 ```yaml
 ---
 destination:
@@ -52,6 +56,7 @@ cursor:
 ```
 
 **After:**
+
 ```yaml
 ---
 provider:
@@ -66,12 +71,14 @@ cursor:
 #### System Variables
 
 **Before:**
+
 ```markdown
 Current destination: {{$destination}}
 Destination ID: {{$destination.id}}
 ```
 
 **After:**
+
 ```markdown
 Current provider: {{$provider}}
 Provider ID: {{$provider.id}}
@@ -88,6 +95,7 @@ Provider ID: {{$provider.id}}
 ## Overview
 
 The branded types system provides:
+
 - **Compile-time safety** through Opaque types from type-fest
 - **Runtime validation** with security checks (path traversal, injection prevention)
 - **Clear error messages** with rich context
@@ -97,6 +105,7 @@ The branded types system provides:
 ## Core Concepts
 
 ### Before: Loose Typing
+
 ```typescript
 // Old approach - prone to errors
 function parseDocument(path: string, content: string) {
@@ -105,16 +114,17 @@ function parseDocument(path: string, content: string) {
 }
 
 // Could pass invalid data
-parseDocument("../../../etc/passwd", "malicious content");
+parseDocument('../../../etc/passwd', 'malicious content');
 ```
 
 ### After: Branded Types
+
 ```typescript
-import { 
-  createSourcePath, 
+import {
+  createSourcePath,
   createRawContent,
   type SourcePath,
-  type RawContent 
+  type RawContent,
 } from '@outfitter/types';
 
 function parseDocument(path: SourcePath, content: RawContent) {
@@ -123,8 +133,8 @@ function parseDocument(path: SourcePath, content: RawContent) {
 }
 
 // Must validate first - throws on invalid data
-const safePath = createSourcePath("rules/my-rule.rule.md");
-const safeContent = createRawContent("# My Rules\n\nContent here");
+const safePath = createSourcePath('rules/my-rule.rule.md');
+const safeContent = createRawContent('# My Rules\n\nContent here');
 parseDocument(safePath, safeContent);
 ```
 
@@ -133,24 +143,23 @@ parseDocument(safePath, safeContent);
 ### 1. Parser Module Migration
 
 #### Before
+
 ```typescript
 // packages/parser/src/index.ts
-export function parse(
-  content: string,
-  sourcePath?: string
-): ParsedDocument {
+export function parse(content: string, sourcePath?: string): ParsedDocument {
   const frontmatter = extractFrontmatter(content);
   const blocks = findBlocks(content);
-  
+
   return {
     source: { path: sourcePath || 'unknown', content },
     blocks,
-    frontmatter
+    frontmatter,
   };
 }
 ```
 
 #### After
+
 ```typescript
 // packages/parser/src/index.ts
 import {
@@ -160,37 +169,32 @@ import {
   type SourcePath,
   type RawContent,
   type BlockName,
-  type ParsedDocument
+  type ParsedDocument,
 } from '@outfitter/types';
 
-export function parse(
-  content: string,
-  sourcePath?: string
-): ParsedDocument {
+export function parse(content: string, sourcePath?: string): ParsedDocument {
   // Validate and brand inputs
-  const validPath = sourcePath 
-    ? createSourcePath(sourcePath)
-    : createSourcePath('unknown.md');
+  const validPath = sourcePath ? createSourcePath(sourcePath) : createSourcePath('unknown.md');
   const validContent = createRawContent(content);
-  
+
   const frontmatter = extractFrontmatter(validContent);
   const blocks = findBlocks(validContent);
-  
+
   return {
-    source: { 
-      path: validPath, 
+    source: {
+      path: validPath,
       content: validContent,
-      frontmatter
+      frontmatter,
     },
     ast: {
-      blocks: blocks.map(b => ({
+      blocks: blocks.map((b) => ({
         ...b,
-        name: createBlockName(b.name) // Validate block names
+        name: createBlockName(b.name), // Validate block names
       })),
       imports: [],
       variables: [],
-      markers: []
-    }
+      markers: [],
+    },
   };
 }
 ```
@@ -198,14 +202,12 @@ export function parse(
 ### 2. Linter Module Migration
 
 #### Before
+
 ```typescript
 // packages/linter/src/index.ts
-export function lint(
-  parsedDoc: any,
-  config: LinterConfig
-): LintResult {
+export function lint(parsedDoc: any, config: LinterConfig): LintResult {
   const errors = [];
-  
+
   // Check destination
   if (config.allowedDestinations) {
     const dest = parsedDoc.destination;
@@ -213,12 +215,13 @@ export function lint(
       errors.push(`Invalid destination: ${dest}`);
     }
   }
-  
+
   return { errors };
 }
 ```
 
 #### After
+
 ```typescript
 // packages/linter/src/index.ts
 import {
@@ -227,74 +230,59 @@ import {
   type ParsedDocument,
   type LinterContext,
   type ValidationError,
-  error
+  error,
 } from '@outfitter/types';
 
-export function lint(
-  context: LinterContext
-): ValidationResult<ParsedDocument> {
+export function lint(context: LinterContext): ValidationResult<ParsedDocument> {
   const errors: ValidationError[] = [];
   const { parsedDoc, config } = context;
-  
+
   // Type-safe destination checking
   if (config.allowedDestinations) {
     const dest = parsedDoc.metadata?.destination;
-    
+
     // Use type guard for runtime check
     if (!isDestinationId(dest)) {
       errors.push(
-        error(
-          'metadata.destination',
-          'Invalid or missing destination',
-          { code: 'INVALID_DESTINATION' }
-        )
+        error('metadata.destination', 'Invalid or missing destination', {
+          code: 'INVALID_DESTINATION',
+        })
       );
     } else if (!config.allowedDestinations.includes(dest)) {
       errors.push(
-        error(
-          'metadata.destination',
-          `Destination ${dest} not allowed`,
-          { 
-            code: 'DESTINATION_NOT_ALLOWED',
-            context: { allowed: config.allowedDestinations }
-          }
-        )
+        error('metadata.destination', `Destination ${dest} not allowed`, {
+          code: 'DESTINATION_NOT_ALLOWED',
+          context: { allowed: config.allowedDestinations },
+        })
       );
     }
   }
-  
-  return errors.length > 0 
-    ? failure(errors)
-    : success(parsedDoc);
+
+  return errors.length > 0 ? failure(errors) : success(parsedDoc);
 }
 ```
 
 ### 3. Compiler Module Migration
 
 #### Before
+
 ```typescript
 // packages/compiler/src/index.ts
-export function compile(
-  doc: ParsedDocument,
-  destination: string,
-  outputPath: string
-): string {
+export function compile(doc: ParsedDocument, destination: string, outputPath: string): string {
   let output = doc.content;
-  
+
   // Process blocks
-  doc.blocks.forEach(block => {
+  doc.blocks.forEach((block) => {
     const xmlTag = block.name.replace(/-/g, '_');
-    output = output.replace(
-      `{{${block.name}}}`,
-      `<${xmlTag}>`
-    );
+    output = output.replace(`{{${block.name}}}`, `<${xmlTag}>`);
   });
-  
+
   return output;
 }
 ```
 
 #### After
+
 ```typescript
 // packages/compiler/src/index.ts
 import {
@@ -302,39 +290,34 @@ import {
   createDestPath,
   createCompiledContent,
   type CompilerContext,
-  type CompiledDocument
+  type CompiledDocument,
 } from '@outfitter/types';
 
-export function compile(
-  context: CompilerContext
-): CompiledDocument {
+export function compile(context: CompilerContext): CompiledDocument {
   const { parsedDoc, providerId, outputPath } = context;
   let output = parsedDoc.source.content;
-  
+
   // Type-safe block processing
-  parsedDoc.ast.blocks.forEach(block => {
+  parsedDoc.ast.blocks.forEach((block) => {
     // BlockName type ensures valid format
     const xmlTag = block.name.replace(/-/g, '_');
-    output = output.replace(
-      `{{${block.name}}}`,
-      `<${xmlTag}>`
-    );
+    output = output.replace(`{{${block.name}}}`, `<${xmlTag}>`);
   });
-  
+
   // Create branded compiled content
   const compiledContent = createCompiledContent(output);
-  
+
   return {
     source: parsedDoc.source,
     ast: parsedDoc.ast,
     output: {
       content: compiledContent,
-      metadata: {}
+      metadata: {},
     },
     context: {
       providerId,
-      config: {}
-    }
+      config: {},
+    },
   };
 }
 ```
@@ -342,13 +325,10 @@ export function compile(
 ### 4. CLI Module Migration
 
 #### Before
+
 ```typescript
 // apps/cli/src/commands/compile.ts
-export async function compileCommand(
-  source: string,
-  destination: string,
-  output: string
-) {
+export async function compileCommand(source: string, destination: string, output: string) {
   const content = await fs.readFile(source, 'utf-8');
   const parsed = parse(content, source);
   const compiled = compile(parsed, destination, output);
@@ -357,6 +337,7 @@ export async function compileCommand(
 ```
 
 #### After
+
 ```typescript
 // apps/cli/src/commands/compile.ts
 import {
@@ -367,42 +348,33 @@ import {
   createParserContext,
   createCompilerContext,
   createWriterContext,
-  type CompilationEnvironment
+  type CompilationEnvironment,
 } from '@outfitter/types';
 
-export async function compileCommand(
-  source: string,
-  destination: string,
-  output: string
-) {
+export async function compileCommand(source: string, destination: string, output: string) {
   try {
     // Validate all inputs upfront
     const sourcePath = createSourcePath(source);
     const providerId = createProviderId(destination);
     const outputPath = createOutputPath(output);
-    
+
     // Read and validate content
     const content = await fs.readFile(source, 'utf-8');
     const rawContent = createRawContent(content);
-    
+
     // Create environment
     const environment: CompilationEnvironment = {
       workspaceRoot: process.cwd(),
       outputDir: path.dirname(output),
       rulesetsVersion: createVersion('0.1.0'),
-      debug: process.env.DEBUG === 'true'
+      debug: process.env.DEBUG === 'true',
     };
-    
+
     // Create contexts for each stage
-    const parserCtx = createParserContext(
-      sourcePath,
-      rawContent,
-      providerId,
-      environment
-    );
-    
+    const parserCtx = createParserContext(sourcePath, rawContent, providerId, environment);
+
     const parsed = parse(parserCtx);
-    
+
     const compilerCtx = createCompilerContext(
       parsed,
       outputPath,
@@ -410,9 +382,9 @@ export async function compileCommand(
       { id: providerId, outputPath: outputPath },
       environment
     );
-    
+
     const compiled = compile(compilerCtx);
-    
+
     const writerCtx = createWriterContext(
       compiled.output.content,
       outputPath,
@@ -420,9 +392,8 @@ export async function compileCommand(
       providerId,
       environment
     );
-    
+
     await write(writerCtx);
-    
   } catch (err) {
     if (err instanceof BrandValidationError) {
       // Rich error context available
@@ -451,7 +422,7 @@ import {
   required,
   chain,
   combine,
-  type Validator
+  type Validator,
 } from '@outfitter/types/validation';
 
 // Define a schema for frontmatter
@@ -459,7 +430,7 @@ const frontmatterValidator = object({
   rulesetsVersion: required(string({ pattern: /^\d+\.\d+\.\d+$/ })),
   description: optional(string({ maxLength: 500 })),
   destinations: optional(array(string({ enum: VALID_DESTINATIONS }))),
-  priority: optional(number({ min: 0, max: 10 }))
+  priority: optional(number({ min: 0, max: 10 })),
 });
 
 // Validate frontmatter
@@ -469,7 +440,7 @@ if (result.success) {
   console.log('Valid frontmatter:', result.value);
 } else {
   // Rich error information
-  result.errors.forEach(err => {
+  result.errors.forEach((err) => {
     console.error(`${err.path}: ${err.message}`);
   });
 }
@@ -478,11 +449,7 @@ if (result.success) {
 ### Custom Validators with Brands
 
 ```typescript
-import {
-  createSourcePath,
-  type SourcePath,
-  type Validator
-} from '@outfitter/types';
+import { createSourcePath, type SourcePath, type Validator } from '@outfitter/types';
 
 // Create a branded validator
 const sourcePathValidator: Validator<SourcePath> = (value, path = '') => {
@@ -501,10 +468,12 @@ const sourcePathValidator: Validator<SourcePath> = (value, path = '') => {
 const configValidator = object({
   source: required(sourcePathValidator),
   destination: required(destinationIdValidator),
-  options: optional(object({
-    strict: boolean(),
-    verbose: boolean()
-  }))
+  options: optional(
+    object({
+      strict: boolean(),
+      verbose: boolean(),
+    })
+  ),
 });
 ```
 
@@ -520,29 +489,30 @@ import { UnsafeBrands } from '@outfitter/types';
 // Example: Processing already-validated data from database
 async function loadFromCache(): Promise<ParsedDocument[]> {
   const cached = await redis.get('parsed-docs');
-  
+
   // Data from cache is pre-validated
-  return cached.map(doc => ({
+  return cached.map((doc) => ({
     source: {
       // Use unsafe brands for performance
       path: UnsafeBrands.sourcePath(doc.path),
       content: UnsafeBrands.rawContent(doc.content),
-      frontmatter: doc.frontmatter
+      frontmatter: doc.frontmatter,
     },
     ast: {
-      blocks: doc.blocks.map(b => ({
+      blocks: doc.blocks.map((b) => ({
         ...b,
-        name: UnsafeBrands.blockName(b.name)
+        name: UnsafeBrands.blockName(b.name),
       })),
       imports: [],
       variables: [],
-      markers: []
-    }
+      markers: [],
+    },
   }));
 }
 ```
 
 ⚠️ **Warning**: Only use `UnsafeBrands` when:
+
 1. Data comes from a trusted source (database, validated cache)
 2. Performance is critical (hot paths, large datasets)
 3. Validation has already occurred upstream
@@ -554,31 +524,24 @@ async function loadFromCache(): Promise<ParsedDocument[]> {
 
 ```typescript
 import { describe, test, expect } from 'bun:test';
-import {
-  createSourcePath,
-  createDestinationId,
-  BrandValidationError
-} from '@outfitter/types';
+import { createSourcePath, createDestinationId, BrandValidationError } from '@outfitter/types';
 
 describe('SourcePath validation', () => {
   test('accepts valid paths', () => {
     expect(() => createSourcePath('rules/my-rule.md')).not.toThrow();
     expect(() => createSourcePath('nested/path/rule.rule.md')).not.toThrow();
   });
-  
+
   test('rejects path traversal', () => {
-    expect(() => createSourcePath('../etc/passwd.md'))
-      .toThrow(BrandValidationError);
+    expect(() => createSourcePath('../etc/passwd.md')).toThrow(BrandValidationError);
   });
-  
+
   test('rejects absolute paths', () => {
-    expect(() => createSourcePath('/etc/passwd.md'))
-      .toThrow(BrandValidationError);
+    expect(() => createSourcePath('/etc/passwd.md')).toThrow(BrandValidationError);
   });
-  
+
   test('rejects non-markdown files', () => {
-    expect(() => createSourcePath('file.txt'))
-      .toThrow(BrandValidationError);
+    expect(() => createSourcePath('file.txt')).toThrow(BrandValidationError);
   });
 });
 ```
@@ -592,23 +555,23 @@ describe('Compilation pipeline', () => {
       const source = createSourcePath('test.rule.md');
       const dest = createDestinationId('cursor');
       const output = createDestPath('.cursor/rules/test.mdc');
-      
+
       const env = {
         workspaceRoot: process.cwd(),
         outputDir: '.cursor/rules',
-        rulesetsVersion: createVersion('0.1.0')
+        rulesetsVersion: createVersion('0.1.0'),
       };
-      
+
       // Full pipeline with branded types
       const parserCtx = createParserContext(source, content, dest, env);
       const parsed = await parse(parserCtx);
-      
+
       const compilerCtx = createCompilerContext(parsed, output, dest, config, env);
       const compiled = await compile(compilerCtx);
-      
+
       return compiled;
     };
-    
+
     await expect(pipeline()).resolves.toBeDefined();
   });
 });
@@ -617,6 +580,7 @@ describe('Compilation pipeline', () => {
 ## Common Patterns
 
 ### 1. Early Validation Pattern
+
 Validate all inputs at system boundaries (CLI, API endpoints):
 
 ```typescript
@@ -624,7 +588,7 @@ Validate all inputs at system boundaries (CLI, API endpoints):
 const validated = {
   source: createSourcePath(args.source),
   destination: createDestinationId(args.destination),
-  output: createDestPath(args.output)
+  output: createDestPath(args.output),
 };
 
 // Rest of code works with validated brands
@@ -632,6 +596,7 @@ await processFiles(validated);
 ```
 
 ### 2. Type Guard Pattern
+
 Use type guards for conditional logic:
 
 ```typescript
@@ -645,19 +610,20 @@ if (isDestinationId(value)) {
 ```
 
 ### 3. Validation Result Pattern
+
 Handle validation results consistently:
 
 ```typescript
 const result = validateConfig(config);
 if (!result.success) {
   // Log all errors with context
-  result.errors.forEach(err => {
+  result.errors.forEach((err) => {
     logger.error({
       path: err.path,
       message: err.message,
       code: err.code,
       severity: err.severity,
-      context: err.context
+      context: err.context,
     });
   });
   return;

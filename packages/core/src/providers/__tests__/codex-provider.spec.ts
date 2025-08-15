@@ -1,25 +1,32 @@
 // TLDR: Unit tests for the Codex provider (Rulesets v1)
 
-import { afterEach, beforeEach, describe, expect, it, mock } from 'bun:test';
-import { promises as fs } from 'node:fs';
-import path from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import type {
   CompiledDoc,
   Logger,
   ProviderCompilationContext,
 } from '@rulesets/types';
+import { afterEach, beforeEach, describe, expect, it, mock, spyOn } from 'bun:test';
 import { CodexProvider } from '../codex-provider';
 
-// Mock fs using Bun's mock API
-const mockWriteFile = mock(() => Promise.resolve());
-const mockMkdir = mock(() => Promise.resolve());
+// Mock fs and Bun API using Bun's mock API
+const mockWriteFile = mock().mockResolvedValue(undefined);
+const mockMkdir = mock().mockResolvedValue(undefined);
+const mockBunWrite = mock().mockResolvedValue(10);
 
-mock.module('fs', () => ({
+// Mock node:fs for Bun test compatibility
+mock.module('node:fs', () => ({
   promises: {
     mkdir: mockMkdir,
     writeFile: mockWriteFile,
   },
 }));
+
+// Type for provider with private methods exposed
+type CodexProviderWithPrivates = CodexProvider & {
+  sanitizePath(filePath: string, basePath: string): string;
+  generateMcpToml(servers: Record<string, unknown>): string;
+};
 
 describe('CodexProvider', () => {
   let provider: CodexProvider;
@@ -28,14 +35,21 @@ describe('CodexProvider', () => {
   beforeEach(() => {
     provider = new CodexProvider();
     mockLogger = {
-      debug: mock(() => {}),
-      info: mock(() => {}),
-      warn: mock(() => {}),
-      error: mock(() => {}),
+      debug: mock(),
+      info: mock(),
+      warn: mock(),
+      error: mock(),
     };
     // Clear mock call counts
     mockWriteFile.mockClear();
     mockMkdir.mockClear();
+    mockBunWrite.mockClear();
+    
+    // Set up mock return values
+    mockBunWrite.mockResolvedValue(10);
+    
+    // Mock Bun.write using spyOn
+    spyOn(Bun, 'write').mockImplementation(mockBunWrite);
   });
 
   afterEach(() => {
@@ -121,7 +135,11 @@ describe('CodexProvider', () => {
 
     it('should define outputPath property with AGENTS.md default', () => {
       const schema = provider.configSchema();
-      const outputPathProp = schema.properties?.outputPath as any;
+      const outputPathProp = schema.properties?.outputPath as {
+        type: string;
+        default: string;
+        description: string;
+      };
       expect(outputPathProp.type).toBe('string');
       expect(outputPathProp.default).toBe('AGENTS.md');
       expect(outputPathProp.description).toContain('AGENTS.md');
@@ -129,14 +147,26 @@ describe('CodexProvider', () => {
 
     it('should define codexHome property for CODEX_HOME support', () => {
       const schema = provider.configSchema();
-      const codexHomeProp = schema.properties?.codexHome as any;
+      const codexHomeProp = schema.properties?.codexHome as {
+        type: string;
+        description: string;
+      };
       expect(codexHomeProp.type).toBe('string');
       expect(codexHomeProp.description).toContain('CODEX_HOME');
     });
 
     it('should define MCP configuration schema for TOML output', () => {
       const schema = provider.configSchema();
-      const mcpConfigProp = schema.properties?.mcpConfig as any;
+      const mcpConfigProp = schema.properties?.mcpConfig as {
+        type: string;
+        properties: {
+          enabled: unknown;
+          outputPath: {
+            default: string;
+          };
+          servers: unknown;
+        };
+      };
       expect(mcpConfigProp.type).toBe('object');
       expect(mcpConfigProp.properties.enabled).toBeDefined();
       expect(mcpConfigProp.properties.outputPath).toBeDefined();
@@ -148,7 +178,10 @@ describe('CodexProvider', () => {
 
     it('should enforce priority enum values', () => {
       const schema = provider.configSchema();
-      const priorityProp = schema.properties?.priority as any;
+      const priorityProp = schema.properties?.priority as {
+        type: string;
+        enum: string[];
+      };
       expect(priorityProp.type).toBe('string');
       expect(priorityProp.enum).toEqual(['low', 'medium', 'high']);
     });
@@ -156,7 +189,10 @@ describe('CodexProvider', () => {
     it('should include layered instructions option', () => {
       const schema = provider.configSchema();
       const layeredInstructionsProp = schema.properties
-        ?.layeredInstructions as any;
+        ?.layeredInstructions as {
+        type: string;
+        default: boolean;
+      };
       expect(layeredInstructionsProp.type).toBe('boolean');
       expect(layeredInstructionsProp.default).toBe(true);
     });
@@ -164,7 +200,10 @@ describe('CodexProvider', () => {
     it('should include project context option', () => {
       const schema = provider.configSchema();
       const includeProjectContextProp = schema.properties
-        ?.includeProjectContext as any;
+        ?.includeProjectContext as {
+        type: string;
+        default: boolean;
+      };
       expect(includeProjectContextProp.type).toBe('boolean');
       expect(includeProjectContextProp.default).toBe(true);
     });
@@ -172,9 +211,9 @@ describe('CodexProvider', () => {
 
   describe('compile', () => {
     const mockContext: ProviderCompilationContext = {
-      provider: provider as any,
-      sourcePath: 'test.rule.md' as any,
-      outputPath: 'AGENTS.md' as any,
+      provider,
+      sourcePath: 'test.rule.md',
+      outputPath: 'AGENTS.md',
       variables: {},
       metadata: {},
     };
@@ -243,14 +282,11 @@ describe('CodexProvider', () => {
         logger: mockLogger,
       });
 
-      const resolvedPath = path.resolve('AGENTS.md');
+      const resolvedPath = resolve('AGENTS.md');
 
-      expect(mockWriteFile).toHaveBeenCalledWith(
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
 
       expect(result.generatedPaths).toEqual([resolvedPath]);
@@ -270,13 +306,10 @@ describe('CodexProvider', () => {
         logger: mockLogger,
       });
 
-      const resolvedPath = path.resolve('custom/AGENTS.md');
-      expect(mockWriteFile).toHaveBeenCalledWith(
+      const resolvedPath = resolve('custom/AGENTS.md');
+      expect(mockBunWrite).toHaveBeenCalledWith(
         resolvedPath,
-        mockCompiledDoc.output.content,
-        {
-          encoding: 'utf8',
-        }
+        mockCompiledDoc.output.content
       );
     });
 
@@ -391,19 +424,19 @@ describe('CodexProvider', () => {
         logger: mockLogger,
       });
 
-      const agentsPath = path.resolve('AGENTS.md');
-      const mcpPath = path.resolve('.codex/config.toml');
+      const agentsPath = resolve('AGENTS.md');
+      const mcpPath = resolve('.codex/config.toml');
 
       expect(result.generatedPaths).toEqual([agentsPath, mcpPath]);
       expect(result.metadata.mcpEnabled).toBe(true);
 
       // Verify directory creation
-      expect(mockMkdir).toHaveBeenCalledWith(path.dirname(mcpPath), {
+      expect(mockMkdir).toHaveBeenCalledWith(dirname(mcpPath), {
         recursive: true,
       });
 
       // Verify TOML content structure
-      const writeFileCalls = mockWriteFile.mock.calls;
+      const writeFileCalls = mockBunWrite.mock.calls;
       const tomlCall = writeFileCalls.find((call) =>
         call[0].toString().includes('config.toml')
       );
@@ -444,29 +477,29 @@ describe('CodexProvider', () => {
 
   describe('sanitizePath', () => {
     it('should prevent path traversal with relative paths', () => {
-      const provider = new CodexProvider() as any;
+      const localProvider = new CodexProvider() as CodexProviderWithPrivates;
       expect(() => {
-        provider.sanitizePath('../../../etc/passwd', process.cwd());
+        localProvider.sanitizePath('../../../etc/passwd', process.cwd());
       }).toThrow('Path traversal detected');
     });
 
     it('should allow valid relative paths', () => {
-      const provider = new CodexProvider() as any;
-      const result = provider.sanitizePath('AGENTS.md', process.cwd());
-      expect(result).toBe(path.resolve(process.cwd(), 'AGENTS.md'));
+      const localProvider = new CodexProvider() as CodexProviderWithPrivates;
+      const result = localProvider.sanitizePath('AGENTS.md', process.cwd());
+      expect(result).toBe(resolve(process.cwd(), 'AGENTS.md'));
     });
 
     it('should allow valid absolute paths within project', () => {
-      const provider = new CodexProvider() as any;
-      const validPath = path.join(process.cwd(), 'docs', 'AGENTS.md');
-      const result = provider.sanitizePath(validPath, process.cwd());
+      const localProvider = new CodexProvider() as CodexProviderWithPrivates;
+      const validPath = join(process.cwd(), 'docs', 'AGENTS.md');
+      const result = localProvider.sanitizePath(validPath, process.cwd());
       expect(result).toBe(validPath);
     });
   });
 
   describe('generateMcpToml', () => {
-    it('should generate valid TOML with complex server configuration', async () => {
-      const provider = new CodexProvider() as any;
+    it('should generate valid TOML with complex server configuration', () => {
+      const localProvider = new CodexProvider() as CodexProviderWithPrivates;
 
       const servers = {
         filesystem: {
@@ -486,7 +519,7 @@ describe('CodexProvider', () => {
         },
       };
 
-      const toml = provider.generateMcpToml(servers);
+      const toml = localProvider.generateMcpToml(servers);
 
       // Check basic structure
       expect(toml).toContain('[mcp]');
@@ -512,9 +545,9 @@ describe('CodexProvider', () => {
       expect(toml).toContain('command = "simple-cmd"');
     });
 
-    it('should handle empty servers configuration', async () => {
-      const provider = new CodexProvider() as any;
-      const toml = provider.generateMcpToml({});
+    it('should handle empty servers configuration', () => {
+      const localProvider = new CodexProvider() as CodexProviderWithPrivates;
+      const toml = localProvider.generateMcpToml({});
 
       expect(toml).toContain('[mcp]');
       expect(toml).toContain('enabled = true');

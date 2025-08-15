@@ -1,6 +1,5 @@
 // Tests for AmpProvider - Amp AI assistant provider implementation
 
-import { beforeEach, describe, expect, it } from 'bun:test';
 import type { Logger, ProviderCompilationContext } from '@rulesets/types';
 import {
   createOutputPath,
@@ -8,6 +7,7 @@ import {
   createSourcePath,
   createVersion,
 } from '@rulesets/types';
+import { beforeEach, describe, expect, it } from 'bun:test';
 import { AmpProvider } from '../amp-provider';
 
 describe('AmpProvider', () => {
@@ -17,10 +17,18 @@ describe('AmpProvider', () => {
   beforeEach(() => {
     provider = new AmpProvider();
     _mockLogger = {
-      info: () => {},
-      error: () => {},
-      warn: () => {},
-      debug: () => {},
+      info: () => {
+        // Mock logger - no implementation needed
+      },
+      error: () => {
+        // Mock logger - no implementation needed
+      },
+      warn: () => {
+        // Mock logger - no implementation needed
+      },
+      debug: () => {
+        // Mock logger - no implementation needed
+      },
     };
   });
 
@@ -68,9 +76,11 @@ describe('AmpProvider', () => {
 
     it('should have correct default values in schema', () => {
       const schema = provider.configSchema();
-      const outputPathProperty = schema.properties?.outputPath as any;
+      const outputPathProperty = schema.properties?.outputPath as {
+        default?: string;
+      };
       const includeProjectContextProperty = schema.properties
-        ?.includeProjectContext as any;
+        ?.includeProjectContext as { default?: boolean };
 
       expect(outputPathProperty.default).toBe('AGENT.md');
       expect(includeProjectContextProperty.default).toBe(true);
@@ -127,7 +137,7 @@ describe('AmpProvider', () => {
   describe('Provider Registry Integration', () => {
     it('should be compatible with provider registry', () => {
       // Test that the provider can be used in a registry context
-      const registry = new Map<string, any>();
+      const registry = new Map<string, unknown>();
       registry.set('amp', provider);
 
       const retrieved = registry.get('amp');
