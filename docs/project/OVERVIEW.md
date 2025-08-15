@@ -1,6 +1,6 @@
 # 📏 Rulesets – ruleset-v0.1-beta Overview
 
-> _Write rules once, compile destination-specific rules, zero drift._
+> *Write rules once, compile destination-specific rules, zero drift.*
 
 ## Table of Contents
 
@@ -35,7 +35,7 @@
       - [Property Bracketing Rules](#property-bracketing-rules)
     - [Property Grouping \& Scoping: Common Patterns](#property-grouping--scoping-common-patterns)
     - [Using bare XML tags](#using-bare-xml-tags)
-  - [Rulesets Frontmatter](#rulesets-frontmatter)
+  - [Rulesets Front matter](#rulesets-front matter)
   - [Links](#links)
     - [External \& Rulesets File Internal Links](#external--rulesets-file-internal-links)
     - [Linking to Project Files](#linking-to-project-files)
@@ -83,7 +83,7 @@ Rulesets introduces a single source-of-truth rules notation written in pure Mark
 
 The complete logical flow is: source rules → Compilation → Compilation Artifacts → compiled rules
 
-Result: _Write rules once, compile destination-specific rules, zero drift._
+Result: *Write rules once, compile destination-specific rules, zero drift.*
 
 ## Core Concepts
 
@@ -124,8 +124,8 @@ Result: _Write rules once, compile destination-specific rules, zero drift._
 - **Variable**
   - Syntax: `{{$key}}` or `$key` if used within a `{{...}}` marker.
   - Dynamic values replaced inline during compilation via variable substitution.
-  - Includes aliases, destination values, and frontmatter values.
-  - Examples: `{{$alias}}`, `{{$dest}}`, `{{$.frontmatter-key}}`
+  - Includes aliases, destination values, and front matter values.
+  - Examples: `{{$alias}}`, `{{$dest}}`, `{{$.front matter-key}}`
 
 ## Key Features
 
@@ -133,7 +133,7 @@ Result: _Write rules once, compile destination-specific rules, zero drift._
 
 - **100% Preview-able Markdown:** Renders cleanly in GitHub, VS Code, etc.; passes markdown-lint.
 - **Granular Blocks:** Filter blocks within a single source rules for per-destination inclusion/exclusion.
-- **Build-time Variables:** Aliases and frontmatter data injection.
+- **Build-time Variables:** Aliases and front matter data injection.
 
 ### Compiler & Integration
 
@@ -142,14 +142,14 @@ Result: _Write rules once, compile destination-specific rules, zero drift._
 
 ## Destination Provider
 
-| ID            | Tool               | Type              |
-| ------------- | ------------------ | ----------------- |
-| `cursor`      | Cursor             | IDE               |
-| `windsurf`    | Windsurf           | IDE               |
-| `claude-code` | Claude Code        | CLI               |
-| `roo-code`    | Roo Code           | VS Code Extension |
-| `cline`       | Cline              | VS Code Extension |
-| `openai-codex` | OpenAI Codex      | CLI/Web agent     |
+| ID             | Tool         | Type              |
+| -------------- | ------------ | ----------------- |
+| `cursor`       | Cursor       | IDE               |
+| `windsurf`     | Windsurf     | IDE               |
+| `claude-code`  | Claude Code  | CLI               |
+| `roo-code`     | Roo Code     | VS Code Extension |
+| `cline`        | Cline        | VS Code Extension |
+| `codex`        | OpenAI Codex | CLI/Web agent     |
 
 ## Getting Started
 
@@ -260,9 +260,9 @@ Any property can be given a per-destination override by suffixing the destinatio
 {{/instructions}}
 ```
 
-In this example the block will use the name "cursor-instructions" when compiled for the _cursor_ destination. The same pattern works with groups once they arrive (e.g. `ide:name-("ide-instructions")`).
+In this example the block will use the name "cursor-instructions" when compiled for the *cursor* destination. The same pattern works with groups once they arrive (e.g. `ide:name-("ide-instructions")`).
 
-Note: You can also use the `+destination` notation to both include the block for specific destinations _and_ apply destination-specific overrides.
+Note: You can also use the `+destination` notation to both include the block for specific destinations *and* apply destination-specific overrides.
 
 #### Destination-scoped Multiple Properties
 
@@ -374,29 +374,29 @@ Self-closing tags render as empty XML tags in the output:
 
 - **Destination-specific property (block included for all destinations unless otherwise specified):**
   `{{instructions cursor:name-("cursor-specific-rules")}}`
-  _(Applies `name-("cursor-specific-rules")` only for the `cursor` destination. The block itself is included for all destinations by default.)_
+  *(Applies `name-("cursor-specific-rules")` only for the `cursor` destination. The block itself is included for all destinations by default.)*
 
 - **Inclusion for a destination with a specific property:**
   `{{instructions +cursor:name-("only-for-cursor")}}`
-  _(Includes this block \_only_ for the `cursor` destination, and for `cursor`, it uses `name-("only-for-cursor")`.)\_
+  *(Includes this block \_only* for the `cursor` destination, and for `cursor`, it uses `name-("only-for-cursor")`.)\_
 
 - **Inclusion for a destination with multiple specific properties:**
   `{{instructions +cursor:[name-("cursor-rules") code-javascript]}}`
-  _(Includes this block \_only_ for the `cursor` destination, applying both `name-("cursor-rules")` and `code-javascript` for `cursor`.)\_
+  *(Includes this block \_only* for the `cursor` destination, applying both `name-("cursor-rules")` and `code-javascript` for `cursor`.)\_
 
 - **Exclusion for a destination, even if a scoped property is present:**
   `{{instructions !cursor:name-("ignored-for-cursor")}}`
-  _(Excludes this block for the `cursor` destination. The `name-("ignored-for-cursor")` property would not apply as the block is excluded for `cursor`.)_
+  *(Excludes this block for the `cursor` destination. The `name-("ignored-for-cursor")` property would not apply as the block is excluded for `cursor`.)*
 
 - **Group inclusion with member exclusion and scoped properties for the group:**
   `{{instructions +ide:[code-javascript] !cursor}}`
-  _(Includes this block for all destinations in the `ide` group, applying the `code-javascript` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `ruleset.config.json`.)_
+  *(Includes this block for all destinations in the `ide` group, applying the `code-javascript` property, but explicitly excludes it for the `cursor` destination, even if `cursor` is part of the `ide` group. Assumes `ide` is a defined group, typically in `ruleset.config.json`.)*
 
 > [!IMPORTANT]
 > Differentiating Scoped Properties from Scoped Inclusion:
 >
 > - `destination:[my-property]` means "If this block is rendered for `destination`, apply `my-property`." The stem's general inclusion is determined elsewhere (e.g. by default, or by a `+destination` on its own).
-> - `+destination:[my-property]` means "Render this block _only_ for `destination`, and when doing so, apply `my-property`." This controls both inclusion and destination-specific properties simultaneously.
+> - `+destination:[my-property]` means "Render this block *only* for `destination`, and when doing so, apply `my-property`." This controls both inclusion and destination-specific properties simultaneously.
 
 #### Multi-line Markers for Readability
 
@@ -434,7 +434,7 @@ This is the content of the instructions section.
 | `code-`, `h-`, `num-`      | flag      | Family-specific properties for code blocks, headings, and numbering.                                                                                            |
 | `[property1 property2]`    | group     | Groups multiple properties together for readability.                                                                                                            |
 | `destination:[properties]` | scoped    | Destination-specific property group.                                                                                                                            |
-| _Custom_ `key="value"`     | attribute | Any key-value pair is passed through as-is to the compiled artifact.                                                                                            |
+| *Custom* `key="value"`     | attribute | Any key-value pair is passed through as-is to the compiled artifact.                                                                                            |
 
 #### Output Format
 
@@ -628,7 +628,7 @@ This extension-to-language mapping follows the same conventions used by most Mar
 > [!WARNING]
 > Bare XML tags are not valid Markdown, so Markdown previewers may be likely to render them differently or not at all.
 
-When `allow-bare-xml-tags` is set to `true` in frontmatter or `.rule.config.json`, you can use bare XML tags for block names. The tags will be compiled as-is, but note:
+When `allow-bare-xml-tags` is set to `true` in front matter or `.rule.config.json`, you can use bare XML tags for block names. The tags will be compiled as-is, but note:
 
 ```markdown
 <!-- XML tags with `allow-bare-xml-tags` set to `true` -->
@@ -644,7 +644,7 @@ Renders as:
 </block_name>
 ```
 
-### Rulesets Frontmatter
+### Rulesets Front matter
 
 ```yaml
 ---
@@ -658,7 +658,7 @@ destination:
   include: ['cursor', 'windsurf']
   exclude: ['claude-code']
   path: './custom/compile/path'
-# Provide destination-specific frontmatter which is included in their respective compiled artifacts:
+# Provide destination-specific front matter which is included in their respective compiled artifacts:
 cursor:
   alwaysApply: false
   destination:
@@ -675,7 +675,7 @@ allow-bare-xml-tags: false # optional, defaults to false. Set to true to allow b
 ---
 ```
 
-Frontmatter is used to provide metadata about the source rules file and control how it's compiled. Basic frontmatter includes:
+Front matter is used to provide metadata about the source rules file and control how it's compiled. Basic front matter includes:
 
 - `ruleset.version`: Metadata about the Rulesets format used.
 - `name`: Unique identifier for the source rules (optional, defaults to filename).
@@ -687,7 +687,7 @@ Frontmatter is used to provide metadata about the source rules file and control 
   - Properties include any destination providers registered in `.rule.config.json`.
 - `version`: Version information for this file.
 - `labels`: Categorization tags for this file.
-- `allow-bare-xml-tags: (boolean)` - Optional. When set to `true` in this file's frontmatter, it allows the use of bare XML tags (e.g., `<my_tag>...</my_tag>`) directly within this specific Rulesets file instead of the standard `{{my-tag}}...{{/my-tag}}` notation. This setting overrides any global `allow-bare-xml-tags` setting in `.rule.config.json` for this file. Defaults to `false` if not specified. See the 'Using bare XML tags' section for more details.
+- `allow-bare-xml-tags: (boolean)` - Optional. When set to `true` in this file's front matter, it allows the use of bare XML tags (e.g., `<my_tag>...</my_tag>`) directly within this specific Rulesets file instead of the standard `{{my-tag}}...{{/my-tag}}` notation. This setting overrides any global `allow-bare-xml-tags` setting in `.rule.config.json` for this file. Defaults to `false` if not specified. See the 'Using bare XML tags' section for more details.
 - `[cursor|windsurf|claude-code|...]`: Destination-specific key/value pairs can be provided.
   - These can include `destination.path` to override the global path for specific destinations.
 
@@ -735,7 +735,7 @@ The syntax for variables depends on the context:
 | Type                     | Notation                      | Notes                                                                                                                                                                                                                                    |
 | ------------------------ | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Alias**                | `{{$alias}}`                  | Alias lookup in `.rule.config.json` under `aliases` key.                                                                                                                                                                                 |
-| **Frontmatter value**    | `{{$.key}}`                   | Access values from the current file's frontmatter.                                                                                                                                                                                       |
+| **Front matter value**    | `{{$.key}}`                   | Access values from the current file's front matter.                                                                                                                                                                                       |
 | **Destination variable** | `{{$dest}}` or `{{$dest.id}}` | Built-in variables provided by the compiler. Display name from the provider manifest (e.g. `Cursor`, `Claude Code`). The current destination ID in kebab-case can be accessed by adding `.id` to the end (`cursor`, `claude-code`, etc.) |
 
 **Built-in Destination Variables**:
@@ -851,7 +851,7 @@ Import scope provides a powerful way to control exactly which blocks are include
 
 It's important to distinguish between imports (`{{> ...}}`) and variable substitution (`{{$...}}`), as they serve different purposes:
 
-- **Imports** (`{{> ...}}`) are used to embed content structures. When an import like `{{> mySnippet }}` is processed, it typically renders the content of `mySnippet` _including its own structure_, which might result in output like `<mySnippet>...</mySnippet>` (unless properties like `unwrap` are used).
+- **Imports** (`{{> ...}}`) are used to embed content structures. When an import like `{{> mySnippet }}` is processed, it typically renders the content of `mySnippet` *including its own structure*, which might result in output like `<mySnippet>...</mySnippet>` (unless properties like `unwrap` are used).
 - **Variable Substitution** (`{{$...}}`) replaces a placeholder with its string value. It does not render any surrounding tags itself. For example, if `{{$userName}}` has the value "John", then `Hello, {{$userName}}!` would render as `Hello, John!`. The variable is directly replaced by its value.
 
 ### Partials
@@ -1077,7 +1077,7 @@ Rulesets uses consistent naming patterns to make properties discoverable and int
 
 The table below organizes properties by their categories with comprehensive information about where they can be used.
 
-| Property                             | Format        | Example                                   | Stem | Import | Frontmatter | Description                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Property                             | Format        | Example                                   | Stem | Import | Front matter | Description                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | ------------------------------------ | ------------- | ----------------------------------------- | ---- | ------ | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Destination Selection Properties** |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `+destination`                       | Flag          | `+cursor`                                 | ✅   | ✅     | ❌          | Include content for specific destination                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -1091,7 +1091,7 @@ The table below organizes properties by their categories with comprehensive info
 | `+destination:property`              | Combined      | `+cursor:unwrap`                          | ✅   | ✅     | ❌          | Include for destination and apply property to that destination                                                                                                                                                                                                                                                                                                                                                                                  |
 | `!destination:property`              | Combined      | `!windsurf:code-javascript`               | ✅   | ✅     | ❌          | Exclude for destination (property has no effect)                                                                                                                                                                                                                                                                                                                                                                                                |
 | **Metadata Properties**              |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `name-("value")`                     | Parameter     | `name-("important-rules")`                | ✅   | ✅     | ✅          | Set XML name attribute; identifier in frontmatter                                                                                                                                                                                                                                                                                                                                                                                               |
+| `name-("value")`                     | Parameter     | `name-("important-rules")`                | ✅   | ✅     | ✅          | Set XML name attribute; identifier in front matter                                                                                                                                                                                                                                                                                                                                                                                               |
 | `id-("value")`                       | Parameter     | `id-("section-1")`                        | ✅   | ✅     | ❌          | Set id attribute for linking and references                                                                                                                                                                                                                                                                                                                                                                                                     |
 | `custom="value"`                     | XML attribute | `priority="high"`                         | ✅   | ✅     | ❌          | Set custom XML attributes passed to output                                                                                                                                                                                                                                                                                                                                                                                                      |
 | **Display Properties**               |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
@@ -1114,7 +1114,7 @@ The table below organizes properties by their categories with comprehensive info
 | `num-tag-first`                      | Flag          | `num-tag-first`                           | ✅   | ✅     | ❌          | Number first tag only                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | `num-tag-last`                       | Flag          | `num-tag-last`                            | ✅   | ✅     | ❌          | Number last tag only                                                                                                                                                                                                                                                                                                                                                                                                                            |
 | **Raw Notation Properties**          |               |                                           |      |        |             |                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| `process-content`                    | Flag          | `process-content`                         | ✅   | ✅     | ❌          | Used within `{{{...}}}` (raw notation) blocks. When `process-content` is applied to such a stem, the content _inside_ the raw block is compiled by Rulesets as if it were regular Rulesets content, while the outer `{{{blockName}}}` and `{{{/stemName}}}` are still rendered as raw. This is useful for selectively processing parts of a raw block, for example, to demonstrate a Rulesets feature that itself involves further compilation. |
+| `process-content`                    | Flag          | `process-content`                         | ✅   | ✅     | ❌          | Used within `{{{...}}}` (raw notation) blocks. When `process-content` is applied to such a stem, the content *inside* the raw block is compiled by Rulesets as if it were regular Rulesets content, while the outer `{{{blockName}}}` and `{{{/stemName}}}` are still rendered as raw. This is useful for selectively processing parts of a raw block, for example, to demonstrate a Rulesets feature that itself involves further compilation. |
 
 **Note:** These properties are exclusively used within the import syntax, e.g., `{{> fileName#block }}`.
 
@@ -1123,7 +1123,7 @@ The table below organizes properties by their categories with comprehensive info
 | `#!block` | Single exclusion | `#!block-name` | ❌ | ✅ | ❌ | Exclude specific block from import. |
 | `#(stem1 !stem2)` | Multiple blocks | `#(section-a section-b)` | ❌ | ✅ | ❌ | Include/exclude multiple specific blocks. |
 | `#(destination:[stem])` | Scoped block | `#(cursor:[section-a])` | ❌ | ✅ | ❌ | Destination-specific block inclusion. |
-| **Frontmatter Configuration** |||||||
+| **Front matter Configuration** |||||||
 | `ruleset.version` | YAML | `ruleset.version: 0.1.0` | ❌ | ❌ | ✅ | Rulesets format version for the file |
 | `description` | YAML | `description: "Project rules"` | ❌ | ❌ | ✅ | Short description of the source rules |
 | `name` | YAML | `name: my-rules` | ❌ | ❌ | ✅ | Unique identifier for the source rules (defaults to filename) |
@@ -1191,6 +1191,6 @@ Most common programming languages are supported using the `code-language` patter
 
 5. **Property Precedence**: When multiple properties might conflict, the last specified property takes precedence (left-to-right evaluation).
 
-6. **Frontmatter to Destination**: Destination-specific frontmatter (e.g., `cursor: { ... }`) overrides global values for that destination.
+6. **Front matter to Destination**: Destination-specific front matter (e.g., `cursor: { ... }`) overrides global values for that destination.
 
-_© 2025 Rulesets contributors – MIT License._
+*© 2025 Rulesets contributors – MIT License.*

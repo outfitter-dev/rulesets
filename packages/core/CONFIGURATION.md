@@ -189,8 +189,7 @@ The configuration system recognizes these providers:
 - `windsurf` - Windsurf IDE
 - `roo-code` - Roo Code VS Code Extension
 - `cline` - Cline VS Code Extension
-- `codex-cli` - OpenAI Codex (CLI)
-- `codex-agent` - OpenAI Codex (Web agent)
+- `codex` - OpenAI Codex
 
 ## Integration with Orchestration
 

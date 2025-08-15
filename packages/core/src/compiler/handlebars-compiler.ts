@@ -243,7 +243,7 @@ export class HandlebarsRulesetCompiler {
       'claude-code': 'Claude Code',
       'roo-code': 'Roo Code',
       cline: 'Cline',
-      'codex-cli': 'OpenAI Codex',
+      codex: 'OpenAI Codex',
     };
     return displayNames[providerId] || providerId;
   }
@@ -258,7 +258,7 @@ export class HandlebarsRulesetCompiler {
       'claude-code': 'cli',
       'roo-code': 'extension',
       cline: 'extension',
-      'codex-cli': 'cli',
+      codex: 'cli',
     };
     return types[providerId] || 'unknown';
   }
@@ -273,7 +273,7 @@ export class HandlebarsRulesetCompiler {
       'claude-code': ['cli', 'git', 'terminal'],
       'roo-code': ['workspaces'],
       cline: ['workspaces'],
-      'codex-cli': ['cli'],
+      codex: ['cli'],
     };
     return capabilities[providerId] || [];
   }

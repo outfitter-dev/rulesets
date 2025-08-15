@@ -71,7 +71,7 @@ Rulesets is a CommonMark-compliant rules compiler that lets you author a single 
 
 - Syntax: `{{$key}}` or `$key` if used within a `{{...}}` marker.
 - Dynamic values replaced inline at compile time.
-- Examples: `{{$provider}}`, `{{$.frontmatter.key}}`, `{{$alias}}`
+- Examples: `{{$provider}}`, `{{$.front matter.key}}`, `{{$alias}}`
 
 ## Project Structure
 
@@ -96,14 +96,14 @@ project/
 
 ## Providers
 
-| ID            | Tool               | Type              |
-| ------------- | ------------------ | ----------------- |
-| `cursor`      | Cursor             | IDE               |
-| `windsurf`    | Windsurf           | IDE               |
-| `claude-code` | Claude Code        | CLI               |
-| `roo-code`    | Roo Code           | VS Code Extension |
-| `cline`       | Cline              | VS Code Extension |
-| `openai-codex` | OpenAI Codex      | CLI/Web agent     |
+| ID             | Tool         | Type              |
+| -------------- | ------------ | ----------------- |
+| `cursor`       | Cursor       | IDE               |
+| `windsurf`     | Windsurf     | IDE               |
+| `claude-code`  | Claude Code  | CLI               |
+| `roo-code`     | Roo Code     | VS Code Extension |
+| `cline`        | Cline        | VS Code Extension |
+| `codex`        | OpenAI Codex | CLI/Web agent     |
 
 ## Ruleset Syntax
 
@@ -146,3 +146,4 @@ Provider ID: {{$provider.id}}
 ```markdown
 {{instructions output="tag:omit"}}
 Content without surrounding XML tags
+```
