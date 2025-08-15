@@ -87,3 +87,5 @@ export function compile(
     throw error;
   }
 }
+
+// TODO: Add compileWithProvider function for v0.2.0 when Provider interface compilation is implemented

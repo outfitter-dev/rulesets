@@ -223,17 +223,17 @@ class MyProvider implements Provider {
 
 ### Medium Priority (Implementation)
 
-6. `packages/core/src/destinations/` → `providers/`
-7. `packages/compiler/src/index.ts`
-8. `packages/linter/src/index.ts`
-9. `packages/parser/src/index.ts`
+1. `packages/core/src/destinations/` → `providers/`
+2. `packages/compiler/src/index.ts`
+3. `packages/linter/src/index.ts`
+4. `packages/parser/src/index.ts`
 
 ### Low Priority (Documentation)
 
-10. `docs/project/LANGUAGE.md`
-11. `CLAUDE.md`
-12. `README.md`
-13. All test files
+1. `docs/project/LANGUAGE.md`
+2. `CLAUDE.md`
+3. `README.md`
+4. All test files
 
 ## Benefits After Refactoring
 

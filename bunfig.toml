@@ -8,7 +8,7 @@ linkWorkspacePackages = true
 # Use isolated linker for better monorepo workspace management
 linker = "isolated"
 
-# Use exact versions for lockfile stability
+# Use semver ranges; lockfile ensures stability
 exact = false
 frozenLockfile = true
 

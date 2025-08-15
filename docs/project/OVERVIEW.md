@@ -28,7 +28,7 @@
     - [Destination Filtering Properties](#destination-filtering-properties)
     - [Self-Closing Tags](#self-closing-tags)
     - [Multi-line Markers for Readability](#multi-line-markers-for-readability)
-    - [Block Properties](#block-properties)
+    - [Blocks](#blocks)
     - [Output Format](#output-format)
     - [Property Grouping](#property-grouping)
       - [Multi-line Property Grouping](#multi-line-property-grouping)
@@ -42,8 +42,8 @@
   - [Variables](#variables)
   - [Imports](#imports)
     - [Import Attributes](#import-attributes)
-    - [Destination-Specific Block Filtering](#destination-specific-block-filtering)
-    - [Block References and Import Scope](#block-references-and-import-scope)
+    - [Destination-Specific Stem Filtering](#destination-specific-stem-filtering)
+    - [Stem References and Import Scope](#stem-references-and-import-scope)
   - [Imports vs. Variables (Substitution)](#imports-vs-variables-substitution)
   - [Partials](#partials)
   - [Rendering Raw Rulesets notation](#rendering-raw-rulesets-notation)
@@ -790,7 +790,7 @@ Important: Be sure to follow the style guide:
 
 #### Import Attributes
 
-All [block properties](#block-properties) can be applied to imports. Additionally, imports support filtering of blocks using `#(...)` parentheses syntax for import scope:
+All block properties can be applied to imports. Additionally, imports support filtering of blocks using `#(...)` parentheses syntax for import scope:
 
 ```markdown
 {{> my-rules#(block-one !block-two) }}

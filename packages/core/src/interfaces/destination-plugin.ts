@@ -3,7 +3,9 @@
 import type { CompiledDoc } from './compiled-doc';
 import type { Logger } from './logger';
 
-export type { JSONSchema7 } from 'json-schema'; // Re-export for convenience
+import type { JSONSchema7 } from 'json-schema';
+
+export type { JSONSchema7 }; // Re-export for convenience
 
 export interface DestinationPlugin {
   /**

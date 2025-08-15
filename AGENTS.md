@@ -1,3 +1,0 @@
-# Test Rules
-
-Some content

@@ -50,12 +50,12 @@ Once these items are cleared, we can confidently mark the terminology migration 
 | **Target Terminology**        | Target, Target tool                 | Destination                       | ✅ Decided |
 | **Output Terminology**        | Output, Target-specific rules files | compiled rules                    | ✅ Decided |
 | **Directory Structure**       | `.mixdown/mixes/`                   | `.ruleset/src/`                   | ✅ Decided |
-| **Directory Structure**       | `.mixdown/mixes/_snippets/`         | `.ruleset/src/_partials/`           | ✅ Decided |
+| **Directory Structure**       | `.mixdown/mixes/_snippets/`         | `.ruleset/src/_partials/`         | ✅ Decided |
 | **Directory Structure**       | `.mixdown/output/`                  | `.ruleset/dist/`                  | ✅ Decided |
-| **Track Terminology**         | Track, Track markers                | Block                              | ✅ Decided |
+| **Track Terminology**         | Track, Track markers                | Block                             | ✅ Decided |
 | **Configuration Terminology** | Option, Attribute                   | Property                          | ✅ Decided |
 | **Property Format**           | `property(value)`                   | `property-*` and `name-("value")` | ✅ Decided |
-| **Reusable Components**       | Snippet                             | Partial                             | ✅ Decided |
+| **Reusable Components**       | Snippet                             | Partial                           | ✅ Decided |
 | **Import Terminology**        | Track filtering                     | Import scope                      | ✅ Decided |
 | **Code Formatting**           | code-js, code-block                 | code-lang                         | ✅ Decided |
 
@@ -64,7 +64,7 @@ Once these items are cleared, we can confidently mark the terminology migration 
 | New Path                                  | Old Path                    | Notes                                 |
 | ----------------------------------------- | --------------------------- | ------------------------------------- |
 | `.ruleset/src/`                           | `.mixdown/mixes/`           | Primary source directory              |
-| `.ruleset/src/_partials/`                   | `.mixdown/mixes/_snippets/` | Reusable components directory         |
+| `.ruleset/src/_partials/`                 | `.mixdown/mixes/_snippets/` | Reusable components directory         |
 | `.ruleset/dist/`                          | `.mixdown/output/`          | Output directory                      |
 | `.ruleset/dist/latest/`                   | `.mixdown/output/builds/`   | Latest compiled rules                 |
 | `.ruleset/dist/runs/`                     | n/a                         | Directory for all compilations        |
@@ -317,13 +317,13 @@ Once these items are cleared, we can confidently mark the terminology migration 
 
 ### Backward Compatibility Approach
 
-2. **Backward Compatibility**
+1. **Backward Compatibility**
    - In API documentation, note both old and new terminology during transition period
    - Consider adding deprecation warnings for old terminology in code
 
 ### Brand Identity Guidelines
 
-3. **Brand References**
+1. **Brand References**
    - When referring to the product name "Rulesets" itself, keep as is
    - Remove all musical terminology references
 

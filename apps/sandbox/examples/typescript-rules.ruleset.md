@@ -1,25 +1,25 @@
 ---
 ruleset:
   version: 0.1.0
-  
-title: "TypeScript Coding Standards"
-description: "Professional TypeScript development guidelines"
+
+title: 'TypeScript Coding Standards'
+description: 'Professional TypeScript development guidelines'
 
 providers:
   cursor:
     enabled: true
-    path: ".cursor/rules/typescript-standards.mdc"
+    path: '.cursor/rules/typescript-standards.mdc'
   claude-code:
     enabled: true
-    path: "TYPESCRIPT_RULES.md"
+    path: 'TYPESCRIPT_RULES.md'
   windsurf:
     enabled: true
-    
-tags: ["typescript", "coding-standards", "development"]
-team: "Engineering"
+
+tags: ['typescript', 'coding-standards', 'development']
+team: 'Engineering'
 ---
 
-# TypeScript Coding Standards
+## TypeScript Coding Standards
 
 These rules ensure consistent, maintainable, and type-safe TypeScript code across our projects.
 
@@ -44,7 +44,7 @@ These rules ensure consistent, maintainable, and type-safe TypeScript code acros
 - **Use Result types** - Prefer `Result<T, E>` over throwing exceptions
 - **Handle all async operations** - Every Promise must be awaited or handled
 - **Custom error classes** - Create specific error types for different failure modes
-{{/instructions}}
+  {{/instructions}}
 
 {{examples}}
 
@@ -90,9 +90,9 @@ async function processUserData(userId: UserId): Promise<void> {
     const [user, orders, preferences] = await Promise.all([
       fetchUser(userId),
       fetchUserOrders(userId),
-      fetchUserPreferences(userId)
+      fetchUserPreferences(userId),
     ]);
-    
+
     await updateUserProfile({ user, orders, preferences });
   } catch (error) {
     // Handle specific error types differently
@@ -129,8 +129,8 @@ function processData<T>(data: T): ProcessedData {
 // ❌ Bad: Mixing promises and callbacks
 function getUserData(id: string, callback: (user: User) => void): Promise<User> {
   return fetch(`/users/${id}`)
-    .then(response => response.json())
-    .then(user => {
+    .then((response) => response.json())
+    .then((user) => {
       callback(user); // Don't mix patterns!
       return user;
     });

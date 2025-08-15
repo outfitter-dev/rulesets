@@ -211,7 +211,7 @@ export function parseConfigContent(
 
         if (errors.length > 0) {
           const errorMessages = errors
-            .map((e) => `Line ${e.line ?? e.offset}: ${e.error}`)
+            .map((e) => `Offset ${e.offset}: ${e.error}`)
             .join(', ');
           throw new Error(`JSONC parse errors: ${errorMessages}`);
         }
@@ -237,7 +237,7 @@ export function parseConfigContent(
 /**
  * Merge scalar configuration values
  */
-function mergeScalarValues(result: RulesetConfig, config: RulesetConfig): void {
+function mergeScalarValues(result: any, config: RulesetConfig): void {
   if (config.strict !== undefined) {
     result.strict = config.strict;
   }
@@ -252,7 +252,7 @@ function mergeScalarValues(result: RulesetConfig, config: RulesetConfig): void {
 /**
  * Merge provider configurations with deep option merging
  */
-function mergeProviders(result: RulesetConfig, config: RulesetConfig): void {
+function mergeProviders(result: any, config: RulesetConfig): void {
   if (!config.providers) {
     return;
   }
@@ -274,7 +274,7 @@ function mergeProviders(result: RulesetConfig, config: RulesetConfig): void {
 /**
  * Merge gitignore configurations with array concatenation
  */
-function mergeGitignore(result: RulesetConfig, config: RulesetConfig): void {
+function mergeGitignore(result: any, config: RulesetConfig): void {
   if (!config.gitignore) {
     return;
   }
@@ -299,7 +299,7 @@ function mergeGitignore(result: RulesetConfig, config: RulesetConfig): void {
  * Merge global options
  */
 function mergeGlobalOptions(
-  result: RulesetConfig,
+  result: any,
   config: RulesetConfig
 ): void {
   if (!config.options) {
@@ -319,7 +319,7 @@ function mergeGlobalOptions(
 export function mergeConfigs(
   ...configs: (RulesetConfig | undefined)[]
 ): RulesetConfig {
-  const result: RulesetConfig = {};
+  const result = {} as any;
 
   for (const config of configs) {
     if (!config) {
@@ -559,7 +559,7 @@ export function setDeepValue(
     current = current[key] as Record<string, unknown>;
   }
 
-  const lastKey = path.at(-1);
+  const lastKey = path[path.length - 1];
   if (lastKey !== undefined) {
     current[lastKey] = value;
   }

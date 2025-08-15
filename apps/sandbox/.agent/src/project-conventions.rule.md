@@ -18,7 +18,7 @@ providers:
     enabled: true
 ---
 
-# Project Conventions
+## Project Conventions
 
 {{instructions}}
 
@@ -48,7 +48,7 @@ providers:
 
 ### File Structure Example
 
-```
+```text
 src/
 ├── features/
 │   ├── auth/

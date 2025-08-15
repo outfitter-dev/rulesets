@@ -99,7 +99,7 @@ The build system respects package dependencies and builds in the correct order:
 
 When using `--parallel` flag, packages at the same dependency level are built simultaneously:
 
-```
+```text
 Level 1: [types, config]           ← Built in parallel
 Level 2: [parser, compiler, ...]   ← Built in parallel
 Level 3: [plugins...]               ← Built in parallel

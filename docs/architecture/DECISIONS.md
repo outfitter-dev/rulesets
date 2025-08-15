@@ -8,11 +8,11 @@
 
 ## 🗂️ Decision Summary
 
-| ID            | Date       | Description                  | Status   | Impact   | Reversibility   |
-| ------------- | ---------- | ---------------------------- | -------- | -------- | --------------- |
-| [NNNN](#NNNN) | YYYY-MM-DD | **{Concise decision title}** | [status] | [impact] | [reversibility] |
-| [NNNN](#NNNN) | YYYY-MM-DD | **{Concise decision title}** | [status] | [impact] | [reversibility] |
-| [NNNN](#NNNN) | YYYY-MM-DD | **{Concise decision title}** | [status] | [impact] | [reversibility] |
+| ID   | Date       | Description                  | Status   | Impact   | Reversibility   |
+| ---- | ---------- | ---------------------------- | -------- | -------- | --------------- |
+| 0001 | YYYY-MM-DD | **{Concise decision title}** | [status] | [impact] | [reversibility] |
+| 0002 | YYYY-MM-DD | **{Concise decision title}** | [status] | [impact] | [reversibility] |
+| 0003 | YYYY-MM-DD | **{Concise decision title}** | [status] | [impact] | [reversibility] |
 
 > Impact: `🚨 high` (breaking / wide-ripple) • `✴️ med` (noticeable) • `🔷 low` (minimal)
 > Reversibility: `🔄 reversible` • `🔒 irreversible`
