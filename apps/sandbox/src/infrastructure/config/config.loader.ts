@@ -504,7 +504,7 @@ export class ConfigurationService {
    */
   getDefaultConfiguration(): Result<RulesetConfiguration, SandboxError> {
     const defaultConfig: RulesetConfiguration = {
-      compilerVersion: '0.1.0',
+      compilerVersion: '0.2.0',
       providers: ['cursor', 'claude-code'],
       outputDirectory: '.ruleset/dist',
       validateInput: true,
