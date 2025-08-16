@@ -60,6 +60,12 @@ export {
   parseOverrideFile,
 } from './gitignore';
 export { ConsoleLogger } from './logger';
+// Export handlebars orchestration for v0.2
+export { runRulesetsV2 } from './handlebars-orchestration';
+export type { HandlebarsOrchestrationOptions } from './handlebars-orchestration';
+// Export migration utilities
+export { migrateRulesets, migrateFile, previewMigration } from './migration';
+export type { MigrationOptions, MigrationResult } from './migration';
 // Export local APIs - Modern provider exports
 // Legacy exports for backwards compatibility
 // @deprecated - Use providers instead. Will be removed in v1.0

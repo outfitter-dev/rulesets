@@ -28,7 +28,9 @@
       "typescript": "^5.9.2",
       "type-fest": "^4.41.0",
       "js-yaml": "^4.1.0",
-      "@types/js-yaml": "^4.0.9"
+      "@types/js-yaml": "^4.0.9",
+      "handlebars": "^4.7.8",
+      "@types/handlebars": "^4.1.0"
     }
   },
   "scripts": {
@@ -43,6 +45,7 @@
     "test:watch": "bun scripts/test.ts --watch",
     "test:coverage": "bun scripts/test.ts --coverage",
     "test:ci": "bun scripts/test.ts --coverage",
+    "test:handlebars": "cd packages/compiler && bun test --filter='handlebars|partial'",
     "format": "prettier --write . && markdownlint-cli2 --fix",
     "format:check": "prettier --check . && markdownlint-cli2",
     "lint": "ultracite lint",
