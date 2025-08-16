@@ -3,10 +3,10 @@ enabled = true
 
 [mcp.servers.filesystem]
 command = "npx"
-args = ["-y", "@modelcontextprotocol/server-filesystem", "/path/to/project"]
+args = ["-y", "@modelcontextprotocol/server-filesystem", "${PROJECT_PATH:-.}"]
 
 [mcp.servers.database]
 command = "mcp-db-server"
 args = ["--db", "postgres://localhost:5432/mydb"]
-[mcp.servers.database.env]
-DB_PASSWORD = "secret"
+# Supply DB_PASSWORD via environment at runtime; do not commit secrets here.
+# Example: export DB_PASSWORD="your-password-here" before running

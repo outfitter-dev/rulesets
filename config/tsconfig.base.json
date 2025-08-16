@@ -22,7 +22,7 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedSideEffectImports": true,
     "useUnknownInCatchVariables": true,
-    "types": ["node", "bun-types"]
+    "types": ["node", "@types/bun"]
   },
   "exclude": ["node_modules", "**/dist", "**/coverage"]
 }

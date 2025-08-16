@@ -1,14 +1,18 @@
 # Local Files
+
 *.local.*
 
 # Private journal
+
 .private-journal/
 
 # Dependency directories
+
 node_modules/
 .pnpm-store/
 
 # Build outputs
+
 dist/
 build/
 out/
@@ -16,9 +20,11 @@ out/
 *.tsbuildinfo
 
 # Testing
+
 coverage/
 
 # Logs
+
 logs/
 *.log
 npm-debug.log*
@@ -27,50 +33,64 @@ yarn-error.log*
 pnpm-debug.log*
 bun-debug.log*
 
-# Lock files (keep only bun.lock)
+# Lock files (keep only Bun lockfiles)
+
 *.lock*
+!bun.lockb
 !bun.lock
 
 # Environment
+
 .env*
 !.env.example
 
 # Editor directories and files
+
 .idea/
 *.swp
 *.swo
 
 # OS files
+
 .DS_Store
 Thumbs.db
 
 # Turbo cache (for future use)
+
 .turbo/
 **/.turbo/
 
 # Docs archive
+
 docs_archive/
 
 # .agent
+
 !.agent/
 .agent/**/archive/
 .agent/research/
 
 # Archived/deprecated code
+
 .archive/
 
 # START Rulesets Generated Files
+
 # Rulesets Generated Files
+
 .ruleset/dist/**/*
 apps/sandbox/.cursor/rules/**/*
 apps/sandbox/.windsurf/rules/**/*
 test-results.xml
 packages/core/.gitignore
+
 # Test-generated temporary files (not real project rules)
+
 .cursor/rules/custom.mdc
 .cursor/rules/test.mdc
 .windsurf/rules/custom.md
 .windsurf/rules/test.md
 .codex/
 custom/
+
 # END Rulesets Generated Files
