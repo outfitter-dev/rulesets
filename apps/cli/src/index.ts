@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 
-// TLDR: CLI for Rulesets compiler (ruleset-v0.1-beta)
-// TLDR: ruleset-v0.1-beta Basic CLI implementation with provider filtering
+// TLDR: CLI for Rulesets compiler (ruleset-v0.1-beta + v0.2-handlebars)
+// TLDR: ruleset-v0.1-beta Basic CLI implementation with v0.2 handlebars support
 
-import { promises as fs } from 'node:fs';
-import { join, resolve } from 'node:path';
 import { Command } from 'commander';
-import { ConsoleLogger, runRulesetsV0, type RulesetConfig } from '@rulesets/core';
+import { runRulesetsV0, runRulesetsV2, ConsoleLogger, migrateRulesets } from '@rulesets/core';
+import type { HandlebarsOrchestrationOptions, MigrationOptions } from '@rulesets/core';
+import chalk from 'chalk';
+import { resolve } from 'node:path';
+import { existsSync } from 'node:fs';
 
 const program = new Command();
 
@@ -19,117 +21,43 @@ program
   .command('compile')
   .description('Compile rulesets files')
   .argument('<input>', 'Input file or directory')
-  .option('-o, --output <dir>', 'Output directory', '.ruleset/dist')
-  .option(
-    '-p, --provider <providers...>',
-    'Filter compilation to specific providers (e.g., cursor, windsurf, claude-code)'
-  )
-  .option('--verbose', 'Enable verbose logging')
-  .option('--quiet', 'Suppress non-error output')
+  .option('-o, --output <dir>', 'Output directory', 'dist')
+  .option('--handlebars', 'Use Handlebars compilation (v0.2)', false)
+  .option('--dev', 'Enable development mode with enhanced debugging', false)
+  .option('--no-cache', 'Disable template and partial caching', false)
+  .option('--precompile', 'Precompile templates for production', false)
   .action(async (input, options) => {
     const logger = new ConsoleLogger();
     
-    // Note: ConsoleLogger doesn't support setLevel yet
-    // TODO: Enhanced logger configuration for quiet/verbose modes will be added in future version
-    if (options.quiet) {
-      // Suppress non-error output by overriding logger methods
-      logger.info = () => {};
-      logger.debug = () => {};
-      logger.warn = () => {};
-    }
-
     try {
       // Resolve input path
       const inputPath = resolve(input);
-      
-      // Check if input is a file or directory
-      const stat = await fs.stat(inputPath);
-      const filesToProcess: string[] = [];
-      
-      if (stat.isFile()) {
-        // Single file
-        if (!inputPath.endsWith('.rule.md') && !inputPath.endsWith('.ruleset.md')) {
-          logger.warn(`Input file ${inputPath} does not have expected extension (.rule.md or .ruleset.md)`);
-        }
-        filesToProcess.push(inputPath);
-      } else if (stat.isDirectory()) {
-        // Directory - find all rule files
-        const findRuleFiles = async (dir: string): Promise<string[]> => {
-          const files: string[] = [];
-          const entries = await fs.readdir(dir, { withFileTypes: true });
-          
-          for (const entry of entries) {
-            if (entry.isDirectory()) {
-              // Skip certain directories
-              if (!entry.name.startsWith('.') && !entry.name.startsWith('node_modules')) {
-                files.push(...await findRuleFiles(join(dir, entry.name)));
-              }
-            } else if (entry.isFile()) {
-              if (entry.name.endsWith('.rule.md') || entry.name.endsWith('.ruleset.md')) {
-                files.push(join(dir, entry.name));
-              }
-            }
-          }
-          return files;
+      if (!existsSync(inputPath)) {
+        logger.error(`Input file not found: ${inputPath}`);
+        process.exit(1);
+      }
+
+      logger.info(chalk.blue(`🚀 Starting Rulesets compilation${options.handlebars ? ' (Handlebars v0.2)' : ' (Legacy v0.1)'}`));
+      logger.info(`📂 Input: ${inputPath}`);
+
+      if (options.handlebars) {
+        // Use v0.2 Handlebars compilation
+        const handlebarsOptions: HandlebarsOrchestrationOptions = {
+          enableHandlebars: true,
+          cacheTemplates: options.cache !== false,
+          precompileTemplates: options.precompile,
+          developmentMode: options.dev,
         };
-        
-        filesToProcess.push(...await findRuleFiles(inputPath));
-        
-        if (filesToProcess.length === 0) {
-          throw new Error(`No .rule.md or .ruleset.md files found in directory: ${inputPath}`);
-        }
-        
-        logger.info(`Found ${filesToProcess.length} rule file(s) to process`);
+
+        await runRulesetsV2(inputPath, logger, undefined, handlebarsOptions);
       } else {
-        throw new Error(`Input path is neither a file nor a directory: ${inputPath}`);
+        // Use v0.1 legacy compilation
+        await runRulesetsV0(inputPath, logger);
       }
 
-      // Build configuration override for provider filtering
-      let configOverride: Partial<RulesetConfig> = {
-        outputDirectory: options.output,
-      };
-
-      // Apply provider filtering if specified
-      if (options.provider && options.provider.length > 0) {
-        logger.info(`Filtering compilation to providers: ${options.provider.join(', ')}`);
-        
-        // Build providers config with only specified providers enabled
-        const providers: Record<string, { enabled: boolean }> = {};
-        
-        // First disable all providers
-        const allProviders = [
-          'cursor', 'windsurf', 'claude-code', 'codex-cli', 'amp', 'opencode'
-        ];
-        
-        for (const provider of allProviders) {
-          providers[provider] = { enabled: false };
-        }
-        
-        // Then enable only the specified providers
-        for (const provider of options.provider) {
-          if (allProviders.includes(provider)) {
-            providers[provider] = { enabled: true };
-          } else {
-            logger.warn(`Unknown provider: ${provider}. Available providers: ${allProviders.join(', ')}`);
-          }
-        }
-        
-        // Create a new config override with providers
-        configOverride = {
-          ...configOverride,
-          providers: providers as Readonly<Record<string, { enabled: boolean }>>,
-        };
-      }
-
-      // Process each file
-      for (const filePath of filesToProcess) {
-        logger.info(`Processing: ${filePath}`);
-        await runRulesetsV0(filePath, logger, configOverride);
-      }
-
-      logger.info(`Successfully processed ${filesToProcess.length} file(s)`);
+      logger.info(chalk.green('✅ Compilation completed successfully!'));
     } catch (error) {
-      logger.error(`Compilation failed: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(chalk.red('❌ Compilation failed:'), error);
       process.exit(1);
     }
   });
@@ -137,78 +65,87 @@ program
 program
   .command('init')
   .description('Initialize a new rulesets project')
-  .option('--name <name>', 'Project name')
-  .option('--output <dir>', 'Output directory', '.ruleset')
-  .action(async (options) => {
+  .option('--handlebars', 'Initialize with Handlebars v0.2 templates', false)
+  .action((options) => {
     const logger = new ConsoleLogger();
     
+    logger.info(chalk.blue('🚀 Initializing new rulesets project...'));
+    
+    if (options.handlebars) {
+      logger.info('📋 Creating Handlebars v0.2 project structure');
+      // TODO: Create handlebars project template
+      logger.warn('Handlebars initialization not yet implemented');
+    } else {
+      logger.info('📋 Creating legacy v0.1 project structure');
+      // TODO: Create legacy project template
+      logger.warn('Project initialization not yet implemented');
+    }
+    
+    logger.info(chalk.green('✅ Project initialization would be completed here'));
+  });
+
+// Add migration command for v0.1 -> v0.2
+program
+  .command('migrate')
+  .description('Migrate v0.1 rulesets files to v0.2 Handlebars syntax')
+  .argument('<input>', 'Input file or directory to migrate')
+  .option('-o, --output <dir>', 'Output directory for migrated files')
+  .option('--dry-run', 'Show what would be changed without writing files', false)
+  .action((input, options) => {
+    const logger = new ConsoleLogger();
+    
+    logger.info(chalk.blue('🔄 Starting migration from v0.1 to v0.2 Handlebars...'));
+    logger.info(`📂 Input: ${resolve(input)}`);
+    
+    if (options.dryRun) {
+      logger.info('🧪 Dry run mode - no files will be modified');
+    }
+    
+    if (options.output) {
+      logger.info(`📁 Output: ${resolve(options.output)}`);
+    }
+    
     try {
-      const outputDir = resolve(options.output);
-      
-      // Create directory structure
-      await fs.mkdir(join(outputDir, 'src'), { recursive: true });
-      await fs.mkdir(join(outputDir, 'src', '_partials'), { recursive: true });
-      
-      // Create sample configuration file
-      const sampleConfig: RulesetConfig = {
-        rulesets: { version: '0.1.0' },
-        outputDirectory: '.ruleset/dist',
-        providers: {
-          cursor: { enabled: true },
-          windsurf: { enabled: true },
-          'claude-code': { enabled: true },
-        },
-        gitignore: {
-          enabled: true,
-        },
+      const migrationOptions: MigrationOptions = {
+        input: inputPath,
+        output: options.output,
+        dryRun: options.dryRun,
+        backup: true,
+        logger,
       };
-      
-      await fs.writeFile(
-        join(outputDir, '..', 'ruleset.config.jsonc'),
-        JSON.stringify(sampleConfig, null, 2)
-      );
-      
-      // Create sample rule file
-      const sampleRule = `---
-ruleset:
-  version: "0.1.0"
-title: "${options.name || 'My Rules'}"
-description: "Sample rulesets file"
----
 
-# ${options.name || 'My Rules'}
+      const result = await migrateRulesets(migrationOptions);
 
-{{#instructions}}
-These are the instructions for AI assistants.
-{{/instructions}}
+      if (result.errors.length > 0) {
+        logger.error(chalk.red(`❌ Migration completed with ${result.errors.length} errors`));
+        for (const error of result.errors) {
+          logger.error(`  ${error.file}: ${error.error}`);
+        }
+      } else {
+        logger.info(chalk.green('✅ Migration completed successfully!'));
+      }
 
-## Guidelines
+      // Show transformation summary
+      if (result.transformations.length > 0 && options.dryRun) {
+        logger.info('\n📋 Preview of changes:');
+        for (const transformation of result.transformations.slice(0, 3)) {
+          logger.info(`\n📄 ${transformation.file}:`);
+          for (const change of transformation.changes.slice(0, 3)) {
+            logger.info(`  Line ${change.line}: ${change.pattern}`);
+            logger.info(`    - ${change.original.trim()}`);
+            logger.info(`    + ${change.transformed.trim()}`);
+          }
+          if (transformation.changes.length > 3) {
+            logger.info(`    ... and ${transformation.changes.length - 3} more changes`);
+          }
+        }
+        if (result.transformations.length > 3) {
+          logger.info(`\n... and ${result.transformations.length - 3} more files`);
+        }
+      }
 
-- Write clean, maintainable code
-- Follow consistent formatting
-- Include comprehensive tests
-
-{{#examples}}
-\`\`\`typescript
-// Example code
-function greet(name: string): string {
-  return \`Hello, \${name}!\`;
-}
-\`\`\`
-{{/examples}}
-`;
-      
-      await fs.writeFile(
-        join(outputDir, 'src', 'my-rules.rule.md'),
-        sampleRule
-      );
-      
-      logger.info(`Initialized new rulesets project in ${outputDir}`);
-      logger.info(`Configuration: ${join(outputDir, '..', 'ruleset.config.jsonc')}`);
-      logger.info(`Sample rule: ${join(outputDir, 'src', 'my-rules.rule.md')}`);
-      logger.info(`Run "rulesets compile ${join(outputDir, 'src', 'my-rules.rule.md')}" to test compilation`);
     } catch (error) {
-      logger.error(`Initialization failed: ${error instanceof Error ? error.message : String(error)}`);
+      logger.error(chalk.red('❌ Migration failed:'), error);
       process.exit(1);
     }
   });
