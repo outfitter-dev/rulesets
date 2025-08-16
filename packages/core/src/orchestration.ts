@@ -1,15 +1,11 @@
 /**
- * Handlebars-aware orchestration for Rulesets v0.2+
- * Extends existing orchestration with handlebars compilation support
+ * Clean, simple orchestration for Rulesets
+ * Handlebars-powered, no legacy cruft
  */
 
 import { dirname, join } from 'node:path';
-import { compile } from '@rulesets/compiler';
-import { 
-  HandlebarsRulesetCompiler, 
-  PartialResolver,
-  type PartialResolverOptions 
-} from '@rulesets/compiler';
+import { HandlebarsRulesetCompiler, PartialResolver } from '@rulesets/compiler';
+import type { PartialResolverOptions } from '@rulesets/compiler';
 import { lint } from '@rulesets/linter';
 import { parse } from '@rulesets/parser';
 import type { CompiledDoc, Logger, ParsedDoc, Provider } from '@rulesets/types';
@@ -20,121 +16,98 @@ import { createGitignoreManager } from './gitignore';
 import { ConsoleLogger } from './logger';
 import { destinations, providers as providerRegistry } from './providers';
 
-export interface HandlebarsOrchestrationOptions {
+export interface RulesetsOptions {
   /**
-   * Enable handlebars compilation mode (v0.2+)
-   * @default false (uses legacy v0.1 compilation)
+   * Limit build to specific providers
    */
-  enableHandlebars?: boolean;
+  providers?: string[];
   
   /**
-   * Partial resolution configuration for handlebars mode
+   * Enable development mode with enhanced debugging
    */
-  partialOptions?: PartialResolverOptions;
-  
-  /**
-   * Template precompilation for production optimization
-   * @default false
-   */
-  precompileTemplates?: boolean;
+  developmentMode?: boolean;
   
   /**
    * Cache compiled templates for performance
-   * @default true
    */
   cacheTemplates?: boolean;
   
   /**
-   * Development mode with enhanced debugging
-   * @default false
+   * Partial resolution configuration
    */
-  developmentMode?: boolean;
+  partialOptions?: PartialResolverOptions;
+  
+  /**
+   * Configuration override
+   */
+  configOverride?: Partial<RulesetConfig>;
 }
 
 /**
- * Enhanced orchestration with handlebars support
- * Backward compatible with v0.1 while enabling v0.2 features
+ * Build rulesets - clean, simple, Handlebars-powered
  */
-export async function runRulesetsV2(
+export async function runRulesets(
   sourceFilePath: string,
   logger: Logger = new ConsoleLogger(),
-  configOverride?: Partial<RulesetConfig>,
-  options: HandlebarsOrchestrationOptions = {}
+  options: RulesetsOptions = {}
 ): Promise<void> {
   const {
-    enableHandlebars = false,
-    partialOptions,
-    precompileTemplates = false,
-    cacheTemplates = true,
+    providers: providerFilter,
     developmentMode = false,
+    cacheTemplates = true,
+    partialOptions,
+    configOverride,
   } = options;
 
-  logger.info(
-    `Starting Rulesets ${enableHandlebars ? 'v0.2 (Handlebars)' : 'v0.1 (Legacy)'} processing for: ${sourceFilePath}`
-  );
+  logger.info(`🔨 Building: ${sourceFilePath}`);
 
   // Step 1: Load configuration
-  logger.info('Loading configuration...');
   const projectPath = dirname(sourceFilePath);
   const config = await loadAndValidateConfig(projectPath, logger, configOverride);
 
-  // Step 2: Set up handlebars compiler if enabled
-  let handlebarsCompiler: HandlebarsRulesetCompiler | undefined;
-  if (enableHandlebars) {
-    logger.info('Initializing Handlebars compilation engine...');
-    handlebarsCompiler = await createHandlebarsCompiler(
-      projectPath,
-      partialOptions,
-      logger,
-      developmentMode
-    );
-  }
+  // Step 2: Set up handlebars compiler
+  logger.debug('Initializing Handlebars compiler...');
+  const handlebarsCompiler = await createHandlebarsCompiler(
+    projectPath,
+    partialOptions,
+    logger,
+    developmentMode
+  );
 
-  // Step 3: Read the source file
+  // Step 3: Read and parse the source file
   const content = await readSourceFile(sourceFilePath, logger);
-
-  // Step 4: Parse the content
-  logger.info('Parsing source file...');
   const parsedDoc = await parseSourceFile(content, sourceFilePath, logger);
 
-  // Step 5: Lint the parsed document
-  logger.info('Linting document...');
+  // Step 4: Lint the parsed document
   performLinting(parsedDoc, logger);
 
-  // Step 6: Determine which destinations to compile for
-  const destinationIds = determineDestinationIds(parsedDoc, config, logger);
-  logger.info(`Compiling for destinations: ${destinationIds.join(', ')}`);
+  // Step 5: Determine which providers to build for
+  const providerIds = determineProviderIds(parsedDoc, config, providerFilter, logger);
+  logger.info(`🎯 Building for: ${providerIds.join(', ')}`);
 
-  // Step 7: Compile and write for each destination
-  const destinationPromises = destinationIds.map((destinationId) =>
-    processDestinationV2(
-      destinationId,
+  // Step 6: Build for each provider
+  const buildPromises = providerIds.map((providerId) =>
+    buildForProvider(
+      providerId,
       parsedDoc,
       config,
       logger,
       projectPath,
       handlebarsCompiler,
-      { precompileTemplates, cacheTemplates, developmentMode }
+      { cacheTemplates, developmentMode }
     )
   );
 
-  const generatedPathsResults = await Promise.all(destinationPromises);
+  const generatedPathsResults = await Promise.all(buildPromises);
   const allGeneratedPaths = generatedPathsResults.flat();
 
-  // Step 8: Update .gitignore with generated file paths
+  // Step 7: Update .gitignore with generated file paths
   await updateGitignore(allGeneratedPaths, config, logger, projectPath);
 
-  logger.info(
-    `Rulesets ${enableHandlebars ? 'v0.2' : 'v0.1'} processing completed successfully!`
-  );
-  if (allGeneratedPaths.length > 0) {
-    logger.info(
-      `Generated ${allGeneratedPaths.length} files across ${destinationIds.length} destinations`
-    );
-  }
+  logger.info(`✅ Built ${allGeneratedPaths.length} files for ${providerIds.length} providers`);
 
-  // Step 9: Log performance metrics in development mode
-  if (developmentMode && handlebarsCompiler) {
+  // Step 8: Log performance metrics in development mode
+  if (developmentMode) {
     logPerformanceMetrics(handlebarsCompiler, logger);
   }
 }
@@ -159,18 +132,6 @@ async function createHandlebarsCompiler(
     ...partialOptions,
   };
 
-  // Validate partial directory exists
-  const partialsPath = join(resolverOptions.rootDir, resolverOptions.partialsDir);
-  try {
-    const partialsExists = await Bun.file(join(partialsPath, '.gitkeep')).exists();
-    if (!partialsExists) {
-      logger.debug(`Partials directory not found: ${partialsPath}`);
-      logger.debug('Partial resolution will work with relative paths only');
-    }
-  } catch {
-    // Directory doesn't exist, which is fine
-  }
-
   logger.debug(`Handlebars compiler initialized with ${allProviders.length} providers`);
   logger.debug(`Partial resolution: ${resolverOptions.rootDir}/${resolverOptions.partialsDir}`);
 
@@ -178,86 +139,82 @@ async function createHandlebarsCompiler(
 }
 
 /**
- * Process a single destination with handlebars support
+ * Build for a single provider
  */
-async function processDestinationV2(
-  destinationId: string,
+async function buildForProvider(
+  providerId: string,
   parsedDoc: ParsedDoc,
   config: RulesetConfig,
   logger: Logger,
   projectPath: string,
-  handlebarsCompiler?: HandlebarsRulesetCompiler,
+  handlebarsCompiler: HandlebarsRulesetCompiler,
   compilationOptions: {
-    precompileTemplates: boolean;
     cacheTemplates: boolean;
     developmentMode: boolean;
-  } = { precompileTemplates: false, cacheTemplates: true, developmentMode: false }
+  }
 ): Promise<string[]> {
-  const plugin = destinations.get(destinationId);
+  const plugin = destinations.get(providerId);
   if (!plugin) {
-    logger.warn(`No plugin found for destination: ${destinationId}`);
+    logger.warn(`No plugin found for provider: ${providerId}`);
     return [];
   }
 
-  logger.info(`Processing destination: ${destinationId}${handlebarsCompiler ? ' (Handlebars)' : ' (Legacy)'}`);
+  logger.debug(`Processing provider: ${providerId}`);
 
   // Get provider for enhanced compilation
-  const provider = providerRegistry.get(destinationId);
-
-  // Choose compilation method
-  let compiledDoc: CompiledDoc;
-  try {
-    if (handlebarsCompiler && provider) {
-      // Use handlebars compilation
-      compiledDoc = await compileWithHandlebars(
-        handlebarsCompiler,
-        parsedDoc,
-        provider,
-        config,
-        logger,
-        compilationOptions
-      );
-    } else {
-      // Fall back to legacy compilation
-      compiledDoc = compile(parsedDoc, destinationId, config);
-    }
-  } catch (error) {
-    logger.error(`Failed to compile for destination: ${destinationId}`, error);
+  const provider = providerRegistry.get(providerId);
+  if (!provider) {
+    logger.warn(`Provider not found in registry: ${providerId}`);
     return [];
   }
 
-  // Rest of processing remains the same as v0.1
-  const destConfig = getMergedDestinationConfig(
+  // Compile with handlebars
+  let compiledDoc: CompiledDoc;
+  try {
+    compiledDoc = await compileWithHandlebars(
+      handlebarsCompiler,
+      parsedDoc,
+      provider,
+      config,
+      logger,
+      compilationOptions
+    );
+  } catch (error) {
+    logger.error(`Failed to compile for provider: ${providerId}`, error);
+    return [];
+  }
+
+  // Get configuration and output path
+  const providerConfig = getMergedProviderConfig(
     parsedDoc.source.frontmatter,
-    destinationId,
+    providerId,
     config
   );
 
-  const destPath = determineOutputPath(
-    destConfig,
-    config.providers?.[destinationId] as Record<string, unknown> | undefined,
-    destinationId,
+  const outputPath = determineOutputPath(
+    providerConfig,
+    config.providers?.[providerId] as Record<string, unknown> | undefined,
+    providerId,
     config.outputDirectory,
     provider?.config?.outputPath
   );
 
+  // Write using the plugin
   try {
     const writeResult = await plugin.write({
       compiled: compiledDoc,
-      destPath,
-      config: { ...destConfig, baseDir: projectPath },
+      destPath: outputPath,
+      config: { ...providerConfig, baseDir: projectPath },
       logger,
     });
 
     if (hasGeneratedPaths(writeResult)) {
-      logger.debug(
-        `Generated paths from ${destinationId}: ${writeResult.generatedPaths.join(', ')}`
-      );
+      logger.debug(`Generated: ${writeResult.generatedPaths.join(', ')}`);
       return [...writeResult.generatedPaths];
     }
     return [];
   } catch (error) {
-    logger.error(`Failed to write ${destinationId} output`, error);
+    logger.error(`Failed to write ${providerId} output`, error);
     throw error;
   }
 }
@@ -272,7 +229,6 @@ async function compileWithHandlebars(
   config: RulesetConfig,
   logger: Logger,
   options: {
-    precompileTemplates: boolean;
     cacheTemplates: boolean;
     developmentMode: boolean;
   }
@@ -283,14 +239,11 @@ async function compileWithHandlebars(
     // Enhanced project config for handlebars context
     const projectConfig = {
       ...config,
-      // Add development flags
       development: options.developmentMode,
-      // Add compilation metadata
       compilation: {
         timestamp: new Date().toISOString(),
-        version: '0.2.0-handlebars',
+        version: '0.2.0',
         cache: options.cacheTemplates,
-        precompiled: options.precompileTemplates,
       },
     };
 
@@ -315,13 +268,10 @@ function logPerformanceMetrics(
   logger: Logger
 ): void {
   // TODO: Add performance metrics collection to HandlebarsRulesetCompiler
-  // For now, just log that metrics would be available
   logger.debug('Performance metrics available in development mode');
-  logger.debug('Add compiler.getMetrics() method for detailed statistics');
 }
 
-// Re-export utility functions from main orchestration
-// These are unchanged between v0.1 and v0.2
+// Utility functions (unchanged from original)
 
 async function loadAndValidateConfig(
   projectPath: string,
@@ -419,75 +369,91 @@ function performLinting(parsedDoc: ParsedDoc, logger: Logger): void {
   }
 }
 
-function determineDestinationIds(
+function determineProviderIds(
   parsedDoc: ParsedDoc,
   config: RulesetConfig,
+  providerFilter: string[] | undefined,
   logger: Logger
 ): string[] {
   const frontmatter = parsedDoc.source.frontmatter;
 
+  // Start with frontmatter providers or enabled config providers
+  let providerIds: string[];
+
   if (
-    frontmatter?.destinations &&
-    typeof frontmatter.destinations === 'object' &&
-    !Array.isArray(frontmatter.destinations)
+    frontmatter?.providers &&
+    typeof frontmatter.providers === 'object' &&
+    !Array.isArray(frontmatter.providers)
   ) {
-    logger.debug('Using destinations from frontmatter');
-    return Object.keys(frontmatter.destinations as Record<string, unknown>);
+    logger.debug('Using providers from frontmatter');
+    providerIds = Object.keys(frontmatter.providers as Record<string, unknown>);
+  } else {
+    const enabledProviders = Object.entries(config.providers || {})
+      .filter(([_, providerConfig]) => providerConfig.enabled !== false)
+      .map(([providerId]) => providerId);
+
+    if (enabledProviders.length > 0) {
+      logger.debug('Using enabled providers from configuration');
+      providerIds = enabledProviders;
+    } else if (config.defaultProviders && config.defaultProviders.length > 0) {
+      logger.debug('Using default providers from configuration');
+      providerIds = [...config.defaultProviders];
+    } else {
+      logger.debug('Using all available providers as fallback');
+      providerIds = Array.from(destinations.keys());
+    }
   }
 
-  const enabledProviders = Object.entries(config.providers || {})
-    .filter(([_, providerConfig]) => providerConfig.enabled !== false)
-    .map(([providerId]) => providerId);
-
-  if (enabledProviders.length > 0) {
-    logger.debug('Using enabled providers from configuration');
-    return enabledProviders;
+  // Apply provider filter if specified
+  if (providerFilter && providerFilter.length > 0) {
+    const filteredIds = providerIds.filter(id => providerFilter.includes(id));
+    
+    if (filteredIds.length === 0) {
+      logger.warn(`No providers matched filter: ${providerFilter.join(', ')}`);
+      logger.warn(`Available providers: ${providerIds.join(', ')}`);
+    }
+    
+    return filteredIds;
   }
 
-  if (config.defaultProviders && config.defaultProviders.length > 0) {
-    logger.debug('Using default providers from configuration');
-    return [...config.defaultProviders];
-  }
-
-  logger.debug('Using all available destinations as fallback');
-  return Array.from(destinations.keys());
+  return providerIds;
 }
 
-function getMergedDestinationConfig(
+function getMergedProviderConfig(
   frontmatter: Record<string, unknown> | undefined,
-  destinationId: string,
+  providerId: string,
   config: RulesetConfig
 ): Record<string, unknown> {
-  const frontmatterDestinations = frontmatter?.destinations;
-  const frontmatterDestConfig: Record<string, unknown> =
-    frontmatterDestinations &&
-    typeof frontmatterDestinations === 'object' &&
-    !Array.isArray(frontmatterDestinations) &&
-    typeof (frontmatterDestinations as Record<string, unknown>)[destinationId] === 'object'
-      ? ((frontmatterDestinations as Record<string, unknown>)[destinationId] as Record<string, unknown>) || {}
+  const frontmatterProviders = frontmatter?.providers;
+  const frontmatterProviderConfig: Record<string, unknown> =
+    frontmatterProviders &&
+    typeof frontmatterProviders === 'object' &&
+    !Array.isArray(frontmatterProviders) &&
+    typeof (frontmatterProviders as Record<string, unknown>)[providerId] === 'object'
+      ? ((frontmatterProviders as Record<string, unknown>)[providerId] as Record<string, unknown>) || {}
       : {};
 
-  const providerConfig = config.providers?.[destinationId] || {};
+  const configProviderConfig = config.providers?.[providerId] || {};
   return {
-    ...providerConfig,
-    ...frontmatterDestConfig,
+    ...configProviderConfig,
+    ...frontmatterProviderConfig,
   };
 }
 
 function determineOutputPath(
-  destConfig: Record<string, unknown>,
-  providerConfig: Record<string, unknown> | undefined,
-  destinationId: string,
+  providerConfig: Record<string, unknown>,
+  configProviderConfig: Record<string, unknown> | undefined,
+  providerId: string,
   outputDirectory?: string,
   providerDefaultPath?: string
 ): string {
   const outputDir = outputDirectory || '.ruleset/dist';
-  const fallbackPath = `${outputDir}/${destinationId}/my-rules.md`;
+  const fallbackPath = `${outputDir}/${providerId}/rules.md`;
 
   return (
-    (typeof destConfig.outputPath === 'string' ? destConfig.outputPath : undefined) ||
-    (typeof destConfig.path === 'string' ? destConfig.path : undefined) ||
-    (typeof providerConfig?.outputPath === 'string' ? providerConfig.outputPath : undefined) ||
+    (typeof providerConfig.outputPath === 'string' ? providerConfig.outputPath : undefined) ||
+    (typeof providerConfig.path === 'string' ? providerConfig.path : undefined) ||
+    (typeof configProviderConfig?.outputPath === 'string' ? configProviderConfig.outputPath : undefined) ||
     providerDefaultPath ||
     fallbackPath
   );
@@ -503,7 +469,7 @@ async function updateGitignore(
     return;
   }
 
-  logger.info('Updating .gitignore with generated file paths...');
+  logger.debug('Updating .gitignore with generated file paths...');
 
   try {
     const gitignoreConfig = {
@@ -511,7 +477,7 @@ async function updateGitignore(
       keep: config.gitignore?.keep || [],
       ignore: config.gitignore?.ignore || [],
       options: {
-        comment: config.gitignore?.options?.comment || 'Rulesets Managed',
+        comment: config.gitignore?.options?.comment || 'Rulesets Generated',
         sort: config.gitignore?.options?.sort ?? true,
       },
     };
@@ -521,7 +487,7 @@ async function updateGitignore(
 
     if (gitignoreResult.success) {
       if (gitignoreResult.added && gitignoreResult.added.length > 0) {
-        logger.info(`Added ${gitignoreResult.added.length} files to .gitignore`);
+        logger.debug(`Added ${gitignoreResult.added.length} files to .gitignore`);
       }
     } else {
       logger.warn('Failed to update .gitignore');
