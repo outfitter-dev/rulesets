@@ -10,6 +10,17 @@ export {
   type SectionOptions
 } from './handlebars-compiler';
 
+// Export partial resolution system (v0.2+ Phase 3)
+export {
+  PartialResolver,
+  PostProcessorFactory,
+  CursorPostProcessor,
+  ClaudeCodePostProcessor,
+  type PartialResolverOptions,
+  type ResolvedPartial,
+  type PostProcessor
+} from './partial-resolver';
+
 /**
 
 - Compiles a parsed Rulesets document for a specific provider.
