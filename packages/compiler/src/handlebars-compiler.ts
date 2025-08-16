@@ -16,6 +16,11 @@ import type {
   Provider as RulesetProvider,
   RulesetContext
 } from '@rulesets/types';
+import { 
+  PartialResolver, 
+  PostProcessorFactory, 
+  type PartialResolverOptions 
+} from './partial-resolver';
 
 /**
 
@@ -67,13 +72,23 @@ export interface SectionOptions extends Handlebars.HelperOptions {
 export class HandlebarsRulesetCompiler {
   private hbs: typeof Handlebars;
   private providers: Map<string, RulesetProvider>;
+  private partialResolver?: PartialResolver;
 
-  constructor(providers: RulesetProvider[] = []) {
+  constructor(
+    providers: RulesetProvider[] = [], 
+    partialOptions?: PartialResolverOptions
+  ) {
     // Create isolated Handlebars instance
     this.hbs = Handlebars.create();
 
     // Store providers for context building
     this.providers = new Map(providers.map(p => [p.id as string, p]));
+    
+    // Set up partial resolver if options provided
+    if (partialOptions) {
+      this.partialResolver = new PartialResolver(partialOptions);
+      this.hbs.registerPartials = this.partialResolver.createHandlebarsLoader();
+    }
     
     // Register core helpers
     this.registerCoreHelpers();
@@ -105,7 +120,13 @@ export class HandlebarsRulesetCompiler {
     try {
       // Compile and execute template
       const template = this.hbs.compile(templateContent);
-      const compiledContent = template(context);
+      let compiledContent = template(context);
+      
+      // Apply provider-specific post-processing
+      const postProcessor = PostProcessorFactory.create(providerId);
+      if (postProcessor) {
+        compiledContent = postProcessor.process(compiledContent, context);
+      }
       
       // Build compiled document
       return {
@@ -118,6 +139,7 @@ export class HandlebarsRulesetCompiler {
             providerName: provider.name,
             compiledAt: context.timestamp,
             handlebarsVersion: '2.0.0-handlebars',
+            postProcessed: !!postProcessor,
             ...parsedDoc.source.frontmatter,
           },
         },
@@ -439,9 +461,17 @@ export class HandlebarsRulesetCompiler {
 - Helper: Include file content
    */
   private includeFileHelper(filePath: string): string {
-    // TODO: Implement file inclusion logic
-    // This will be implemented in Phase 3
-    return `<!-- Include: ${filePath} -->`;
+    if (!this.partialResolver) {
+      return `<!-- Include: ${filePath} (No partial resolver configured) -->`;
+    }
+    
+    try {
+      const resolved = this.partialResolver.resolve(filePath);
+      return resolved.content;
+    } catch (error) {
+      console.warn(`Failed to include file "${filePath}":`, error.message);
+      return `<!-- Include failed: ${filePath} -->`;
+    }
   }
 
   /**
