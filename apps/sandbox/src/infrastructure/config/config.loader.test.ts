@@ -46,7 +46,7 @@ describe('ConfigurationService', () => {
     test('should load valid JSON configuration file', async () => {
       const configPath = createSafeFilePath('ruleset.config.json');
       const validConfig = {
-        compilerVersion: '0.1.0',
+        compilerVersion: '0.2.0',
         providers: ['cursor', 'claude-code'],
         outputDirectory: '.ruleset/dist',
         validateInput: true,
@@ -61,7 +61,7 @@ describe('ConfigurationService', () => {
 
       expect(isOk(result)).toBe(true);
       if (isOk(result)) {
-        expect(result.value.compilerVersion).toBe('0.1.0');
+        expect(result.value.compilerVersion).toBe('0.2.0');
         expect(result.value.providers).toEqual(['cursor', 'claude-code']);
         expect(result.value.outputDirectory).toBe('.ruleset/dist');
         expect(result.value.validateInput).toBe(true);
@@ -72,7 +72,7 @@ describe('ConfigurationService', () => {
       const configPath = createSafeFilePath('ruleset.config.jsonc');
       const validConfigWithComments = `{
         // Rulesets configuration
-        "compilerVersion": "0.1.0",
+        "compilerVersion": "0.2.0",
         "providers": [
           "cursor", // IDE provider
           "claude-code" // CLI provider  
@@ -89,7 +89,7 @@ describe('ConfigurationService', () => {
 
       expect(isOk(result)).toBe(true);
       if (isOk(result)) {
-        expect(result.value.compilerVersion).toBe('0.1.0');
+        expect(result.value.compilerVersion).toBe('0.2.0');
         expect(result.value.providers).toEqual(['cursor', 'claude-code']);
       }
     });
@@ -108,7 +108,7 @@ describe('ConfigurationService', () => {
 
     test('should return error for invalid JSON', async () => {
       const configPath = createSafeFilePath('invalid.config.json');
-      const invalidJson = '{ "compilerVersion": "0.1.0", }'; // Trailing comma
+      const invalidJson = '{ "compilerVersion": "0.2.0", }'; // Trailing comma
 
       await fileSystem.writeFile(configPath, createSourceContent(invalidJson));
 
@@ -143,7 +143,7 @@ describe('ConfigurationService', () => {
     test('should validate provider types', async () => {
       const configPath = createSafeFilePath('invalid-providers.config.json');
       const configWithInvalidProviders = {
-        compilerVersion: '0.1.0',
+        compilerVersion: '0.2.0',
         providers: ['cursor', 'invalid-provider'],
         outputDirectory: '.ruleset/dist',
       };
@@ -165,7 +165,7 @@ describe('ConfigurationService', () => {
   describe('get', () => {
     test('should retrieve configuration value by key', async () => {
       const config = {
-        compilerVersion: '0.1.0',
+        compilerVersion: '0.2.0',
         providers: ['cursor'],
         outputDirectory: '.ruleset/dist',
         validateInput: true,
@@ -185,13 +185,13 @@ describe('ConfigurationService', () => {
 
       expect(isOk(result)).toBe(true);
       if (isOk(result)) {
-        expect(result.value).toBe('0.1.0');
+        expect(result.value).toBe('0.2.0');
       }
     });
 
     test('should return error for missing configuration key', async () => {
       const config = {
-        compilerVersion: '0.1.0',
+        compilerVersion: '0.2.0',
         providers: ['cursor'],
         outputDirectory: '.ruleset/dist',
       };
@@ -215,7 +215,7 @@ describe('ConfigurationService', () => {
 
     test('should support nested configuration keys', async () => {
       const config = {
-        compilerVersion: '0.1.0',
+        compilerVersion: '0.2.0',
         providers: ['cursor'],
         outputDirectory: '.ruleset/dist',
         advanced: {
@@ -245,7 +245,7 @@ describe('ConfigurationService', () => {
   describe('set', () => {
     test('should set configuration value', async () => {
       const config = {
-        compilerVersion: '0.1.0',
+        compilerVersion: '0.2.0',
         providers: ['cursor'],
         outputDirectory: '.ruleset/dist',
       };
@@ -274,7 +274,7 @@ describe('ConfigurationService', () => {
 
     test('should set nested configuration value', async () => {
       const config = {
-        compilerVersion: '0.1.0',
+        compilerVersion: '0.2.0',
         providers: ['cursor'],
         outputDirectory: '.ruleset/dist',
         advanced: {
@@ -308,7 +308,7 @@ describe('ConfigurationService', () => {
   describe('saveConfiguration', () => {
     test('should save configuration to file', async () => {
       const config = {
-        compilerVersion: '0.1.0',
+        compilerVersion: '0.2.0',
         providers: ['cursor'],
         outputDirectory: '.ruleset/dist',
       };
@@ -338,7 +338,7 @@ describe('ConfigurationService', () => {
     test('should preserve formatting when saving JSONC files', async () => {
       const configPath = createSafeFilePath('format-test.config.jsonc');
       const formattedConfig = `{
-  "compilerVersion": "0.1.0",
+  "compilerVersion": "0.2.0",
   "providers": ["cursor"],
   "outputDirectory": ".ruleset/dist"
 }`;
@@ -365,7 +365,7 @@ describe('ConfigurationService', () => {
   describe('validateConfiguration', () => {
     test('should validate complete configuration', () => {
       const validConfig = {
-        compilerVersion: '0.1.0',
+        compilerVersion: '0.2.0',
         providers: ['cursor', 'claude-code'],
         outputDirectory: '.ruleset/dist',
         validateInput: true,
@@ -392,7 +392,7 @@ describe('ConfigurationService', () => {
 
     test('should reject configuration with invalid provider types', () => {
       const invalidConfig = {
-        compilerVersion: '0.1.0',
+        compilerVersion: '0.2.0',
         providers: ['cursor', 'invalid-provider'],
         outputDirectory: '.ruleset/dist',
       };
