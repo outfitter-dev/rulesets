@@ -1,6 +1,7 @@
 /**
- * Tests for Handlebars-based Rulesets compiler
- * Phase 1: Foundation testing - basic functionality
+
+- Tests for Handlebars-based Rulesets compiler
+- Phase 1: Foundation testing - basic functionality
  */
 
 import { describe, it, expect, beforeEach } from 'bun:test';
@@ -27,6 +28,7 @@ describe('HandlebarsRulesetCompiler', () => {
       source: {
         path: 'test-rule.rule.md',
         content: `---
+
 title: Test Rule
 version: 1.0.0
 project:
@@ -37,6 +39,7 @@ project:
 # {{file.name}} v{{file.version}}
 
 {{#instructions}}
+
 ## Coding Standards for {{project.name}}
 
 All {{project.language}} code must follow these guidelines.
@@ -61,7 +64,7 @@ All {{project.language}} code must follow these guidelines.
     compiler = new HandlebarsRulesetCompiler([mockProvider]);
   });
 
-  describe('Basic Compilation', () => {
+describe('Basic Compilation', () => {
     it('should compile a simple template with variables', () => {
       const simpleDoc: ParsedDoc = {
         source: {
