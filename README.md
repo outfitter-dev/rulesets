@@ -47,7 +47,7 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 **Partials**
 : Reusable components stored in `.ruleset/src/_partials/` and included with `{{> @partial-name}}`.
 
-**Providers** 
+**Providers**
 : Supported AI tools (Cursor, Claude Code, Windsurf, etc.) with automatic format conversion and optimization.
 
 **Auto-Discovery**
@@ -127,7 +127,7 @@ providers:
 {{/if-provider}}
 
 {{#if-provider "claude-code"}}
-## Claude Code Guidelines  
+## Claude Code Guidelines
 - Break down complex tasks
 - Use clear, specific prompts
 {{/if-provider}}
@@ -151,7 +151,7 @@ rulesets --provider cursor,windsurf
 ### 5. Find your built rules at:
 
 - `.cursor/rules/standards.mdc`
-- `CLAUDE.md` 
+- `CLAUDE.md`
 - `.windsurf/rules/standards.md`
 
 ## Advanced Features
@@ -159,21 +159,23 @@ rulesets --provider cursor,windsurf
 ### Handlebars Templating
 
 ```handlebars
-{{!-- Variables --}}
-Project: {{project.name}}
-Language: {{project.language}}
+{{! Variables }}
+Project:
+{{project.name}}
+Language:
+{{project.language}}
 
-{{!-- Conditionals --}}
-{{#if-provider "cursor"}}
-Cursor-specific content here
+{{! Conditionals }}
+{{#if-provider 'cursor'}}
+  Cursor-specific content here
 {{/if-provider}}
 
-{{!-- Switch statements --}}
+{{! Switch statements }}
 {{#switch-provider}}
-  {{#case "cursor,windsurf"}}
+  {{#case 'cursor,windsurf'}}
     IDE-specific configuration
   {{/case}}
-  {{#case "claude-code"}}
+  {{#case 'claude-code'}}
     CLI-specific setup
   {{/case}}
   {{#default}}
@@ -181,9 +183,9 @@ Cursor-specific content here
   {{/default}}
 {{/switch-provider}}
 
-{{!-- Complex logic --}}
-{{#if (and (eq provider.type "ide") (has-capability "workspaces"))}}
-Advanced IDE features available
+{{! Complex logic }}
+{{#if (and (eq provider.type 'ide') (has-capability 'workspaces'))}}
+  Advanced IDE features available
 {{/if}}
 ```
 
@@ -248,9 +250,9 @@ async function buildMyRules() {
 
     // Build with options
     await runRulesets('./ruleset/src/my-rules.rule.md', logger, {
-      providers: ['cursor', 'claude-code'],  // Only build for these
-      developmentMode: true,                 // Enhanced debugging
-      cacheTemplates: false,                 // Disable caching
+      providers: ['cursor', 'claude-code'], // Only build for these
+      developmentMode: true, // Enhanced debugging
+      cacheTemplates: false, // Disable caching
     });
 
     console.log('Rules built successfully!');
@@ -264,7 +266,7 @@ async function buildMyRules() {
 
 ```bash
 rulesets                           # Auto-discover and build all
-rulesets build                     # Explicit build command  
+rulesets build                     # Explicit build command
 rulesets --provider cursor         # Build for specific provider
 rulesets --provider cursor,windsurf # Build for multiple providers
 rulesets --dev                     # Development mode with debugging
