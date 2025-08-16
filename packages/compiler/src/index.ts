@@ -2,6 +2,14 @@
 // TLDR: ruleset-v0.1-beta Pass-through implementation without marker processing
 import type { CompiledDoc, ParsedDoc, Provider } from '@rulesets/types';
 
+// Export new Handlebars-based compiler (v0.2+)
+export { 
+  HandlebarsRulesetCompiler, 
+  compileWithHandlebars,
+  type HandlebarsContext,
+  type SectionOptions
+} from './handlebars-compiler';
+
 /**
  * Compiles a parsed Rulesets document for a specific provider.
  * For ruleset-v0.1-beta, this is a pass-through implementation that doesn't process markers.
