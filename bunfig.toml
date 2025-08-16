@@ -1,35 +1,46 @@
 # Bun configuration for @outfitter/rulesets monorepo
-# https://bun.sh/docs/runtime/configuration
+
+# <https://bun.sh/docs/runtime/configuration>
 
 [install]
+
 # Match workspace behavior for monorepo packages
+
 linkWorkspacePackages = true
 
 # Use isolated linker for better monorepo workspace management
+
 linker = "isolated"
 
 # Use semver ranges; lockfile ensures stability
+
 exact = false
 frozenLockfile = true
 
 # Cache configuration
+
 cache = true
-registry = "https://registry.npmjs.org"
+registry = "<https://registry.npmjs.org>"
 
 [install.scopes]
+
 # Optimize for our common scopes
-"@rulesets" = { registry = "https://registry.npmjs.org" }
-"@biomejs" = { registry = "https://registry.npmjs.org" }
-"@changesets" = { registry = "https://registry.npmjs.org" }
+
+"@rulesets" = { registry = "<https://registry.npmjs.org>" }
+"@biomejs" = { registry = "<https://registry.npmjs.org>" }
+"@changesets" = { registry = "<https://registry.npmjs.org>" }
 
 [test]
+
 # Bun native test configuration
+
 coverage = true
-coverageThreshold = { line = 80, function = 80, branch = 80 }
+coverageThreshold = { lines = 0.8, functions = 0.8, statements = 0.8 }
 timeout = 10000
 bail = false  # Don't stop on first test failure
-watch = false # Disable watch mode by default
 
 [run]
+
 # Set NODE_ENV if not already set
+
 env = { NODE_ENV = "development" }

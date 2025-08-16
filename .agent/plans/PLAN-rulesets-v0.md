@@ -73,7 +73,6 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
   - **Acceptance Criteria**: Interfaces are defined and exported.
   - **Dependencies**: Phase 1/Task 2.
 - [ ] **Task 2: Implement v0 Parser Module**
-
   - Create `packages/core/src/parser/index.ts`.
   - Implement `parse(content: string): Promise<ParsedDoc>` function.
     - For v0, `ParsedDoc` will be a simplified version of `CompiledDoc.source` and `CompiledDoc.ast` (primarily front matter and raw body).
@@ -94,7 +93,6 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
   - **Dependencies**: Phase 2/Task 1.
 
 - [ ] **Task 3: Implement v0 Linter Module**
-
   - Create `packages/core/src/linter/index.ts`.
   - Implement `lint(parsedDoc: ParsedDoc, config?: LinterConfig): Promise<LintResult[]>`.
     - For v0, it validates the parsed front matter against a basic schema (e.g., presence of a `ruleset` key or specific expected fields).
@@ -113,7 +111,6 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
   - **Dependencies**: Phase 2/Task 2.
 
 - [ ] **Task 4: Implement v0 Compiler Module**
-
   - Create `packages/core/src/compiler/index.ts`.
   - Implement `compile(parsedDoc: ParsedDoc, destinationId: string, projectConfig?: any): Promise<CompiledDoc>`.
     - For v0, this function will be a pass-through for the body content.
@@ -136,7 +133,6 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
   - **Dependencies**: Phase 2/Task 2.
 
 - [ ] **Task 5: Implement Stub Destination Plugins (Cursor & Windsurf)**
-
   - Create `packages/core/src/destinations/cursor-plugin.ts` and `packages/core/src/destinations/windsurf-plugin.ts`.
   - Implement the `DestinationPlugin` interface for each.
     - `name`: "cursor" or "windsurf".
@@ -167,7 +163,6 @@ While v0 will not process Rulesets notation markers (`{{...}}`) within the conte
   - **Acceptance Criteria**: A Node.js script can execute the parse -> lint -> compile -> write (stubbed) flow. Compiled rules (raw body) are written to the specified output directory.
   - **Dependencies**: Phase 2 (all tasks).
 - [ ] **Task 2: Create Sample `my-rules.rule.md`**
-
   - Create a file named `my-rules.rule.md` in the project root or a test directory.
   - Content:
 
@@ -332,7 +327,7 @@ rulesets/
     "lint:fix": "ultracite format",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "bun run build:clean && changeset publish"
+    "release": "bun run build:clean && changeset publish",
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1", // Example version, use latest
@@ -519,7 +514,7 @@ export interface CompiledDoc {
   source: {
     path: string;
     content: string;
-    front matter: Record<string, any>;
+    frontMatter: Record<string, any>;
   };
   ast: {
     blocks: any[]; // Empty for v0
@@ -576,7 +571,7 @@ export interface Logger {
 import matter from 'gray-matter';
 
 export interface ParsedDoc {
-  front matter: Record<string, any>;
+  frontMatter: Record<string, any>;
   body: string;
   ast: {
     blocks: any[];
@@ -588,10 +583,10 @@ export interface ParsedDoc {
 
 // TLDR: Parse source rules file into structured document
 export async function parse(content: string): Promise<ParsedDoc> {
-  const { data: front matter, content: body } = matter(content);
+  const { data: frontMatter, content: body } = matter(content);
 
   return {
-    front matter,
+    frontMatter,
     body,
     ast: {
       blocks: [], // Not implemented in v0
@@ -625,7 +620,7 @@ This is the body.`;
 
     const result = await parse(content);
 
-    expect(result.front matter).toEqual({
+    expect(result.frontMatter).toEqual({
       ruleset: 'v0',
       title: 'Test Rule',
     });
@@ -638,7 +633,7 @@ This is the body.`;
 
     const result = await parse(content);
 
-    expect(result.front matter).toEqual({});
+    expect(result.frontMatter).toEqual({});
     expect(result.body).toBe('# No Front matter\n\nJust content.');
   });
 });

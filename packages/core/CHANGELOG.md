@@ -25,7 +25,6 @@
   ### Limitations
 
   This v0 release intentionally does not process Rulesets notation markers (`{{...}}`). These features are planned for v0.x releases:
-
   - Stem parsing and handling (v0.1)
   - Variable substitution (v0.2)
   - Import resolution (v0.3)

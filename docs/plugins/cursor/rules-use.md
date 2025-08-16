@@ -66,7 +66,6 @@ alwaysApply: false
 Cursor offers four ways to activate rules:
 
 1. **Always Apply**: Rules that are always included in context for every operation
-
    - Best for critical project information, style guides, and core concepts
    - Use sparingly to avoid using up the context token limit
 
@@ -77,7 +76,6 @@ Cursor offers four ways to activate rules:
    ```
 
 2. **Auto-Attached**: Rules that apply only when working with matching files
-
    - Perfect for language-specific or framework-specific guidance
    - Requires `globs` field to specify file patterns
 
@@ -88,7 +86,6 @@ Cursor offers four ways to activate rules:
    ```
 
 3. **Agent-Requested**: Rules that are only added when the AI specifically requests them
-
    - Useful for reference material that may or may not be needed
    - Requires `description` field for the AI to determine relevance
 
@@ -99,7 +96,6 @@ Cursor offers four ways to activate rules:
    ```
 
 4. **Manual**: Rules that are only applied when manually selected by the user
-
    - For specialized knowledge that's only occasionally needed
 
    ```yaml

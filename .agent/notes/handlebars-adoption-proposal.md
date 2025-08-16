@@ -568,7 +568,7 @@ Total timeline: **8 weeks** from approval to production-ready
 ```handlebars
 {{!-- Variables --}}
 {{provider.id}}                   {{!-- Simple variable --}}
-{{file.front matter.version}}      {{!-- Nested property --}}
+{{file.frontMatter.version}}       {{!-- Nested property --}}
 
 {{!-- Sections --}}
 {{#instructions}}content{{/instructions}}              {{!-- Basic section --}}
@@ -598,4 +598,4 @@ Total timeline: **8 weeks** from approval to production-ready
 
 ---
 
-*This proposal represents a natural evolution of Rulesets, aligning with industry standards while maintaining all current capabilities and opening doors for future enhancements.*
+_This proposal represents a natural evolution of Rulesets, aligning with industry standards while maintaining all current capabilities and opening doors for future enhancements._

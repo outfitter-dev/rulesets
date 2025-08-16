@@ -42,7 +42,7 @@ AGENTS.md files use pure Markdown with section headings (## ...) as the primary 
 ```markdown
 ## Coding Standards
 
-- Use tabs for indentation
+- Use spaces for indentation (2 for JS/TS; 4 for Python per PEP 8)
 - Follow PEP 8 for Python code
 - Maximum line length is 80 characters
 

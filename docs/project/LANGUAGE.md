@@ -200,7 +200,6 @@ For detailed migration instructions, see the [Provider Migration Guide](../../pa
 ## Changelog
 
 - **2025-01-13:**
-
   - **BREAKING**: Migrated from "Destination" to "Provider" terminology
   - Updated all interfaces: `DestinationPlugin` → `RulesetProvider`
   - Updated system variables: `$destination` → `$provider`
@@ -230,4 +229,4 @@ For detailed migration instructions, see the [Provider Migration Guide](../../pa
 
 ---
 
-*This language spec is a living styleguide document and will evolve with Rulesets' development.*
+_This language spec is a living styleguide document and will evolve with Rulesets' development._

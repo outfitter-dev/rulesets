@@ -27,7 +27,7 @@ The app consists of:
 1. A Node.js app with a compiler (featuring a plugin architecture for different tools), an API, CLI, and Model Context Protocol implementation for managing prompts and instructions.
 2. A CommonMark-compliant markup specification for creating effective and reusable rules, processed by the compiler to generate destination-specific rules files.
 
-Result: *author once, distribute everywhere, zero drift.*
+Result: _author once, distribute everywhere, zero drift._
 
 ## What's with the name?
 
@@ -74,7 +74,7 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 | `openai-codex` | [OpenAI Codex](https://github.com/openai/codex)                                         | CLI         | 🔵 Planned     |
 | `windsurf`     | [Windsurf](https://windsurf.dev/)                                                       | IDE         | 🟡 In Progress |
 
-*Want a new provider? Implement `RulesetProvider` and publish `@rulesets/plugin-<your-tool>`. See existing plugin examples and general development guidelines.*
+_Want a new provider? Implement `RulesetProvider` and publish `@rulesets/plugin-<your-tool>`. See existing plugin examples and general development guidelines._
 
 ## Key Features
 
@@ -207,7 +207,7 @@ Common development scripts at the repo root:
 | **Internal Link**           | `[Read more](rules.md)`                                    | Standard Markdown links.                          |
 | **Project File Link**       | `@path/to/file.txt` or `@path/to/file.txt("Custom Title")` | Links to project files, optionally with an alias. |
 | **Alias Variable**          | `{{$project}}`                                             | Resolved via `aliases` in config.                 |
-| **Data Variable**           | `{{$.key}}`                                                | Injects YAML front matter data.                    |
+| **Data Variable**           | `{{$.key}}`                                                | Injects YAML front matter data.                   |
 | **Provider Variable**       | `{{$provider}}` / `{{$provider.id}}`                       | Injects current provider name/ID.                 |
 | **Instruction Placeholder** | `[fill this in]`                                           | Marker for LLM to complete.                       |
 

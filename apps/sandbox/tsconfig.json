@@ -1,0 +1,92 @@
+{
+  "compilerOptions": {
+    /*Language and Environment*/
+    "target": "ES2022",
+    "lib": ["ES2022", "ES2023.Array"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "allowJs": false,
+    "checkJs": false,
+    "jsx": "preserve",
+    "experimentalDecorators": false,
+    "emitDecoratorMetadata": false,
+    "useDefineForClassFields": true,
+    "moduleDetection": "force",
+
+    /* Modules */
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"],
+      "@/domain/*": ["domain/*"],
+      "@/shared/*": ["shared/*"],
+      "@/infrastructure/*": ["infrastructure/*"],
+      "@/application/*": ["application/*"]
+    },
+    "rootDirs": ["./src"],
+    "allowUmdGlobalAccess": false,
+    "allowArbitraryExtensions": false,
+    "resolveJsonModule": true,
+    "resolvePackageJsonExports": true,
+    "resolvePackageJsonImports": true,
+
+    /* JavaScript Support */
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+
+    /* Emit */
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": false,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "removeComments": false,
+    "noEmit": false,
+    "importHelpers": false,
+    "downlevelIteration": true,
+    "stripInternal": true,
+    "noEmitHelpers": false,
+    "noEmitOnError": true,
+    "declarationDir": "./dist/types",
+
+    /* Interop Constraints */
+    "isolatedModules": true,
+    "verbatimModuleSyntax": false,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Type Checking - STRICT MODE */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+
+    /* Completeness */
+    "skipDefaultLibCheck": false,
+    "skipLibCheck": false
+  },
+  "include": [
+    "src/**/*",
+    "*.config.*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
+}

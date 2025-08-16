@@ -162,7 +162,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't use bitwise operators.
 - Don't use expressions where the operation doesn't change the value.
 - Make sure Promise-like statements are handled appropriately.
-- Don't use **dirname and**filename in the global scope.
+- Don't use `__dirname` and `__filename` in the global scope.
 - Prevent import cycles.
 - Don't use configured elements.
 - Don't hardcode sensitive data like API keys and tokens.

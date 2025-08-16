@@ -26,8 +26,8 @@
     "isolatedModules": true,
 
     // Language and environment
-    "target": "ES2018",
-    "lib": ["ES2018"],
+    "target": "ES2022",
+    "lib": ["ES2022"],
     "downlevelIteration": true,
 
     // Bun-specific optimizations
