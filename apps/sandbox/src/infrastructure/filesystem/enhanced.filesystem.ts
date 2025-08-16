@@ -149,7 +149,7 @@ export class EnhancedSecureFileSystemService
         {
           maxEntries: 1000,
           defaultTtlMs: this.config.cacheTtlMs,
-          maxMemoryBytes: 10 * 1024 * 1024, // 10MB
+          maxMemoryBytes: 10 *1024* 1024, // 10MB
         },
         this.monitor
       );
@@ -160,7 +160,7 @@ export class EnhancedSecureFileSystemService
         {
           maxEntries: 500,
           defaultTtlMs: this.config.cacheTtlMs,
-          maxMemoryBytes: 50 * 1024 * 1024, // 50MB
+          maxMemoryBytes: 50 *1024* 1024, // 50MB
         },
         this.monitor
       );
@@ -170,8 +170,8 @@ export class EnhancedSecureFileSystemService
     this.pathValidationCache = new PerformanceCache<boolean>(
       {
         maxEntries: 2000,
-        defaultTtlMs: this.config.cacheTtlMs * 2,
-        maxMemoryBytes: 1 * 1024 * 1024, // 1MB
+        defaultTtlMs: this.config.cacheTtlMs *2,
+        maxMemoryBytes: 1* 1024 * 1024, // 1MB
       },
       this.monitor
     );

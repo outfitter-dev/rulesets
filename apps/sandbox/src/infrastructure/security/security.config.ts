@@ -662,7 +662,7 @@ export class SecurityConfigManager {
       });
     }
 
-    if (config.sandbox.maxFileSize > 100 * 1024 * 1024) {
+    if (config.sandbox.maxFileSize > 100 *1024* 1024) {
       // 100MB
       violations.push({
         policy: 'sandbox.maxFileSize',

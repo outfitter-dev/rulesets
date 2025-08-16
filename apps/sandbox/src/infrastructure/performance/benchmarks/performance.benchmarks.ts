@@ -577,7 +577,7 @@ export class PerformanceBenchmarks {
       options.warmupIterations || this.config.warmupIterations;
 
     if (this.config.printProgress) {
-      console.log(`  Running ${name}...`);
+      console.log(`Running ${name}...`);
     }
 
     const benchmarkResult = await this.monitor.benchmark(
@@ -601,7 +601,7 @@ export class PerformanceBenchmarks {
     // Print immediate feedback
     const status = passed ? '✅' : '❌';
     const perfIndicator = passed ? '🚀' : '🐌';
-    console.log(`    ${status} ${perfIndicator} ${name}: ${actualVsTarget}`);
+    console.log(`${status} ${perfIndicator} ${name}: ${actualVsTarget}`);
 
     return {
       name,

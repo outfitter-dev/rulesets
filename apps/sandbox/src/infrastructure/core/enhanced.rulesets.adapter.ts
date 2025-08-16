@@ -226,7 +226,7 @@ export class EnhancedRulesetsCompilationService implements ICompilationService {
       defaultTimeoutMs: 60_000,
       cacheTtlMs: 600_000, // 10 minutes
       enableIncremental: true,
-      maxCacheSize: 100 * 1024 * 1024, // 100MB
+      maxCacheSize: 100 *1024* 1024, // 100MB
       ...config,
     };
 
