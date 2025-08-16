@@ -69,7 +69,6 @@ No front-matter configuration is required or supported - Jules uses plain Markdo
 Google Jules offers 1 primary activation mode:
 
 1. **Repository Context**: Automatic activation when working on any file in the repository
-
    - Always applies AGENTS.md guidance to all tasks
    - Combines with full codebase understanding
    - No manual activation required

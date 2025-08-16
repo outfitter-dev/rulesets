@@ -43,25 +43,21 @@ project/
 Roo Code's distinctive feature is its mode-specific rules folders:
 
 1. **Common Rules** (`/rules/`): Applied regardless of which mode is active
-
    - Project overview and terminology
    - General coding standards
    - Team practices and workflows
 
 2. **Architect Mode Rules** (`/rules-architect/`): For high-level design tasks
-
    - System architecture principles
    - Design patterns
    - Component interaction guidelines
 
 3. **Debug Mode Rules** (`/rules-debug/`): For finding and fixing issues
-
    - Common bugs and solutions
    - Testing approaches
    - Debugging workflows
 
 4. **Documentation Mode Rules** (`/rules-docs-writer/`): For documentation tasks
-
    - Documentation standards
    - API description formats
    - Comment style guidelines

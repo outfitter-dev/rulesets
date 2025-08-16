@@ -1,9 +1,9 @@
 ---
 ruleset:
   version: 0.1.0
-  
-title: "TypeScript Coding Standards"
-description: "Professional TypeScript development standards for our team"
+
+title: 'TypeScript Coding Standards'
+description: 'Professional TypeScript development standards for our team'
 
 providers:
   cursor:
@@ -37,7 +37,7 @@ providers:
 - **Use Result types** - Prefer `Result<T, E>` over throwing exceptions
 - **Handle all async operations** - Every Promise must be awaited or handled
 - **Custom error classes** - Create specific error types for different failure modes
-{{/instructions}}
+  {{/instructions}}
 
 {{examples}}
 
@@ -83,9 +83,9 @@ async function processUserData(userId: UserId): Promise<void> {
     const [user, orders, preferences] = await Promise.all([
       fetchUser(userId),
       fetchUserOrders(userId),
-      fetchUserPreferences(userId)
+      fetchUserPreferences(userId),
     ]);
-    
+
     await updateUserProfile({ user, orders, preferences });
   } catch (error) {
     // Handle specific error types differently

@@ -21,7 +21,7 @@ framework: 'React 18+'
 
 Best practices for building maintainable, performant React applications.
 
-{{instructions}}
+{{#instructions}}
 
 ## Component Architecture
 
@@ -45,7 +45,7 @@ Best practices for building maintainable, performant React applications.
 - **External state libraries** - Zustand/Redux for complex global state
   {{/instructions}}
 
-{{examples}}
+{{#examples}}
 
 ### Well-Structured Components
 
@@ -146,7 +146,7 @@ function useUserManagement(initialUsers: User[] = []) {
 
 {{/examples}}
 
-{{patterns}}
+{{#patterns}}
 
 ### Component Patterns
 
@@ -219,7 +219,7 @@ function DataFetcher<T>({ url, children }: DataFetcherProps<T>) {
 
 {{/patterns}}
 
-{{testing}}
+{{#testing}}
 
 ### Testing Guidelines
 

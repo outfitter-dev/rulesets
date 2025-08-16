@@ -347,7 +347,7 @@ function compileAsHeading(block: BlockNode, context: CompilerContext): string {
 
 ### Documentation Ruleset
 
-```markdown
+````markdown
 ---
 ruleset:
   heading:
@@ -368,6 +368,7 @@ First, install the dependencies:
 ```bash
 npm install
 ```
+````
 
 {{/\"Installation\"}}
 
@@ -386,7 +387,7 @@ Set these required variables:
 
 {{/\"Getting Started\"}}
 
-```text
+````text
 
 ### Mixed Format Example
 
@@ -431,4 +432,4 @@ Set these required variables:
 
 ---
 
-*This proposal aims to enhance Rulesets' flexibility and user experience by providing an alternative to XML-based output that better aligns with Markdown standards and provider capabilities.*
+_This proposal aims to enhance Rulesets' flexibility and user experience by providing an alternative to XML-based output that better aligns with Markdown standards and provider capabilities._

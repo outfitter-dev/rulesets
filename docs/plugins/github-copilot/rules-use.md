@@ -50,13 +50,11 @@ Reference Jira issue keys (e.g., JIRA-123) in commit messages.
 GitHub Copilot uses a straightforward activation process:
 
 1. **Automatic Loading**: Rules are loaded when you open a repository containing the file
-
    - Personal rules are fetched from GitHub
    - Repository rules are read from `.github/copilot-instructions.md`
    - Both are automatically included in every prompt
 
 2. **Prompt Files**: Only activated when explicitly referenced
-
    - Use `/prompt <filename>` in VS Code Chat to include
    - Perfect for task-specific instructions
 

@@ -68,7 +68,6 @@ activation: 'always_on'
 [Provider Name] offers [number] ways to activate rules:
 
 1. **[Mode 1]**: [Description of activation mode]
-
    - [When to use this mode]
    - [Requirements for this mode]
 
@@ -79,7 +78,6 @@ activation: 'always_on'
    ```
 
 2. **[Mode 2]**: [Description of activation mode]
-
    - [When to use this mode]
    - [Requirements for this mode]
 
