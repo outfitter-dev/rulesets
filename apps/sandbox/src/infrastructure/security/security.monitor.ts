@@ -621,7 +621,7 @@ export class SecurityMonitor extends EventEmitter {
     }
 
     // Check hourly rate limit
-    const hourStart = now - 60 * 60 * 1000;
+    const hourStart = now - 60 *60* 1000;
     const recentAlerts = this.events.filter(
       (e) => e.timestamp >= hourStart && e.metadata.alerted === true
     );

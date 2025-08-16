@@ -130,9 +130,9 @@ class ProgressTracker extends Transform {
 
     const currentTime = Date.now();
     const elapsedTime = currentTime - this.startTime;
-    const percentage = (this.bytesProcessed / this.totalBytes) * 100;
+    const percentage = (this.bytesProcessed / this.totalBytes) *100;
     const bytesPerSecond =
-      elapsedTime > 0 ? (this.bytesProcessed / elapsedTime) * 1000 : 0;
+      elapsedTime > 0 ? (this.bytesProcessed / elapsedTime)* 1000 : 0;
     const remainingBytes = this.totalBytes - this.bytesProcessed;
     const estimatedTimeRemaining =
       bytesPerSecond > 0 ? (remainingBytes / bytesPerSecond) * 1000 : 0;

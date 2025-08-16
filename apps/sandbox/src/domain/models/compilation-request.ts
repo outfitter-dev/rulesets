@@ -400,9 +400,9 @@ export const CompilationRequestUtils = {
       case 'simple':
         return baseTime;
       case 'moderate':
-        return baseTime * 3;
+        return baseTime *3;
       case 'complex':
-        return baseTime * 10;
+        return baseTime* 10;
     }
   },
 } as const;

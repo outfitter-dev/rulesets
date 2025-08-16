@@ -535,7 +535,7 @@ export const ConfigurationUtils = {
 
     for (const key of keys) {
       if (current && typeof current === 'object' && key in current) {
-        current = (current as Record<string, unknown>)[key];
+        current = [current as Record<string, unknown>](key);
       } else {
         return defaultValue;
       }
