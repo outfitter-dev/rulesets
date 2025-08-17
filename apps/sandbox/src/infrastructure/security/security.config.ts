@@ -19,6 +19,7 @@
 
 import { ErrorCodes, SandboxError } from '@/domain/errors';
 import { Err, Ok, type Result } from '@/shared/types/result';
+import { SECURITY_CONSTANTS, TIME_CONSTANTS } from '@/shared/constants';
 import type {
   ErrorExposureLevel,
   ErrorSanitizationConfig,
@@ -409,12 +410,12 @@ export class SecurityConfigManager {
 
       sandbox: {
         allowedPaths: [process.cwd()],
-        maxFileSize: isProduction ? 10 * 1024 * 1024 : 50 * 1024 * 1024, // 10MB prod, 50MB dev
+        maxFileSize: isProduction ? SECURITY_CONSTANTS.MAX_FILE_SIZE_PROD : SECURITY_CONSTANTS.MAX_FILE_SIZE_DEV, // 10MB prod, 50MB dev
         maxFiles: isProduction ? 1000 : 10_000,
         maxDirectories: isProduction ? 100 : 1000,
         maxDepth: 10,
         operationTimeoutMs: isProduction ? 30_000 : 60_000,
-        memoryLimitBytes: isProduction ? 512 * 1024 * 1024 : 1024 * 1024 * 1024, // 512MB prod, 1GB dev
+        memoryLimitBytes: isProduction ? SECURITY_CONSTANTS.MEMORY_LIMIT_PROD : SECURITY_CONSTANTS.MEMORY_LIMIT_DEV, // 512MB prod, 1GB dev
         cpuTimeoutMs: isProduction ? 30_000 : 60_000,
         allowSymlinks: false,
         allowHiddenFiles: isDevelopment,
@@ -500,8 +501,8 @@ export class SecurityConfigManager {
 
       validation: {
         strictMode: isProduction,
-        maxInputSize: 10 * 1024 * 1024, // 10MB
-        maxOutputSize: 50 * 1024 * 1024, // 50MB
+        maxInputSize: SECURITY_CONSTANTS.MAX_FILE_SIZE_PROD, // 10MB
+        maxOutputSize: SECURITY_CONSTANTS.MAX_OUTPUT_SIZE, // 50MB
         allowedFileExtensions: [
           '.md',
           '.txt',

@@ -10,6 +10,7 @@ import { ErrorCodes, SandboxError } from '@/domain/errors';
 import type { Timestamp } from '@/shared/types/brands';
 import { createTimestamp } from '@/shared/types/brands';
 import { Err, Ok, type Result } from '@/shared/types/result';
+import { MEMORY_CONSTANTS } from '@/shared/constants';
 import type { PerformanceMonitor } from '../monitoring/performance.monitor';
 
 /**
@@ -110,7 +111,7 @@ export class PerformanceCache<T = unknown> {
     this.config = {
       maxEntries: 1000,
       defaultTtlMs: 300_000, // 5 minutes
-      maxMemoryBytes: 50 *1024* 1024, // 50MB
+      maxMemoryBytes: MEMORY_CONSTANTS.MEDIUM_CACHE_SIZE, // 50MB
       enableLru: true,
       enableMonitoring: true,
       cleanupIntervalMs: 60_000, // 1 minute

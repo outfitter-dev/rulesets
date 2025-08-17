@@ -88,9 +88,10 @@ import {
   PerformanceMonitor,
   type TaskPriority,
 } from '../performance';
+import { MEMORY_CONSTANTS } from '@/shared/constants';
 
 // Constants
-const DEFAULT_MAX_CACHE_SIZE_BYTES = 100 * 1024 * 1024; // 100MB
+const DEFAULT_MAX_CACHE_SIZE_BYTES = MEMORY_CONSTANTS.LARGE_CACHE_SIZE; // 100MB
 
 /**
 

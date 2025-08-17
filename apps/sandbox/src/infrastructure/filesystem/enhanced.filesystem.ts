@@ -36,6 +36,7 @@ import type {
 } from '@/shared/types/brands';
 import { createTimestamp } from '@/shared/types/brands';
 import { Err, Ok, type Result } from '@/shared/types/result';
+import { MEMORY_CONSTANTS } from '@/shared/constants';
 import {
   AsyncQueue,
   PerformanceCache,
@@ -149,7 +150,7 @@ export class EnhancedSecureFileSystemService
         {
           maxEntries: 1000,
           defaultTtlMs: this.config.cacheTtlMs,
-          maxMemoryBytes: 10 *1024* 1024, // 10MB
+          maxMemoryBytes: MEMORY_CONSTANTS.SMALL_CACHE_SIZE, // 10MB
         },
         this.monitor
       );
@@ -160,7 +161,7 @@ export class EnhancedSecureFileSystemService
         {
           maxEntries: 500,
           defaultTtlMs: this.config.cacheTtlMs,
-          maxMemoryBytes: 50 *1024* 1024, // 50MB
+          maxMemoryBytes: MEMORY_CONSTANTS.MEDIUM_CACHE_SIZE, // 50MB
         },
         this.monitor
       );
@@ -171,7 +172,7 @@ export class EnhancedSecureFileSystemService
       {
         maxEntries: 2000,
         defaultTtlMs: this.config.cacheTtlMs *2,
-        maxMemoryBytes: 1* 1024 * 1024, // 1MB
+        maxMemoryBytes: MEMORY_CONSTANTS.MEGABYTE, // 1MB
       },
       this.monitor
     );
