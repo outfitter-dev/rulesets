@@ -395,7 +395,7 @@ export const CompilationRequestUtils = {
   estimateProcessingTime: (request: CompilationRequest): number => {
     const MODERATE_COMPLEXITY_TIME_MULTIPLIER = 3;
     const COMPLEX_COMPLEXITY_TIME_MULTIPLIER = 10;
-    
+
     const complexity = CompilationRequestUtils.estimateComplexity(request);
     const baseTime = 1000; // 1 second base
 
@@ -403,9 +403,9 @@ export const CompilationRequestUtils = {
       case 'simple':
         return baseTime;
       case 'moderate':
-        return baseTime * MODERATE_COMPLEXITY_TIME_MULTIPLIER;
+        return baseTime *MODERATE_COMPLEXITY_TIME_MULTIPLIER;
       case 'complex':
-        return baseTime * COMPLEX_COMPLEXITY_TIME_MULTIPLIER;
+        return baseTime* COMPLEX_COMPLEXITY_TIME_MULTIPLIER;
     }
   },
 } as const;
