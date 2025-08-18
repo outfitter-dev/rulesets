@@ -30,13 +30,13 @@ jobs:
         with:
           fetch-depth: 2 # Reduced from 0 for faster checkout
 
-      # Bun setup with pinned version and fallback strategy
-      # Using v1.1.38 - last known stable before registry URL parsing issues
-      # Issue: https://github.com/oven-sh/bun/issues/12342
+      # Bun setup using version file for deterministic builds
+      # Version controlled via .bun-version file
+      # Workaround for: https://github.com/outfitter-dev/rulesets/issues/67
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.1.38
+          bun-version-file: .bun-version
 
       # Cache Bun dependencies
       - name: Cache Bun Dependencies
@@ -185,13 +185,13 @@ jobs:
         with:
           fetch-depth: 0 # Need full history for changesets
 
-      # Bun setup with pinned version and fallback strategy
-      # Using v1.1.38 - last known stable before registry URL parsing issues
-      # Issue: https://github.com/oven-sh/bun/issues/12342
+      # Bun setup using version file for deterministic builds
+      # Version controlled via .bun-version file
+      # Workaround for: https://github.com/outfitter-dev/rulesets/issues/67
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.1.38
+          bun-version-file: .bun-version
 
       # Reuse caches from build job
       - name: Cache Bun Dependencies
