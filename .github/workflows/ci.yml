@@ -30,10 +30,13 @@ jobs:
         with:
           fetch-depth: 2 # Reduced from 0 for faster checkout
 
+      # Bun setup with pinned version and fallback strategy
+      # Using v1.1.38 - last known stable before registry URL parsing issues
+      # Issue: https://github.com/oven-sh/bun/issues/12342
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.1.38
 
       # Cache Bun dependencies
       - name: Cache Bun Dependencies
@@ -59,9 +62,17 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          # Clear cache if needed (helps with registry issues)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual run detected - clearing Bun cache"
+            bun pm cache rm || true
+          fi
+
+          # Install with frozen lockfile for reproducibility
           if [ -f "bun.lock" ]; then
             bun install --frozen-lockfile
           else
+            echo "Warning: bun.lock not found, installing without lock"
             bun install
           fi
 
@@ -174,10 +185,13 @@ jobs:
         with:
           fetch-depth: 0 # Need full history for changesets
 
+      # Bun setup with pinned version and fallback strategy
+      # Using v1.1.38 - last known stable before registry URL parsing issues
+      # Issue: https://github.com/oven-sh/bun/issues/12342
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.1.38
 
       # Reuse caches from build job
       - name: Cache Bun Dependencies
@@ -202,9 +216,17 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          # Clear cache if needed (helps with registry issues)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual run detected - clearing Bun cache"
+            bun pm cache rm || true
+          fi
+
+          # Install with frozen lockfile for reproducibility
           if [ -f "bun.lock" ]; then
             bun install --frozen-lockfile
           else
+            echo "Warning: bun.lock not found, installing without lock"
             bun install
           fi
 
