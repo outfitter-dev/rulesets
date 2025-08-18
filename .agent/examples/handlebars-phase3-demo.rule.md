@@ -199,10 +199,10 @@ The current provider supports file system operations, enabling:
 {{> @base-standards}}
 
 {{!-- Language layer --}}
-{{> @{{project.language}}-rules}}
+{{> (concat "@" project.language "-rules") }}
 
 {{!-- Project type layer --}}
-{{> @{{project.type}}-guidelines}}
+{{> (concat "@" project.type "-guidelines") }}
 
 {{!-- Custom overrides --}}
 {{#if custom.hasCustomRules}}
@@ -214,7 +214,7 @@ The current provider supports file system operations, enabling:
 
 ```handlebars
 {{!-- Partials can access the full context --}}
-{{> @provider-specific/{{provider.id}}-config}}
+{{> (concat "@provider-specific/" provider.id "-config") }}
 
 {{!-- Partials with parameters --}}
 {{> @component-template language=project.language version=file.version}}

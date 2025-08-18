@@ -72,7 +72,7 @@
     "pre:push": "lefthook run pre-push",
     "postinstall": "bun run build"
   },
-  "packageManager": "bun@1.2.19",
+  "packageManager": "bun@1.2.20",
   "engines": {
     "node": ">=20.0.0",
     "bun": ">=1.2.0"

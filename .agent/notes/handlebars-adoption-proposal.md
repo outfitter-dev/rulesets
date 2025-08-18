@@ -493,7 +493,7 @@ export function ifProviderHelper(
 
 ```javascript
 // Precompile templates for production
-const templates = handlebars.precompile(sourceDir);
+const templates = Handlebars.precompile(sourceDir);
 
 // 10x faster execution with precompiled templates
 const result = Handlebars.template(templates.ruleset)(context);

@@ -16,7 +16,7 @@ providers:
 
 ## TypeScript Coding Standards
 
-{{instructions}}
+{{#instructions}}
 
 ## Type Safety Requirements
 
@@ -39,7 +39,7 @@ providers:
 - **Custom error classes** - Create specific error types for different failure modes
   {{/instructions}}
 
-{{examples}}
+{{#examples}}
 
 ### Type Safety Examples
 
@@ -77,8 +77,10 @@ if (result.success) {
 ```
 
 ```typescript
-// ✅ Good: Proper async/await with error boundaries
-async function processUserData(userId: UserId): Promise<void> {
+// ✅ Good: Proper async/await with Result style (no throws)
+type VoidResult<E> = { success: true } | { success: false; error: E };
+
+async function processUserData(userId: UserId): Promise<VoidResult<Error>> {
   try {
     const [user, orders, preferences] = await Promise.all([
       fetchUser(userId),
@@ -87,12 +89,15 @@ async function processUserData(userId: UserId): Promise<void> {
     ]);
 
     await updateUserProfile({ user, orders, preferences });
+    return { success: true };
   } catch (error) {
-    // Handle specific error types differently
     if (error instanceof NetworkError) {
-      throw new ServiceUnavailableError('Service temporarily unavailable');
+      return {
+        success: false,
+        error: new ServiceUnavailableError('Service temporarily unavailable'),
+      };
     }
-    throw error; // Re-throw unknown errors
+    return { success: false, error: error as Error };
   }
 }
 ```

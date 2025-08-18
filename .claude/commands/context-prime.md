@@ -37,7 +37,7 @@ Make sure that the language used in the README is consistent with the language s
 
 ### CLAUDE.md
 
-**File:** @./CLAUDE.md
+**File:** @./.claude/CLAUDE.md
 **Description:**
 This is your project guidance file.
 

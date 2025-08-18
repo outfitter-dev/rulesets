@@ -16,7 +16,7 @@ providers:
 
 ## React Best Practices
 
-{{instructions}}
+{{#instructions}}
 
 ## Component Architecture
 
@@ -40,7 +40,7 @@ providers:
 - **External state managers** - Zustand/Redux for complex app state
   {{/instructions}}
 
-{{examples}}
+{{#examples}}
 
 ### Component Architecture Examples
 
@@ -81,7 +81,7 @@ interface ExpensiveListProps {
 
 const ExpensiveList = React.memo<ExpensiveListProps>(({ items, onItemSelect }) => {
   const sortedItems = useMemo(
-    () => items.sort((a, b) => a.priority - b.priority),
+    () => [...items].sort((a, b) => a.priority - b.priority),
     [items]
   );
 

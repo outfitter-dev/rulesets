@@ -90,6 +90,15 @@ npm install -g @rulesets/cli
 npx @rulesets/cli --help
 ```
 
+## Development (Bun-only)
+
+- Package manager: Bun (pinned via `.bun-version` and `packageManager`)
+- Install dependencies: `bun install` (use `--frozen-lockfile` in CI)
+- Run scripts: `bun run <script>` (see `package.json`)
+- Please do not use npm, Yarn, or pnpm in this repository
+
+See also: `.agent/rules/development-environment.md` for CI setup, caching, and troubleshooting.
+
 ## Quick Start
 
 ### 1. Initialize a new project
