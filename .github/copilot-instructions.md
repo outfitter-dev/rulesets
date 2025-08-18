@@ -43,14 +43,15 @@ Rulesets is a CommonMark-compliant rules compiler that lets you author a single 
 
 ## Current Implementation Status
 
-We're implementing **Rulesets v0.1-beta** with these limitations:
+We’re on **Rulesets v0.2 (Handlebars)**:
 
-- Parser handles front matter and raw body only
-- Compiler is pass-through (no marker processing)
-- Linter validates basic front matter schema
-- Architecture designed for easy ruleset-v0.1-beta+ enhancement
+- Handlebars-based compiler with provider-aware helpers
+- `_partials/` support with `@` syntax and partial caching
+- Conditional helpers (`if-provider`, `unless-provider`, `switch-provider`)
+- Auto-discovery of `*.rule.md` sources
+- Updated docs and examples aligned to v0.2
 
-Reference `docs/project/plans/PLAN-rulesets-v0.md` for complete implementation details.
+Reference `docs/project/ARCHITECTURE.md` for the v0.2 architecture and helpers.
 
 ## Development Workflow
 

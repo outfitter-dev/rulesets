@@ -17,7 +17,7 @@ language: TypeScript
 
 - One class/interface per file
 - Use barrel exports (`index.ts`) for modules
-- Group related types in namespace files
+- Group related types in dedicated modules; avoid TypeScript namespaces
 - Separate types from implementation
 
 ### Naming Conventions

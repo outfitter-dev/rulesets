@@ -12,7 +12,7 @@ on:
       versions:
         description: "Comma-separated list of Bun versions to test"
         required: false
-        default: "1.1.38,1.2.20,latest"
+        default: "latest,1.2.20,1.1.38"
         type: string
   schedule:
     # Run weekly to detect new issues early
@@ -37,7 +37,7 @@ jobs:
             VERSIONS="${{ inputs.versions }}"
           else
             # Default versions for scheduled runs
-            VERSIONS="1.1.38,1.2.20,latest"
+            VERSIONS="latest,1.2.20,1.1.38"
           fi
 
           # Convert to JSON array
