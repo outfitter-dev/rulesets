@@ -28,7 +28,7 @@ jobs:
       # Bun setup - pinned to stable version
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.1.38
+          bun-version-file: .bun-version
 
       - name: Cache Dependencies
         uses: actions/cache@v4
