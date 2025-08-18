@@ -1,0 +1,54 @@
+# Bun Version Configuration for CI/CD
+
+# Centralized version management for GitHub Actions workflows
+
+#
+
+# Version History:
+
+# - 1.2.20: InvalidURL registry error with @types/js-yaml
+
+# - 1.2.19: Same InvalidURL issue present
+
+# - 1.1.38: Last known stable for our use case
+
+# - 1.1.34: Windows-specific InvalidURL issues reported
+
+#
+
+# Usage in workflows:
+
+# ```yaml
+
+# - uses: oven-sh/setup-bun@v2
+
+# with:
+
+# bun-version: ${{ vars.BUN_VERSION || '1.1.38' }}
+
+# ```
+
+name: Bun Version Config
+
+env:
+  # Primary version - should be tested thoroughly before updating
+
+  BUN_VERSION_STABLE: "1.1.38"
+
+  # Canary version for testing newer releases
+
+  BUN_VERSION_CANARY: "1.2.20"
+
+  # Minimum supported version
+
+  BUN_VERSION_MIN: "1.1.0"
+
+on:
+  workflow_call:
+    outputs:
+      stable-version:
+        description: "Stable Bun version"
+        value: "1.1.38"
+      canary-version:
+        description: "Canary Bun version for testing"
+        value: "1.2.20"
