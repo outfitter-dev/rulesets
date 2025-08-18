@@ -32,7 +32,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          # Skip cache since we don't have package-lock.json yet
 
       # Setup Bun for script execution (it's faster than npm run)
       - name: Setup Bun Runtime
@@ -193,7 +193,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          # Skip cache since we don't have package-lock.json yet
 
       - name: Setup Bun Runtime
         uses: oven-sh/setup-bun@v2
