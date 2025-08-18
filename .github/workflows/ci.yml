@@ -30,7 +30,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.19
+          bun-version: 1.2.20
 
       # Cache Bun dependencies
       - name: Cache Bun Dependencies
@@ -174,7 +174,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.19
+          bun-version: 1.2.20
 
       # Reuse caches from build job
       - name: Cache Bun Dependencies
