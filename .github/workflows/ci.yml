@@ -1,4 +1,5 @@
 # CI/CD Workflow - Optimized for speed and reliability
+
 name: CI
 
 on:
@@ -8,11 +9,13 @@ on:
     branches: [main, develop]
 
 # Cancel outdated runs for same ref
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 # Set environment for all jobs
+
 env:
   NODE_ENV: production
 
@@ -30,7 +33,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.20
+          bun-version: latest
 
       # Cache Bun dependencies
       - name: Cache Bun Dependencies
@@ -174,7 +177,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.20
+          bun-version: latest
 
       # Reuse caches from build job
       - name: Cache Bun Dependencies
