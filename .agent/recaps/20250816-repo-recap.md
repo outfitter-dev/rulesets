@@ -6,7 +6,7 @@
 
 ## Key Changes
 
-```
+```text
 📊 CHANGE VOLUME: 74,665 additions, 15,542 deletions (mentioned in PR #66)
 
 packages/compiler/               ✨🔧 Handlebars implementation

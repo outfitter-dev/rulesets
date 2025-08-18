@@ -6,7 +6,7 @@
 
 ## Key Changes
 
-```
+```text
 📊 COMMIT VOLUME: 20 commits (highest activity day)
 
 CODE QUALITY TRANSFORMATION:
