@@ -80,29 +80,49 @@ jobs:
       - name: Lint
         id: lint
         run: |
+          set -o pipefail
           echo "🔍 Running linting..."
-          bun run lint 2>&1 | tee lint.log || echo "lint_failed=true" >> $GITHUB_OUTPUT
+          bun run lint 2>&1 | tee lint.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "lint_failed=true" >> "$GITHUB_OUTPUT"
+          fi
         continue-on-error: true
 
       - name: Type Check
         id: typecheck
         run: |
+          set -o pipefail
           echo "🔍 Running type checking..."
-          bun run typecheck 2>&1 | tee typecheck.log || echo "typecheck_failed=true" >> $GITHUB_OUTPUT
+          bun run typecheck 2>&1 | tee typecheck.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "typecheck_failed=true" >> "$GITHUB_OUTPUT"
+          fi
         continue-on-error: true
 
       - name: Test
         id: test
         run: |
+          set -o pipefail
           echo "🧪 Running tests..."
-          bun run test 2>&1 | tee test.log || echo "test_failed=true" >> $GITHUB_OUTPUT
+          bun run test 2>&1 | tee test.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "test_failed=true" >> "$GITHUB_OUTPUT"
+          fi
         continue-on-error: true
 
       - name: Build
         id: build
         run: |
+          set -o pipefail
           echo "🏗️ Running build..."
-          bun run build 2>&1 | tee build.log || echo "build_failed=true" >> $GITHUB_OUTPUT
+          bun run build 2>&1 | tee build.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "build_failed=true" >> "$GITHUB_OUTPUT"
+          fi
         continue-on-error: true
 
       # Upload logs for debugging

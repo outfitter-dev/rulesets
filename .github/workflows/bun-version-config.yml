@@ -48,7 +48,21 @@ on:
     outputs:
       stable-version:
         description: "Stable Bun version"
-        value: "1.1.38"
+        value: ${{ jobs.emit-versions.outputs.stable }}
       canary-version:
         description: "Canary Bun version for testing"
-        value: "1.2.20"
+        value: ${{ jobs.emit-versions.outputs.canary }}
+
+jobs:
+  emit-versions:
+    name: Emit Versions
+    runs-on: ubuntu-latest
+    outputs:
+      stable: ${{ steps.set.outputs.stable }}
+      canary: ${{ steps.set.outputs.canary }}
+    steps:
+      - name: Set Outputs
+        id: set
+        run: |
+          echo "stable=${BUN_VERSION_STABLE}" >> "$GITHUB_OUTPUT"
+          echo "canary=${BUN_VERSION_CANARY}" >> "$GITHUB_OUTPUT"
