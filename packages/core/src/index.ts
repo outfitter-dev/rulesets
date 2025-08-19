@@ -268,6 +268,239 @@ function determineDestinationIds(
 }
 
 /**
+ * Result of a single destination processing
+ */
+interface DestinationResult {
+  destinationId: string;
+  success: boolean;
+  generatedPaths: string[];
+  duration: number;
+  error?: Error;
+}
+
+/**
+ * Options for parallel processing
+ */
+interface ParallelProcessingOptions {
+  maxConcurrency: number;
+  continueOnError: boolean;
+}
+
+/**
+ * Result of parallel destination processing
+ */
+interface ParallelProcessingResult {
+  generatedPaths: string[];
+  results: DestinationResult[];
+  totalDuration: number;
+}
+
+/**
+ * Process multiple destinations in parallel with enhanced control
+ */
+async function processDestinationsInParallel(
+  destinationIds: string[],
+  parsedDoc: ParsedDoc,
+  config: RulesetConfig,
+  logger: Logger,
+  projectPath: string,
+  options: ParallelProcessingOptions
+): Promise<ParallelProcessingResult> {
+  const startTime = Date.now();
+  
+  logger.debug(
+    `Starting parallel processing of ${destinationIds.length} destinations with max concurrency: ${options.maxConcurrency}`
+  );
+
+  // Create semaphore for concurrency control
+  const semaphore = new Semaphore(options.maxConcurrency);
+  
+  // Create compilation result cache to avoid duplicate compilations
+  const compilationCache = new Map<string, CompiledDoc>();
+
+  const processDestinationWithSemaphore = async (destinationId: string): Promise<DestinationResult> => {
+    const permit = await semaphore.acquire();
+    const destStartTime = Date.now();
+    
+    try {
+      const result = await processDestinationOptimized(
+        destinationId,
+        parsedDoc,
+        config,
+        logger,
+        projectPath,
+        compilationCache
+      );
+      
+      return {
+        destinationId,
+        success: true,
+        generatedPaths: result,
+        duration: Date.now() - destStartTime,
+      };
+    } catch (error) {
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      
+      if (!options.continueOnError) {
+        permit.release();
+        throw errorObj;
+      }
+      
+      logger.error(`Failed to process destination ${destinationId}:`, errorObj);
+      
+      return {
+        destinationId,
+        success: false,
+        generatedPaths: [],
+        duration: Date.now() - destStartTime,
+        error: errorObj,
+      };
+    } finally {
+      permit.release();
+    }
+  };
+
+  // Process all destinations
+  const results = await Promise.all(
+    destinationIds.map(processDestinationWithSemaphore)
+  );
+
+  const totalDuration = Date.now() - startTime;
+  const allGeneratedPaths = results.flatMap(r => r.generatedPaths);
+
+  logger.debug(
+    `Parallel processing completed in ${totalDuration}ms: ${results.filter(r => r.success).length}/${results.length} successful`
+  );
+
+  // Log detailed timing if enabled
+  if (config.parallelCompilation?.enableTiming) {
+    results.forEach(result => {
+      const status = result.success ? 'SUCCESS' : 'FAILED';
+      logger.info(`${result.destinationId}: ${status} (${result.duration}ms)`);
+    });
+  }
+
+  return {
+    generatedPaths: allGeneratedPaths,
+    results,
+    totalDuration,
+  };
+}
+
+/**
+ * Simple semaphore implementation for concurrency control
+ */
+class Semaphore {
+  private permits: number;
+  private queue: Array<() => void> = [];
+
+  constructor(permits: number) {
+    this.permits = permits;
+  }
+
+  async acquire(): Promise<{ release: () => void }> {
+    return new Promise((resolve) => {
+      if (this.permits > 0) {
+        this.permits--;
+        resolve({ release: () => this.release() });
+      } else {
+        this.queue.push(() => {
+          this.permits--;
+          resolve({ release: () => this.release() });
+        });
+      }
+    });
+  }
+
+  private release(): void {
+    this.permits++;
+    const next = this.queue.shift();
+    if (next) {
+      next();
+    }
+  }
+}
+
+/**
+ * Optimized destination processing with compilation caching
+ */
+async function processDestinationOptimized(
+  destinationId: string,
+  parsedDoc: ParsedDoc,
+  config: RulesetConfig,
+  logger: Logger,
+  projectPath: string,
+  compilationCache: Map<string, CompiledDoc>
+): Promise<string[]> {
+  const plugin = destinations.get(destinationId);
+  if (!plugin) {
+    logger.warn(`No plugin found for destination: ${destinationId}`);
+    return [];
+  }
+
+  logger.info(`Processing destination: ${destinationId}`);
+
+  // Prefer modern provider from registry when available
+  const provider = providerRegistry.get(destinationId);
+
+  // Check compilation cache first
+  const cacheKey = `${destinationId}-${JSON.stringify(config)}`;
+  let compiledDoc = compilationCache.get(cacheKey);
+
+  if (!compiledDoc) {
+    // Use standard compilation - provider compilation will be added in v0.2
+    try {
+      compiledDoc = compile(parsedDoc, destinationId, config);
+      compilationCache.set(cacheKey, compiledDoc);
+      logger.debug(`Cached compilation for ${destinationId}`);
+    } catch (error) {
+      logger.error(`Failed to compile for destination: ${destinationId}`, error);
+      return [];
+    }
+  } else {
+    logger.debug(`Using cached compilation for ${destinationId}`);
+  }
+
+  // Get merged configuration
+  const destConfig = getMergedDestinationConfig(
+    parsedDoc.source.frontmatter,
+    destinationId,
+    config
+  );
+
+  // Determine output path
+  const destPath = determineOutputPath(
+    destConfig,
+    config.providers?.[destinationId] as Record<string, unknown> | undefined,
+    destinationId,
+    config.outputDirectory,
+    provider?.config?.outputPath
+  );
+
+  // Write using the plugin
+  try {
+    const writeResult = await plugin.write({
+      compiled: compiledDoc,
+      destPath,
+      config: { ...destConfig, baseDir: projectPath },
+      logger,
+    });
+
+    // Return generated paths if available
+    if (hasGeneratedPaths(writeResult)) {
+      logger.debug(
+        `Generated paths from ${destinationId}: ${writeResult.generatedPaths.join(', ')}`
+      );
+      return [...writeResult.generatedPaths];
+    }
+    return [];
+  } catch (error) {
+    logger.error(`Failed to write ${destinationId} output`, error);
+    throw error;
+  }
+}
+
+/**
  * Process a single destination
  */
 async function processDestination(
@@ -508,13 +741,38 @@ export async function runRulesetsV0(
   const destinationIds = determineDestinationIds(parsedDoc, config, logger);
   logger.info(`Compiling for destinations: ${destinationIds.join(', ')}`);
 
-  // Step 6: Compile and write for each destination
-  const destinationPromises = destinationIds.map((destinationId) =>
-    processDestination(destinationId, parsedDoc, config, logger, projectPath)
+  // Step 6: Compile and write for each destination in parallel
+  const parallelOptions = {
+    maxConcurrency: config.parallelCompilation?.maxConcurrency || destinationIds.length,
+    continueOnError: config.parallelCompilation?.continueOnError ?? false,
+  };
+
+  const { generatedPaths: allGeneratedPaths, results } = await processDestinationsInParallel(
+    destinationIds,
+    parsedDoc,
+    config,
+    logger,
+    projectPath,
+    parallelOptions
   );
 
-  const generatedPathsResults = await Promise.all(destinationPromises);
-  const allGeneratedPaths = generatedPathsResults.flat();
+  // Log parallel processing results
+  const successful = results.filter(r => r.success).length;
+  const failed = results.filter(r => !r.success).length;
+  
+  logger.info(`Parallel compilation completed: ${successful} successful, ${failed} failed`);
+  
+  // Handle case where no providers succeeded
+  if (successful === 0 && failed > 0) {
+    const errorMessages = results
+      .filter(r => !r.success && r.error)
+      .map(r => `${r.destinationId}: ${r.error!.message}`)
+      .join(', ');
+    
+    throw new Error(
+      `All provider compilations failed. Errors: ${errorMessages}`
+    );
+  }
 
   // Step 7: Update .gitignore with generated file paths
   await updateGitignore(allGeneratedPaths, config, logger, projectPath);
