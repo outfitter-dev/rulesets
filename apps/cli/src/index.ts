@@ -93,7 +93,7 @@ async function discoverFallbackFiles(
       if (stats.isDirectory()) {
         // Skip _partials directory and common directories
         const dirName = basename(fullPath);
-        if (dirName === '_partials' || dirName === 'node_modules' || dirName === '.git') {
+        if (['_partials', 'node_modules', '.git', 'dist'].includes(dirName)) {
           continue;
         }
         
