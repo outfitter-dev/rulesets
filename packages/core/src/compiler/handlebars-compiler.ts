@@ -70,6 +70,9 @@ export class HandlebarsRulesetCompiler {
     'with',
     'lookup',
     'log',
+    'switch-provider',
+    'case',
+    'default',
   ]);
 
   constructor() {
@@ -289,6 +292,11 @@ export class HandlebarsRulesetCompiler {
       this.createUnlessProviderHelper()
     );
 
+    // Provider switch helpers
+    this.hbs.registerHelper('switch-provider', this.createSwitchProviderHelper());
+    this.hbs.registerHelper('case', this.createCaseHelper());
+    this.hbs.registerHelper('default', this.createDefaultHelper());
+
     // Setup missing helper handler for freeform sections
     this.hbs.registerHelper('helperMissing', this.createMissingHelperHandler());
   }
@@ -353,6 +361,92 @@ export class HandlebarsRulesetCompiler {
       }
 
       return options.inverse ? options.inverse(this) : '';
+    };
+  }
+
+  /**
+   * Creates the switch-provider helper
+   * Sets up a switch context for case/default helpers to use
+   */
+  private createSwitchProviderHelper() {
+    return function (
+      this: RulesetContext,
+      options: Handlebars.HelperOptions
+    ): string {
+      // Create a new context with switch state
+      const switchContext = {
+        ...this,
+        __switchProvider: {
+          currentProviderId: this.provider.id,
+          matched: false,
+        },
+      };
+
+      // Execute the block with the switch context
+      const result = options.fn(switchContext);
+
+      return result;
+    };
+  }
+
+  /**
+   * Creates the case helper
+   * Matches against the current provider ID in a switch-provider context
+   */
+  private createCaseHelper() {
+    return function (
+      this: RulesetContext & { __switchProvider?: { currentProviderId: string; matched: boolean } },
+      providerIds: string,
+      options: Handlebars.HelperOptions
+    ): string {
+      // Check if we're in a switch-provider context
+      if (!this.__switchProvider) {
+        throw new Error(
+          'case helper can only be used inside a switch-provider block'
+        );
+      }
+
+      // If we've already matched a case, skip this one
+      if (this.__switchProvider.matched) {
+        return '';
+      }
+
+      // Parse the provider IDs (support comma-separated list)
+      const targetProviders = providerIds.split(',').map((p) => p.trim());
+
+      // Check if current provider matches any of the target providers
+      if (targetProviders.includes(this.__switchProvider.currentProviderId)) {
+        // Mark as matched to prevent other cases from executing
+        this.__switchProvider.matched = true;
+        return options.fn(this);
+      }
+
+      return '';
+    };
+  }
+
+  /**
+   * Creates the default helper
+   * Executes if no case matched in a switch-provider context
+   */
+  private createDefaultHelper() {
+    return function (
+      this: RulesetContext & { __switchProvider?: { currentProviderId: string; matched: boolean } },
+      options: Handlebars.HelperOptions
+    ): string {
+      // Check if we're in a switch-provider context
+      if (!this.__switchProvider) {
+        throw new Error(
+          'default helper can only be used inside a switch-provider block'
+        );
+      }
+
+      // Only execute if no case has matched
+      if (!this.__switchProvider.matched) {
+        return options.fn(this);
+      }
+
+      return '';
     };
   }
 
