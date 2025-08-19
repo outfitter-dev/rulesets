@@ -342,7 +342,6 @@ async function processDestinationsInParallel(
       const errorObj = error instanceof Error ? error : new Error(String(error));
       
       if (!options.continueOnError) {
-        permit.release();
         throw errorObj;
       }
       
@@ -395,7 +394,9 @@ class Semaphore {
   private queue: Array<() => void> = [];
 
   constructor(permits: number) {
-    this.permits = permits;
+    // Normalise to at least 1; coerce non-finite to a very large number ("unlimited")
+    const p = Number.isFinite(permits) ? Math.floor(permits) : Number.MAX_SAFE_INTEGER;
+    this.permits = p > 0 ? p : 1;
   }
 
   async acquire(): Promise<{ release: () => void }> {
@@ -455,7 +456,8 @@ async function processDestinationOptimized(
       logger.debug(`Cached compilation for ${destinationId}`);
     } catch (error) {
       logger.error(`Failed to compile for destination: ${destinationId}`, error);
-      return [];
+      // Propagate to ensure failure is recorded and handled correctly
+      throw (error instanceof Error ? error : new Error(String(error)));
     }
   } else {
     logger.debug(`Using cached compilation for ${destinationId}`);
@@ -742,8 +744,16 @@ export async function runRulesetsV0(
   logger.info(`Compiling for destinations: ${destinationIds.join(', ')}`);
 
   // Step 6: Compile and write for each destination in parallel
+  const requestedConcurrency = config.parallelCompilation?.maxConcurrency;
+  const safeMaxConcurrency =
+    typeof requestedConcurrency === 'number' &&
+    Number.isFinite(requestedConcurrency) &&
+    requestedConcurrency > 0
+      ? Math.floor(requestedConcurrency)
+      : destinationIds.length; // default: "unlimited" for this run
+
   const parallelOptions = {
-    maxConcurrency: config.parallelCompilation?.maxConcurrency || destinationIds.length,
+    maxConcurrency: safeMaxConcurrency,
     continueOnError: config.parallelCompilation?.continueOnError ?? false,
   };
 
