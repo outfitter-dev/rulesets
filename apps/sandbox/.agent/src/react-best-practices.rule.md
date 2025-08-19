@@ -1,9 +1,9 @@
 ---
 ruleset:
   version: 0.1.0
-  
-title: "React Best Practices"
-description: "Modern React development guidelines and patterns"
+
+title: 'React Best Practices'
+description: 'Modern React development guidelines and patterns'
 
 providers:
   cursor:
@@ -16,7 +16,7 @@ providers:
 
 ## React Best Practices
 
-{{instructions}}
+{{#instructions}}
 
 ## Component Architecture
 
@@ -38,9 +38,9 @@ providers:
 - **useReducer for complex state** - When state logic becomes complex
 - **Context sparingly** - Only for truly global state (theme, auth)
 - **External state managers** - Zustand/Redux for complex app state
-{{/instructions}}
+  {{/instructions}}
 
-{{examples}}
+{{#examples}}
 
 ### Component Architecture Examples
 
@@ -52,10 +52,10 @@ interface UserCardProps {
   showActions?: boolean;
 }
 
-const UserCard: React.FC<UserCardProps> = ({ 
-  user, 
-  onUserClick, 
-  showActions = false 
+const UserCard: React.FC<UserCardProps> = ({
+  user,
+  onUserClick,
+  showActions = false
 }) => {
   return (
     <div className="user-card">
@@ -81,21 +81,21 @@ interface ExpensiveListProps {
 
 const ExpensiveList = React.memo<ExpensiveListProps>(({ items, onItemSelect }) => {
   const sortedItems = useMemo(
-    () => items.sort((a, b) => a.priority - b.priority),
+    () => [...items].sort((a, b) => a.priority - b.priority),
     [items]
   );
-  
+
   const handleItemClick = useCallback(
     (item: Item) => {
       onItemSelect(item);
     },
     [onItemSelect]
   );
-  
+
   return (
     <ul>
       {sortedItems.map(item => (
-        <ExpensiveListItem 
+        <ExpensiveListItem
           key={item.id}
           item={item}
           onClick={handleItemClick}
@@ -112,10 +112,10 @@ function useUserData(userId: string) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  
+
   useEffect(() => {
     let cancelled = false;
-    
+
     async function fetchUser() {
       try {
         setLoading(true);
@@ -134,14 +134,14 @@ function useUserData(userId: string) {
         }
       }
     }
-    
+
     fetchUser();
-    
+
     return () => {
       cancelled = true;
     };
   }, [userId]);
-  
+
   return { user, loading, error };
 }
 ```

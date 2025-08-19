@@ -1,9 +1,9 @@
-// TLDR: Defines the CompiledDoc interface for Rulesets (mixd-v0)
-// TLDR: v0.1.0 Minimal interface structure without marker processing
+// TLDR: Defines the CompiledDoc interface for Rulesets (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Minimal interface structure without marker processing
 
 /**
  * Represents the structure of a parsed Rulesets block.
- * For v0.1.0, this will be minimal as blocks are not processed from the body.
+ * For ruleset-v0.1-beta, this will be minimal as blocks are not processed from the body.
  */
 export interface Block {
   name: string;
@@ -14,7 +14,7 @@ export interface Block {
 
 /**
  * Represents the structure of a parsed Rulesets import.
- * For v0.1.0, this will be minimal.
+ * For ruleset-v0.1-beta, this will be minimal.
  */
 export interface Import {
   path: string;
@@ -24,7 +24,7 @@ export interface Import {
 
 /**
  * Represents the structure of a parsed Rulesets variable.
- * For v0.1.0, this will be minimal.
+ * For ruleset-v0.1-beta, this will be minimal.
  */
 export interface Variable {
   name: string;
@@ -33,7 +33,7 @@ export interface Variable {
 
 /**
  * Represents the structure of a generic Rulesets marker.
- * For v0.1.0, this will be minimal.
+ * For ruleset-v0.1-beta, this will be minimal.
  */
 export interface Marker {
   type: 'block' | 'import' | 'variable' | 'unknown';
@@ -75,9 +75,9 @@ export interface CompiledDoc {
 
   /**
    * Parsed representation of the source document.
-   * For v0.1.0, `blocks`, `imports`, `variables`, and `markers` will be empty
+   * For ruleset-v0.1-beta, `blocks`, `imports`, `variables`, and `markers` will be empty
    * or reflect only what might be in frontmatter if we decide to parse that deep.
-   * The primary focus for v0.1.0 body content is that it's not processed for markers.
+   * The primary focus for ruleset-v0.1-beta body content is that it's not processed for markers.
    */
   ast: {
     blocks: Block[]; // Array of parsed blocks (empty for v0 body)

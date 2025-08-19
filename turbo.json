@@ -36,9 +36,5 @@
     }
   },
   "globalEnv": ["NODE_ENV", "CI"],
-  "globalDependencies": [
-    "tsconfig.json",
-    "bunfig.toml",
-    ".bun-version"
-  ]
+  "globalDependencies": ["tsconfig.json", "bunfig.toml", ".bun-version"]
 }

@@ -161,8 +161,7 @@ export const KNOWN_PROVIDERS = [
   'windsurf',
   'roo-code',
   'cline',
-  'codex-cli',
-  'codex-agent',
+  'codex',
 ] as const;
 
 /**
@@ -255,7 +254,7 @@ export const ValidationMessages = {
   INVALID_PROVIDER_ID:
     'Provider ID must start with a letter and contain only letters, numbers, and hyphens',
   UNKNOWN_PROVIDER:
-    'Unknown provider. Known providers are: cursor, claude-code, windsurf, roo-code, cline, codex-cli, codex-agent',
+    'Unknown provider. Known providers are: cursor, claude-code, windsurf, roo-code, cline, codex',
   INVALID_OUTPUT_PATH: 'Output path cannot be empty',
   INVALID_GITIGNORE_PATTERN: 'Gitignore pattern must be a valid glob pattern',
   EMPTY_DEFAULT_PROVIDERS: 'Default providers array cannot be empty',

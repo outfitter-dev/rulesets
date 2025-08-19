@@ -1,25 +1,23 @@
-# Rulesets Architecture
+# Rulesets v0.2 Architecture
 
-> A CommonMark-compliant rules compiler for AI assistants
-
-(Note: Some file paths in this document are placeholders and will be updated as the codebase evolves.)
+> Handlebars-powered AI rules compilation
 
 ## Overview
 
-Rulesets is a compiler that transforms _source rules_ files into destination-specific rules files for various AI tools & coding agents. It follows the "write once, compile for many destinations" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
+Rulesets v0.2 is a Handlebars-powered compiler that transforms source rules files into provider-specific rules files for various AI tools & coding agents. It follows the "write once, compile for many providers" philosophy, similar to how Terraform manages infrastructure across multiple cloud providers.
 
-The compiler processes multiple source files simultaneously and can output to multiple destinations in a single compilation run, ensuring that all source rules files are consistently applied across all enabled destinations.
+The v0.2 architecture is built around auto-discovery, Handlebars templating, and clean provider-specific compilation without legacy compatibility layers.
 
 ```text
-+-----------------+      +----------------+      +----------------------+
-| Source rules    | ---> | Rulesets Core  | ---> | Destination-specific |
-| (.md files)     |      | Compiler       |      | rules files          |
-+-----------------+      +----------------+      +----------------------+
++-----------------+      +-------------------+      +----------------------+
+| Source rules    | ---> | Handlebars        | ---> | Provider-specific    |
+| (.rule.md)      |      | Compiler          |      | rules files          |
++-----------------+      +-------------------+      +----------------------+
                               ^
                               |
                        +-----------------+
-                       | Plugin System   |
-                       | (Destination Defs)|
+                       | Provider System |
+                       | (Plugins)       |
                        +-----------------+
 ```
 
@@ -30,15 +28,22 @@ The Rulesets project is organized as a monorepo using bun workspaces:
 ```text
 rulesets/
 ├── packages/
-│   ├── core/                 # Core compiler engine
+│   ├── core/                 # Core orchestration engine
+│   ├── compiler/             # Handlebars compiler
 │   ├── cli/                  # Command-line interface
 │   ├── mcp/                  # MCP server implementation
-│   ├── plugins/              # Destination plugin directory
-│   │   ├── cursor/           # Cursor destination implementation
-│   │   ├── claude-code/      # Claude Code destination implementation
-│   │   ├── windsurf/         # Windsurf destination implementation
-│   │   └── ...               # Other destination implementations
+│   ├── plugins/              # Provider plugin directory
+│   │   ├── cursor/           # Cursor provider implementation
+│   │   ├── claude-code/      # Claude Code provider implementation
+│   │   ├── windsurf/         # Windsurf provider implementation
+│   │   └── ...               # Other provider implementations
+│   ├── parser/               # Source file parsing
+│   ├── linter/               # Rule validation
+│   ├── types/                # Shared TypeScript types
 │   └── utils/                # Shared utilities
+├── apps/
+│   ├── cli/                  # CLI application
+│   └── sandbox/              # Development sandbox
 ├── examples/                 # Example source rules files and configurations
 ├── docs/                     # Documentation
 ├── tests/                    # Integration tests
@@ -47,195 +52,253 @@ rulesets/
 
 ## Core Components
 
+### Orchestration
+
+- **packages/core/src/orchestration.ts** - Main entry point for compilation
+- Single `runRulesets()` function with clean, modern API
+- Auto-discovery of `.rule.md` files in `.ruleset/src/`
+- Provider filtering and parallel compilation
+- No legacy v0.1 compatibility layers
+
+### Handlebars Compiler
+
+- **packages/compiler/** - Modern Handlebars-powered templating engine
+- `HandlebarsRulesetCompiler` class with provider-aware compilation
+- Built-in helpers: `if-provider`, `unless-provider`, `switch-provider`
+- Template caching for performance
+- Partial resolution with `@` syntax for `_partials/` directory
+
 ### Parser
 
-- [packages/core/src/parser.ts](placeholder)
-- Responsible for parsing source rules files into an AST (Abstract Syntax Tree)
-- Uses a hybrid approach with specialized nodes for different Rulesets constructs
-- Preserves necessary source positions for error reporting while avoiding excessive metadata
-- Handles Ruleset syntax markers, blocks, imports, and variables
+- **packages/parser/** - Front matter and Markdown parsing
+- CommonMark-compliant Markdown processing
+- YAML/JSON front matter extraction
+- Error collection and reporting
+- Source position tracking for debugging
 
-### Compiler
+### Linter
 
-- [packages/core/src/compiler.ts](placeholder)
-- Processes the AST and transforms it for target-specific output
-- Resolves imports and variables
-- Applies block filtering and other transformations
-- Collects errors during processing to report them all at once
+- **packages/linter/** - Source file validation
+- Front matter schema validation
+- Provider configuration checks
+- Rule naming and structure validation
+- Comprehensive error reporting with line numbers
 
-### Renderer
+### Provider System
 
-- [packages/core/src/renderer.ts](placeholder)
-- Generates the destination-specific rules files for each destination
-- Handles different output formats (XML, markdown, etc.)
-- Adapts to each destination's preferred file structure
-
-### Plugin System
-
-- [packages/core/src/plugin.ts](placeholder)
-- Manages destination plugins that define how source rules files are compiled for specific tools
-- Built on an interface-based architecture with dependency injection
-- Uses multiple lifecycle hooks to allow plugins to integrate at various stages
-- Provides plugin registration and discovery
+- **packages/plugins/** - Provider-specific implementations
+- `RulesetProvider` interface for consistent plugin architecture
+- Auto-registration and discovery
+- Provider-specific post-processing and optimization
+- Output path management and file writing
 
 ### Configuration
 
-- [packages/core/src/config.ts](placeholder)
-- Loads and validates configuration from ruleset.config.json
-- Uses both JSON Schema validation and TypeScript types
-- Manages project-level settings
-- Provides runtime validation for dynamic configurations
+- **packages/core/src/config.ts** - Project configuration management
+- `ruleset.config.json` loading and validation
+- Provider-specific configuration merging
+- Default values and fallback handling
+- Environment-based overrides
 
 ### CLI
 
-- [packages/cli/src/index.ts](placeholder)
-- Provides command-line interface for building, validating, and initializing
-- Features configurable logging levels for debugging
+- **apps/cli/src/index.ts** - Command-line interface
+- Auto-discovery mode as default behavior
+- Provider filtering with `--provider` flag
+- Development mode with enhanced debugging
+- Simple, clean command structure
 
 ### MCP Server
 
-- [packages/mcp/src/server.ts](placeholder)
-- Full API with caching and persistence for server-side usage
-- Exposes an API endpoint for remote compilation
-- Optimized for server deployment patterns
+- **packages/mcp/** - Model Context Protocol integration
+- API endpoints for remote compilation
+- Caching and persistence for server deployment
+- RESTful interface for external integrations
 
 ## Source Rules File Processing
 
 ```text
                 +--------------------+
                 | Source rules file  |
+                | (.rule.md)         |
                 +--------+-----------+
                          |
                          v
                 +-------------+
                 |    Parse    |
+                | (Markdown + |
+                | Front matter)|
+                +------+------+
+                         |
+                         v
+                +-------------+
+                | Handlebars  |
+                | Compilation |
                 +------+------+
                          |
                          v
 +------------+  +-------------+  +------------+
-| Frontmatter|->|  Process    |<-| Variables  |
-+------------+  |  Directives |  +------------+
-                +------+------+
-                         |
-                         v
-+------------+  +-------------+  +------------+
-|  Imports   |->| Compile AST |<-|   Blocks   |
+| Partials   |->| Template    |<-| Variables  |
+| (@syntax)  |  | Resolution  |  | & Helpers  |
 +------------+  +------+------+  +------------+
                          |
                          v
                 +-------------+
-                | Destination |
-                |  Renderers  |
+                | Provider    |
+                | Processing  |
                 +------+------+
                          |
                          v
                 +--------------------+
-                | destination-specific|
-                | rules files         |
+                | Provider-specific  |
+                | rules files        |
                 +--------------------+
 ```
 
-### AST Structure
+### Handlebars Template Structure
 
-The compiler uses a hybrid AST structure that:
+The v0.2 architecture uses standard Handlebars templates with:
 
-- Provides necessary detail for error reporting and context preservation
-- Contains specialized nodes for different Ruleset constructs (blocks, imports, etc.)
-- Balances detail and performance by avoiding excessive metadata
-- Maintains source positions for accurate error reporting
+- **Front matter parsing**: YAML/JSON extraction for metadata
+- **Template compilation**: Standard Handlebars.js engine
+- **Custom helpers**: Provider-specific template helpers (`if-provider`, etc.)
+- **Partial resolution**: `@` syntax for `_partials/` directory references
+- **Error tracking**: Source position preservation for debugging
 
-### Imports and References
+### Partial System
 
-- Resolution of relative paths in imports
-- Source-rules-file-relative, project-relative, and absolute paths support
-- Prevention of circular dependencies
-- Tracking files for incremental rebuilding when dependencies change
+- **Partial discovery**: Auto-discovery in `.ruleset/src/_partials/`
+- **Resolver caching**: Performance optimization for repeated includes
+- **Context passing**: Template variables passed to partials
+- **Nested partials**: Support for partials including other partials
+- **@-syntax**: Clean `{{> @partial-name}}` syntax for includes
 
-### Block Filtering
+### Provider Processing
 
-- Implementing destination-specific block inclusion/exclusion
-- Processing of destination groups (e.g., `+ide`)
-- Explicit destination declarations take precedence over group-based ones
+- **Auto-discovery**: Detection of available providers
+- **Filter processing**: `--provider` CLI flag handling
+- **Parallel compilation**: Multiple providers built simultaneously
+- **Output path resolution**: Front matter, config, and default path handling
+- **Post-processing**: Provider-specific formatting and optimization
 
-### Activation/Trigger Mapping
+### Template Helpers
 
-Different AI assistants use different terminology and mechanisms for when rules should be applied:
+Built-in Handlebars helpers for provider-aware compilation:
 
-```text
-Rulesets "Activation" Abstraction
-           +
-           |
-           v
-+----------+----------+----------+----------+
-|          |          |          |          |
-v          v          v          v          v
-Cursor   Windsurf  Claude     Roo      GitHub
-(types)  (trigger) (imports) (folders) (scopes)
+```handlebars
+{{#if-provider 'cursor'}}Cursor-specific content{{/if-provider}}
+{{#unless-provider 'claude-code'}}Non-Claude content{{/unless-provider}}
+{{#switch-provider}}
+  {{#case 'cursor,windsurf'}}IDE content{{/case}}
+  {{#default}}Other content{{/default}}
+{{/switch-provider}}
 ```
 
-<!-- TODO: If GitHub is a planned destination, consider adding it to the destination tables in README.md and spec/OVERVIEW.md for consistency. -->
+### Configuration Resolution
 
-- Creates an abstraction layer for activation mechanisms
-- Maps common patterns to tool-specific implementations
-- Allows destination plugins to define their own activation logic
-
-### Target Output Generation
-
-- Converting Ruleset syntax into tool-specific formats
-- Handling front-matter requirements
-- Output file naming conventions and paths
-- Destination-specific strategies for handling character/token limits
+- **Hierarchy**: Front matter > config file > defaults
+- **Provider-specific**: Individual provider configuration blocks
+- **Output paths**: Flexible path resolution with fallbacks
+- **Environment overrides**: Runtime configuration modifications
 
 ## Build Process and Workflow
 
-### Batch Compilation
+### Auto-Discovery
 
-- Processes multiple source files in a single compilation run
-- Handles dependencies between source files
-- Applies changes consistently across all enabled destinations
-- Optimizes compilation by sharing common resources and processing steps
-- Ensures consistency across all destination outputs
+- **File scanning**: Automatic detection of `.rule.md` files in `.ruleset/src/`
+- **Recursive search**: Traverses subdirectories for source files
+- **Provider filtering**: CLI `--provider` flag for selective builds
+- **Default behavior**: No manual file specification required
 
-### Incremental Builds
+### Single-Pass Compilation
 
-- Build process is based on file changes rather than full rebuilds
-- Uses detailed dependency records with timestamps for tracking
-- Handles both direct and indirect dependencies
-- Can fall back to full rebuild when needed
-- Standard approach in most modern build tools
+- **Simplified flow**: No incremental builds or complex dependency tracking
+- **Clean execution**: Linear processing from source to output
+- **Error collection**: Comprehensive error reporting across all stages
+- **Performance focus**: Fast compilation with Handlebars caching
 
-### Dependency Tracking
+### Provider Orchestration
 
-- Maintains detailed dependency records with timestamps
-- Handles both direct imports and variable dependencies
-- Properly tracks file dependencies for accurate incremental builds
-- Balances accuracy and performance
+- **Parallel processing**: Multiple providers built simultaneously
+- **Output coordination**: Consistent file paths and structure
+- **Error isolation**: Provider failures don't affect others
+- **Resource sharing**: Shared template compilation and caching
 
-### Logging System
+### Development Mode
 
-- Implements configurable logging levels for different usage scenarios
-- Can be minimal in production, verbose in development
-- Users can adjust detail level as needed
-- Essential for a complex compiler with multiple processing stages
+- **Enhanced logging**: Detailed debugging information
+- **Performance metrics**: Compilation timing and cache statistics
+- **Template debugging**: Handlebars template resolution details
+- **Error context**: Enhanced error messages with line numbers
 
-### Event System
+### Gitignore Management
 
-- Simple event emitter for core processes
-- Allows plugins to monitor the compilation process
-- Doesn't affect main execution flow
-- Provides good balance of simplicity and extensibility
+- **Automatic updates**: Generated files added to `.gitignore`
+- **Pattern management**: Intelligent pattern detection and sorting
+- **Configuration**: User control over gitignore behavior
+- **Safety**: Never removes manually added entries
 
 ## Error Handling
 
-- Collects errors during processing and reports them all at once
-- Allows identifying multiple issues in a single pass
-- Provides better user experience for complex compilations
-- Still throws exceptions for truly unexpected errors
-- Essential for multi-file projects where multiple errors may be related
+### Comprehensive Error Collection
 
-## Template System
+- **Multi-stage collection**: Errors from parsing, compilation, and writing phases
+- **Source tracking**: Line numbers and file paths for debugging
+- **Graceful degradation**: Continue processing other files when one fails
+- **Detailed reporting**: Context-aware error messages with suggestions
 
-The architecture supports a system for content reusability (Partials). Internally, this system is designed to be flexible, potentially allowing for future enhancements like template inheritance where partials could extend and override others. Currently, user-facing features for content reuse are primarily documented as Imports and Partials in `spec/OVERVIEW.md`.
+### Error Categories
+
+- **Parse errors**: Front matter and Markdown syntax issues
+- **Template errors**: Handlebars compilation and helper failures
+- **Provider errors**: Plugin-specific output and validation failures
+- **Configuration errors**: Invalid settings and missing dependencies
+
+### Development Debugging
+
+- **Enhanced context**: Full stack traces in development mode
+- **Template debugging**: Handlebars template resolution and variable context
+- **Performance warnings**: Slow compilation detection and reporting
+- **Suggestion engine**: Automated fixes for common issues
+
+## Handlebars Integration
+
+### Template Processing
+
+- **Standard engine**: Uses official Handlebars.js with full feature support
+- **Custom helpers**: Provider-aware helpers for conditional content
+- **Partial resolution**: `@` syntax for clean partial inclusion
+- **Caching layer**: Compiled template caching for performance
+
+### Context Variables
+
+Available in all templates:
+
+```handlebars
+{{provider.id}}
+<!-- Current provider ID -->
+{{provider.name}}
+<!-- Human-readable provider name -->
+{{provider.type}}
+<!-- Provider type (ide, cli, extension) -->
+{{project.name}}
+<!-- Project name from config -->
+{{compilation.timestamp}}
+<!-- Build timestamp -->
+```
+
+### Section Helpers
+
+Auto-generated section helpers for semantic markup:
+
+```handlebars
+{{#instructions}}...{{/instructions}}
+<!-- <instructions>...</instructions> -->
+{{#examples}}...{{/examples}}
+<!-- <examples>...</examples> -->
+{{#troubleshooting}}...{{/troubleshooting}}
+<!-- <troubleshooting>...</troubleshooting> -->
+```
 
 ## Standard Project Structure
 
@@ -245,84 +308,119 @@ A typical project using Rulesets would have this structure:
 project/
 ├── .ruleset/
 │   ├── dist/
-│   │   └── latest/         # compiled rules
-│   ├── src/                # source rules files (*.md)
-│   │   └── _partials/      # reusable content modules
-│   └── ruleset.config.json # compiler config
+│   │   └── latest/         # Compiled rules output
+│   ├── src/                # Source rules files (*.rule.md)
+│   │   ├── coding-standards.rule.md
+│   │   ├── project-setup.rule.md
+│   │   └── _partials/      # Reusable components
+│   │       ├── typescript-rules.md
+│   │       └── security-checklist.md
+│   └── ruleset.config.json # Configuration
+├── .cursor/rules/          # Generated Cursor rules
+├── CLAUDE.md               # Generated Claude Code rules
+├── .windsurf/rules/        # Generated Windsurf rules
+└── .gitignore              # Auto-updated with generated paths
 ```
 
 ## Configuration Format
 
-A stub for `ruleset.config.json`:
+Example `ruleset.config.json` for v0.2:
 
 ```json
 {
-  "version": "0.1.0",
-  "projects": {
-    "default": {
-      "sources": {
-        "sourceRules": ".ruleset/src",
-        "partials": ".ruleset/src/_partials"
-      },
-      "dist": ".ruleset/dist",
-      "allow-bare-xml-tags": false,
-      "destinations": {
-        "include": ["cursor", "claude-code", "windsurf"],
-        "exclude": []
-      },
-      "aliases": {
-        "project": "Rulesets",
-        "author": "Maybe Good"
-      },
-      "destinationOptions": {
-        "cursor": {
-          "output": {
-            "path": ".cursor/rules"
-          }
-        },
-        "claude-code": {
-          "output": {
-            "path": "./CLAUDE.md"
-          }
-        }
-      },
-      "destinationGroups": {
-        "ide": ["cursor", "windsurf"],
-        "cli": ["claude-code", "codex-cli"]
-      },
-      "compile": {
-        "batchSize": 10,
-        "parallelism": 4
-      }
+  "version": "0.2.0",
+  "sourceDirectory": ".ruleset/src",
+  "outputDirectory": ".ruleset/dist",
+  "defaultProviders": ["cursor", "claude-code", "windsurf"],
+  "providers": {
+    "cursor": {
+      "enabled": true,
+      "outputPath": ".cursor/rules"
+    },
+    "claude-code": {
+      "enabled": true,
+      "outputPath": "CLAUDE.md"
+    },
+    "windsurf": {
+      "enabled": true,
+      "outputPath": ".windsurf/rules"
     }
+  },
+  "handlebars": {
+    "cacheTemplates": true,
+    "partialsDirectory": "_partials"
+  },
+  "gitignore": {
+    "enabled": true,
+    "options": {
+      "comment": "Rulesets Generated Files",
+      "sort": true
+    }
+  },
+  "development": {
+    "logLevel": "info",
+    "enablePerformanceMetrics": false
   }
 }
 ```
 
-Note: Paths in `sources` (like `sourceRules` and `partials`) and `dist` are typically relative to the project root directory (i.e., the directory containing the `.ruleset` folder itself).
+### Configuration Hierarchy
+
+1. **Front matter**: Provider-specific config in source files
+2. **Config file**: Project-wide `ruleset.config.json`
+3. **CLI options**: Runtime overrides (`--provider`, `--dev`)
+4. **Defaults**: Built-in fallback values
 
 ## Extension Points
 
-- Hooks at key processing stages allow extension of core functionality
-- More flexible than plugins alone
-- Supports monitoring and modifying the compilation process
-- Destination plugins can implement destination-specific validators
-- Core provides abstraction and simplification for plugin authors
+### Provider Plugin System
 
-## Compiled Rules Validation
+- **RulesetProvider interface**: Consistent plugin architecture
+- **Auto-registration**: Automatic discovery of provider plugins
+- **Lifecycle hooks**: Pre/post-processing capabilities
+- **Custom validation**: Provider-specific rule validation
+- **Output formatting**: Provider-specific post-processing
 
-- Each destination plugin handles its own validation
-- Better guarantees of compatibility
-- Leverages destination-specific knowledge
-- Core provides abstractions to simplify validation implementation
+### Handlebars Extensions
 
-## Next Steps
+- **Custom helpers**: Template helpers for specific providers
+- **Context injection**: Additional variables for template compilation
+- **Partial interceptors**: Custom partial resolution logic
+- **Template validation**: Custom template syntax checking
 
-1. Finalize architecture details
-2. Create detailed component specifications
-3. Implement core parsing and AST
-4. Build initial plugin system
-5. Develop basic destination implementations
-6. Create CLI and build process
-7. Add MCP server integration
-8. Establish test framework
+## Provider Validation
+
+### Built-in Validation
+
+- **Front matter schema**: Provider configuration validation
+- **Output path validation**: File system path checking
+- **Template syntax**: Handlebars template validation
+- **Circular dependency**: Partial inclusion loop detection
+
+### Provider-Specific Validation
+
+- **Cursor**: MDC format validation and rule structure checking
+- **Claude Code**: CLAUDE.md format and content validation
+- **Windsurf**: Rule format and activation mode validation
+- **Custom providers**: Plugin-defined validation rules
+
+## Migration from v0.1
+
+### Breaking Changes
+
+- **No backwards compatibility**: v0.1 syntax not supported
+- **Handlebars required**: All templates must use Handlebars syntax
+- **Provider terminology**: "Destinations" renamed to "Providers"
+- **Auto-discovery**: Manual file specification removed
+
+### Migration Path
+
+1. **Analyze existing rules**: Use `rulesets migrate` to import scattered rules
+2. **Convert syntax**: Manual conversion to Handlebars templates
+3. **Update configuration**: New `ruleset.config.json` format
+4. **Test compilation**: Verify output matches expectations
+5. **Clean up legacy**: Remove old rule files and configuration
+
+---
+
+_Rulesets v0.2 Architecture – Clean, simple, Handlebars-powered_

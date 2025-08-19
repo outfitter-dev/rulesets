@@ -1,5 +1,5 @@
-// TLDR: Parser implementation for Rulesets notation (mixd-v0)
-// TLDR: v0.1.0 Basic frontmatter extraction without marker processing
+// TLDR: Parser implementation for Rulesets notation (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Basic frontmatter extraction without marker processing
 
 import type { ParsedDoc } from '@rulesets/types';
 import { JSON_SCHEMA, load } from 'js-yaml';
@@ -86,15 +86,15 @@ function createYamlErrorMessage(error: unknown): string {
 
 /**
  * Parses a Rulesets source rules file to extract frontmatter and body content.
- * For v0.1.0, this is a simple implementation that doesn't process Rulesets markers.
+ * For ruleset-v0.1-beta, this is a simple implementation that doesn't process Rulesets markers.
  *
  * @param content - The raw markdown content to parse
  * @returns A promise that resolves to a ParsedDoc
  */
-// TLDR: Parse frontmatter and body from markdown content (mixd-v0)
-// TLDR: v0.1.0 Simple YAML frontmatter extraction only
-// TODO(v0.2.0): Add support for block parsing
-// TODO(v0.3.0): Add variable substitution
+// TLDR: Parse frontmatter and body from markdown content (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Simple YAML frontmatter extraction only
+// TODO(ruleset-v0.2-beta): Add support for block parsing
+// TODO(ruleset-v0.3-beta): Add variable substitution
 export function parse(content: string, sourcePath?: string): ParsedDoc {
   const lines = content.split('\n');
   const errors: ParseError[] = [];
@@ -186,7 +186,7 @@ function checkKeys(obj: unknown, path = ''): void {
 
   for (const key in record) {
     // Guard against prototype chain properties
-    if (!Object.prototype.hasOwnProperty.call(record, key)) {
+    if (!Object.hasOwn(record, key)) {
       continue;
     }
 

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
+  "$schema": "<https://biomejs.dev/schemas/2.2.0/schema.json>",
   "extends": ["ultracite"],
   "javascript": {
     "globals": ["Bun"]
@@ -12,7 +12,7 @@
   },
   "files": {
     "ignoreUnknown": true,
-    "includes": ["!**/*.{md,mdx,mdc,css,scss,less,yaml,yml}"]
+    "include": ["**/*.{js,jsx,ts,tsx,json,jsonc}"]
   },
   "vcs": {
     "useIgnoreFile": true

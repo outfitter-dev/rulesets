@@ -1,5 +1,5 @@
-// TLDR: Defines the DestinationPlugin interface for Rulesets (mixd-v0)
-// TLDR: v0.1.0 Basic plugin contract for writing compiled rules to destinations
+// TLDR: Defines the DestinationPlugin interface for Rulesets (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Basic plugin contract for writing compiled rules to destinations
 import type { CompiledDoc } from './compiled-doc';
 import type { Logger } from './logger';
 
@@ -31,16 +31,16 @@ export interface DestinationPlugin {
   /**
    * Canonical ID for the destination plugin.
    * Should be unique, kebab-case. e.g., "cursor", "windsurf".
-   * // TLDR: Returns the canonical name of the plugin (mixd-v0)
-   * // TLDR: v0.1.0 Used for plugin registration and identification
+   * // TLDR: Returns the canonical name of the plugin (ruleset-v0.1-beta)
+   * // TLDR: ruleset-v0.1-beta Used for plugin registration and identification
    */
   get name(): string;
 
   /**
    * Returns a JSON schema describing the configuration options specific to this plugin.
    * This schema is used for validating plugin configuration.
-   * // TLDR: Provides a JSON schema for the plugin's configuration (mixd-v0)
-   * // TLDR: v0.1.0 Enables validation of destination-specific settings
+   * // TLDR: Provides a JSON schema for the plugin's configuration (ruleset-v0.1-beta)
+   * // TLDR: ruleset-v0.1-beta Enables validation of destination-specific settings
    */
   configSchema(): JSONSchema7;
 
@@ -48,9 +48,9 @@ export interface DestinationPlugin {
    * Writes the compiled document to the destination.
    * This method is responsible for handling file I/O and any final transformations
    * specific to the destination's format or requirements.
-   * // TLDR: Writes the compiled document to the target destination (mixd-v0)
-   * // TLDR: v0.1.0 Basic file writing without destination-specific transformations
-   * // TODO(v0.2.0): Added optional WriteResult return for gitignore management
+   * // TLDR: Writes the compiled document to the target destination (ruleset-v0.1-beta)
+   * // TLDR: ruleset-v0.1-beta Basic file writing without destination-specific transformations
+   * // TODO(ruleset-v0.2-beta): Added optional WriteResult return for gitignore management
    *
    * @param ctx - The context object for the write operation.
    * @param ctx.compiled - The compiled document to write.

@@ -172,7 +172,7 @@ export function migrateDestinationConfig(
       configBuilder.validation = {
         strictMode: true, // Default to strict mode when legacy validation was present
       };
-      
+
       // Generate specific warnings for lost validation properties
       if (legacyConfig.validation.allowedFormats) {
         warnings.push({
@@ -182,12 +182,13 @@ export function migrateDestinationConfig(
           field: 'validation.allowedFormats',
         });
       }
-      
+
       if (legacyConfig.validation.maxLength) {
         warnings.push({
           type: 'data-loss',
           message: 'maxLength validation not supported in new format',
-          suggestion: 'Consider implementing length validation at the provider level',
+          suggestion:
+            'Consider implementing length validation at the provider level',
           field: 'validation.maxLength',
         });
       }

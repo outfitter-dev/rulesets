@@ -50,7 +50,7 @@ This is a TypeScript React application using Next.js and Tailwind CSS.
 ## Coding Standards
 
 - Use TypeScript for all new code
-- Follow ESLint configuration in .eslintrc.js
+- Follow Biome configuration
 - Use Prettier for formatting
 - Conventional commits for Git messages
 
@@ -69,7 +69,6 @@ No front-matter configuration is required or supported - Jules uses plain Markdo
 Google Jules offers 1 primary activation mode:
 
 1. **Repository Context**: Automatic activation when working on any file in the repository
-
    - Always applies AGENTS.md guidance to all tasks
    - Combines with full codebase understanding
    - No manual activation required
@@ -99,7 +98,7 @@ This is a full-stack TypeScript application with React frontend and Node.js back
 ## Coding Standards
 
 - Use TypeScript strict mode
-- Follow Airbnb ESLint configuration
+- Follow Biome configuration
 - Implement proper error handling
 - Write unit tests for business logic
 - Use meaningful variable and function names
@@ -116,7 +115,7 @@ This is a full-stack TypeScript application with React frontend and Node.js back
 
 1. Create feature branch from main
 2. Implement changes with tests
-3. Run `npm run build` and `npm test` before committing
+3. Run `bun run build` and `bun run test` before committing
 4. Use conventional commit messages
 5. Create PR with description and testing notes
 

@@ -36,7 +36,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't assign interactive ARIA roles to non-interactive HTML elements.
 - Don't assign `tabIndex` to non-interactive HTML elements.
 - Don't use positive integers for `tabIndex` property.
-- Don't include "image", "picture", or "photo" in img alt prop.
+- Don't include "image", "picture", or "photo" in the img alt attribute.
 - Don't use explicit role property that's the same as the implicit/default role.
 - Make static elements with click handlers use a valid role attribute.
 - Always include a `title` element for SVG elements.
@@ -50,7 +50,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Give heading elements content that's accessible to screen readers (not hidden with `aria-hidden`).
 - Always include a `lang` attribute on the html element.
 - Always include a `title` attribute for iframe elements.
-- Accompany `onClick` with at least one of: `onKeyUp`, `onKeyDown`, or `onKeyPress`.
+- Accompany `onClick` with at least one of `onKeyUp`, `onKeyDown`, or `onKeyPress`.
 - Accompany `onMouseOver`/`onMouseOut` with `onFocus`/`onBlur`.
 - Include caption tracks for audio and video elements.
 - Use semantic elements instead of role attributes in JSX.
@@ -162,7 +162,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't use bitwise operators.
 - Don't use expressions where the operation doesn't change the value.
 - Make sure Promise-like statements are handled appropriately.
-- Don't use **dirname and**filename in the global scope.
+- Don't use `__dirname` and `__filename` in the global scope.
 - Prevent import cycles.
 - Don't use configured elements.
 - Don't hardcode sensitive data like API keys and tokens.
@@ -200,13 +200,11 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't use TypeScript namespaces.
 - Don't use non-null assertions with the `!` postfix operator.
 - Don't use parameter properties in class constructors.
-- Don't use user-defined types.
+- Prefer well-defined domain types; avoid overusing broad aliases.
 - Use `as const` instead of literal types and type annotations.
 - Use either `T[]` or `Array<T>` consistently.
-- Initialize each enum member value explicitly.
 - Use `export type` for types.
 - Use `import type` for types.
-- Make sure all enum members are literal values.
 - Don't use TypeScript const enum.
 - Don't declare empty interfaces.
 - Don't let variables evolve into any type through reassignments.
@@ -215,7 +213,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't use implicit any type on variable declarations.
 - Don't merge interfaces and classes unsafely.
 - Don't use overload signatures that aren't next to each other.
-- Use the namespace keyword instead of the module keyword to declare TypeScript namespaces.
+<!-- Removed contradictory guidance about namespaces -->
 
 ### Style and Consistency
 

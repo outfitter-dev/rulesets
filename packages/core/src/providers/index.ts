@@ -73,7 +73,7 @@ export const providers: ReadonlyMap<string, Provider> = new ReadOnlyProviderMap(
     ['cursor', cursorProvider],
     ['windsurf', windsurfProvider],
     ['claude-code', claudeCodeProvider],
-    ['codex-cli', codexProvider],
+    ['codex', codexProvider],
     ['amp', ampProvider],
     ['opencode', openCodeProvider],
   ]
@@ -149,7 +149,7 @@ export const destinations: ReadonlyMap<string, DestinationPlugin> =
     ['cursor', cursorProvider as unknown as DestinationPlugin],
     ['windsurf', windsurfProvider as unknown as DestinationPlugin],
     ['claude-code', claudeCodeProvider as unknown as DestinationPlugin],
-    ['codex-cli', codexProvider as unknown as DestinationPlugin],
+    ['codex', codexProvider as unknown as DestinationPlugin],
     ['amp', ampProvider as unknown as DestinationPlugin],
     ['opencode', openCodeProvider as unknown as DestinationPlugin],
   ]);

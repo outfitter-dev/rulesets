@@ -32,7 +32,7 @@
 ## Additional Notes
 
 - `providers` should use provider IDs and provider versions (e.g. `"providers": {"claude-code": "^1.0.0"}`)
-- `providers` should only be necessary to include in source rules files if the user wants to *override* the default options
+- `providers` should only be necessary to include in source rules files if the user wants to _override_ the default options
 - We should consider using bun's runtime run the `ruleset` binary, for its concurrency and performance benefits
 - The `version` key in source rules files should be changed to `schema` which would match to versioned schemas provided by `@rulesets/schemas`
   - This would allow us to version the ruleset schema and provide a way to migrate rulesets to new versions

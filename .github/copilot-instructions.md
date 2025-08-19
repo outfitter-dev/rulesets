@@ -43,14 +43,15 @@ Rulesets is a CommonMark-compliant rules compiler that lets you author a single 
 
 ## Current Implementation Status
 
-We're implementing **Rulesets v0.1-beta** with these limitations:
+We’re on **Rulesets v0.2 (Handlebars)**:
 
-- Parser handles frontmatter and raw body only
-- Compiler is pass-through (no marker processing)
-- Linter validates basic frontmatter schema
-- Architecture designed for easy v0.1+ enhancement
+- Handlebars-based compiler with provider-aware helpers
+- `_partials/` support with `@` syntax and partial caching
+- Conditional helpers (`if-provider`, `unless-provider`, `switch-provider`)
+- Auto-discovery of `*.rule.md` sources
+- Updated docs and examples aligned to v0.2
 
-Reference `docs/project/plans/PLAN-rulesets-v0.md` for complete implementation details.
+Reference `docs/project/ARCHITECTURE.md` for the v0.2 architecture and helpers.
 
 ## Development Workflow
 
@@ -89,6 +90,6 @@ pnpm turbo build   # Build all packages
 - `CLAUDE.md` - Project-specific concepts and workflows
 - `docs/project/GREPABLE.md` - Master navigation guide
 - `docs/project/LANGUAGE.md` - Terminology specification
-- `docs/project/plans/PLAN-mixdown-v0.md` - Current implementation plan
+- `docs/project/plans/PLAN-rulesets-v0.md` - Current implementation plan
 
 Remember: Use grep first, browse files second. The marker system is designed to make code discovery fast and precise.

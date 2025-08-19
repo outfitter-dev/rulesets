@@ -1,5 +1,5 @@
-// TLDR: Testing utilities for Rulesets packages (mixd-v0)
-// TLDR: v0.1.0 Shared testing utilities and helpers
+// TLDR: Testing utilities for Rulesets packages (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Shared testing utilities and helpers
 
 export const name = 'rulesets-testing';
 export const version = '0.1.0';

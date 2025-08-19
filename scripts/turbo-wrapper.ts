@@ -2,17 +2,17 @@
 
 /**
  * Turbo-compatible wrapper for Bun scripts
- * 
+ *
  * This wrapper allows the same commands to work with or without Turbo:
  * - Direct: `bun run build` → runs Bun scripts directly
  * - Turbo: `turbo build` → Turbo calls this wrapper
- * 
+ *
  * When Turbo is added later, no script changes needed!
  */
 
-import { $ } from 'bun';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { $ } from 'bun';
 
 const command = process.argv[2];
 const args = process.argv.slice(3);
@@ -32,12 +32,12 @@ const isRoot = packageJson.name === 'rulesets';
 // Map commands to their implementations
 const commandMap: Record<string, string> = {
   // Root-level commands use our custom scripts
-  'build': isRoot ? 'bun scripts/build.ts' : 'bun run build:package',
-  'test': isRoot ? 'bun scripts/test.ts' : 'bun test',
-  'typecheck': isRoot ? 'bun scripts/typecheck.ts' : 'tsc --noEmit',
-  'lint': isRoot ? 'bun x ultracite@latest lint' : 'bun x ultracite@latest lint',
-  'dev': isRoot ? 'bun scripts/dev.ts' : 'bun run dev:package',
-  'clean': 'rm -rf dist coverage *.tsbuildinfo',
+  build: isRoot ? 'bun scripts/build.ts' : 'bun run build:package',
+  test: isRoot ? 'bun scripts/test.ts' : 'bun test',
+  typecheck: isRoot ? 'bun scripts/typecheck.ts' : 'tsc --noEmit',
+  lint: isRoot ? 'bun x ultracite@latest lint' : 'bun x ultracite@latest lint',
+  dev: isRoot ? 'bun scripts/dev.ts' : 'bun run dev:package',
+  clean: 'rm -rf dist coverage *.tsbuildinfo',
 };
 
 const implementation = commandMap[command];

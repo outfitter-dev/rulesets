@@ -63,18 +63,15 @@ globs: '**/*.test.ts?(x)'
 Windsurf's distinctive feature is its four activation modes (via the `trigger` field):
 
 1. **always_on**: Rules are included in every prompt
-
    - Best for critical project information, style guides, and core concepts
    - Use sparingly to avoid using up the context token limit
 
 2. **glob**: Rules are included when the edited/mentioned file matches glob patterns
-
    - Perfect for language-specific or framework-specific guidance
    - Requires `globs` field to specify file patterns
    - Example: `globs: "**/*.tsx"` for React components
 
 3. **model_decision**: The AI decides whether to include the rule based on relevance
-
    - Useful for reference material that may or may not be needed
    - Requires `description` field for the AI to determine relevance
    - Reduces prompt engineer work by delegating to the AI

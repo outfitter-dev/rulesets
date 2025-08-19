@@ -7,15 +7,13 @@
 - Initial v0 release of Rulesets - a CommonMark-compliant rules compiler for AI coding assistants.
 
   ### Features
-
-  - **Parser**: Extracts frontmatter and body content from Markdown files
-  - **Linter**: Validates frontmatter structure and content
+  - **Parser**: Extracts front matter and body content from Markdown files
+  - **Linter**: Validates front matter structure and content
   - **Compiler**: Pass-through compilation (marker processing planned for future versions)
   - **Destination Plugins**: Initial support for Cursor and Windsurf
   - **CLI Orchestration**: Complete pipeline from source to destination files
 
   ### What's Included
-
   - Full TypeScript implementation with strict typing
   - Comprehensive test suite (44 tests)
   - Dual ESM/CJS builds
@@ -25,7 +23,6 @@
   ### Limitations
 
   This v0 release intentionally does not process Rulesets notation markers (`{{...}}`). These features are planned for v0.x releases:
-
   - Stem parsing and handling (v0.1)
   - Variable substitution (v0.2)
   - Import resolution (v0.3)

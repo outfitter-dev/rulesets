@@ -30,7 +30,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't assign interactive ARIA roles to non-interactive HTML elements.
 - Don't assign `tabIndex` to non-interactive HTML elements.
 - Don't use positive integers for `tabIndex` property.
-- Don't include "image", "picture", or "photo" in img alt prop.
+- Don't include "image", "picture", or "photo" in the img alt attribute.
 - Don't use explicit role property that's the same as the implicit/default role.
 - Make static elements with click handlers use a valid role attribute.
 - Always include a `title` element for SVG elements.
@@ -44,7 +44,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Give heading elements content that's accessible to screen readers (not hidden with `aria-hidden`).
 - Always include a `lang` attribute on the html element.
 - Always include a `title` attribute for iframe elements.
-- Accompany `onClick` with at least one of: `onKeyUp`, `onKeyDown`, or `onKeyPress`.
+- Accompany `onClick` with at least one of `onKeyUp`, `onKeyDown`, or `onKeyPress`.
 - Accompany `onMouseOver`/`onMouseOut` with `onFocus`/`onBlur`.
 - Include caption tracks for audio and video elements.
 - Use semantic elements instead of role attributes in JSX.
@@ -156,7 +156,7 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 - Don't use bitwise operators.
 - Don't use expressions where the operation doesn't change the value.
 - Make sure Promise-like statements are handled appropriately.
-- Don't use **dirname and**filename in the global scope.
+- Don't use `__dirname` and `__filename` in the global scope.
 - Prevent import cycles.
 - Don't use configured elements.
 - Don't hardcode sensitive data like API keys and tokens.

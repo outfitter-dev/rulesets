@@ -12,7 +12,7 @@ The Rulesets project has completed a comprehensive refactoring from "Destination
 
 - All TypeScript interfaces updated (`DestinationPlugin` → `RulesetProvider`)
 - System variables updated (`$destination` → `$provider`)
-- Configuration frontmatter updated (`destination:` → `provider:`)
+- Configuration front matter updated (`destination:` → `provider:`)
 - File structure updated (`destinations/` → `providers/`)
 - Documentation updated throughout
 
@@ -40,7 +40,7 @@ interface RulesetProvider {
 }
 ```
 
-#### Configuration Frontmatter
+#### Configuration Front matter
 
 **Before:**
 
@@ -86,7 +86,7 @@ Provider ID: {{$provider.id}}
 
 ### Backwards Compatibility
 
-- Old `destination:` frontmatter keys still work but are deprecated
+- Old `destination:` front matter keys still work but are deprecated
 - `$destination` variable still available but will be removed in v1.0
 - Legacy plugin interfaces continue to work through adapters
 
@@ -147,13 +147,13 @@ parseDocument(safePath, safeContent);
 ```typescript
 // packages/parser/src/index.ts
 export function parse(content: string, sourcePath?: string): ParsedDocument {
-  const frontmatter = extractFrontmatter(content);
+  const front matter = extractFront matter(content);
   const blocks = findBlocks(content);
 
   return {
     source: { path: sourcePath || 'unknown', content },
     blocks,
-    frontmatter,
+    front matter,
   };
 }
 ```
@@ -177,14 +177,14 @@ export function parse(content: string, sourcePath?: string): ParsedDocument {
   const validPath = sourcePath ? createSourcePath(sourcePath) : createSourcePath('unknown.md');
   const validContent = createRawContent(content);
 
-  const frontmatter = extractFrontmatter(validContent);
+  const front matter = extractFront matter(validContent);
   const blocks = findBlocks(validContent);
 
   return {
     source: {
       path: validPath,
       content: validContent,
-      frontmatter,
+      front matter,
     },
     ast: {
       blocks: blocks.map((b) => ({
@@ -425,19 +425,19 @@ import {
   type Validator,
 } from '@outfitter/types/validation';
 
-// Define a schema for frontmatter
-const frontmatterValidator = object({
+// Define a schema for front matter
+const front matterValidator = object({
   rulesetsVersion: required(string({ pattern: /^\d+\.\d+\.\d+$/ })),
   description: optional(string({ maxLength: 500 })),
   destinations: optional(array(string({ enum: VALID_DESTINATIONS }))),
   priority: optional(number({ min: 0, max: 10 })),
 });
 
-// Validate frontmatter
-const result = frontmatterValidator(data);
+// Validate front matter
+const result = front matterValidator(data);
 if (result.success) {
   // result.value is fully typed
-  console.log('Valid frontmatter:', result.value);
+  console.log('Valid front matter:', result.value);
 } else {
   // Rich error information
   result.errors.forEach((err) => {
@@ -496,7 +496,7 @@ async function loadFromCache(): Promise<ParsedDocument[]> {
       // Use unsafe brands for performance
       path: UnsafeBrands.sourcePath(doc.path),
       content: UnsafeBrands.rawContent(doc.content),
-      frontmatter: doc.frontmatter,
+      front matter: doc.front matter,
     },
     ast: {
       blocks: doc.blocks.map((b) => ({

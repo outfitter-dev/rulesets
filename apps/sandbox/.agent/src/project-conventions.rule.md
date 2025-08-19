@@ -1,9 +1,9 @@
 ---
 ruleset:
   version: 0.1.0
-  
-title: "Project Conventions"
-description: "General development conventions and standards"
+
+title: 'Project Conventions'
+description: 'General development conventions and standards'
 
 providers:
   cursor:
@@ -20,7 +20,7 @@ providers:
 
 ## Project Conventions
 
-{{instructions}}
+{{#instructions}}
 
 ## File Organization
 
@@ -42,9 +42,9 @@ providers:
 - **Feature branches** - Work on feature branches, PR to main
 - **No direct commits to main** - All changes through pull requests
 - **Squash merge** - Keep main branch history clean
-{{/instructions}}
+  {{/instructions}}
 
-{{examples}}
+{{#examples}}
 
 ### File Structure Example
 
@@ -83,7 +83,7 @@ src/
 feat: add user authentication with JWT tokens
 feat(dashboard): implement real-time data updates
 
-# Bug fixes  
+# Bug fixes
 fix: resolve memory leak in user session handling
 fix(api): handle null response from external service
 
@@ -102,19 +102,19 @@ perf(images): implement lazy loading for gallery component
 
 ### JSDoc Documentation Example
 
-```typescript
+````typescript
 /**
  * Fetches user data with caching and error handling
- * 
+ *
  * @param userId - The unique identifier for the user
  * @param options - Configuration options for the request
  * @param options.useCache - Whether to use cached data if available
  * @param options.timeout - Request timeout in milliseconds
  * @returns Promise that resolves to user data or null if not found
- * 
+ *
  * @throws {UserNotFoundError} When user doesn't exist
  * @throws {NetworkError} When request fails due to network issues
- * 
+ *
  * @example
  * ```typescript
  * const user = await fetchUserData('123', { useCache: true });
@@ -132,6 +132,6 @@ async function fetchUserData(
 ): Promise<User | null> {
   // Implementation here
 }
-```
+````
 
 {{/examples}}

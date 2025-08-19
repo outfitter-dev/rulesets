@@ -1,23 +1,40 @@
-// TLDR: Compiler implementation for Rulesets notation (mixd-v0)
-// TLDR: v0.1.0 Pass-through implementation without marker processing
-import type { CompiledDoc, Logger, ParsedDoc, Provider } from '@rulesets/types';
+// TLDR: Compiler implementation for Rulesets notation (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Pass-through implementation without marker processing
+import type { CompiledDoc, ParsedDoc, Provider } from '@rulesets/types';
 
-let logger: Logger | undefined;
+// Export new Handlebars-based compiler (v0.2+)
+export {
+  HandlebarsRulesetCompiler,
+  compileWithHandlebars,
+  type HandlebarsContext,
+  type SectionOptions
+} from './handlebars-compiler';
+
+// Export partial resolution system (v0.2+ Phase 3)
+export {
+  PartialResolver,
+  PostProcessorFactory,
+  CursorPostProcessor,
+  ClaudeCodePostProcessor,
+  type PartialResolverOptions,
+  type ResolvedPartial,
+  type PostProcessor
+} from './partial-resolver';
 
 /**
- * Compiles a parsed Rulesets document for a specific provider.
- * For v0.1.0, this is a pass-through implementation that doesn't process markers.
- *
- * @param parsedDoc - The parsed document to compile
- * @param destinationId - The ID of the provider to compile for (legacy parameter name)
- * @param projectConfig - Optional project configuration
- * @returns A promise that resolves to a CompiledDoc
+
+- Compiles a parsed Rulesets document for a specific provider.
+- For ruleset-v0.1-beta, this is a pass-through implementation that doesn't process markers.
+-
+- @param parsedDoc - The parsed document to compile
+- @param destinationId - The ID of the provider to compile for (legacy parameter name)
+- @param projectConfig - Optional project configuration
+- @returns A promise that resolves to a CompiledDoc
  */
-// TLDR: Compiles parsed document to provider format (mixd-v0)
-// TLDR: v0.1.0 Pass-through implementation without transformation
-// TODO(v0.2.0): Process block markers and convert to XML
-// TODO(v0.3.0): Process variables and perform substitution
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: v0 implementation will be refactored
+// TLDR: Compiles parsed document to provider format (ruleset-v0.1-beta)
+// TLDR: ruleset-v0.1-beta Pass-through implementation without transformation
+// TODO(ruleset-v0.2-beta): Process block markers and convert to XML
+// TODO(ruleset-v0.3-beta): Process variables and perform substitution
 export function compile(
   parsedDoc: ParsedDoc,
   destinationId: string,
@@ -26,8 +43,8 @@ export function compile(
   const { source, ast } = parsedDoc;
 
   // Handle empty files consistently
-  if (!source.content.trim() && logger) {
-    logger.warn('Compiling empty source file');
+  if (!source.content.trim()) {
+    // Empty source file - will result in empty output
   }
 
   // Extract the body content (everything after frontmatter)
@@ -63,13 +80,13 @@ export function compile(
       frontmatter: source.frontmatter,
     },
     ast: {
-      blocks: ast.blocks, // Pass through from parser (empty for v0)
-      imports: ast.imports, // Pass through from parser (empty for v0)
-      variables: ast.variables, // Pass through from parser (empty for v0)
-      markers: ast.markers, // Pass through from parser (empty for v0)
+      blocks: ast.blocks, // Pass through from parser (empty for ruleset-v0.1-beta)
+      imports: ast.imports, // Pass through from parser (empty for ruleset-v0.1-beta)
+      variables: ast.variables, // Pass through from parser (empty for ruleset-v0.1-beta)
+      markers: ast.markers, // Pass through from parser (empty for ruleset-v0.1-beta)
     },
     output: {
-      content: bodyContent, // Raw body content for v0
+      content: bodyContent, // Raw body content for ruleset-v0.1-beta
       metadata: {
         // Include relevant frontmatter metadata
         title: source.frontmatter?.title,
@@ -105,17 +122,22 @@ export function compile(
 }
 
 /**
- * Compiles a parsed Rulesets document using a Provider definition.
- * Centralized compiler entry that consumes provider metadata/capabilities.
- * Currently behaves like pass-through (v0.1.0) but sets context from provider.id
- * to enable a single compiler for all providers.
+
+- Compiles a parsed Rulesets document using a Provider definition.
+- Centralized compiler entry that consumes provider metadata/capabilities.
+- Currently behaves like pass-through (ruleset-v0.1-beta) but sets context from provider.id
+- to enable a single compiler for all providers.
  */
 export function compileWithProvider(
   parsedDoc: ParsedDoc,
   provider: Provider,
   projectConfig: Record<string, unknown> = {}
 ): CompiledDoc {
-  const compiled = compile(parsedDoc, provider.id as unknown as string, projectConfig);
+  const compiled = compile(
+    parsedDoc,
+    provider.id as unknown as string,
+    projectConfig
+  );
 
   // Preserve output/content from base compile; enrich metadata minimally for now
   return {

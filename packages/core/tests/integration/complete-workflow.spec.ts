@@ -118,7 +118,7 @@ These are comprehensive rules that should be compiled for all 6 providers.
 ## Code Standards
 
 - Always use TypeScript
-- Follow ESLint rules
+- Follow Biome rules
 - Write comprehensive tests
 
 {{examples}}
@@ -176,7 +176,7 @@ Variable test: {{$destination}}
         )
       );
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!'
+        'Rulesets ruleset-v0.1-beta processing completed successfully!'
       );
     });
 
@@ -535,7 +535,7 @@ function example() {
       }
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!'
+        'Rulesets ruleset-v0.1-beta processing completed successfully!'
       );
     });
 
@@ -595,7 +595,7 @@ Content for sequence test ${i}.
 
       // Verify: Processing completed successfully for all files
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Rulesets v0.1.0 processing completed successfully!'
+        'Rulesets ruleset-v0.1-beta processing completed successfully!'
       );
       expect(mockLogger.info).toHaveBeenCalledTimes(5); // Once per file
     });

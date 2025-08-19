@@ -1,9 +1,9 @@
 ---
 ruleset:
   version: 0.1.0
-  
-title: "TypeScript Coding Standards"
-description: "Professional TypeScript development standards for our team"
+
+title: 'TypeScript Coding Standards'
+description: 'Professional TypeScript development standards for our team'
 
 providers:
   cursor:
@@ -16,7 +16,7 @@ providers:
 
 ## TypeScript Coding Standards
 
-{{instructions}}
+{{#instructions}}
 
 ## Type Safety Requirements
 
@@ -37,9 +37,9 @@ providers:
 - **Use Result types** - Prefer `Result<T, E>` over throwing exceptions
 - **Handle all async operations** - Every Promise must be awaited or handled
 - **Custom error classes** - Create specific error types for different failure modes
-{{/instructions}}
+  {{/instructions}}
 
-{{examples}}
+{{#examples}}
 
 ### Type Safety Examples
 
@@ -77,22 +77,27 @@ if (result.success) {
 ```
 
 ```typescript
-// ✅ Good: Proper async/await with error boundaries
-async function processUserData(userId: UserId): Promise<void> {
+// ✅ Good: Proper async/await with Result style (no throws)
+type VoidResult<E> = { success: true } | { success: false; error: E };
+
+async function processUserData(userId: UserId): Promise<VoidResult<Error>> {
   try {
     const [user, orders, preferences] = await Promise.all([
       fetchUser(userId),
       fetchUserOrders(userId),
-      fetchUserPreferences(userId)
+      fetchUserPreferences(userId),
     ]);
-    
+
     await updateUserProfile({ user, orders, preferences });
+    return { success: true };
   } catch (error) {
-    // Handle specific error types differently
     if (error instanceof NetworkError) {
-      throw new ServiceUnavailableError('Service temporarily unavailable');
+      return {
+        success: false,
+        error: new ServiceUnavailableError('Service temporarily unavailable'),
+      };
     }
-    throw error; // Re-throw unknown errors
+    return { success: false, error: error as Error };
   }
 }
 ```

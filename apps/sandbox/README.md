@@ -21,8 +21,8 @@ This sandbox demonstrates a realistic monorepo setup:
     ├── 🎯 .cursor/rules/         # Cursor IDE rules
     ├── 🌊 .windsurf/rules.md     # Windsurf IDE rules
     ├── 📄 CLAUDE.md              # Claude Code rules
-    ├── 📄 AMP.md                 # AMP rules
-    └── 📄 CODEX.md               # Codex rules
+    ├── 📄 AGENTS.md              # Codex / Jules rules
+    └── 📄 AGENT.md               # AMP rules
 ```
 
 ## Quick Start
@@ -112,7 +112,7 @@ Modern React development best practices covering:
 
 ### `complete-example.ruleset.md`
 
-Comprehensive showcase of all Rulesets v0.1 features including:
+Comprehensive showcase of all Rulesets ruleset-v0.1-beta features including:
 
 - Multiple block types
 - Provider-specific configuration

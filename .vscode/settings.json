@@ -1,0 +1,58 @@
+{
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "package.json": "pnpm-*.yaml,*config.json,*.config.js,*.config.ts,.markdownlint-cli2.jsonc,lint-staged.config.mjs,biome.json,.markdownlint.json,.prettierrc.json,.prettierignore,.editorconfig,.biomeignore,commitlint.config.mjs,*.lock,lefthook.yml,bunfig.toml,.env,turbo.json,turbo.json*",
+    "AGENT.md": ".mcp.json,CLAUDE.md,AGENTS.md"
+  },
+
+  // Global editor defaults
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "emmet.showExpandedAbbreviation": "never",
+  "typescript.tsdk": "node_modules/typescript/lib",
+
+  // Biome: JavaScript, TypeScript, JSON, GraphQL
+  "[javascript]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[typescript]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[javascriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[typescriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[json]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[jsonc]": { "editor.defaultFormatter": "biomejs.biome" },
+  "[graphql]": { "editor.defaultFormatter": "biomejs.biome" },
+
+  // Prettier: CSS, YAML
+  "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[scss]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[less]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[yaml]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[yml]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+
+  // MarkdownLint: Markdown files
+  "[markdown]": {
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "on",
+      "strings": "on",
+      "other": "on"
+    }
+  },
+
+  // Code actions on save
+  "editor.codeActionsOnSave": {
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit",
+    "source.fixAll.markdownlint": "explicit",
+    "source.fixAll.stylelint": "explicit"
+  },
+
+  // Tool-specific validation
+  "stylelint.validate": ["css", "scss", "less"],
+
+  // File associations
+  "files.associations": {
+    "*.mdc": "markdown"
+  },
+  "cSpell.words": ["bunfig", "publint", "lefthook", "frontmatter", "ultracite", "previewable", "previewability", "lintability", "subdirs", "clinerules", "sublist", "rulesetkeep", "rulesetignore", "opencode", "esbenp", "myproject", "syncpack", "cheatsheet"]
+}

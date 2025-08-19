@@ -157,9 +157,9 @@ Rulesets uses specific delimiters consistently throughout the syntax:
 
 When referring to compilation versions:
 
-- Full version format: "Rulesets v0.1.0"
+- Full version format: "Rulesets ruleset-v0.1-beta"
 - Major version format: "Rulesets v0"
-- Release candidate format: "Rulesets v0.1.0-rc1"
+- Release candidate format: "Rulesets ruleset-v0.1-beta-rc1"
 
 ## Terminology Best Practices
 
@@ -179,13 +179,13 @@ When referring to compilation versions:
 The Rulesets project has completed a comprehensive refactoring from "Destination" to "Provider" terminology:
 
 - **Code**: All TypeScript interfaces, variables, and function names updated
-- **Configuration**: Frontmatter and config files now use `provider:` keys
+- **Configuration**: Front matter and config files now use `provider:` keys
 - **Variables**: System variables changed from `$destination` to `$provider`
 - **Documentation**: All references updated throughout project docs
 
 ### Backwards Compatibility
 
-- **Frontmatter**: Old `destination:` keys still work but are deprecated
+- **Front matter**: Old `destination:` keys still work but are deprecated
 - **Variables**: `$destination` is still available but will be removed in v1.0
 - **File paths**: Provider plugin files moved from `destinations/` to `providers/`
 
@@ -200,13 +200,12 @@ For detailed migration instructions, see the [Provider Migration Guide](../../pa
 ## Changelog
 
 - **2025-01-13:**
-
   - **BREAKING**: Migrated from "Destination" to "Provider" terminology
   - Updated all interfaces: `DestinationPlugin` → `RulesetProvider`
   - Updated system variables: `$destination` → `$provider`
   - Updated configuration keys: `destination:` → `provider:`
   - Updated file structure: `destinations/` → `providers/`
-  - Added backwards compatibility for frontmatter and variables
+  - Added backwards compatibility for front matter and variables
   - Updated all documentation and examples
 
 - **2025-05-20:**

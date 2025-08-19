@@ -1,7 +1,7 @@
 // TLDR: Unit tests for the Rulesets linter module (Rulesets v0)
 
-import type { ParsedDoc } from '@rulesets/types';
 import { describe, expect, it } from 'bun:test';
+import type { ParsedDoc } from '@rulesets/types';
 import { lint } from '../index';
 
 describe('linter', () => {

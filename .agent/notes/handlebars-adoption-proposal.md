@@ -237,7 +237,7 @@ Content for specific providers
 
 - Keep `@path/to/file.md` syntax for \_partials/ references
 - For providers that support file imports, preserve the path as-is
-- For providers that don't, embed the file content (stripping frontmatter)
+- For providers that don't, embed the file content (stripping front matter)
 - Eliminate complex filtering (`blocks="naming,structure"`) - include entire file or use separate partials
 
 #### 5. Raw Content (No Change!)
@@ -283,7 +283,7 @@ registerHelper('if-provider', ifProviderHelper);
 - [ ] Implement block helper with XML generation
 - [ ] Add provider conditional helpers
 - [ ] Create partial resolution system
-- [ ] Build context generation from frontmatter
+- [ ] Build context generation from front matter
 
 ### Phase 3: Advanced Features (Week 5-6)
 
@@ -493,7 +493,7 @@ export function ifProviderHelper(
 
 ```javascript
 // Precompile templates for production
-const templates = handlebars.precompile(sourceDir);
+const templates = Handlebars.precompile(sourceDir);
 
 // 10x faster execution with precompiled templates
 const result = Handlebars.template(templates.ruleset)(context);
@@ -568,7 +568,7 @@ Total timeline: **8 weeks** from approval to production-ready
 ```handlebars
 {{!-- Variables --}}
 {{provider.id}}                   {{!-- Simple variable --}}
-{{file.frontmatter.version}}      {{!-- Nested property --}}
+{{file.frontMatter.version}}       {{!-- Nested property --}}
 
 {{!-- Sections --}}
 {{#instructions}}content{{/instructions}}              {{!-- Basic section --}}
