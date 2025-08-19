@@ -2,6 +2,8 @@
 // TLDR: Implements full marker processing with Handlebars templating engine and template caching
 
 import { createHash } from 'node:crypto';
+import { dirname, join, resolve } from 'node:path';
+import { readFileSync, existsSync } from 'node:fs';
 import Handlebars from 'handlebars';
 import type { CompiledDoc, ParsedDoc } from '../interfaces';
 import { getChildLogger } from '../utils/logger';
@@ -60,6 +62,7 @@ interface SectionOptions extends Handlebars.HelperOptions {
 }
 
 /**
+<<<<<<< HEAD
  * Template cache entry with metadata
  */
 interface CachedTemplate {
@@ -72,6 +75,9 @@ interface CachedTemplate {
 
 /**
  * Handlebars-based Rulesets compiler with template caching
+=======
+ * Handlebars-based Rulesets compiler with partial resolution support
+>>>>>>> b250b02 (feat(compiler): complete partial resolution system for @-prefixed partials)
  */
 export class HandlebarsRulesetCompiler {
   private hbs: typeof Handlebars;
@@ -87,10 +93,17 @@ export class HandlebarsRulesetCompiler {
     'default',
   ]);
   
+<<<<<<< HEAD
   // Template caching system
   private templateCache = new Map<string, CachedTemplate>();
   private maxCacheSize = 1000; // Maximum number of cached templates
   private cacheEnabled = true; // Can be disabled for testing
+=======
+  // Partial resolution state
+  private currentSourcePath?: string;
+  private partialCache = new Map<string, string>();
+  private partialDirectories: string[] = [];
+>>>>>>> b250b02 (feat(compiler): complete partial resolution system for @-prefixed partials)
 
   constructor(options: { cacheEnabled?: boolean; maxCacheSize?: number } = {}) {
     this.hbs = Handlebars.create();
@@ -114,6 +127,10 @@ export class HandlebarsRulesetCompiler {
     if (!source.content.trim()) {
       pinoLogger.warn({ path: source.path }, 'Compiling empty source file');
     }
+
+    // Set up partial resolution context
+    this.currentSourcePath = source.path;
+    this.setupPartialDirectories();
 
     // Extract body content (everything after frontmatter)
     const bodyContent = this.extractBodyContent(
@@ -538,11 +555,240 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
+   * Sets up partial resolution directories based on current source file
+   */
+  private setupPartialDirectories(): void {
+    if (!this.currentSourcePath) {
+      return;
+    }
+
+    this.partialDirectories = [];
+    let currentDir = dirname(this.currentSourcePath);
+    
+    // Look for _partials directories up the tree
+    for (let i = 0; i < 10; i++) { // Limit search depth
+      const partialsDir = join(currentDir, '_partials');
+      if (existsSync(partialsDir)) {
+        this.partialDirectories.push(partialsDir);
+        pinoLogger.debug(`Found partials directory: ${partialsDir}`);
+      }
+      
+      const parent = dirname(currentDir);
+      if (parent === currentDir) {
+        break; // Reached root
+      }
+      currentDir = parent;
+    }
+    
+    // Also check for .ruleset/src/_partials from project root
+    const projectRoot = this.findProjectRoot(dirname(this.currentSourcePath));
+    if (projectRoot) {
+      const projectPartialsDir = join(projectRoot, '.ruleset', 'src', '_partials');
+      if (existsSync(projectPartialsDir) && !this.partialDirectories.includes(projectPartialsDir)) {
+        this.partialDirectories.push(projectPartialsDir);
+        pinoLogger.debug(`Found project partials directory: ${projectPartialsDir}`);
+      }
+    }
+  }
+
+  /**
+   * Finds the project root by looking for ruleset.config files
+   */
+  private findProjectRoot(startPath: string): string | null {
+    let currentDir = startPath;
+    
+    for (let i = 0; i < 10; i++) { // Limit search depth
+      const configFiles = [
+        'ruleset.config.jsonc',
+        'ruleset.config.json',
+        'package.json',
+        '.git'
+      ];
+      
+      for (const configFile of configFiles) {
+        if (existsSync(join(currentDir, configFile))) {
+          return currentDir;
+        }
+      }
+      
+      const parent = dirname(currentDir);
+      if (parent === currentDir) {
+        break; // Reached root
+      }
+      currentDir = parent;
+    }
+    
+    return null;
+  }
+
+  /**
    * Sets up partial resolution for @-prefixed partials
    */
   private setupPartialResolver(): void {
-    // TODO: Implement @-prefixed partial loading from _partials/
-    // This will load files like @common-patterns from .ruleset/src/_partials/
+    this.hbs.registerHelper('partial', this.createPartialHelper());
+    
+    // Set up dynamic partial loader for {{> partialName}} syntax
+    const originalPartials = this.hbs.partials;
+    
+    this.hbs.partials = new Proxy(originalPartials, {
+      get: (target: any, prop: string | symbol) => {
+        if (typeof prop === 'string') {
+          // Check if partial is already registered
+          if (target[prop]) {
+            return target[prop];
+          }
+          
+          // Try to load partial dynamically
+          const partialTemplate = this.resolvePartial(prop);
+          if (partialTemplate) {
+            // Cache the compiled template
+            target[prop] = partialTemplate;
+            return partialTemplate;
+          }
+          
+          // Return a fallback template for missing partials
+          const fallbackTemplate = this.hbs.compile(`<!-- Partial not found: ${prop} -->`, {
+            noEscape: true,
+            strict: false,
+          });
+          target[prop] = fallbackTemplate;
+          return fallbackTemplate;
+        }
+        
+        return target[prop];
+      },
+      
+      has: (target: any, prop: string | symbol) => {
+        if (typeof prop === 'string') {
+          // Always return true to prevent Handlebars from throwing
+          // We'll handle missing partials in the get handler
+          return true;
+        }
+        
+        return prop in target;
+      }
+    });
+  }
+
+  /**
+   * Checks if a partial can be resolved without actually loading it
+   */
+  private canResolvePartial(partialName: string): boolean {
+    // Check cache first
+    if (this.partialCache.has(partialName)) {
+      return true;
+    }
+
+    // Handle @-prefixed partials
+    const fileName = partialName.startsWith('@') 
+      ? partialName.substring(1) 
+      : partialName;
+    
+    // Check if file exists in any directory
+    const extensions = ['.md', '.hbs', '.handlebars', '.txt', ''];
+    
+    for (const directory of this.partialDirectories) {
+      for (const ext of extensions) {
+        const filePath = join(directory, fileName + ext);
+        if (existsSync(filePath)) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  }
+
+  /**
+   * Creates the {{partial}} helper for explicit partial inclusion
+   */
+  private createPartialHelper() {
+    return (partialName: string, options: Handlebars.HelperOptions): string => {
+      const context = options.data?.root || options.data || {};
+      const partialTemplate = this.resolvePartial(partialName);
+      
+      if (!partialTemplate) {
+        pinoLogger.warn(`Partial not found: ${partialName}`);
+        return `<!-- Partial not found: ${partialName} -->`;
+      }
+      
+      return partialTemplate(context);
+    };
+  }
+
+  /**
+   * Resolves a partial by name, supporting @-prefixed partials
+   */
+  private resolvePartial(partialName: string): Handlebars.Template | null {
+    // Check cache first
+    if (this.partialCache.has(partialName)) {
+      const cachedContent = this.partialCache.get(partialName)!;
+      return this.hbs.compile(cachedContent, {
+        noEscape: true,
+        strict: false,
+      });
+    }
+
+    // Handle @-prefixed partials
+    if (partialName.startsWith('@')) {
+      const fileName = partialName.substring(1); // Remove @
+      const partialContent = this.loadPartialFromDirectories(fileName);
+      
+      if (partialContent) {
+        this.partialCache.set(partialName, partialContent);
+        return this.hbs.compile(partialContent, {
+          noEscape: true,
+          strict: false,
+        });
+      }
+    } else {
+      // Handle regular partial names
+      const partialContent = this.loadPartialFromDirectories(partialName);
+      
+      if (partialContent) {
+        this.partialCache.set(partialName, partialContent);
+        return this.hbs.compile(partialContent, {
+          noEscape: true,
+          strict: false,
+        });
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Loads a partial file from the configured directories
+   */
+  private loadPartialFromDirectories(fileName: string): string | null {
+    // Try various file extensions
+    const extensions = ['.md', '.hbs', '.handlebars', '.txt', ''];
+    
+    for (const directory of this.partialDirectories) {
+      for (const ext of extensions) {
+        const filePath = join(directory, fileName + ext);
+        
+        if (existsSync(filePath)) {
+          try {
+            const content = readFileSync(filePath, 'utf8');
+            pinoLogger.debug(`Loaded partial ${fileName} from ${filePath}`);
+            return content;
+          } catch (error) {
+            pinoLogger.warn(`Failed to read partial ${fileName} from ${filePath}:`, error);
+            continue;
+          }
+        }
+      }
+    }
+    
+    return null;
+  }
+
+  /**
+   * Clears the partial cache (useful for testing or recompilation)
+   */
+  public clearPartialCache(): void {
+    this.partialCache.clear();
   }
 
   /**
