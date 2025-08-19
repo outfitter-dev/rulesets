@@ -91,6 +91,18 @@ export interface GitignoreConfig {
 }
 
 /**
+ * Parallel compilation configuration
+ */
+export interface ParallelCompilationConfig {
+  /** Maximum number of concurrent provider compilations (default: unlimited) */
+  readonly maxConcurrency?: number;
+  /** Whether to continue compilation if one provider fails (default: false) */
+  readonly continueOnError?: boolean;
+  /** Enable detailed performance timing for parallel operations */
+  readonly enableTiming?: boolean;
+}
+
+/**
  * Main Rulesets configuration interface with strict typing
  */
 export interface RulesetConfig {
@@ -98,6 +110,8 @@ export interface RulesetConfig {
   readonly providers?: Readonly<Record<string, ProviderConfig>>;
   /** Gitignore management settings */
   readonly gitignore?: GitignoreConfig;
+  /** Parallel compilation settings */
+  readonly parallelCompilation?: ParallelCompilationConfig;
   /** Default providers to enable when none specified */
   readonly defaultProviders?: readonly string[];
   /** Strict mode - fail on warnings */
