@@ -6,7 +6,7 @@ Handlebars v0.2.0 implementation day: Merged major feature branch implementing H
 
 ## Key Changes
 
-```
+```text
 🎯 Handlebars Implementation & CI/CD Fixes
 ├── feat: implement Handlebars-based compiler for v0.2.0 (#61)
 │   ♻️ Complete templating engine overhaul
@@ -50,12 +50,12 @@ Handlebars v0.2.0 implementation day: Merged major feature branch implementing H
 
 ## Commit Velocity Analysis
 
-```
+```text
 Commits/Hour: █ = 2 commits
-07:00: ████ (4) - Early morning CI fixes
-16:00: ██ (1) - Handlebars implementation
-17:00: ████ (2) - Type system fixes
-23:00: ████████████████████ (10) - Late night CI/merge marathon
+07:00: ████ (8) - Early morning CI fixes
+16:00: ██ (4) - Handlebars implementation
+17:00: ████ (8) - Type system fixes
+23:00: ████████████████████ (40) - Late night CI/merge marathon
 ```
 
 ### Development Pattern Recognition
