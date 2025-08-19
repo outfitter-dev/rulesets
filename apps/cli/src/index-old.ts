@@ -13,7 +13,7 @@ import { Command } from 'commander';
 // import chalk from 'chalk';
 
 // Auto-discovery CLI for Rulesets with support for .rule.md files
-// TODO: Enable actual compilation when core dependencies are resolved
+// TODO: Enable actual compilation when core dependencies are resolved"
 
 const program = new Command();
 
@@ -352,15 +352,6 @@ program
       }
       
       logger.info(`\n📁 Found ${filteredFiles.length} rule file(s):\n`);
-      
-      if (filteredFiles.length === 0) {
-        logger.warn('No rule files found.');
-        logger.info('\nChecked for:');
-        logger.info('  • .rule.md files (preferred)');
-        logger.info('  • .md files (fallback)');
-        logger.info('  • Excluded _partials/ directory');
-        return;
-      }
       
       filteredFiles.forEach(file => {
         logger.info(`  • ${file.name}`);

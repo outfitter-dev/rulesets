@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": false,
   "type": "module",
-  "description": "CLI for Rulesets compiler",
+  "description": "CLI for Rulesets compiler with auto-discovery of .rule.md files",
   "bin": {
     "rulesets": "./dist/index.js"
   },
