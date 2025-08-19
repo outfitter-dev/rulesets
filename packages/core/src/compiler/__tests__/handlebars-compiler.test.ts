@@ -486,6 +486,171 @@ languages:
     });
   });
 
+  describe('Provider switch helpers', () => {
+    it('should support switch-provider with case helpers', () => {
+      const parsedDoc: ParsedDoc = {
+        source: {
+          path: 'test.md',
+          content: `{{#switch-provider}}
+{{#case "cursor"}}Content for Cursor{{/case}}
+{{#case "windsurf"}}Content for Windsurf{{/case}}
+{{#case "claude-code"}}Content for Claude Code{{/case}}
+{{/switch-provider}}`,
+          frontmatter: {},
+        },
+        ast: {
+          blocks: [],
+          imports: [],
+          variables: [],
+          markers: [],
+        },
+      };
+
+      const result = compiler.compile(parsedDoc, 'cursor');
+
+      expect(result.output.content.trim()).toBe('Content for Cursor');
+    });
+
+    it('should support switch-provider with default case', () => {
+      const parsedDoc: ParsedDoc = {
+        source: {
+          path: 'test.md',
+          content: `{{#switch-provider}}
+{{#case "windsurf"}}Content for Windsurf{{/case}}
+{{#case "claude-code"}}Content for Claude Code{{/case}}
+{{#default}}Default content{{/default}}
+{{/switch-provider}}`,
+          frontmatter: {},
+        },
+        ast: {
+          blocks: [],
+          imports: [],
+          variables: [],
+          markers: [],
+        },
+      };
+
+      const result = compiler.compile(parsedDoc, 'cursor');
+
+      expect(result.output.content.trim()).toBe('Default content');
+    });
+
+    it('should support case with comma-separated provider list', () => {
+      const parsedDoc: ParsedDoc = {
+        source: {
+          path: 'test.md',
+          content: `{{#switch-provider}}
+{{#case "cursor,windsurf"}}Content for IDE providers{{/case}}
+{{#case "claude-code"}}Content for CLI providers{{/case}}
+{{#default}}Other content{{/default}}
+{{/switch-provider}}`,
+          frontmatter: {},
+        },
+        ast: {
+          blocks: [],
+          imports: [],
+          variables: [],
+          markers: [],
+        },
+      };
+
+      const result = compiler.compile(parsedDoc, 'windsurf');
+
+      expect(result.output.content.trim()).toBe('Content for IDE providers');
+    });
+
+    it('should execute only first matching case', () => {
+      const parsedDoc: ParsedDoc = {
+        source: {
+          path: 'test.md',
+          content: `{{#switch-provider}}
+{{#case "cursor"}}First match{{/case}}
+{{#case "cursor"}}Second match (should not appear){{/case}}
+{{#default}}Default (should not appear){{/default}}
+{{/switch-provider}}`,
+          frontmatter: {},
+        },
+        ast: {
+          blocks: [],
+          imports: [],
+          variables: [],
+          markers: [],
+        },
+      };
+
+      const result = compiler.compile(parsedDoc, 'cursor');
+
+      expect(result.output.content.trim()).toBe('First match');
+      expect(result.output.content).not.toContain('Second match');
+      expect(result.output.content).not.toContain('Default');
+    });
+
+    it('should not execute default when a case matches', () => {
+      const parsedDoc: ParsedDoc = {
+        source: {
+          path: 'test.md',
+          content: `{{#switch-provider}}
+{{#case "windsurf"}}Windsurf content{{/case}}
+{{#case "cursor"}}Cursor content{{/case}}
+{{#default}}Default content (should not appear){{/default}}
+{{/switch-provider}}`,
+          frontmatter: {},
+        },
+        ast: {
+          blocks: [],
+          imports: [],
+          variables: [],
+          markers: [],
+        },
+      };
+
+      const result = compiler.compile(parsedDoc, 'cursor');
+
+      expect(result.output.content.trim()).toBe('Cursor content');
+      expect(result.output.content).not.toContain('Default content');
+    });
+
+    it('should throw error when case is used outside switch-provider', () => {
+      const parsedDoc: ParsedDoc = {
+        source: {
+          path: 'test.md',
+          content: `{{#case "cursor"}}This should fail{{/case}}`,
+          frontmatter: {},
+        },
+        ast: {
+          blocks: [],
+          imports: [],
+          variables: [],
+          markers: [],
+        },
+      };
+
+      expect(() => {
+        compiler.compile(parsedDoc, 'cursor');
+      }).toThrow('case helper can only be used inside a switch-provider block');
+    });
+
+    it('should throw error when default is used outside switch-provider', () => {
+      const parsedDoc: ParsedDoc = {
+        source: {
+          path: 'test.md',
+          content: `{{#default}}This should fail{{/default}}`,
+          frontmatter: {},
+        },
+        ast: {
+          blocks: [],
+          imports: [],
+          variables: [],
+          markers: [],
+        },
+      };
+
+      expect(() => {
+        compiler.compile(parsedDoc, 'cursor');
+      }).toThrow('default helper can only be used inside a switch-provider block');
+    });
+  });
+
   describe('Error handling', () => {
     it('should throw error for undefined helpers', () => {
       const parsedDoc: ParsedDoc = {
