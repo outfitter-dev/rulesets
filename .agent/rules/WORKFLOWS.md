@@ -70,10 +70,10 @@ Systematic approach to investigating, fixing, and deploying bug fixes.
 
 ```bash
 # Development
-bun install              # Install dependencies
-turbo run dev           # Start dev mode
-turbo run build         # Build all packages
-turbo run test          # Run all tests
+bun install               # Install dependencies
+bunx turbo run dev        # Start dev mode
+bunx turbo run build      # Build all packages
+bunx turbo run test       # Run all tests
 
 # Code Quality
 bun run lint            # Run linter
@@ -85,7 +85,9 @@ bun run compile         # Compile all rules
 bun run compile --watch # Watch mode
 
 # Git
-git checkout -b feature/name  # New feature branch
+git checkout -b feature/name            # New feature branch (compatible everywhere)
+# or
+git switch -c feature/name              # Modern alternative
 git add -A && git commit -m "feat: description"  # Commit
 git push -u origin HEAD          # Push current branch
 gh pr create -f -B main          # Create PR against main

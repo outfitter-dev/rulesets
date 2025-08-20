@@ -3,7 +3,7 @@
 ## Start Development Mode
 
 ```bash
-turbo run dev
+bunx turbo run dev
 ```
 
 ## Install Dependencies
@@ -68,11 +68,11 @@ bun --hot run dev
 ## Clean Development Environment
 
 ```bash
-turbo clean && bun install
+bunx turbo clean && bun install
 ```
 
 ## Develop a Single Workspace
 
 ```bash
-turbo run dev --filter=@scope/[package-name]
+bunx turbo run dev --filter=@scope/[package-name]
 ```

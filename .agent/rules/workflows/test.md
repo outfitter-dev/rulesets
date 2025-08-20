@@ -3,7 +3,7 @@
 ## Run All Tests
 
 ```bash
-turbo run test
+bunx turbo run test
 ```
 
 ## Run Tests in Watch Mode
@@ -27,7 +27,7 @@ cd packages/[package-name] && bun test
 ## Test Only Selected Workspaces
 
 ```bash
-turbo run test --filter=@scope/[package-name]
+bunx turbo run test --filter=@scope/[package-name]
 ```
 
 ## Test Specific File

@@ -4,11 +4,10 @@ Scope: Review `.agent/rules/WORKFLOWS.md` and subsequent workflow files for accu
 
 ## What I Found
 
-- The path `.agent/rules/WORKFLOWS.md` does not exist in this workspace. I searched the repo for a `WORKFLOWS.md` under `.agent/rules` but didn’t find one.
-- Closest related materials:
+- `.agent/rules/WORKFLOWS.md` now exists in this workspace and serves as the source-of-truth index.
+- Related materials:
   - `monorepo/.agent/rules/CI.md` (covers GitHub Actions workflows, caching, stages, and release automation).
   - Multiple actual GitHub workflows under `.github/workflows` in various packages; notably this repo’s root `.github/workflows/ci.yml` and `.github/workflows/ci-quick-fix.yml`.
-- No dedicated “Workflows.md” reference doc appears under `.agent/rules` in this `rulesets` package or the repo root. If there is another intended path/branch, please point me to it.
 
 ## Assessment: `monorepo/.agent/rules/CI.md`
 

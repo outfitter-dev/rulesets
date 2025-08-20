@@ -31,6 +31,20 @@ TypeScript rules for this codebase. Enforced by Ultracite + Biome: fast, determi
 - Keep overloads adjacent, not scattered.
 - Prefer literal/discriminated unions + composition, not inheritance hierarchies.
 
+Example (exhaustive switch helper):
+
+```typescript
+type Kind = 'a' | 'b';
+function assertNever(x: never): never { throw new Error(`Unhandled: ${x}`); }
+function handle(kind: Kind) {
+  switch (kind) {
+    case 'a': return 1;
+    case 'b': return 2;
+    default: return assertNever(kind);
+  }
+}
+```
+
 ### Compiler settings
 
 - Enable `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`.
