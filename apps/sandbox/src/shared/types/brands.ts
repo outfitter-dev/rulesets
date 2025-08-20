@@ -298,7 +298,7 @@ export function createProviderType(value: string): ProviderType {
 
   if (
     !VALID_PROVIDER_TYPES.includes(
-      value as [typeof VALID_PROVIDER_TYPES](number)
+      value as (typeof VALID_PROVIDER_TYPES)[number]
     )
   ) {
     throw new BrandValidationError(
@@ -437,7 +437,7 @@ export function createTimestamp(value: number): Timestamp {
 
   // Reasonable bounds check (not before 1970, not too far in future)
   const minTimestamp = 0; // Unix epoch
-  const maxTimestamp = Date.now() + 365 _24_ 60 _60_ 1000; // One year from now
+  const maxTimestamp = Date.now() + 365 * 24 * 60 * 60 * 1000; // One year from now
 
   if (value < minTimestamp || value > maxTimestamp) {
     throw new BrandValidationError(

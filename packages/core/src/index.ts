@@ -81,34 +81,37 @@ export {
 } from './providers';
 
 /**
- * Orchestrates the Rulesets ruleset-v0.1-beta build process for a single file.
- * Reads, parses, lints, compiles, and writes to destinations with configuration support.
- *
- * @example
- * ```typescript
- * import { runRulesetsV0 } from '@rulesets/core';
- * import { ConsoleLogger } from '@rulesets/core';
- *
- * async function main() {
- *   const logger = new ConsoleLogger();
- *   try {
- *     await runRulesetsV0('./my-rules.ruleset.md', logger);
- *     logger.info('Rulesets ruleset-v0.1-beta process completed.');
- *   } catch (error) {
- *     logger.error('Rulesets ruleset-v0.1-beta process failed:', error);
- *   }
- * }
- *
- * main();
- * ```
- *
- * @param sourceFilePath - The path to the source Rulesets file (e.g., my-rules.ruleset.md).
- * @param logger - An instance of the Logger interface.
- * @param configOverride - Optional: Configuration override (takes precedence over config files).
- * @returns A promise that resolves when the process is complete, or rejects on error.
+
+- Orchestrates the Rulesets ruleset-v0.1-beta build process for a single file.
+- Reads, parses, lints, compiles, and writes to destinations with configuration support.
+-
+- @example
+
+- ```typescript
+- import { runRulesetsV0 } from '@rulesets/core';
+- import { ConsoleLogger } from '@rulesets/core';
+-
+- async function main() {
+- const logger = new ConsoleLogger();
+- try {
+-     await runRulesetsV0('./my-rules.ruleset.md', logger);
+-     logger.info('Rulesets ruleset-v0.1-beta process completed.');
+- } catch (error) {
+-     logger.error('Rulesets ruleset-v0.1-beta process failed:', error);
+- }
+- }
+-
+- main();
+
+- ```
+-
+- @param sourceFilePath - The path to the source Rulesets file (e.g., my-rules.ruleset.md).
+- @param logger - An instance of the Logger interface.
+- @param configOverride - Optional: Configuration override (takes precedence over config files).
+- @returns A promise that resolves when the process is complete, or rejects on error.
  */
 /**
- * Load and validate configuration for Rulesets processing
+- Load and validate configuration for Rulesets processing
  */
 async function loadAndValidateConfig(
   projectPath: string,
@@ -153,7 +156,8 @@ async function loadAndValidateConfig(
 }
 
 /**
- * Read source file content
+
+- Read source file content
  */
 async function readSourceFile(
   sourceFilePath: string,
@@ -170,7 +174,8 @@ async function readSourceFile(
 }
 
 /**
- * Parse source file content
+
+- Parse source file content
  */
 async function parseSourceFile(
   content: string,
@@ -190,7 +195,8 @@ async function parseSourceFile(
 }
 
 /**
- * Perform linting and handle results
+
+- Perform linting and handle results
  */
 function performLinting(parsedDoc: ParsedDoc, logger: Logger): void {
   const lintResults = lint(parsedDoc, {
@@ -200,7 +206,7 @@ function performLinting(parsedDoc: ParsedDoc, logger: Logger): void {
 
   let hasErrors = false;
   for (const result of lintResults) {
-    const location = result.line ? ` (line ${result.line})` : '';
+    const location = result.line ? `(line ${result.line})` : '';
     const message = `${result.message}${location}`;
 
     switch (result.severity) {
@@ -227,7 +233,8 @@ function performLinting(parsedDoc: ParsedDoc, logger: Logger): void {
 }
 
 /**
- * Determine destination IDs based on configuration hierarchy
+
+- Determine destination IDs based on configuration hierarchy
  */
 function determineDestinationIds(
   parsedDoc: ParsedDoc,
@@ -268,7 +275,8 @@ function determineDestinationIds(
 }
 
 /**
- * Result of a single destination processing
+
+- Result of a single destination processing
  */
 interface DestinationResult {
   destinationId: string;
@@ -279,7 +287,8 @@ interface DestinationResult {
 }
 
 /**
- * Options for parallel processing
+
+- Options for parallel processing
  */
 interface ParallelProcessingOptions {
   maxConcurrency: number;
@@ -287,7 +296,8 @@ interface ParallelProcessingOptions {
 }
 
 /**
- * Result of parallel destination processing
+
+- Result of parallel destination processing
  */
 interface ParallelProcessingResult {
   generatedPaths: string[];
@@ -296,7 +306,8 @@ interface ParallelProcessingResult {
 }
 
 /**
- * Process multiple destinations in parallel with enhanced control
+
+- Process multiple destinations in parallel with enhanced control
  */
 async function processDestinationsInParallel(
   destinationIds: string[],
@@ -321,7 +332,7 @@ async function processDestinationsInParallel(
   const processDestinationWithSemaphore = async (destinationId: string): Promise<DestinationResult> => {
     const permit = await semaphore.acquire();
     const destStartTime = Date.now();
-    
+
     try {
       const result = await processDestinationOptimized(
         destinationId,
@@ -331,7 +342,7 @@ async function processDestinationsInParallel(
         projectPath,
         compilationCache
       );
-      
+
       return {
         destinationId,
         success: true,
@@ -340,7 +351,7 @@ async function processDestinationsInParallel(
       };
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error(String(error));
-      
+
       if (!options.continueOnError) {
         throw errorObj;
       }
@@ -387,7 +398,8 @@ async function processDestinationsInParallel(
 }
 
 /**
- * Simple semaphore implementation for concurrency control
+
+- Simple semaphore implementation for concurrency control
  */
 class Semaphore {
   private permits: number;
@@ -423,7 +435,8 @@ class Semaphore {
 }
 
 /**
- * Optimized destination processing with compilation caching
+
+- Optimized destination processing with compilation caching
  */
 async function processDestinationOptimized(
   destinationId: string,
@@ -503,76 +516,8 @@ async function processDestinationOptimized(
 }
 
 /**
- * Process a single destination
- */
-async function processDestination(
-  destinationId: string,
-  parsedDoc: ParsedDoc,
-  config: RulesetConfig,
-  logger: Logger,
-  projectPath: string
-): Promise<string[]> {
-  const plugin = destinations.get(destinationId);
-  if (!plugin) {
-    logger.warn(`No plugin found for destination: ${destinationId}`);
-    return [];
-  }
 
-  logger.info(`Processing destination: ${destinationId}`);
-
-  // Prefer modern provider from registry when available
-  const provider = providerRegistry.get(destinationId);
-
-  // Use standard compilation for now - provider compilation will be added in v0.2
-  let compiledDoc: CompiledDoc;
-  try {
-    compiledDoc = compile(parsedDoc, destinationId, config);
-  } catch (error) {
-    logger.error(`Failed to compile for destination: ${destinationId}`, error);
-    return [];
-  }
-
-  // Get merged configuration
-  const destConfig = getMergedDestinationConfig(
-    parsedDoc.source.frontmatter,
-    destinationId,
-    config
-  );
-
-  // Determine output path
-  const destPath = determineOutputPath(
-    destConfig,
-    config.providers?.[destinationId] as Record<string, unknown> | undefined,
-    destinationId,
-    config.outputDirectory,
-    provider?.config?.outputPath
-  );
-
-  // Write using the plugin
-  try {
-    const writeResult = await plugin.write({
-      compiled: compiledDoc,
-      destPath,
-      config: { ...destConfig, baseDir: projectPath },
-      logger,
-    });
-
-    // Return generated paths if available
-    if (hasGeneratedPaths(writeResult)) {
-      logger.debug(
-        `Generated paths from ${destinationId}: ${writeResult.generatedPaths.join(', ')}`
-      );
-      return [...writeResult.generatedPaths];
-    }
-    return [];
-  } catch (error) {
-    logger.error(`Failed to write ${destinationId} output`, error);
-    throw error;
-  }
-}
-
-/**
- * Get merged destination configuration
+- Get merged destination configuration
  */
 function getMergedDestinationConfig(
   frontmatter: Record<string, unknown> | undefined,
@@ -600,7 +545,8 @@ function getMergedDestinationConfig(
 }
 
 /**
- * Determine output path for destination
+
+- Determine output path for destination
  */
 function determineOutputPath(
   destConfig: Record<string, unknown>,
@@ -626,7 +572,8 @@ function determineOutputPath(
 }
 
 /**
- * Build gitignore configuration
+
+- Build gitignore configuration
  */
 function buildGitignoreConfig(config: RulesetConfig) {
   return {
@@ -641,14 +588,15 @@ function buildGitignoreConfig(config: RulesetConfig) {
 }
 
 /**
- * Log gitignore update results
+
+- Log gitignore update results
  */
 function logGitignoreResults(result: any, logger: Logger): void {
   if (!result.success) {
     logger.warn('Failed to update .gitignore:');
     if (result.messages) {
       for (const message of result.messages) {
-        logger.warn(`  ${message}`);
+        logger.warn(`${message}`);
       }
     }
     return;
@@ -672,7 +620,8 @@ function logGitignoreResults(result: any, logger: Logger): void {
 }
 
 /**
- * Update gitignore with generated paths
+
+- Update gitignore with generated paths
  */
 async function updateGitignore(
   allGeneratedPaths: string[],
@@ -778,7 +727,7 @@ export async function runRulesetsV0(
       .filter(r => !r.success && r.error)
       .map(r => `${r.destinationId}: ${r.error!.message}`)
       .join(', ');
-    
+
     throw new Error(
       `All provider compilations failed. Errors: ${errorMessages}`
     );

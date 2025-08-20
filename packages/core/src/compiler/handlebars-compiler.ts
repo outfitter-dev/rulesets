@@ -1,7 +1,9 @@
 // TLDR: Handlebars-based compiler for Rulesets (ruleset-v0.2-beta+)
-// TLDR: Implements full marker processing with Handlebars templating engine and template caching
+// TLDR: Implements full marker processing with Handlebars templating engine, template caching, and partial resolution
 
 import { createHash } from 'node:crypto';
+import { dirname, join } from 'node:path';
+import { readFileSync, existsSync } from 'node:fs';
 import Handlebars from 'handlebars';
 import type { CompiledDoc, ParsedDoc } from '../interfaces';
 import { getChildLogger } from '../utils/logger';
@@ -13,7 +15,8 @@ const FILE_EXTENSION_REGEX = /\.[^.]*$/;
 const BLOCK_HELPER_REGEX = /\{\{#([a-zA-Z][a-zA-Z0-9-]*)/g;
 
 /**
- * Context provided to Handlebars templates during compilation
+
+- Context provided to Handlebars templates during compilation
  */
 export interface RulesetContext {
   // Provider information (updated from "destination" terminology)
@@ -49,7 +52,8 @@ export interface RulesetContext {
 }
 
 /**
- * Options for section helpers (formerly block helpers)
+
+- Options for section helpers (formerly block helpers)
  */
 interface SectionOptions extends Handlebars.HelperOptions {
   hash: {
@@ -60,7 +64,8 @@ interface SectionOptions extends Handlebars.HelperOptions {
 }
 
 /**
- * Template cache entry with metadata
+
+- Template cache entry with metadata
  */
 interface CachedTemplate {
   template: Handlebars.Template;
@@ -71,7 +76,8 @@ interface CachedTemplate {
 }
 
 /**
- * Handlebars-based Rulesets compiler with template caching
+
+- Handlebars-based Rulesets compiler with template caching and partial resolution
  */
 export class HandlebarsRulesetCompiler {
   private hbs: typeof Handlebars;
@@ -92,6 +98,11 @@ export class HandlebarsRulesetCompiler {
   private maxCacheSize = 1000; // Maximum number of cached templates
   private cacheEnabled = true; // Can be disabled for testing
 
+  // Partial resolution state
+  private currentSourcePath?: string;
+  private partialCache = new Map<string, string>();
+  private partialDirectories: string[] = [];
+
   constructor(options: { cacheEnabled?: boolean; maxCacheSize?: number } = {}) {
     this.hbs = Handlebars.create();
     this.cacheEnabled = options.cacheEnabled ?? true;
@@ -101,7 +112,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Compiles a parsed document using Handlebars
+
+- Compiles a parsed document using Handlebars
    */
   compile(
     parsedDoc: ParsedDoc,
@@ -114,6 +126,10 @@ export class HandlebarsRulesetCompiler {
     if (!source.content.trim()) {
       pinoLogger.warn({ path: source.path }, 'Compiling empty source file');
     }
+
+    // Set up partial resolution context
+    this.currentSourcePath = source.path;
+    this.setupPartialDirectories();
 
     // Extract body content (everything after frontmatter)
     const bodyContent = this.extractBodyContent(
@@ -131,7 +147,7 @@ export class HandlebarsRulesetCompiler {
       // Get or compile template with caching
       const template = this.getOrCompileTemplate(bodyContent);
 
-      const compiledContent = template(context);
+      const compiledContent = typeof template === 'function' ? template(context) : this.hbs.compile(template)(context);
 
       // Build the compiled document
       const compiledDoc: CompiledDoc = {
@@ -177,7 +193,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Extracts body content by removing frontmatter
+
+- Extracts body content by removing frontmatter
    */
   private extractBodyContent(
     content: string,
@@ -210,7 +227,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Builds the Handlebars context for template compilation
+
+- Builds the Handlebars context for template compilation
    */
   private buildContext(
     source: {
@@ -253,7 +271,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Gets display name for a provider
+
+- Gets display name for a provider
    */
   private getProviderDisplayName(providerId: string): string {
     const displayNames: Record<string, string> = {
@@ -268,7 +287,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Gets provider type
+
+- Gets provider type
    */
   private getProviderType(providerId: string): string {
     const types: Record<string, string> = {
@@ -283,7 +303,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Gets provider capabilities
+
+- Gets provider capabilities
    */
   private getProviderCapabilities(providerId: string): string[] {
     const capabilities: Record<string, string[]> = {
@@ -298,7 +319,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Registers core Handlebars helpers
+
+- Registers core Handlebars helpers
    */
   private registerCoreHelpers(): void {
     // Provider conditional helpers
@@ -318,7 +340,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Pre-registers a section helper for a given name
+
+- Pre-registers a section helper for a given name
    */
   private registerSectionHelper(name: string): void {
     if (!(this.reservedHelpers.has(name) || this.hbs.helpers[name])) {
@@ -327,7 +350,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Scans template content and pre-registers section helpers
+
+- Scans template content and pre-registers section helpers
    */
   private preRegisterSectionHelpers(content: string): void {
     // Simple regex to find block helpers: {{#name}} or {{#name arg1 arg2}}
@@ -343,7 +367,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Creates the if-provider helper
+
+- Creates the if-provider helper
    */
   private createIfProviderHelper() {
     return function (
@@ -362,7 +387,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Creates the unless-provider helper
+
+- Creates the unless-provider helper
    */
   private createUnlessProviderHelper() {
     return function (
@@ -381,8 +407,9 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Creates the switch-provider helper
-   * Sets up a switch context for case/default helpers to use
+
+- Creates the switch-provider helper
+- Sets up a switch context for case/default helpers to use
    */
   private createSwitchProviderHelper() {
     return function (
@@ -406,8 +433,9 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Creates the case helper
-   * Matches against the current provider ID in a switch-provider context
+
+- Creates the case helper
+- Matches against the current provider ID in a switch-provider context
    */
   private createCaseHelper() {
     return function (
@@ -442,8 +470,9 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Creates the default helper
-   * Executes if no case matched in a switch-provider context
+
+- Creates the default helper
+- Executes if no case matched in a switch-provider context
    */
   private createDefaultHelper() {
     return function (
@@ -467,7 +496,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Creates the missing helper handler for freeform sections
+
+- Creates the missing helper handler for freeform sections
    */
   private createMissingHelperHandler() {
     return (context: unknown, options: SectionOptions): string => {
@@ -486,7 +516,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Creates a section helper for freeform section names
+
+- Creates a section helper for freeform section names
    */
   private createSectionHelper(sectionName: string) {
     return function (this: RulesetContext, options: SectionOptions): string {
@@ -538,15 +569,259 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Sets up partial resolution for @-prefixed partials
+
+- Sets up partial resolution directories based on current source file
    */
-  private setupPartialResolver(): void {
-    // TODO: Implement @-prefixed partial loading from _partials/
-    // This will load files like @common-patterns from .ruleset/src/_partials/
+  private setupPartialDirectories(): void {
+    if (!this.currentSourcePath) {
+      return;
+    }
+
+    this.partialDirectories = [];
+    let currentDir = dirname(this.currentSourcePath);
+
+    // Look for _partials directories up the tree
+    for (let i = 0; i < 10; i++) { // Limit search depth
+      const partialsDir = join(currentDir, '_partials');
+      if (existsSync(partialsDir)) {
+        this.partialDirectories.push(partialsDir);
+        pinoLogger.debug(`Found partials directory: ${partialsDir}`);
+      }
+
+      const parent = dirname(currentDir);
+      if (parent === currentDir) {
+        break; // Reached root
+      }
+      currentDir = parent;
+    }
+
+    // Also check for .ruleset/src/_partials from project root
+    const projectRoot = this.findProjectRoot(dirname(this.currentSourcePath));
+    if (projectRoot) {
+      const projectPartialsDir = join(projectRoot, '.ruleset', 'src', '_partials');
+      if (existsSync(projectPartialsDir) && !this.partialDirectories.includes(projectPartialsDir)) {
+        this.partialDirectories.push(projectPartialsDir);
+        pinoLogger.debug(`Found project partials directory: ${projectPartialsDir}`);
+      }
+    }
   }
 
   /**
-   * Gets a cached template or compiles and caches a new one
+
+- Finds the project root by looking for ruleset.config files
+   */
+  private findProjectRoot(startPath: string): string | null {
+    let currentDir = startPath;
+
+    for (let i = 0; i < 10; i++) { // Limit search depth
+      const configFiles = [
+        'ruleset.config.jsonc',
+        'ruleset.config.json',
+        'package.json',
+        '.git'
+      ];
+
+      for (const configFile of configFiles) {
+        if (existsSync(join(currentDir, configFile))) {
+          return currentDir;
+        }
+      }
+      
+      const parent = dirname(currentDir);
+      if (parent === currentDir) {
+        break; // Reached root
+      }
+      currentDir = parent;
+    }
+
+    return null;
+  }
+
+  /**
+
+- Sets up partial resolution for @-prefixed partials
+   */
+  private setupPartialResolver(): void {
+    this.hbs.registerHelper('partial', this.createPartialHelper());
+
+    // Set up dynamic partial loader for {{> partialName}} syntax
+    const originalPartials = this.hbs.partials as Record<string, unknown>;
+
+    // Use Object.defineProperty to work around readonly constraint
+    Object.defineProperty(this.hbs, 'partials', {
+      value: new Proxy(originalPartials, {
+      get: (target: any, prop: string | symbol) => {
+        if (typeof prop === 'string') {
+          // Check if partial is already registered
+          if (target[prop]) {
+            return target[prop];
+          }
+
+          // Try to load partial dynamically
+          const partialTemplate = this.resolvePartial(prop);
+          if (partialTemplate) {
+            // Cache the compiled template
+            target[prop] = partialTemplate;
+            return partialTemplate;
+          }
+          
+          // Return a fallback template for missing partials
+          const fallbackTemplate = this.hbs.compile(`<!-- Partial not found: ${prop} -->`, {
+            noEscape: true,
+            strict: false,
+          });
+          target[prop] = fallbackTemplate;
+          return fallbackTemplate;
+        }
+        
+        return target[prop];
+      },
+      
+      has: (target: any, prop: string | symbol) => {
+        if (typeof prop === 'string') {
+          // Always return true to prevent Handlebars from throwing
+          // We'll handle missing partials in the get handler
+          return true;
+        }
+        
+        return prop in target;
+      }
+    }),
+      configurable: true,
+      writable: true
+    });
+  }
+
+  /**
+
+- Checks if a partial can be resolved without actually loading it
+  - @internal - Currently unused but may be used for optimization in future
+   */
+  // private _canResolvePartial(partialName: string): boolean {
+  //   // Check cache first
+  //   if (this.partialCache.has(partialName)) {
+  //     return true;
+  //   }
+
+  //   // Handle @-prefixed partials
+  //   const fileName = partialName.startsWith('@')
+  //     ? partialName.substring(1)
+  //     : partialName;
+
+  //   // Check if file exists in any directory
+  //   const extensions = ['.md', '.hbs', '.handlebars', '.txt', ''];
+
+  //   for (const directory of this.partialDirectories) {
+  //     for (const ext of extensions) {
+  //       const filePath = join(directory, fileName + ext);
+  //       if (existsSync(filePath)) {
+  //         return true;
+  //       }
+  //     }
+  //   }
+
+  //   return false;
+  // }
+
+  /**
+
+- Creates the {{partial}} helper for explicit partial inclusion
+   */
+  private createPartialHelper() {
+    return (partialName: string, options: Handlebars.HelperOptions): string => {
+      const context = options.data?.root || options.data || {};
+      const partialTemplate = this.resolvePartial(partialName);
+
+      if (!partialTemplate) {
+        pinoLogger.warn(`Partial not found: ${partialName}`);
+        return `<!-- Partial not found: ${partialName} -->`;
+      }
+
+      return typeof partialTemplate === 'function' ? partialTemplate(context) : this.hbs.compile(partialTemplate)(context);
+    };
+  }
+
+  /**
+
+- Resolves a partial by name, supporting @-prefixed partials
+   */
+  private resolvePartial(partialName: string): Handlebars.Template | null {
+    // Check cache first
+    if (this.partialCache.has(partialName)) {
+      const cachedContent = this.partialCache.get(partialName)!;
+      return this.hbs.compile(cachedContent, {
+        noEscape: true,
+        strict: false,
+      });
+    }
+
+    // Handle @-prefixed partials
+    if (partialName.startsWith('@')) {
+      const fileName = partialName.substring(1); // Remove @
+      const partialContent = this.loadPartialFromDirectories(fileName);
+
+      if (partialContent) {
+        this.partialCache.set(partialName, partialContent);
+        return this.hbs.compile(partialContent, {
+          noEscape: true,
+          strict: false,
+        });
+      }
+    } else {
+      // Handle regular partial names
+      const partialContent = this.loadPartialFromDirectories(partialName);
+
+      if (partialContent) {
+        this.partialCache.set(partialName, partialContent);
+        return this.hbs.compile(partialContent, {
+          noEscape: true,
+          strict: false,
+        });
+      }
+    }
+
+    return null;
+  }
+
+  /**
+
+- Loads a partial file from the configured directories
+   */
+  private loadPartialFromDirectories(fileName: string): string | null {
+    // Try various file extensions
+    const extensions = ['.md', '.hbs', '.handlebars', '.txt', ''];
+
+    for (const directory of this.partialDirectories) {
+      for (const ext of extensions) {
+        const filePath = join(directory, fileName + ext);
+
+        if (existsSync(filePath)) {
+          try {
+            const content = readFileSync(filePath, 'utf8');
+            pinoLogger.debug(`Loaded partial ${fileName} from ${filePath}`);
+            return content;
+          } catch (error) {
+            pinoLogger.warn({ error }, `Failed to read partial ${fileName} from ${filePath}`);
+            continue;
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  /**
+
+- Clears the partial cache (useful for testing or recompilation)
+   */
+  public clearPartialCache(): void {
+    this.partialCache.clear();
+  }
+
+  /**
+
+- Gets a cached template or compiles and caches a new one
    */
   private getOrCompileTemplate(content: string): Handlebars.Template {
     if (!this.cacheEnabled) {
@@ -581,14 +856,16 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Generates a hash for template content to use as cache key
+
+- Generates a hash for template content to use as cache key
    */
   private generateContentHash(content: string): string {
     return createHash('sha256').update(content.trim()).digest('hex').substring(0, 16);
   }
 
   /**
-   * Caches a compiled template with metadata
+
+- Caches a compiled template with metadata
    */
   private cacheTemplate(contentHash: string, template: Handlebars.Template): void {
     // Enforce cache size limit
@@ -609,26 +886,28 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Evicts oldest templates when cache is full
+
+- Evicts oldest templates when cache is full
    */
   private evictOldestTemplates(): void {
     const entries = Array.from(this.templateCache.entries());
-    
+
     // Sort by last accessed time (oldest first)
     entries.sort((a, b) => a[1].lastAccessed.getTime() - b[1].lastAccessed.getTime());
-    
+
     // Remove oldest 25% of entries
     const toRemove = Math.floor(entries.length * 0.25) || 1;
-    
+
     for (let i = 0; i < toRemove; i++) {
       this.templateCache.delete(entries[i][0]);
     }
-    
+
     pinoLogger.debug(`Evicted ${toRemove} templates from cache`);
   }
 
   /**
-   * Clears the entire template cache
+
+- Clears the entire template cache
    */
   public clearTemplateCache(): void {
     this.templateCache.clear();
@@ -636,7 +915,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Gets template cache statistics
+
+- Gets template cache statistics
    */
   public getCacheStats(): {
     size: number;
@@ -664,7 +944,8 @@ export class HandlebarsRulesetCompiler {
   }
 
   /**
-   * Preheats the cache by compiling common templates
+
+- Preheats the cache by compiling common templates
    */
   public preheatCache(templates: string[]): void {
     if (!this.cacheEnabled) {
@@ -672,18 +953,19 @@ export class HandlebarsRulesetCompiler {
     }
 
     pinoLogger.debug(`Preheating cache with ${templates.length} templates`);
-    
+
     for (const template of templates) {
       try {
         this.getOrCompileTemplate(template);
       } catch (error) {
-        pinoLogger.warn(`Failed to preheat template:`, error);
+        pinoLogger.warn({ error }, `Failed to preheat template`);
       }
     }
   }
 
   /**
-   * Enables or disables template caching
+
+- Enables or disables template caching
    */
   public setCacheEnabled(enabled: boolean): void {
     this.cacheEnabled = enabled;
