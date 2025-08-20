@@ -5,19 +5,19 @@
 ### 1. Create Plugin File
 
 ```bash
-touch packages/core/src/providers/[provider-name].ts
+bunx shx touch packages/core/src/providers/[provider-name].ts
 ```
 
 ### 2. Create Test File
 
 ```bash
-touch packages/core/src/providers/[provider-name].test.ts
+bunx shx touch packages/core/src/providers/[provider-name].test.ts
 ```
 
 ### 3. Create Plugin Type Definition
 
 ```bash
-touch packages/types/src/providers/[provider-name].ts
+bunx shx touch packages/types/src/providers/[provider-name].ts
 ```
 
 ## Develop Provider Plugin
@@ -52,7 +52,14 @@ echo "{{instructions}}Test content{{/instructions}}" | \
 ### Enable Debug Logging
 
 ```bash
+# macOS/Linux
 DEBUG=ruleset:provider:* bun run compile --provider [provider-name]
+
+# Windows (PowerShell)
+$env:DEBUG="ruleset:provider:*"; bun run compile --provider [provider-name]
+
+# Cross-platform
+bunx cross-env DEBUG=ruleset:provider:* bun run compile --provider [provider-name]
 ```
 
 ### Inspect Compiled Output

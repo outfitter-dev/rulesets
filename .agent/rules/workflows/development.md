@@ -3,7 +3,7 @@
 ## Start Development Mode
 
 ```bash
-turbo dev
+turbo run dev
 ```
 
 ## Install Dependencies
@@ -33,7 +33,11 @@ bun outdated
 ## Link Local Package
 
 ```bash
-bun link [package-name]
+# In the source package
+cd packages/[local-package] && bun link
+
+# In the consumer package
+cd packages/[consumer] && bun link [local-package]
 ```
 
 ## Run Development Server
@@ -45,7 +49,14 @@ bun run dev
 ## Debug Mode
 
 ```bash
+# macOS/Linux
 DEBUG=* bun run dev
+
+# Windows (PowerShell)
+$env:DEBUG="*"; bun run dev
+
+# Cross-platform
+bunx cross-env DEBUG=* bun run dev
 ```
 
 ## Development with Hot Reload
@@ -58,4 +69,10 @@ bun --hot run dev
 
 ```bash
 turbo clean && bun install
+```
+
+## Develop a Single Workspace
+
+```bash
+turbo run dev --filter=@scope/[package-name]
 ```

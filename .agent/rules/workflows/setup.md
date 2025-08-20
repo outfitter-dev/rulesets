@@ -35,21 +35,23 @@ cp .env.example .env.local
 curl -fsSL https://bun.sh/install | bash
 ```
 
+On Windows, use the official installer from <https://bun.sh/> or `powershell -c "irm bun.sh/install.ps1 | iex"`.
+
 ### Install Required Tools
 
 ```bash
 # Install GitHub CLI
 brew install gh
 
-# Install Turbo
-bun add -g turbo
+# Add Turbo (pinned) to the repo
+bun add -D turbo
 ```
 
 ### Configure Git
 
 ```bash
-git config user.name "[Your Name]"
-git config user.email "[your.email@example.com]"
+git config --local user.name "[Your Name]"
+git config --local user.email "[your.email@example.com]"
 ```
 
 ## IDE Setup
@@ -99,7 +101,7 @@ bun run doctor
 ### Run Test Build
 
 ```bash
-turbo build && turbo test
+bunx turbo build && bunx turbo test
 ```
 
 ### Check Environment

@@ -54,13 +54,15 @@ bun changeset publish --dry-run
 ### Check Current Version
 
 ```bash
-cat package.json | grep version
+jq -r '.version' package.json
+# Fallback (if jq unavailable):
+# grep -oP '(?<=^  "version": ")[^"]+' package.json
 ```
 
 ### Tag Release
 
 ```bash
-git tag v[version]
+git tag -a v[version] -m "Release v[version]"
 git push origin v[version]
 ```
 
@@ -87,7 +89,7 @@ bun run changelog
 ### Build for Production
 
 ```bash
-NODE_ENV=production turbo build
+NODE_ENV=production turbo run build
 ```
 
 ### Run Release Tests

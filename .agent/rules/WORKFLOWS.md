@@ -33,7 +33,7 @@ Essential git commands for branching, committing, and managing changes.
 GitHub PR workflow from creation through review to merge.
 
 ### [Release](./workflows/release.md)
-Release management with changesets, versioning, and NPM publishing.
+Manage releases with changesets, versioning, and npm publishing.
 
 ## CI/CD & Deployment
 
@@ -71,9 +71,9 @@ Systematic approach to investigating, fixing, and deploying bug fixes.
 ```bash
 # Development
 bun install              # Install dependencies
-turbo dev               # Start dev mode
-turbo build             # Build all packages
-turbo test              # Run all tests
+turbo run dev           # Start dev mode
+turbo run build         # Build all packages
+turbo run test          # Run all tests
 
 # Code Quality
 bun run lint            # Run linter
@@ -87,8 +87,8 @@ bun run compile --watch # Watch mode
 # Git
 git checkout -b feature/name  # New feature branch
 git add -A && git commit -m "feat: description"  # Commit
-git push -u origin $(git branch --show-current)  # Push
-gh pr create            # Create PR
+git push -u origin HEAD          # Push current branch
+gh pr create -f -B main          # Create PR against main
 
 # Quick Checks
 bun run ci:local        # Full CI check locally
@@ -98,7 +98,7 @@ bun run ci:local        # Full CI check locally
 
 - **Daily Development**: build, test, lint, development
 - **Feature Work**: feature-implementation, provider-plugin
-- **Bug Fixes**: bug-fix, debugging, troubleshooting  
+- **Bug Fixes**: bug-fix, debugging, troubleshooting
 - **Releases**: release, documentation
 - **Maintenance**: setup, ci-cd
 - **Collaboration**: git, pull-request

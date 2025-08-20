@@ -127,7 +127,7 @@ If you intend a `WORKFLOWS.md` under `.agent/rules`, I recommend it becomes a â€
         - uses: oven-sh/setup-bun@v2
           with: { bun-version: '1.2.x' }
         - run: bun install --frozen-lockfile
-        - run: bun turbo test ${{ inputs.scope }}
+        - run: bunx turbo run test ${{ inputs.scope }}
   ```
 
 ## Summary

@@ -5,8 +5,8 @@
 ### Push Branch and Create PR
 
 ```bash
-git push -u origin $(git branch --show-current)
-gh pr create --title "[type]: [description]" --body "[detailed description]"
+git push -u origin HEAD
+gh pr create --base main --head "$(git branch --show-current)" --title "[type]: [description]" --body "[detailed description]"
 ```
 
 ### Create Draft PR
@@ -24,13 +24,13 @@ gh pr create --template .github/pull_request_template.md
 ### Create PR with Reviewers
 
 ```bash
-gh pr create --reviewer [username1],[username2]
+gh pr create --reviewer [username1] --reviewer [username2]
 ```
 
 ### Create PR with Labels
 
 ```bash
-gh pr create --label "enhancement,documentation"
+gh pr create --label enhancement --label documentation
 ```
 
 ## Manage Pull Requests

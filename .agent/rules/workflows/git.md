@@ -6,6 +6,8 @@
 
 ```bash
 git checkout -b feature/[feature-name]
+# or
+git switch -c feature/[feature-name]
 ```
 
 ### Create Fix Branch
@@ -29,7 +31,7 @@ git checkout main
 ### Update from Main
 
 ```bash
-git fetch origin main && git merge origin/main
+git fetch origin main && git rebase origin/main
 ```
 
 ## Committing Changes
@@ -76,7 +78,7 @@ git rebase -i HEAD~[number-of-commits]
 ### Push New Branch
 
 ```bash
-git push -u origin $(git branch --show-current)
+git push -u origin HEAD
 ```
 
 ### Force Push (After Rebase)

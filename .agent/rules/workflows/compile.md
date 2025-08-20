@@ -38,7 +38,14 @@ bun run compile --source [path/to/rule.md]
 ## Compile with Debug Output
 
 ```bash
+# macOS/Linux
 DEBUG=ruleset:* bun run compile
+
+# Windows (PowerShell)
+$env:DEBUG="ruleset:*"; bun run compile
+
+# Alternatively (cross-platform)
+bunx cross-env DEBUG=ruleset:* bun run compile
 ```
 
 ## Dry Run (Preview Output)

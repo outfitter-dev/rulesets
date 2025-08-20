@@ -3,19 +3,19 @@
 ## Quick Build
 
 ```bash
-turbo build
+turbo run build
 ```
 
 ## Full Build Pipeline
 
 ```bash
-bun install && turbo build
+bun install && turbo run build
 ```
 
 ## Clean Build
 
 ```bash
-turbo clean && turbo build
+turbo clean && turbo run build
 ```
 
 ## Build Specific Package
@@ -24,32 +24,45 @@ turbo clean && turbo build
 cd packages/[package-name] && bun run build
 ```
 
+## Build Only Affected/Filtered Workspaces
+
+```bash
+# by workspace name
+turbo run build --filter=@scope/[package-name]
+
+# by path
+turbo run build --filter=./packages/[package-name]
+
+# only changed since main
+turbo run build --filter=...[main]
+```
+
 ## Build with Cache Disabled
 
 ```bash
-turbo build --force
+turbo run build --force
 ```
 
 ## Build in Production Mode
 
 ```bash
-NODE_ENV=production turbo build
+NODE_ENV=production turbo run build
 ```
 
 ## Watch Mode Build
 
 ```bash
-turbo build --watch
+turbo run build --watch
 ```
 
 ## Build with Source Maps
 
 ```bash
-turbo build --source-maps
+turbo run build --source-maps
 ```
 
 ## Verify Build Output
 
 ```bash
-turbo build && ls -la packages/*/dist/
+turbo run build && ls -la packages/*/dist/
 ```

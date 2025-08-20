@@ -3,7 +3,7 @@
 ## Run All Tests
 
 ```bash
-turbo test
+turbo run test
 ```
 
 ## Run Tests in Watch Mode
@@ -24,6 +24,12 @@ bun test --coverage
 cd packages/[package-name] && bun test
 ```
 
+## Test Only Selected Workspaces
+
+```bash
+turbo run test --filter=@scope/[package-name]
+```
+
 ## Test Specific File
 
 ```bash
@@ -39,19 +45,34 @@ bun test --grep "pattern"
 ## Run Unit Tests Only
 
 ```bash
-bun test unit
+# by directory convention
+bun test "packages/**/__tests__/unit/**/*.test.ts"
+
+# or by grep tag in test titles
+bun test --grep "@unit"
 ```
 
 ## Run Integration Tests
 
 ```bash
-bun test integration
+# by directory convention
+bun test "packages/**/__tests__/integration/**/*.test.ts"
+
+# or by grep tag in test titles
+bun test --grep "@integration"
 ```
 
 ## Test with Debug Output
 
 ```bash
+# macOS/Linux
 DEBUG=* bun test
+
+# Windows (PowerShell)
+$env:DEBUG="*"; bun test
+
+# Cross-platform
+bunx cross-env DEBUG=* bun test
 ```
 
 ## Update Test Snapshots

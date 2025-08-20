@@ -36,6 +36,12 @@ bun run format --check
 bun run typecheck
 ```
 
+Tip: In a monorepo, prefer running type checks via Turbo at the root to ensure all packages are validated:
+
+```bash
+bunx turbo run typecheck
+```
+
 ## Type Check Specific Package
 
 ```bash
@@ -46,6 +52,12 @@ cd packages/[package-name] && bun run typecheck
 
 ```bash
 bun run lint && bun run format && bun run typecheck
+```
+
+## Lint Markdown
+
+```bash
+bun run lint:md
 ```
 
 ## Pre-commit Validation
