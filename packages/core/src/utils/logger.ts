@@ -4,7 +4,9 @@
  */
 
 import type { Logger as PinoLogger } from 'pino';
-import pino from 'pino';
+import * as pinoModule from 'pino';
+
+const pino = (pinoModule as any).default || pinoModule;
 
 // Define log levels for the application
 export type LogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
@@ -33,7 +35,7 @@ export function createLogger(options: LoggerOptions = {}): PinoLogger {
     return 'info';
   }
 
-  const defaultOptions: pino.LoggerOptions = {
+  const defaultOptions = {
     name: options.name || '@rulesets/core',
     level: options.level || getDefaultLogLevel(),
     formatters: {
