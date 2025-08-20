@@ -1,6 +1,7 @@
 // TLDR: Handlebars-based compiler for Rulesets (ruleset-v0.2-beta+)
-// TLDR: Implements full marker processing with Handlebars templating engine
+// TLDR: Implements full marker processing with Handlebars templating engine and template caching
 
+import { createHash } from 'node:crypto';
 import Handlebars from 'handlebars';
 import type { CompiledDoc, ParsedDoc } from '../interfaces';
 import { getChildLogger } from '../utils/logger';
@@ -59,7 +60,18 @@ interface SectionOptions extends Handlebars.HelperOptions {
 }
 
 /**
- * Handlebars-based Rulesets compiler
+ * Template cache entry with metadata
+ */
+interface CachedTemplate {
+  template: Handlebars.Template;
+  contentHash: string;
+  compiledAt: Date;
+  accessCount: number;
+  lastAccessed: Date;
+}
+
+/**
+ * Handlebars-based Rulesets compiler with template caching
  */
 export class HandlebarsRulesetCompiler {
   private hbs: typeof Handlebars;
@@ -74,9 +86,16 @@ export class HandlebarsRulesetCompiler {
     'case',
     'default',
   ]);
+  
+  // Template caching system
+  private templateCache = new Map<string, CachedTemplate>();
+  private maxCacheSize = 1000; // Maximum number of cached templates
+  private cacheEnabled = true; // Can be disabled for testing
 
-  constructor() {
+  constructor(options: { cacheEnabled?: boolean; maxCacheSize?: number } = {}) {
     this.hbs = Handlebars.create();
+    this.cacheEnabled = options.cacheEnabled ?? true;
+    this.maxCacheSize = options.maxCacheSize ?? 1000;
     this.registerCoreHelpers();
     this.setupPartialResolver();
   }
@@ -109,11 +128,8 @@ export class HandlebarsRulesetCompiler {
       // Build compilation context
       const context = this.buildContext(source, providerId, projectConfig);
 
-      // Compile template with Handlebars
-      const template = this.hbs.compile(bodyContent, {
-        noEscape: true, // Preserve markdown formatting
-        strict: false, // Allow undefined variables for flexibility
-      });
+      // Get or compile template with caching
+      const template = this.getOrCompileTemplate(bodyContent);
 
       const compiledContent = template(context);
 
@@ -527,5 +543,153 @@ export class HandlebarsRulesetCompiler {
   private setupPartialResolver(): void {
     // TODO: Implement @-prefixed partial loading from _partials/
     // This will load files like @common-patterns from .ruleset/src/_partials/
+  }
+
+  /**
+   * Gets a cached template or compiles and caches a new one
+   */
+  private getOrCompileTemplate(content: string): Handlebars.Template {
+    if (!this.cacheEnabled) {
+      return this.hbs.compile(content, {
+        noEscape: true,
+        strict: false,
+      });
+    }
+
+    const contentHash = this.generateContentHash(content);
+    const cached = this.templateCache.get(contentHash);
+
+    if (cached) {
+      // Update access metadata
+      cached.accessCount++;
+      cached.lastAccessed = new Date();
+      pinoLogger.debug(`Template cache hit for hash: ${contentHash}`);
+      return cached.template;
+    }
+
+    // Compile new template
+    const template = this.hbs.compile(content, {
+      noEscape: true,
+      strict: false,
+    });
+
+    // Cache the compiled template
+    this.cacheTemplate(contentHash, template);
+    pinoLogger.debug(`Template compiled and cached with hash: ${contentHash}`);
+
+    return template;
+  }
+
+  /**
+   * Generates a hash for template content to use as cache key
+   */
+  private generateContentHash(content: string): string {
+    return createHash('sha256').update(content.trim()).digest('hex').substring(0, 16);
+  }
+
+  /**
+   * Caches a compiled template with metadata
+   */
+  private cacheTemplate(contentHash: string, template: Handlebars.Template): void {
+    // Enforce cache size limit
+    if (this.templateCache.size >= this.maxCacheSize) {
+      this.evictOldestTemplates();
+    }
+
+    const now = new Date();
+    const cacheEntry: CachedTemplate = {
+      template,
+      contentHash,
+      compiledAt: now,
+      accessCount: 1,
+      lastAccessed: now,
+    };
+
+    this.templateCache.set(contentHash, cacheEntry);
+  }
+
+  /**
+   * Evicts oldest templates when cache is full
+   */
+  private evictOldestTemplates(): void {
+    const entries = Array.from(this.templateCache.entries());
+    
+    // Sort by last accessed time (oldest first)
+    entries.sort((a, b) => a[1].lastAccessed.getTime() - b[1].lastAccessed.getTime());
+    
+    // Remove oldest 25% of entries
+    const toRemove = Math.floor(entries.length * 0.25) || 1;
+    
+    for (let i = 0; i < toRemove; i++) {
+      this.templateCache.delete(entries[i][0]);
+    }
+    
+    pinoLogger.debug(`Evicted ${toRemove} templates from cache`);
+  }
+
+  /**
+   * Clears the entire template cache
+   */
+  public clearTemplateCache(): void {
+    this.templateCache.clear();
+    pinoLogger.debug('Template cache cleared');
+  }
+
+  /**
+   * Gets template cache statistics
+   */
+  public getCacheStats(): {
+    size: number;
+    maxSize: number;
+    hitRate?: number;
+    entries: Array<{
+      hash: string;
+      compiledAt: Date;
+      accessCount: number;
+      lastAccessed: Date;
+    }>;
+  } {
+    const entries = Array.from(this.templateCache.values()).map(entry => ({
+      hash: entry.contentHash,
+      compiledAt: entry.compiledAt,
+      accessCount: entry.accessCount,
+      lastAccessed: entry.lastAccessed,
+    }));
+
+    return {
+      size: this.templateCache.size,
+      maxSize: this.maxCacheSize,
+      entries,
+    };
+  }
+
+  /**
+   * Preheats the cache by compiling common templates
+   */
+  public preheatCache(templates: string[]): void {
+    if (!this.cacheEnabled) {
+      return;
+    }
+
+    pinoLogger.debug(`Preheating cache with ${templates.length} templates`);
+    
+    for (const template of templates) {
+      try {
+        this.getOrCompileTemplate(template);
+      } catch (error) {
+        pinoLogger.warn(`Failed to preheat template:`, error);
+      }
+    }
+  }
+
+  /**
+   * Enables or disables template caching
+   */
+  public setCacheEnabled(enabled: boolean): void {
+    this.cacheEnabled = enabled;
+    if (!enabled) {
+      this.clearTemplateCache();
+    }
+    pinoLogger.debug(`Template caching ${enabled ? 'enabled' : 'disabled'}`);
   }
 }
