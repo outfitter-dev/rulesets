@@ -39,7 +39,7 @@ export function createLogger(options: LoggerOptions = {}): PinoLogger {
     name: options.name || '@rulesets/core',
     level: options.level || getDefaultLogLevel(),
     formatters: {
-      level: (label) => {
+      level: (label: string) => {
         return { level: label.toUpperCase() };
       },
     },
