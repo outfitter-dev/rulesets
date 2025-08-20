@@ -1,216 +1,172 @@
 #!/usr/bin/env node
 
-// TLDR: CLI for Rulesets compiler (ruleset-v0.1-beta)
-// TLDR: ruleset-v0.1-beta Basic CLI implementation with provider filtering
+// TLDR: CLI for Rulesets - clean, simple, Handlebars-powered
+// TLDR: Auto-discovery, provider filtering, elegant build workflow
 
-import { promises as fs } from 'node:fs';
-import { join, resolve } from 'node:path';
 import { Command } from 'commander';
-import { ConsoleLogger, runRulesetsV0, type RulesetConfig } from '@rulesets/core';
+import { runRulesets, ConsoleLogger } from '@rulesets/core';
+import chalk from 'chalk';
+import { resolve, join } from 'node:path';
+import { existsSync, readdirSync, statSync } from 'node:fs';
 
 const program = new Command();
 
 program
   .name('rulesets')
-  .description('CLI for Rulesets compiler')
-  .version('0.1.0');
+  .description('Build AI rules for multiple providers from source files')
+  .version('0.2.0')
+  .option('--provider <providers>', 'Comma-separated list of providers to build for')
+  .option('--dev', 'Enable development mode with enhanced debugging', false)
+  .option('--no-cache', 'Disable template and partial caching', false)
+  .action(async (options) => {
+    await buildRulesets(options);
+  });
 
 program
-  .command('compile')
-  .description('Compile rulesets files')
-  .argument('<input>', 'Input file or directory')
-  .option('-o, --output <dir>', 'Output directory', '.ruleset/dist')
-  .option(
-    '-p, --provider <providers...>',
-    'Filter compilation to specific providers (e.g., cursor, windsurf, claude-code)'
-  )
-  .option('--verbose', 'Enable verbose logging')
-  .option('--quiet', 'Suppress non-error output')
-  .action(async (input, options) => {
-    const logger = new ConsoleLogger();
-    
-    // Note: ConsoleLogger doesn't support setLevel yet
-    // TODO: Enhanced logger configuration for quiet/verbose modes will be added in future version
-    if (options.quiet) {
-      // Suppress non-error output by overriding logger methods
-      logger.info = () => {};
-      logger.debug = () => {};
-      logger.warn = () => {};
-    }
-
-    try {
-      // Resolve input path
-      const inputPath = resolve(input);
-      
-      // Check if input is a file or directory
-      const stat = await fs.stat(inputPath);
-      const filesToProcess: string[] = [];
-      
-      if (stat.isFile()) {
-        // Single file
-        if (!inputPath.endsWith('.rule.md') && !inputPath.endsWith('.ruleset.md')) {
-          logger.warn(`Input file ${inputPath} does not have expected extension (.rule.md or .ruleset.md)`);
-        }
-        filesToProcess.push(inputPath);
-      } else if (stat.isDirectory()) {
-        // Directory - find all rule files
-        const findRuleFiles = async (dir: string): Promise<string[]> => {
-          const files: string[] = [];
-          const entries = await fs.readdir(dir, { withFileTypes: true });
-          
-          for (const entry of entries) {
-            if (entry.isDirectory()) {
-              // Skip certain directories
-              if (!entry.name.startsWith('.') && !entry.name.startsWith('node_modules')) {
-                files.push(...await findRuleFiles(join(dir, entry.name)));
-              }
-            } else if (entry.isFile()) {
-              if (entry.name.endsWith('.rule.md') || entry.name.endsWith('.ruleset.md')) {
-                files.push(join(dir, entry.name));
-              }
-            }
-          }
-          return files;
-        };
-        
-        filesToProcess.push(...await findRuleFiles(inputPath));
-        
-        if (filesToProcess.length === 0) {
-          throw new Error(`No .rule.md or .ruleset.md files found in directory: ${inputPath}`);
-        }
-        
-        logger.info(`Found ${filesToProcess.length} rule file(s) to process`);
-      } else {
-        throw new Error(`Input path is neither a file nor a directory: ${inputPath}`);
-      }
-
-      // Build configuration override for provider filtering
-      let configOverride: Partial<RulesetConfig> = {
-        outputDirectory: options.output,
-      };
-
-      // Apply provider filtering if specified
-      if (options.provider && options.provider.length > 0) {
-        logger.info(`Filtering compilation to providers: ${options.provider.join(', ')}`);
-        
-        // Build providers config with only specified providers enabled
-        const providers: Record<string, { enabled: boolean }> = {};
-        
-        // First disable all providers
-        const allProviders = [
-          'cursor', 'windsurf', 'claude-code', 'codex-cli', 'amp', 'opencode'
-        ];
-        
-        for (const provider of allProviders) {
-          providers[provider] = { enabled: false };
-        }
-        
-        // Then enable only the specified providers
-        for (const provider of options.provider) {
-          if (allProviders.includes(provider)) {
-            providers[provider] = { enabled: true };
-          } else {
-            logger.warn(`Unknown provider: ${provider}. Available providers: ${allProviders.join(', ')}`);
-          }
-        }
-        
-        // Create a new config override with providers
-        configOverride = {
-          ...configOverride,
-          providers: providers as Readonly<Record<string, { enabled: boolean }>>,
-        };
-      }
-
-      // Process each file
-      for (const filePath of filesToProcess) {
-        logger.info(`Processing: ${filePath}`);
-        await runRulesetsV0(filePath, logger, configOverride);
-      }
-
-      logger.info(`Successfully processed ${filesToProcess.length} file(s)`);
-    } catch (error) {
-      logger.error(`Compilation failed: ${error instanceof Error ? error.message : String(error)}`);
-      process.exit(1);
-    }
+  .command('build')
+  .description('Build rulesets (same as running without command)')
+  .option('--provider <providers>', 'Comma-separated list of providers to build for')
+  .option('--dev', 'Enable development mode with enhanced debugging', false)
+  .option('--no-cache', 'Disable template and partial caching', false)
+  .action(async (options) => {
+    await buildRulesets(options);
   });
+
+async function buildRulesets(options: any) {
+  const logger = new ConsoleLogger();
+  
+  try {
+    logger.info(chalk.blue('🚀 Building Rulesets...'));
+    
+    // Auto-discover source files
+    const sourceFiles = await discoverSourceFiles();
+    
+    if (sourceFiles.length === 0) {
+      logger.warn('No source files found in .ruleset/src/');
+      logger.info('Run `rulesets init` to set up a new project');
+      return;
+    }
+    
+    logger.info(`📂 Found ${sourceFiles.length} source file${sourceFiles.length === 1 ? '' : 's'}`);
+    
+    // Parse provider filter if provided
+    const providers = options.provider ? options.provider.split(',').map((p: string) => p.trim()) : undefined;
+    if (providers) {
+      logger.info(`🎯 Building for providers: ${providers.join(', ')}`);
+    }
+    
+    // Build each source file
+    for (const sourceFile of sourceFiles) {
+      logger.info(`📄 Processing: ${sourceFile}`);
+      
+      await runRulesets(sourceFile, logger, {
+        providers,
+        developmentMode: options.dev,
+        cacheTemplates: options.cache !== false,
+      });
+    }
+    
+    logger.info(chalk.green('✅ Build completed successfully!'));
+  } catch (error) {
+    logger.error(chalk.red('❌ Build failed:'), error);
+    process.exit(1);
+  }
+}
+
+async function discoverSourceFiles(): Promise<string[]> {
+  const sourceDir = '.ruleset/src';
+  const files: string[] = [];
+  
+  if (!existsSync(sourceDir)) {
+    return files;
+  }
+  
+  try {
+    const entries = readdirSync(sourceDir);
+    
+    for (const entry of entries) {
+      const fullPath = join(sourceDir, entry);
+      const stat = statSync(fullPath);
+      
+      if (stat.isFile() && (entry.endsWith('.rule.md') || entry.endsWith('.md'))) {
+        files.push(resolve(fullPath));
+      } else if (stat.isDirectory() && !entry.startsWith('.') && entry !== '_partials') {
+        // Recursively search subdirectories
+        const subFiles = await discoverSourceFilesInDir(fullPath);
+        files.push(...subFiles);
+      }
+    }
+  } catch (error) {
+    console.warn(`Warning: Could not read source directory: ${error}`);
+  }
+  
+  return files.sort();
+}
+
+async function discoverSourceFilesInDir(dir: string): Promise<string[]> {
+  const files: string[] = [];
+  
+  try {
+    const entries = readdirSync(dir);
+    
+    for (const entry of entries) {
+      const fullPath = join(dir, entry);
+      const stat = statSync(fullPath);
+      
+      if (stat.isFile() && (entry.endsWith('.rule.md') || entry.endsWith('.md'))) {
+        files.push(resolve(fullPath));
+      } else if (stat.isDirectory() && !entry.startsWith('.') && entry !== '_partials') {
+        const subFiles = await discoverSourceFilesInDir(fullPath);
+        files.push(...subFiles);
+      }
+    }
+  } catch (error) {
+    // Ignore errors in subdirectories
+  }
+  
+  return files;
+}
 
 program
   .command('init')
   .description('Initialize a new rulesets project')
-  .option('--name <name>', 'Project name')
-  .option('--output <dir>', 'Output directory', '.ruleset')
+  .action(async () => {
+    const logger = new ConsoleLogger();
+    
+    logger.info(chalk.blue('🚀 Initializing new rulesets project...'));
+    
+    // TODO: Create .ruleset/src/ structure
+    // TODO: Create example source file
+    // TODO: Create ruleset.config.json
+    logger.warn('Project initialization not yet implemented');
+    
+    logger.info(chalk.green('✅ Project initialization would be completed here'));
+  });
+
+program
+  .command('migrate')
+  .description('Migrate existing scattered rules into .ruleset/src/')
+  .option('--dry-run', 'Show what would be imported without creating files', false)
   .action(async (options) => {
     const logger = new ConsoleLogger();
     
-    try {
-      const outputDir = resolve(options.output);
-      
-      // Create directory structure
-      await fs.mkdir(join(outputDir, 'src'), { recursive: true });
-      await fs.mkdir(join(outputDir, 'src', '_partials'), { recursive: true });
-      
-      // Create sample configuration file
-      const sampleConfig: RulesetConfig = {
-        rulesets: { version: '0.1.0' },
-        outputDirectory: '.ruleset/dist',
-        providers: {
-          cursor: { enabled: true },
-          windsurf: { enabled: true },
-          'claude-code': { enabled: true },
-        },
-        gitignore: {
-          enabled: true,
-        },
-      };
-      
-      await fs.writeFile(
-        join(outputDir, '..', 'ruleset.config.jsonc'),
-        JSON.stringify(sampleConfig, null, 2)
-      );
-      
-      // Create sample rule file
-      const sampleRule = `---
-ruleset:
-  version: "0.1.0"
-title: "${options.name || 'My Rules'}"
-description: "Sample rulesets file"
----
-
-# ${options.name || 'My Rules'}
-
-{{#instructions}}
-These are the instructions for AI assistants.
-{{/instructions}}
-
-## Guidelines
-
-- Write clean, maintainable code
-- Follow consistent formatting
-- Include comprehensive tests
-
-{{#examples}}
-\`\`\`typescript
-// Example code
-function greet(name: string): string {
-  return \`Hello, \${name}!\`;
-}
-\`\`\`
-{{/examples}}
-`;
-      
-      await fs.writeFile(
-        join(outputDir, 'src', 'my-rules.rule.md'),
-        sampleRule
-      );
-      
-      logger.info(`Initialized new rulesets project in ${outputDir}`);
-      logger.info(`Configuration: ${join(outputDir, '..', 'ruleset.config.jsonc')}`);
-      logger.info(`Sample rule: ${join(outputDir, 'src', 'my-rules.rule.md')}`);
-      logger.info(`Run "rulesets compile ${join(outputDir, 'src', 'my-rules.rule.md')}" to test compilation`);
-    } catch (error) {
-      logger.error(`Initialization failed: ${error instanceof Error ? error.message : String(error)}`);
-      process.exit(1);
+    logger.info(chalk.blue('🔄 Migrating existing rules into .ruleset/src/...'));
+    
+    if (options.dryRun) {
+      logger.info('🧪 Dry run mode - no files will be created');
     }
+    
+    // TODO: Discover existing .cursor/rules, CLAUDE.md, etc.
+    // TODO: Import them into .ruleset/src/ with appropriate frontmatter
+    // TODO: Create consolidated source files
+    logger.warn('Migration tool not yet implemented');
+    logger.info('Would discover and import:');
+    logger.info('  • .cursor/rules/*.mdc → .ruleset/src/');
+    logger.info('  • CLAUDE.md → .ruleset/src/');
+    logger.info('  • .roo/rules.md → .ruleset/src/');
+    logger.info('  • And create appropriate frontmatter configuration');
+    
+    logger.info(chalk.green('✅ Migration would be completed here'));
   });
 
 program.parse();

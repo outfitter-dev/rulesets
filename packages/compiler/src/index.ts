@@ -2,14 +2,34 @@
 // TLDR: ruleset-v0.1-beta Pass-through implementation without marker processing
 import type { CompiledDoc, ParsedDoc, Provider } from '@rulesets/types';
 
+// Export new Handlebars-based compiler (v0.2+)
+export {
+  HandlebarsRulesetCompiler,
+  compileWithHandlebars,
+  type HandlebarsContext,
+  type SectionOptions
+} from './handlebars-compiler';
+
+// Export partial resolution system (v0.2+ Phase 3)
+export {
+  PartialResolver,
+  PostProcessorFactory,
+  CursorPostProcessor,
+  ClaudeCodePostProcessor,
+  type PartialResolverOptions,
+  type ResolvedPartial,
+  type PostProcessor
+} from './partial-resolver';
+
 /**
- * Compiles a parsed Rulesets document for a specific provider.
- * For ruleset-v0.1-beta, this is a pass-through implementation that doesn't process markers.
- *
- * @param parsedDoc - The parsed document to compile
- * @param destinationId - The ID of the provider to compile for (legacy parameter name)
- * @param projectConfig - Optional project configuration
- * @returns A promise that resolves to a CompiledDoc
+
+- Compiles a parsed Rulesets document for a specific provider.
+- For ruleset-v0.1-beta, this is a pass-through implementation that doesn't process markers.
+-
+- @param parsedDoc - The parsed document to compile
+- @param destinationId - The ID of the provider to compile for (legacy parameter name)
+- @param projectConfig - Optional project configuration
+- @returns A promise that resolves to a CompiledDoc
  */
 // TLDR: Compiles parsed document to provider format (ruleset-v0.1-beta)
 // TLDR: ruleset-v0.1-beta Pass-through implementation without transformation
@@ -102,10 +122,11 @@ export function compile(
 }
 
 /**
- * Compiles a parsed Rulesets document using a Provider definition.
- * Centralized compiler entry that consumes provider metadata/capabilities.
- * Currently behaves like pass-through (ruleset-v0.1-beta) but sets context from provider.id
- * to enable a single compiler for all providers.
+
+- Compiles a parsed Rulesets document using a Provider definition.
+- Centralized compiler entry that consumes provider metadata/capabilities.
+- Currently behaves like pass-through (ruleset-v0.1-beta) but sets context from provider.id
+- to enable a single compiler for all providers.
  */
 export function compileWithProvider(
   parsedDoc: ParsedDoc,

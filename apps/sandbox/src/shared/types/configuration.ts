@@ -348,7 +348,7 @@ export interface SandboxConfig {
 export const DefaultDevelopmentConfig: SandboxConfig = {
   app: {
     name: 'rulesets-sandbox',
-    version: '0.1.0' as SemanticVersion,
+    version: '0.2.0' as SemanticVersion,
     environment: 'development',
     instanceId: 'dev-instance',
   },

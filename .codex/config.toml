@@ -7,6 +7,6 @@ args = ["-y", "@modelcontextprotocol/server-filesystem", "${PROJECT_PATH:-.}"]
 
 [mcp.servers.database]
 command = "mcp-db-server"
-args = ["--db", "postgres://localhost:5432/mydb"]
+args = ["--db", "${DATABASE_URL:-postgres://localhost:5432/mydb}"]
 # Supply DB_PASSWORD via environment at runtime; do not commit secrets here.
 # Example: export DB_PASSWORD="your-password-here" before running

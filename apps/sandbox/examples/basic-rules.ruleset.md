@@ -18,7 +18,7 @@ author: 'Your Name'
 
 This is a simple example showing the basic features of Rulesets.
 
-{{instructions}}
+{{#instructions}}
 
 - Always write clear, self-documenting code
 - Use TypeScript for type safety
@@ -27,7 +27,7 @@ This is a simple example showing the basic features of Rulesets.
 - Document complex logic with comments
   {{/instructions}}
 
-{{examples}}
+{{#examples}}
 
 ```typescript
 // ✅ Good: Clear function name and types
@@ -53,7 +53,7 @@ function processUserPreferences(user: User): ProcessedPreferences {
 
 {{/examples}}
 
-{{best-practices}}
+{{#best-practices}}
 
 ## Best Practices
 

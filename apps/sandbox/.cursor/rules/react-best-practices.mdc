@@ -62,7 +62,7 @@ interface ExpensiveListProps {
 
 const ExpensiveList = React.memo<ExpensiveListProps>(({ items, onItemSelect }) => {
   const sortedItems = useMemo(
-    () => items.sort((a, b) => a.priority - b.priority),
+    () => [...items].sort((a, b) => a.priority - b.priority),
     [items]
   );
   

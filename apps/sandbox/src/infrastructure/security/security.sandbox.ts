@@ -153,7 +153,17 @@ class SecuritySandboxError extends SandboxError {
 export class SecuritySandbox {
   private readonly config: SecuritySandboxConfig;
   private readonly allowedPaths: Set<string>;
-  private readonly resourceUsage: ResourceUsage;
+  private resourceUsageData: {
+    filesAccessed: number;
+    directoriesAccessed: number;
+    bytesRead: number;
+    bytesWritten: number;
+    operationsCount: number;
+    memoryUsageBytes: number;
+    cpuTimeMs: number;
+    startTime: Timestamp;
+    lastActivity: Timestamp;
+  };
   private readonly threatHistory: SecurityThreat[] = [];
   private readonly operationHistory: Array<{
     path: string;
@@ -165,7 +175,7 @@ export class SecuritySandbox {
   constructor(config: SecuritySandboxConfig) {
     this.config = config;
     this.allowedPaths = new Set(config.allowedPaths.map((p) => resolve(p)));
-    this.resourceUsage = {
+    this.resourceUsageData = {
       filesAccessed: 0,
       directoriesAccessed: 0,
       bytesRead: 0,
@@ -176,6 +186,13 @@ export class SecuritySandbox {
       startTime: createTimestamp(Date.now()),
       lastActivity: createTimestamp(Date.now()),
     };
+  }
+
+  /**
+  - Get current resource usage as readonly interface
+   */
+  get resourceUsage(): ResourceUsage {
+    return { ...this.resourceUsageData };
   }
 
   /**
@@ -191,8 +208,8 @@ export class SecuritySandbox {
 
     try {
       // Update activity timestamp
-      (this.resourceUsage as any).lastActivity = createTimestamp(Date.now());
-      (this.resourceUsage as any).operationsCount++;
+      this.resourceUsageData.lastActivity = createTimestamp(Date.now());
+      this.resourceUsageData.operationsCount++;
 
       // Basic path validation
       if (!path || typeof path !== 'string') {
@@ -541,9 +558,9 @@ export class SecuritySandbox {
   getResourceUsage(): ResourceUsage {
     // Update memory usage
     const memoryUsage = process.memoryUsage();
-    (this.resourceUsage as any).memoryUsageBytes = memoryUsage.heapUsed;
+    this.resourceUsageData.memoryUsageBytes = memoryUsage.heapUsed;
 
-    return { ...this.resourceUsage };
+    return { ...this.resourceUsageData };
   }
 
   /**
@@ -570,7 +587,7 @@ export class SecuritySandbox {
 - Resets resource usage counters
    */
   resetResourceUsage(): void {
-    Object.assign(this.resourceUsage, {
+    Object.assign(this.resourceUsageData, {
       filesAccessed: 0,
       directoriesAccessed: 0,
       bytesRead: 0,
@@ -842,23 +859,23 @@ export class SecuritySandbox {
     operation: string
   ): void {
     if (metadata.isFile) {
-      (this.resourceUsage as any).filesAccessed++;
+      this.resourceUsageData.filesAccessed++;
 
       if (operation === 'read' && metadata.size) {
-        (this.resourceUsage as any).bytesRead += metadata.size;
+        this.resourceUsageData.bytesRead += metadata.size;
       } else if (operation === 'write' && metadata.size) {
-        (this.resourceUsage as any).bytesWritten += metadata.size;
+        this.resourceUsageData.bytesWritten += metadata.size;
       }
     }
 
     if (metadata.isDirectory) {
-      (this.resourceUsage as any).directoriesAccessed++;
+      this.resourceUsageData.directoriesAccessed++;
     }
 
     // Update memory usage
     const memoryUsage = process.memoryUsage();
-    (this.resourceUsage as any).memoryUsageBytes = memoryUsage.heapUsed;
-    (this.resourceUsage as any).lastActivity = createTimestamp(Date.now());
+    this.resourceUsageData.memoryUsageBytes = memoryUsage.heapUsed;
+    this.resourceUsageData.lastActivity = createTimestamp(Date.now());
   }
 
   /**
