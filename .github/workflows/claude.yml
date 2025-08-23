@@ -12,8 +12,8 @@ on:
 
 jobs:
   claude:
-    if: |
-      # Block common bots to prevent loops
+    # Block common bots to prevent loops
+    if: >
       !contains(fromJSON('["github-actions[bot]","dependabot[bot]","renovate[bot]","claude-code[bot]","claude[bot]"]'), github.actor) &&
       (
         (github.event_name == 'issue_comment' && contains(github.event.comment.body || '', '@claude')) ||
