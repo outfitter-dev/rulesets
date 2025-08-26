@@ -26,11 +26,11 @@ jobs:
           bun-version-file: "package.json"
 
       - name: Preliminary Setup
+        if: ${{ hashFiles('**/package.json') != '' }}
         run: |
           echo "Setting up environment..."
           # Add any preliminary setup commands here to setup Claude's dev environment
           bun install
-
       - name: Run Claude Code
         id: claude
         uses: anthropics/claude-code-action@eap
