@@ -20,11 +20,16 @@ jobs:
         with:
           fetch-depth: 1
 
-      # - name: Preliminary Setup
-        # run: |
-          # echo "Setting up environment..."
+      - name: Bun Setup
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: "package.json"
+
+      - name: Preliminary Setup
+        run: |
+          echo "Setting up environment..."
           # Add any preliminary setup commands here to setup Claude's dev environment
-          # e.g., npm install, etc.
+          bun install
 
       - name: Run Claude Code
         id: claude
