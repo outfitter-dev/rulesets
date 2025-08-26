@@ -21,10 +21,10 @@ jobs:
           fetch-depth: 1
 
       - name: Bun Setup
+        if: ${{ hashFiles('**/package.json') != '' }}
         uses: oven-sh/setup-bun@v2
         with:
           bun-version-file: "package.json"
-
       - name: Preliminary Setup
         if: ${{ hashFiles('**/package.json') != '' }}
         run: |
