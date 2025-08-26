@@ -279,6 +279,7 @@ export const DEFAULT_CONFIG: Required<
       sort: true,
     },
   },
+  parallelCompilation: {},
   defaultProviders: ['cursor', 'claude-code'],
   strict: false,
   outputDirectory: '.ruleset/dist',

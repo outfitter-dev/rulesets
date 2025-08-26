@@ -5,6 +5,9 @@
 export { runRulesets } from './orchestration';
 export type { RulesetsOptions } from './orchestration';
 
+// Alias for v0 compatibility (mixd-v0)
+export { runRulesets as runRulesetsV0 } from './orchestration';
+
 // Re-export from compiler
 export { compile } from '@rulesets/compiler';
 export type { HandlebarsRulesetCompiler, PartialResolver } from '@rulesets/compiler';

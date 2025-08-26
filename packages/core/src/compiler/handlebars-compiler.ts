@@ -12,7 +12,6 @@ const pinoLogger = getChildLogger('handlebars-compiler');
 
 // Regex constants at top level for performance
 const FILE_EXTENSION_REGEX = /\.[^.]*$/;
-const BLOCK_HELPER_REGEX = /\{\{#([a-zA-Z][a-zA-Z0-9-]*)/g;
 
 /**
  * Context provided to Handlebars templates during compilation
@@ -93,17 +92,15 @@ export class HandlebarsRulesetCompiler {
     'default',
   ]);
   
-<<<<<<< HEAD
   // Template caching system
   private templateCache = new Map<string, CachedTemplate>();
   private maxCacheSize = 1000; // Maximum number of cached templates
   private cacheEnabled = true; // Can be disabled for testing
-=======
+  
   // Partial resolution state
   private currentSourcePath?: string;
-  private partialCache = new Map<string, string>();
+  private partialCache = new Map<string, Handlebars.Template>();
   private partialDirectories: string[] = [];
->>>>>>> b250b02 (feat(compiler): complete partial resolution system for @-prefixed partials)
 
   constructor(options: { cacheEnabled?: boolean; maxCacheSize?: number } = {}) {
     this.hbs = Handlebars.create();
@@ -348,14 +345,11 @@ export class HandlebarsRulesetCompiler {
    */
   private preRegisterSectionHelpers(content: string): void {
     // Simple regex to find block helpers: {{#name}} or {{#name arg1 arg2}}
-    let match: RegExpExecArray | null = BLOCK_HELPER_REGEX.exec(content);
-
-    while (match !== null) {
+    for (const match of content.matchAll(/\{\{#([a-zA-Z][a-zA-Z0-9-]*)/g)) {
       const helperName = match[1];
       if (helperName) {
         this.registerSectionHelper(helperName);
       }
-      match = BLOCK_HELPER_REGEX.exec(content);
     }
   }
 
@@ -722,11 +716,7 @@ export class HandlebarsRulesetCompiler {
   private resolvePartial(partialName: string): Handlebars.Template | null {
     // Check cache first
     if (this.partialCache.has(partialName)) {
-      const cachedContent = this.partialCache.get(partialName)!;
-      return this.hbs.compile(cachedContent, {
-        noEscape: true,
-        strict: false,
-      });
+      return this.partialCache.get(partialName)!;
     }
 
     // Handle @-prefixed partials
@@ -735,22 +725,24 @@ export class HandlebarsRulesetCompiler {
       const partialContent = this.loadPartialFromDirectories(fileName);
       
       if (partialContent) {
-        this.partialCache.set(partialName, partialContent);
-        return this.hbs.compile(partialContent, {
+        const compiled = this.hbs.compile(partialContent, {
           noEscape: true,
           strict: false,
         });
+        this.partialCache.set(partialName, compiled);
+        return compiled;
       }
     } else {
       // Handle regular partial names
       const partialContent = this.loadPartialFromDirectories(partialName);
       
       if (partialContent) {
-        this.partialCache.set(partialName, partialContent);
-        return this.hbs.compile(partialContent, {
+        const compiled = this.hbs.compile(partialContent, {
           noEscape: true,
           strict: false,
         });
+        this.partialCache.set(partialName, compiled);
+        return compiled;
       }
     }
 
@@ -762,8 +754,8 @@ export class HandlebarsRulesetCompiler {
    */
   private loadPartialFromDirectories(fileName: string): string | null {
     // Try various file extensions
-    const extensions = ['.md', '.hbs', '.handlebars', '.txt', ''];
-    
+    const extensions = ['.rule.md', '.md', '.hbs', '.handlebars', '.txt', ''];
+
     for (const directory of this.partialDirectories) {
       for (const ext of extensions) {
         const filePath = join(directory, fileName + ext);
@@ -789,6 +781,10 @@ export class HandlebarsRulesetCompiler {
    */
   public clearPartialCache(): void {
     this.partialCache.clear();
+    const partials = this.hbs.partials as Record<string, unknown>;
+    for (const key of Object.keys(partials)) {
+      delete partials[key];
+    }
   }
 
   /**

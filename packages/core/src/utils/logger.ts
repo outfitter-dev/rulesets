@@ -9,7 +9,14 @@ import * as pinoModule from 'pino';
 const pino = (pinoModule as any).default || pinoModule;
 
 // Define log levels for the application
-export type LogLevel = 'fatal' | 'error' | 'warn' | 'info' | 'debug' | 'trace';
+export type LogLevel =
+  | 'fatal'
+  | 'error'
+  | 'warn'
+  | 'info'
+  | 'debug'
+  | 'trace'
+  | 'silent';
 
 // Logger configuration options
 export interface LoggerOptions {

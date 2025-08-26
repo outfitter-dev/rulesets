@@ -285,6 +285,7 @@ const VALID_PROVIDER_TYPES = [
   'windsurf',
   'cline',
   'roo-code',
+  'codex',
 ] as const;
 
 export function createProviderType(value: string): ProviderType {

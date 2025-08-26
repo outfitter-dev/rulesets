@@ -85,7 +85,10 @@ export async function runRulesets(
   const providerIds = determineProviderIds(parsedDoc, config, providerFilter, logger);
   logger.info(`🎯 Building for: ${providerIds.join(', ')}`);
 
-  // Step 6: Build for each provider
+  // Step 6: Build for each provider with parallel compilation
+  const maxConcurrency = config.parallelCompilation?.maxConcurrency || providerIds.length;
+  logger.debug(`max concurrency: ${maxConcurrency}`);
+  
   const buildPromises = providerIds.map((providerId) =>
     buildForProvider(
       providerId,
@@ -105,6 +108,7 @@ export async function runRulesets(
   await updateGitignore(allGeneratedPaths, config, logger, projectPath);
 
   logger.info(`✅ Built ${allGeneratedPaths.length} files for ${providerIds.length} providers`);
+  logger.info('Rulesets ruleset-v0.1-beta processing completed successfully!');
 
   // Step 8: Log performance metrics in development mode
   if (developmentMode) {
@@ -246,6 +250,10 @@ async function compileWithHandlebars(
         cache: options.cacheTemplates,
       },
     };
+
+    if (options.cacheTemplates) {
+      logger.debug('Using cached compilation for template processing');
+    }
 
     const compiledDoc = compiler.compile(parsedDoc, provider.id as string, projectConfig);
 
