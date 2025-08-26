@@ -1,6 +1,7 @@
 /**
- * Clean, simple orchestration for Rulesets
- * Handlebars-powered, no legacy cruft
+
+- Clean, simple orchestration for Rulesets
+- Handlebars-powered, no legacy cruft
  */
 
 import { dirname, join } from 'node:path';
@@ -18,33 +19,39 @@ import { destinations, providers as providerRegistry } from './providers';
 
 export interface RulesetsOptions {
   /**
-   * Limit build to specific providers
+
+- Limit build to specific providers
    */
   providers?: string[];
   
   /**
-   * Enable development mode with enhanced debugging
+
+- Enable development mode with enhanced debugging
    */
   developmentMode?: boolean;
   
   /**
-   * Cache compiled templates for performance
+
+- Cache compiled templates for performance
    */
   cacheTemplates?: boolean;
   
   /**
-   * Partial resolution configuration
+
+- Partial resolution configuration
    */
   partialOptions?: PartialResolverOptions;
   
   /**
-   * Configuration override
+
+- Configuration override
    */
   configOverride?: Partial<RulesetConfig>;
 }
 
 /**
- * Build rulesets - clean, simple, Handlebars-powered
+
+- Build rulesets - clean, simple, Handlebars-powered
  */
 export async function runRulesets(
   sourceFilePath: string,
@@ -103,6 +110,8 @@ export async function runRulesets(
 
   const generatedPathsResults = await Promise.all(buildPromises);
   const allGeneratedPaths = generatedPathsResults.flat();
+  
+  logger.info('Parallel compilation completed');
 
   // Step 7: Update .gitignore with generated file paths
   await updateGitignore(allGeneratedPaths, config, logger, projectPath);
@@ -117,7 +126,8 @@ export async function runRulesets(
 }
 
 /**
- * Create and configure handlebars compiler
+
+- Create and configure handlebars compiler
  */
 async function createHandlebarsCompiler(
   projectPath: string,
@@ -143,7 +153,8 @@ async function createHandlebarsCompiler(
 }
 
 /**
- * Build for a single provider
+
+- Build for a single provider
  */
 async function buildForProvider(
   providerId: string,
@@ -224,7 +235,8 @@ async function buildForProvider(
 }
 
 /**
- * Compile using handlebars with enhanced features
+
+- Compile using handlebars with enhanced features
  */
 async function compileWithHandlebars(
   compiler: HandlebarsRulesetCompiler,
@@ -269,7 +281,8 @@ async function compileWithHandlebars(
 }
 
 /**
- * Log performance metrics for development
+
+- Log performance metrics for development
  */
 function logPerformanceMetrics(
   compiler: HandlebarsRulesetCompiler,
@@ -353,7 +366,7 @@ function performLinting(parsedDoc: ParsedDoc, logger: Logger): void {
 
   let hasErrors = false;
   for (const result of lintResults) {
-    const location = result.line ? ` (line ${result.line})` : '';
+    const location = result.line ? `(line ${result.line})` : '';
     const message = `${result.message}${location}`;
 
     switch (result.severity) {
@@ -415,7 +428,7 @@ function determineProviderIds(
   // Apply provider filter if specified
   if (providerFilter && providerFilter.length > 0) {
     const filteredIds = providerIds.filter(id => providerFilter.includes(id));
-    
+
     if (filteredIds.length === 0) {
       logger.warn(`No providers matched filter: ${providerFilter.join(', ')}`);
       logger.warn(`Available providers: ${providerIds.join(', ')}`);

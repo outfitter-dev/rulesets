@@ -1,6 +1,7 @@
 /**
- * Centralized logger configuration using Pino
- * Replaces console.* usage to meet Ultracite standards
+
+- Centralized logger configuration using Pino
+- Replaces console.*usage to meet Ultracite standards
  */
 
 import type { Logger as PinoLogger } from 'pino';
@@ -26,7 +27,8 @@ export interface LoggerOptions {
 }
 
 /**
- * Creates a configured Pino logger instance
+
+- Creates a configured Pino logger instance
  */
 export function createLogger(options: LoggerOptions = {}): PinoLogger {
   const isDevelopment = process.env.NODE_ENV === 'development';
@@ -86,8 +88,9 @@ export function getChildLogger(
 export type { Logger } from 'pino';
 
 /**
- * Logger interface matching our existing Logger type in @rulesets/types
- * This provides compatibility with existing code
+
+- Logger interface matching our existing Logger type in @rulesets/types
+- This provides compatibility with existing code
  */
 export interface RulesetsLogger {
   info: (msg: string, ...args: unknown[]) => void;
@@ -97,7 +100,8 @@ export interface RulesetsLogger {
 }
 
 /**
- * Adapter to convert Pino logger to RulesetsLogger interface
+
+- Adapter to convert Pino logger to RulesetsLogger interface
  */
 export function toRulesetsLogger(pinoLogger: PinoLogger): RulesetsLogger {
   return {
@@ -109,7 +113,8 @@ export function toRulesetsLogger(pinoLogger: PinoLogger): RulesetsLogger {
 }
 
 /**
- * Mock logger for testing that doesn't output anything
+
+- Mock logger for testing that doesn't output anything
  */
 export const mockLogger: RulesetsLogger = {
   info: () => {

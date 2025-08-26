@@ -33,5 +33,5 @@ export type {
   SourceMapping,
 } from './output-file';
 export { OutputFileUtils } from './output-file';
-export * from './provider-info';
+export* from './provider-info';
 export * from './validation-result';

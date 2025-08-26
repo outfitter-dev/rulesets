@@ -16,10 +16,10 @@ import type {
   Provider as RulesetProvider,
   RulesetContext
 } from '@rulesets/types';
-import { 
-  PartialResolver, 
-  PostProcessorFactory, 
-  type PartialResolverOptions 
+import {
+  PartialResolver,
+  PostProcessorFactory,
+  type PartialResolverOptions
 } from './partial-resolver';
 
 /**
@@ -75,7 +75,7 @@ export class HandlebarsRulesetCompiler {
   private partialResolver?: PartialResolver;
 
   constructor(
-    providers: RulesetProvider[] = [], 
+    providers: RulesetProvider[] = [],
     partialOptions?: PartialResolverOptions
   ) {
     // Create isolated Handlebars instance
@@ -83,16 +83,16 @@ export class HandlebarsRulesetCompiler {
 
     // Store providers for context building
     this.providers = new Map(providers.map(p => [p.id as string, p]));
-    
+
     // Set up partial resolver if options provided
     if (partialOptions) {
       this.partialResolver = new PartialResolver(partialOptions);
       this.hbs.registerPartials = this.partialResolver.createHandlebarsLoader();
     }
-    
+
     // Register core helpers
     this.registerCoreHelpers();
-    
+
     // Register provider-specific helpers
     this.registerProviderHelpers();
   }
@@ -113,15 +113,15 @@ export class HandlebarsRulesetCompiler {
 
     // Build Handlebars context
     const context = this.buildContext(parsedDoc, provider, projectConfig);
-    
+
     // Get the content body (without frontmatter)
     const templateContent = this.extractTemplateContent(parsedDoc.source.content);
-    
+
     try {
       // Compile and execute template
       const template = this.hbs.compile(templateContent);
       let compiledContent = template(context);
-      
+
       // Apply provider-specific post-processing
       const postProcessor = PostProcessorFactory.create(providerId);
       if (postProcessor) {
@@ -163,7 +163,7 @@ export class HandlebarsRulesetCompiler {
     projectConfig: Record<string, unknown>
   ): HandlebarsContext {
     const frontmatter = parsedDoc.source.frontmatter || {};
-    
+
     // Enhanced provider capabilities with dynamic detection
     const providerCapabilities = this.detectProviderCapabilities(provider);
 
@@ -230,11 +230,11 @@ export class HandlebarsRulesetCompiler {
    */
   private flattenFrontmatter(frontmatter: Record<string, unknown>): Record<string, unknown> {
     const flattened: Record<string, unknown> = {};
-    
+
     const flatten = (obj: Record<string, unknown>, prefix = '') => {
       for (const [key, value] of Object.entries(obj)) {
         const newKey = prefix ? `${prefix}.${key}` : key;
-        
+
         if (value && typeof value === 'object' && !Array.isArray(value)) {
           flatten(value as Record<string, unknown>, newKey);
         } else {
@@ -242,7 +242,7 @@ export class HandlebarsRulesetCompiler {
         }
       }
     };
-    
+
     flatten(frontmatter);
     return { ...frontmatter, ...flattened };
   }
@@ -257,7 +257,7 @@ export class HandlebarsRulesetCompiler {
   ): Record<string, unknown> {
     const projectData = frontmatter.project as Record<string, unknown> || {};
     const configProject = projectConfig.project as Record<string, unknown> || {};
-    
+
     return {
       ...projectConfig,
       ...configProject,
@@ -272,7 +272,7 @@ export class HandlebarsRulesetCompiler {
   private extractUserVariables(frontmatter: Record<string, unknown>): Record<string, unknown> {
     const variables = frontmatter.variables as Record<string, unknown> || {};
     const custom = frontmatter.custom as Record<string, unknown> || {};
-    
+
     return {
       variables,
       custom,
@@ -284,6 +284,9 @@ export class HandlebarsRulesetCompiler {
 - Extract filename from path
    */
   private extractFileName(filePath: string): string {
+    if (!filePath || typeof filePath !== 'string') {
+      return 'unknown';
+    }
     const filename = filePath.split('/').pop() || 'unknown';
     return filename.replace(/\.(rule\.)?md$/, '');
   }
@@ -303,12 +306,12 @@ export class HandlebarsRulesetCompiler {
           break;
         }
       }
-      
+
       if (frontmatterEnd > 0) {
         return lines.slice(frontmatterEnd + 1).join('\n').trim();
       }
     }
-    
+
     return content.trim();
   }
 
@@ -334,7 +337,7 @@ export class HandlebarsRulesetCompiler {
     this.hbs.registerHelper('kebab-to-snake', this.kebabToSnakeHelper.bind(this));
     this.hbs.registerHelper('format-date', this.formatDateHelper.bind(this));
     this.hbs.registerHelper('include-file', this.includeFileHelper.bind(this));
-    
+
     // Auto-register section helpers for freeform names
     this.hbs.registerHelper('helperMissing', this.createSectionHelper.bind(this));
   }
@@ -362,7 +365,7 @@ export class HandlebarsRulesetCompiler {
     if (allowedProviders.includes(context.provider.id)) {
       return options.fn(context);
     }
-    
+
     return options.inverse ? options.inverse(context) : '';
   }
 
@@ -380,7 +383,7 @@ export class HandlebarsRulesetCompiler {
     if (!excludedProviders.includes(context.provider.id)) {
       return options.fn(context);
     }
-    
+
     return options.inverse ? options.inverse(context) : '';
   }
 
@@ -393,10 +396,10 @@ export class HandlebarsRulesetCompiler {
     options: Handlebars.HelperOptions
   ): string {
     const context = options.data.root as HandlebarsContext;
-    
+
     // Store the current provider for case matching
     options.data.switchProvider = context.provider.id;
-    
+
     return options.fn(context);
   }
 
@@ -414,11 +417,11 @@ export class HandlebarsRulesetCompiler {
     }
 
     const patterns = providerPattern.split(',').map(p => p.trim());
-    
+
     if (patterns.includes(switchProvider)) {
       return options.fn(this);
     }
-    
+
     return '';
   }
 
@@ -431,11 +434,11 @@ export class HandlebarsRulesetCompiler {
   ): string {
     // Check if any case has matched
     const hasMatched = options.data.caseMatched || false;
-    
+
     if (!hasMatched) {
       return options.fn(this);
     }
-    
+
     return '';
   }
 
@@ -464,7 +467,7 @@ export class HandlebarsRulesetCompiler {
     if (!this.partialResolver) {
       return `<!-- Include: ${filePath} (No partial resolver configured) -->`;
     }
-    
+
     try {
       const resolved = this.partialResolver.resolve(filePath);
       return resolved.content;
@@ -483,11 +486,11 @@ export class HandlebarsRulesetCompiler {
     options: Handlebars.HelperOptions
   ): string {
     const context = options.data.root as HandlebarsContext;
-    
+
     if (context.provider.capabilities.includes(capability)) {
       return options.fn(context);
     }
-    
+
     return options.inverse ? options.inverse(context) : '';
   }
 
