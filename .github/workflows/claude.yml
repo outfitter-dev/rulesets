@@ -1,4 +1,5 @@
-name: Claude Assistant
+name: Claude Code
+
 on:
   issue_comment:
     types: [created]
@@ -10,14 +11,91 @@ on:
     types: [submitted]
 
 jobs:
-  claude-response:
+  claude:
+    # Allow specific bots (@copilot[bot], @devin[bot], @coderabbitai[bot]) and all humans to trigger Claude
+    if: |
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request &&
+       contains(github.event.comment.body, '@claude') &&
+       (github.event.comment.user.type != 'Bot' ||
+        contains(fromJSON('["copilot[bot]", "devin[bot]", "coderabbitai[bot], cursor[bot]"]'), github.event.comment.user.login))) ||
+      (github.event_name == 'pull_request_review_comment' &&
+       contains(github.event.comment.body, '@claude') &&
+       (github.event.comment.user.type != 'Bot' ||
+        contains(fromJSON('["copilot[bot]", "devin[bot]", "coderabbitai[bot]", cursor[bot]]'), github.event.comment.user.login))) ||
+      (github.event_name == 'pull_request_review' &&
+       contains(github.event.review.body, '@claude') &&
+       (github.event.review.user.type != 'Bot' ||
+        contains(fromJSON('["copilot[bot]", "devin[bot]", "coderabbitai[bot], cursor[bot]"]'), github.event.review.user.login)))
     runs-on: ubuntu-latest
+    concurrency:
+      group: claude-${{ github.event.pull_request.number || github.event.issue.number || github.run_id }}
+      cancel-in-progress: true
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+      id-token: write
+      actions: read # Required for Claude to read CI results on PRs
     steps:
-      - uses: anthropics/claude-code-action@beta
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: Run Claude Code
+        id: claude
+        uses: anthropics/claude-code-action@beta
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # MCP configuration
+          mcp_config: |
+            {
+              "mcpServers": {
+                "sequential-thinking": {
+                  "command": "npx",
+                  "args": [
+                    "-y",
+                    "@modelcontextprotocol/server-sequential-thinking"
+                  ]
+                }
+              }
+            }
+          # Allow bots
+          allowed_bots: |
+            copilot[bot]
+            devin[bot]
+            coderabbitai[bot]
+            cursor[bot]
+          # Allow Claude to run specific commands
+          allowed_tools: |
+            Edit,Read,Write
+            Bash(bun install),Bash(bun test:*),Bash(bun format:*),Bash(bun typecheck:*),Bash(bun lint:*),Bash(bun sandbox:*),Bash(bun pre:*)
+            mcp__sequential-thinking__sequentialthinking
+          # Provide Claude with custom instructions
+          custom_instructions: |
+            You have also been granted tools for editing files and running bun commands (install, run, test, typecheck, format, lint, sandbox, pre*) for testing your changes.
+            You also have access to `mcp__sequential-thinking__sequentialthinking` to work out more complex problems. Use it to think longer.
+            Use Bun to the fullest extent
+            Don't .gitignore `.agent/` or `path/to/rules` if they're not compiled with Rulesets
+          # Set Claude's model
+          model: "claude-opus-4-1-20250805"
+          # This is an optional setting that allows Claude to read CI results on PRs
+          additional_permissions: |
+            actions: read
           # Optional: add custom trigger phrase (default: @claude)
           trigger_phrase: "/claude"
           # Optional: add assignee trigger for issues
           assignee_trigger: "claude"
+
+          # Allow additioanl domains
+          experimental_allowed_domains: |
+            .anthropic.com
+            .github.com
+            .githubusercontent.com
+            ghcr.io
+            .blob.core.windows.net
+          
+          # Optional: Custom environment variables for Claude
+          # claude_env: |
+          #   NODE_ENV: test
