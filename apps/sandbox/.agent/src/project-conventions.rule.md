@@ -20,7 +20,7 @@ providers:
 
 ## Project Conventions
 
-{{instructions}}
+{{#instructions}}
 
 ## File Organization
 
@@ -44,7 +44,7 @@ providers:
 - **Squash merge** - Keep main branch history clean
   {{/instructions}}
 
-{{examples}}
+{{#examples}}
 
 ### File Structure Example
 

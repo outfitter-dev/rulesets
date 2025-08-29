@@ -16,7 +16,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/outfitter-dev/rulesets.git"
+    "url": "<https://github.com/outfitter-dev/rulesets.git>"
   },
   "workspaces": {
     "packages": [
@@ -28,7 +28,9 @@
       "typescript": "^5.9.2",
       "type-fest": "^4.41.0",
       "js-yaml": "^4.1.0",
-      "@types/js-yaml": "^4.0.9"
+      "@types/js-yaml": "^4.0.9",
+      "handlebars": "^4.7.8",
+      "@types/handlebars": "^4.1.0"
     }
   },
   "scripts": {
@@ -43,6 +45,7 @@
     "test:watch": "bun scripts/test.ts --watch",
     "test:coverage": "bun scripts/test.ts --coverage",
     "test:ci": "bun scripts/test.ts --coverage",
+    "test:handlebars": "cd packages/compiler && bun test --filter='handlebars|partial'",
     "format": "prettier --write . && markdownlint-cli2 --fix",
     "format:check": "prettier --check . && markdownlint-cli2",
     "lint": "ultracite lint",
@@ -69,7 +72,7 @@
     "pre:push": "lefthook run pre-push",
     "postinstall": "bun run build"
   },
-  "packageManager": "bun@1.2.19",
+  "packageManager": "bun@1.2.20",
   "engines": {
     "node": ">=20.0.0",
     "bun": ">=1.2.0"
@@ -85,7 +88,9 @@
     "@commitlint/config-conventional": "^19.8.1",
     "@commitlint/prompt-cli": "^19.8.1",
     "@types/bun": "^1.2.20",
+    "@types/handlebars": "^4.1.0",
     "@types/node": "^24.2.1",
+    "handlebars": "^4.7.8",
     "lefthook": "^1.12.3",
     "markdownlint-cli2": "^0.18.1",
     "pino": "^9.9.0",
@@ -93,6 +98,7 @@
     "prettier": "^3.6.2",
     "publint": "^0.3.12",
     "syncpack": "^14.0.0-alpha.19",
+    "turbo": "^2.5.6",
     "type-fest": "^4.41.0",
     "typedoc": "^0.28.10",
     "typescript": "^5.9.2",

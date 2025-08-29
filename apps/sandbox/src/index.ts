@@ -7,12 +7,12 @@
  */
 
 // Export domain layer
-export *from './domain';
+export * from './domain';
 // Export shared types and utilities
-export* from './shared/types';
+export * from './shared/types';
 
 // Export application version and metadata
-export const VERSION = '0.1.0' as const;
+export const VERSION = '0.2.0' as const;
 export const APP_NAME = 'rulesets-sandbox' as const;
 
 /**

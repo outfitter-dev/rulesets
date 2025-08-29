@@ -1,0 +1,215 @@
+# Test workflow for validating Bun versions
+
+# This workflow tests different Bun versions to identify compatibility issues
+
+# Run manually via workflow_dispatch when considering version upgrades
+
+name: Test Bun Versions
+
+on:
+  workflow_dispatch:
+    inputs:
+      versions:
+        description: "Comma-separated list of Bun versions to test"
+        required: false
+        default: "latest,1.2.20,1.1.38"
+        type: string
+  schedule:
+    # Run weekly to detect new issues early
+    - cron: "0 2 * * 1" # Monday at 2 AM UTC
+
+concurrency:
+  group: bun-version-test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    name: Prepare Version Matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Set Version Matrix
+        id: set-matrix
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Parse comma-separated versions from input
+            VERSIONS="${{ inputs.versions }}"
+          else
+            # Default versions for scheduled runs
+            VERSIONS="latest,1.2.20,1.1.38"
+          fi
+
+          # Convert to JSON array
+          JSON_ARRAY=$(echo "$VERSIONS" | jq -R 'split(",") | map(gsub("^\\s+|\\s+$"; ""))')
+          echo "matrix={\"version\":$JSON_ARRAY}" >> $GITHUB_OUTPUT
+          echo "Testing versions: $JSON_ARRAY"
+
+  test-version:
+    name: Test Bun ${{ matrix.version }}
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.matrix) }}
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Bun ${{ matrix.version }}
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ matrix.version }}
+
+      - name: Get Bun Version Info
+        id: bun-info
+        run: |
+          BUN_VERSION=$(bun --version)
+          echo "version=$BUN_VERSION" >> $GITHUB_OUTPUT
+          echo "## Bun Version: $BUN_VERSION" >> $GITHUB_STEP_SUMMARY
+
+      - name: Clear Bun Cache
+        run: |
+          echo "Clearing Bun cache to ensure clean install..."
+          bun pm cache rm || true
+
+      - name: Test Install - Fresh
+        id: install-fresh
+        run: |
+          echo "### Fresh Install Test" >> $GITHUB_STEP_SUMMARY
+
+          # Remove existing lock file and node_modules
+          rm -rf node_modules bun.lock
+
+          # Attempt fresh install with verbose output
+          if bun install --verbose 2>&1 | tee install.log; then
+            echo "✅ Fresh install successful" >> $GITHUB_STEP_SUMMARY
+            echo "success=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Fresh install failed" >> $GITHUB_STEP_SUMMARY
+            echo "```" >> $GITHUB_STEP_SUMMARY
+            tail -50 install.log >> $GITHUB_STEP_SUMMARY
+            echo "```" >> $GITHUB_STEP_SUMMARY
+            echo "success=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      - name: Test Install - With Lock
+        id: install-locked
+        if: steps.install-fresh.outputs.success == 'true'
+        run: |
+          echo "### Locked Install Test" >> $GITHUB_STEP_SUMMARY
+
+          # Clean node_modules but keep lock file
+          rm -rf node_modules
+
+          # Install with frozen lockfile
+          if bun install --frozen-lockfile 2>&1 | tee install-locked.log; then
+            echo "✅ Locked install successful" >> $GITHUB_STEP_SUMMARY
+            echo "success=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Locked install failed" >> $GITHUB_STEP_SUMMARY
+            echo "```" >> $GITHUB_STEP_SUMMARY
+            tail -50 install-locked.log >> $GITHUB_STEP_SUMMARY
+            echo "```" >> $GITHUB_STEP_SUMMARY
+            echo "success=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      - name: Test Build
+        id: build
+        if: steps.install-fresh.outputs.success == 'true' || steps.install-locked.outputs.success == 'true'
+        run: |
+          echo "### Build Test" >> $GITHUB_STEP_SUMMARY
+
+          if bun run build 2>&1 | tee build.log; then
+            echo "✅ Build successful" >> $GITHUB_STEP_SUMMARY
+            echo "success=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Build failed" >> $GITHUB_STEP_SUMMARY
+            echo "```" >> $GITHUB_STEP_SUMMARY
+            tail -50 build.log >> $GITHUB_STEP_SUMMARY
+            echo "```" >> $GITHUB_STEP_SUMMARY
+            echo "success=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      - name: Test Suite
+        id: test
+        if: steps.install-fresh.outputs.success == 'true' || steps.install-locked.outputs.success == 'true'
+        run: |
+          echo "### Test Suite" >> $GITHUB_STEP_SUMMARY
+
+          if bun test 2>&1 | tee test.log; then
+            echo "✅ Tests passed" >> $GITHUB_STEP_SUMMARY
+            echo "success=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ Tests failed" >> $GITHUB_STEP_SUMMARY
+            echo "```" >> $GITHUB_STEP_SUMMARY
+            tail -50 test.log >> $GITHUB_STEP_SUMMARY
+            echo "```" >> $GITHUB_STEP_SUMMARY
+            echo "success=false" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      - name: Performance Metrics
+        if: steps.install-fresh.outputs.success == 'true'
+        run: |
+          echo "### Performance Metrics" >> $GITHUB_STEP_SUMMARY
+
+          # Time a clean install
+          rm -rf node_modules
+          START=$(date +%s)
+          bun install --force > /dev/null 2>&1
+          END=$(date +%s)
+          DURATION=$((END - START))
+          echo "- Install time: ${DURATION}s" >> $GITHUB_STEP_SUMMARY
+
+          # Count dependencies
+          DEPS=$(find node_modules -maxdepth 1 -type d | wc -l)
+          echo "- Total dependencies: $DEPS" >> $GITHUB_STEP_SUMMARY
+
+          # Check cache size
+          CACHE_SIZE=$(du -sh ~/.bun/install/cache 2>/dev/null | cut -f1 || echo "N/A")
+          echo "- Cache size: $CACHE_SIZE" >> $GITHUB_STEP_SUMMARY
+
+      - name: Final Status
+        if: always()
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Overall Result for Bun ${{ matrix.version }}" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "${{ steps.install-fresh.outputs.success }}" == "true" && \
+                "${{ steps.build.outputs.success }}" == "true" && \
+                "${{ steps.test.outputs.success }}" == "true" ]]; then
+            echo "🎉 **PASSED** - All checks successful" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          else
+            echo "⚠️ **FAILED** - Some checks failed" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+  summary:
+    name: Version Test Summary
+    needs: test-version
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Create Summary Report
+        run: |
+          echo "# Bun Version Compatibility Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|--------|" >> $GITHUB_STEP_SUMMARY
+
+          # This would ideally pull from job outputs
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Recommendations" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Production**: Use v1.1.38 (stable)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Testing**: Monitor newer versions for registry fix" >> $GITHUB_STEP_SUMMARY
+          echo "- **Action Required**: Report persistent issues to https://github.com/oven-sh/bun/issues" >> $GITHUB_STEP_SUMMARY

@@ -1,32 +1,38 @@
 /**
- * Configuration system types and interfaces for Rulesets
- * Supports both JSONC and TOML configuration formats with hierarchical discovery
+
+- Configuration system types and interfaces for Rulesets
+- Supports both JSONC and TOML configuration formats with hierarchical discovery
  */
 
 import type { Logger } from '@rulesets/types';
 
 /**
- * Branded types for type safety
+
+- Branded types for type safety
  */
 type Brand<T, B> = T & { readonly __brand: B };
 
 /**
- * Branded type for file paths to prevent confusion
+
+- Branded type for file paths to prevent confusion
  */
 export type ConfigFilePath = Brand<string, 'ConfigFilePath'>;
 
 /**
- * Branded type for directory paths
+
+- Branded type for directory paths
  */
 export type ConfigDirectoryPath = Brand<string, 'ConfigDirectoryPath'>;
 
 /**
- * Branded type for provider IDs to ensure they're valid
+
+- Branded type for provider IDs to ensure they're valid
  */
 export type ProviderID = Brand<string, 'ProviderID'>;
 
 /**
- * Known provider IDs as const assertion for type safety
+
+- Known provider IDs as const assertion for type safety
  */
 export const KNOWN_PROVIDERS = [
   'cursor',
@@ -38,12 +44,14 @@ export const KNOWN_PROVIDERS = [
 ] as const;
 
 /**
- * Union type of known provider IDs
+
+- Union type of known provider IDs
  */
 export type KnownProviderID = (typeof KNOWN_PROVIDERS)[number];
 
 /**
- * Configuration result discriminated union for strict success/failure handling
+
+- Configuration result discriminated union for strict success/failure handling
  */
 export type ConfigResult<T> =
   | {
@@ -60,30 +68,32 @@ export type ConfigResult<T> =
     };
 
 /**
- * Provider-specific configuration settings
+
+- Provider-specific configuration settings
  */
 export interface ProviderConfig {
-  /** Whether this provider is enabled */
+  /**Whether this provider is enabled */
   readonly enabled?: boolean;
   /** Output path for this provider (overrides default) */
   readonly outputPath?: string;
-  /** Provider-specific options */
+  /**Provider-specific options*/
   readonly options?: Readonly<Record<string, unknown>>;
 }
 
 /**
- * Gitignore management configuration
+
+- Gitignore management configuration
  */
 export interface GitignoreConfig {
-  /** Whether gitignore management is enabled */
+  /**Whether gitignore management is enabled */
   readonly enabled?: boolean;
   /** Files to keep in gitignore despite being generated */
   readonly keep?: readonly string[];
-  /** Additional patterns to always ignore */
+  /**Additional patterns to always ignore */
   readonly ignore?: readonly string[];
   /** Gitignore management options */
   readonly options?: {
-    /** Custom comment for managed block */
+    /**Custom comment for managed block */
     readonly comment?: string;
     /** Whether to sort entries alphabetically */
     readonly sort?: boolean;
@@ -91,110 +101,119 @@ export interface GitignoreConfig {
 }
 
 /**
- * Parallel compilation configuration
+
+- Parallel compilation configuration
  */
 export interface ParallelCompilationConfig {
-  /** Maximum number of concurrent provider compilations (default: unlimited) */
+  /**Maximum number of concurrent provider compilations (default: unlimited) */
   readonly maxConcurrency?: number;
   /** Whether to continue compilation if one provider fails (default: false) */
   readonly continueOnError?: boolean;
-  /** Enable detailed performance timing for parallel operations */
+  /**Enable detailed performance timing for parallel operations*/
   readonly enableTiming?: boolean;
 }
 
 /**
- * Main Rulesets configuration interface with strict typing
+
+- Main Rulesets configuration interface with strict typing
  */
 export interface RulesetConfig {
-  /** Provider-specific settings with type-safe keys */
+  /**Provider-specific settings with type-safe keys */
   readonly providers?: Readonly<Record<string, ProviderConfig>>;
   /** Gitignore management settings */
   readonly gitignore?: GitignoreConfig;
-  /** Parallel compilation settings */
+  /**Parallel compilation settings */
   readonly parallelCompilation?: ParallelCompilationConfig;
   /** Default providers to enable when none specified */
   readonly defaultProviders?: readonly string[];
-  /** Strict mode - fail on warnings */
+  /**Strict mode - fail on warnings */
   readonly strict?: boolean;
   /** Output directory for compiled rules */
   readonly outputDirectory?: string;
-  /** Global configuration options */
+  /**Global configuration options */
   readonly options?: Readonly<Record<string, unknown>>;
   /** Index signature for dynamic property access */
   readonly [key: string]: unknown;
 }
 
 /**
- * Type-safe provider configuration with strict known providers
+
+- Type-safe provider configuration with strict known providers
  */
 export interface TypeSafeRulesetConfig
   extends Omit<RulesetConfig, 'providers'> {
-  /** Type-safe provider settings */
+  /**Type-safe provider settings*/
   readonly providers?: Readonly<
     Partial<Record<KnownProviderID, ProviderConfig>>
+
   >;
 }
 
 /**
- * Configuration loading context
+
+- Configuration loading context
  */
 export interface ConfigContext {
-  /** Project root path */
+  /**Project root path */
   readonly projectPath: ConfigDirectoryPath;
   /** Environment variables to consider */
   readonly env?: Readonly<Record<string, string>>;
-  /** Logger instance */
+  /**Logger instance*/
   readonly logger?: Logger;
 }
 
 /**
- * Configuration loading options
+
+- Configuration loading options
  */
 export interface ConfigLoadOptions {
-  /** Search for config files in parent directories */
+  /**Search for config files in parent directories */
   readonly searchParents?: boolean;
   /** Maximum directory levels to search upward */
   readonly maxSearchDepth?: number;
-  /** Environment variable prefix for overrides */
+  /**Environment variable prefix for overrides */
   readonly envPrefix?: string;
   /** Validate configuration against schema */
   readonly validate?: boolean;
 }
 
 /**
- * Configuration file discovery result with branded types
+
+- Configuration file discovery result with branded types
  */
 export interface ConfigFileResult {
-  /** Path to the configuration file */
+  /**Path to the configuration file */
   readonly filePath: ConfigFilePath;
   /** Configuration file format */
   readonly format: 'jsonc' | 'toml';
-  /** Raw file content */
+  /**Raw file content */
   readonly content: string;
   /** Directory where config was found */
   readonly directory: ConfigDirectoryPath;
 }
 
 /**
- * Configuration loading result with strict type safety
+
+- Configuration loading result with strict type safety
  */
 export interface ConfigLoadResult {
-  /** Whether the configuration loading succeeded */
+  /**Whether the configuration loading succeeded */
   readonly success: boolean;
   /** Final merged configuration */
   readonly config: RulesetConfig;
-  /** Configuration files that were loaded */
+  /**Configuration files that were loaded */
   readonly sources: readonly ConfigFileResult[];
   /** Environment overrides applied */
   readonly envOverrides: Readonly<Record<string, unknown>>;
-  /** Validation errors (if any) */
+  /**Validation errors (if any) */
   readonly errors?: readonly string[];
   /** Validation warnings (if any) */
   readonly warnings?: readonly string[];
 }
 
 /**
- * Type-safe configuration loading result using discriminated union
+
+- Type-safe configuration loading result using discriminated union
  */
 export type SafeConfigLoadResult = ConfigResult<{
   readonly config: RulesetConfig;
@@ -203,11 +222,12 @@ export type SafeConfigLoadResult = ConfigResult<{
 }>;
 
 /**
- * Configuration loader interface with strict typing
+
+- Configuration loader interface with strict typing
  */
 export interface ConfigLoader {
   /**
-   * Load configuration from project path with hierarchical discovery
+  - Load configuration from project path with hierarchical discovery
    */
   loadConfig(
     context: ConfigContext,
@@ -215,12 +235,14 @@ export interface ConfigLoader {
   ): Promise<ConfigLoadResult>;
 
   /**
-   * Validate configuration against schema with strict return type
+
+- Validate configuration against schema with strict return type
    */
   validateConfig(config: unknown): ConfigValidationResult;
 
   /**
-   * Find configuration file starting from given path
+
+- Find configuration file starting from given path
    */
   findConfigFile(
     startPath: ConfigDirectoryPath,
@@ -228,17 +250,20 @@ export interface ConfigLoader {
   ): Promise<ConfigFileResult | null>;
 
   /**
-   * Parse configuration file content with branded path
+
+- Parse configuration file content with branded path
    */
   parseConfigFile(filePath: ConfigFilePath, content: string): RulesetConfig;
 
   /**
-   * Merge multiple configurations with proper precedence
+
+- Merge multiple configurations with proper precedence
    */
   mergeConfigs(configs: readonly RulesetConfig[]): RulesetConfig;
 
   /**
-   * Apply environment variable overrides
+
+- Apply environment variable overrides
    */
   applyEnvOverrides(
     config: RulesetConfig,
@@ -248,10 +273,12 @@ export interface ConfigLoader {
 }
 
 /**
- * Default configuration values
+
+- Default configuration values
  */
 export const DEFAULT_CONFIG: Required<
   Omit<RulesetConfig, 'providers' | 'options'>
+
 > & {
   providers: Record<string, ProviderConfig>;
   options: Record<string, unknown>;
@@ -279,6 +306,7 @@ export const DEFAULT_CONFIG: Required<
       sort: true,
     },
   },
+  parallelCompilation: {},
   defaultProviders: ['cursor', 'claude-code'],
   strict: false,
   outputDirectory: '.ruleset/dist',
@@ -286,7 +314,8 @@ export const DEFAULT_CONFIG: Required<
 } as const;
 
 /**
- * Configuration file names in order of precedence (highest first)
+
+- Configuration file names in order of precedence (highest first)
  */
 export const CONFIG_FILE_NAMES = [
   'ruleset.config.jsonc',
@@ -298,7 +327,8 @@ export const CONFIG_FILE_NAMES = [
 ] as const;
 
 /**
- * Default configuration loading options
+
+- Default configuration loading options
  */
 export const DEFAULT_LOAD_OPTIONS: Required<ConfigLoadOptions> = {
   searchParents: true,
@@ -308,7 +338,8 @@ export const DEFAULT_LOAD_OPTIONS: Required<ConfigLoadOptions> = {
 } as const;
 
 /**
- * Type guards and helper functions for branded types
+
+- Type guards and helper functions for branded types
  */
 export const createConfigFilePath = (path: string): ConfigFilePath =>
   path as ConfigFilePath;
@@ -317,14 +348,16 @@ export const createConfigDirectoryPath = (path: string): ConfigDirectoryPath =>
 export const createProviderID = (id: string): ProviderID => id as ProviderID;
 
 /**
- * Type guard for known provider IDs
+
+- Type guard for known provider IDs
  */
 export const isKnownProviderID = (id: string): id is KnownProviderID => {
   return KNOWN_PROVIDERS.includes(id as KnownProviderID);
 };
 
 /**
- * Type guard for configuration success result
+
+- Type guard for configuration success result
  */
 export const isConfigSuccess = <T>(
   result: ConfigResult<T>
@@ -337,7 +370,8 @@ export const isConfigSuccess = <T>(
 };
 
 /**
- * Type guard for configuration failure result
+
+- Type guard for configuration failure result
  */
 export const isConfigFailure = <T>(
   result: ConfigResult<T>
@@ -350,7 +384,8 @@ export const isConfigFailure = <T>(
 };
 
 /**
- * Assert that a provider ID is known at compile time
+
+- Assert that a provider ID is known at compile time
  */
 export const assertKnownProvider = (
   id: string
@@ -363,7 +398,8 @@ export const assertKnownProvider = (
 };
 
 /**
- * Create a type-safe configuration result
+
+- Create a type-safe configuration result
  */
 export const createConfigResult = {
   success: <T>(data: T, warnings?: string[]): ConfigResult<T> => ({
@@ -382,7 +418,8 @@ export const createConfigResult = {
 } as const;
 
 /**
- * Type-safe configuration validation
+
+- Type-safe configuration validation
  */
 export interface ConfigValidationResult {
   readonly valid: boolean;
@@ -391,7 +428,8 @@ export interface ConfigValidationResult {
 }
 
 /**
- * Assertion for non-null configuration access
+
+- Assertion for non-null configuration access
  */
 export const assertConfigExists = <T>(
   config: T | undefined,

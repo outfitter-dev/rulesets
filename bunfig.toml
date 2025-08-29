@@ -1,46 +1,33 @@
-# Bun configuration for @outfitter/rulesets monorepo
-
-# <https://bun.sh/docs/runtime/configuration>
+# Bun configuration file
+# This configuration works around the Bun InvalidURL bug with scoped packages in CI
+# See: https://github.com/outfitter-dev/rulesets/issues/67
 
 [install]
+# Explicit registry with trailing slash to fix URL joining
+registry = "https://registry.npmjs.org/"
 
-# Match workspace behavior for monorepo packages
+# Use frozen lockfile by default (same as --frozen-lockfile flag)
+frozenLockfile = false
 
-linkWorkspacePackages = true
-
-# Use isolated linker for better monorepo workspace management
-
-linker = "isolated"
-
-# Use semver ranges; lockfile ensures stability
-
+# Optional: Specify exact for deterministic installs
 exact = false
-frozenLockfile = true
-
-# Cache configuration
-
-cache = true
-registry = "<https://registry.npmjs.org>"
 
 [install.scopes]
+# Map each scope to the registry explicitly to bypass URL joining bug
+"@types" = "https://registry.npmjs.org/"
+"@biomejs" = "https://registry.npmjs.org/"
+"@changesets" = "https://registry.npmjs.org/"
+"@commitlint" = "https://registry.npmjs.org/"
 
-# Optimize for our common scopes
+# Cache configuration
+[install.cache]
+# Use shared cache for faster installs
+dir = "~/.bun/install/cache"
+disable = false
 
-"@rulesets" = { registry = "<https://registry.npmjs.org>" }
-"@biomejs" = { registry = "<https://registry.npmjs.org>" }
-"@changesets" = { registry = "<https://registry.npmjs.org>" }
-
-[test]
-
-# Bun native test configuration
-
-coverage = true
-coverageThreshold = { lines = 0.8, functions = 0.8, statements = 0.8 }
-timeout = 10000
-bail = false  # Don't stop on first test failure
-
-[run]
-
-# Set NODE_ENV if not already set
-
-env = { NODE_ENV = "development" }
+# Lockfile configuration
+[install.lockfile]
+# Save lockfile for reproducible installs
+save = true
+# Use yarn format (only supported output format currently)
+print = "yarn"

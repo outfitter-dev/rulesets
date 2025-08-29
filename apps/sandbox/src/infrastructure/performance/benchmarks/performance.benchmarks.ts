@@ -7,7 +7,7 @@
  */
 
 import type { SafeFilePath, SourceContent } from '@/shared/types/brands';
-import { createSafeFilePath, createSourceContent } from '@/shared/types/brands';
+import { createSafeDirectoryPath, createSafeFilePath, createSourceContent } from '@/shared/types/brands';
 import { Err, Ok, Result } from '@/shared/types/result';
 import { ConfigurationService } from '../../config/config.loader';
 import { EnhancedRulesetsCompilationService } from '../../core/enhanced.rulesets.adapter';
@@ -248,7 +248,7 @@ export class PerformanceBenchmarks {
       await this.runBenchmark(
         'Directory Listing',
         async () => {
-          await fileSystem.listDirectory(createSafeFilePath('.') as any);
+          await fileSystem.listDirectory(createSafeDirectoryPath('.'));
         },
         PERFORMANCE_TARGETS.DIRECTORY_LIST
       )

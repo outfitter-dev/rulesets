@@ -1,4 +1,5 @@
 # CI/CD Workflow - Optimized for speed and reliability
+
 name: CI
 
 on:
@@ -8,11 +9,13 @@ on:
     branches: [main, develop]
 
 # Cancel outdated runs for same ref
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 # Set environment for all jobs
+
 env:
   NODE_ENV: production
 
@@ -27,10 +30,13 @@ jobs:
         with:
           fetch-depth: 2 # Reduced from 0 for faster checkout
 
+      # Bun setup using version file for deterministic builds
+      # Version controlled via .bun-version file
+      # Workaround for: https://github.com/outfitter-dev/rulesets/issues/67
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.19
+          bun-version-file: .bun-version
 
       # Cache Bun dependencies
       - name: Cache Bun Dependencies
@@ -39,7 +45,7 @@ jobs:
           path: |
             ~/.bun/install/cache
             node_modules
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock', '**/package.json') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock*', '**/package.json') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
@@ -56,9 +62,17 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          # Clear cache if needed (helps with registry issues)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual run detected - clearing Bun cache"
+            bun pm cache rm || true
+          fi
+
+          # Install with frozen lockfile for reproducibility
           if [ -f "bun.lock" ]; then
             bun install --frozen-lockfile
           else
+            echo "Warning: bun.lock not found, installing without lock"
             bun install
           fi
 
@@ -66,29 +80,49 @@ jobs:
       - name: Lint
         id: lint
         run: |
+          set -o pipefail
           echo "🔍 Running linting..."
-          bun run lint 2>&1 | tee lint.log || echo "lint_failed=true" >> $GITHUB_OUTPUT
+          bun run lint 2>&1 | tee lint.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "lint_failed=true" >> "$GITHUB_OUTPUT"
+          fi
         continue-on-error: true
 
       - name: Type Check
         id: typecheck
         run: |
+          set -o pipefail
           echo "🔍 Running type checking..."
-          bun run typecheck 2>&1 | tee typecheck.log || echo "typecheck_failed=true" >> $GITHUB_OUTPUT
+          bun run typecheck 2>&1 | tee typecheck.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "typecheck_failed=true" >> "$GITHUB_OUTPUT"
+          fi
         continue-on-error: true
 
       - name: Test
         id: test
         run: |
+          set -o pipefail
           echo "🧪 Running tests..."
-          bun run test 2>&1 | tee test.log || echo "test_failed=true" >> $GITHUB_OUTPUT
+          bun run test 2>&1 | tee test.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "test_failed=true" >> "$GITHUB_OUTPUT"
+          fi
         continue-on-error: true
 
       - name: Build
         id: build
         run: |
+          set -o pipefail
           echo "🏗️ Running build..."
-          bun run build 2>&1 | tee build.log || echo "build_failed=true" >> $GITHUB_OUTPUT
+          bun run build 2>&1 | tee build.log
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "build_failed=true" >> "$GITHUB_OUTPUT"
+          fi
         continue-on-error: true
 
       # Upload logs for debugging
@@ -171,10 +205,13 @@ jobs:
         with:
           fetch-depth: 0 # Need full history for changesets
 
+      # Bun setup using version file for deterministic builds
+      # Version controlled via .bun-version file
+      # Workaround for: https://github.com/outfitter-dev/rulesets/issues/67
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: 1.2.19
+          bun-version-file: .bun-version
 
       # Reuse caches from build job
       - name: Cache Bun Dependencies
@@ -199,9 +236,17 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          # Clear cache if needed (helps with registry issues)
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "Manual run detected - clearing Bun cache"
+            bun pm cache rm || true
+          fi
+
+          # Install with frozen lockfile for reproducibility
           if [ -f "bun.lock" ]; then
             bun install --frozen-lockfile
           else
+            echo "Warning: bun.lock not found, installing without lock"
             bun install
           fi
 

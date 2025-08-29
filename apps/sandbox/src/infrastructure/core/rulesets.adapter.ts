@@ -77,6 +77,7 @@ import {
   BrandedTypeUtils,
   createCompiledContent,
   createSafeFilePath,
+  createSemanticVersion,
   createTimestamp,
 } from '@/shared/types/brands';
 import { Err, Ok, type Result } from '@/shared/types/result';
@@ -205,7 +206,7 @@ export class RulesetsCompilationService implements ICompilationService {
         metadata: {
           initiatedBy: 'sandbox',
           environment: 'development',
-          compilerVersion: '0.1.0' as any,
+          compilerVersion: createSemanticVersion('0.2.0'),
           tags: [],
           custom: {},
           ...params.metadata,
@@ -586,7 +587,7 @@ export class RulesetsCompilationService implements ICompilationService {
 
     if (source.type === 'content' && source.content) {
       // Create temporary file
-      const tempFileName = `temp-${Date.now()}-${Math.random().toString(36).substr(2, 9)}.rule.md`;
+      const tempFileName = `temp-${Date.now()}-${Math.random().toString(36).substring(2, 11)}.rule.md`;
       const tempPath = createSafeFilePath(tempFileName);
 
       const writeResult = await this.fileSystem.writeFile(

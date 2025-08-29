@@ -1,8 +1,8 @@
-# 📏 Rulesets: A Compiler for AI Rules Files
+# 📏 Rulesets: Modern AI Rules Compilation
 
-> **🚀 v0 Release Now Available!** The initial implementation of Rulesets is ready for testing. See [CLI Installation](#cli-installation) to get started.
+> **🚀 v0.2 Now Available!** Clean, simple, Handlebars-powered AI rules compilation. See [Quick Start](#quick-start) to get started.
 
-Rulesets simplifies rules management for tools like Cursor, Claude Code, Codex, etc. With Rulesets, you author rules (called "source rules") in previewable Markdown and compile them into compiled rules for each provider (`.cursor/rules.mdc`, `./CLAUDE.md`, `.roo/rules.md`, and more). Think of it as **Terraform for AI rules**: write once, compile for many providers, your agents, no matter the tool, on the (literal) same page.
+Rulesets simplifies rules management for AI coding tools like Cursor, Claude Code, Windsurf, and more. Author rules once in Handlebars-enhanced Markdown and build them for multiple providers automatically. Think of it as **Terraform for AI rules**: write once, build for many tools, keep everyone on the same page.
 
 ## What is Rulesets?
 
@@ -35,32 +35,23 @@ We chose "Rulesets" because it captures the essence of what this tool does: orga
 
 ## Core Concepts
 
-**source rules**
-: source rules files, written in 100% previewable Markdown with `.rule.md` extension. Written in Rulesets notation and use `{{...}}` notation markers to direct the compiler.
+**Source Rules**
+: Markdown files (`.rule.md`) authored in `.ruleset/src/` using Handlebars templating. 100% previewable and version-controllable.
 
-**compiled rules**
-: Provider-specific compiled files (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md#project-conventions`). When placed in their provider directories, these are referred to as "tool-ready rules".
+**Built Rules**
+: Provider-specific output files generated from source rules (e.g., `.cursor/rules/foo.mdc`, `./CLAUDE.md`).
 
-**Block**
-: Delimited, reusable blocks of content using notation like `{{instructions}}...{{/instructions}}` with optional properties. They are 1:1 translations of XML tags (e.g., `{{instructions}}` → `<instructions>`), but readable in Markdown previewers.
+**Templates**
+: Handlebars-powered templating with blocks (`{{#instructions}}...{{/instructions}}`), variables (`{{project.name}}`), and conditionals (`{{#if-provider "cursor"}}`).
 
-**Import**
-: A reference to another source rules file, block, partial, or template (`{{> my-rule}}`). Embeds content from another source.
+**Partials**
+: Reusable components stored in `.ruleset/src/_partials/` and included with `{{> @partial-name}}`.
 
-**Variable**
-: Dynamic value replaced inline at compile time (e.g., `{{$key}}` for aliases, `{{$.front matter.key}}` for front matter data, `{{$provider}}` for the current provider name).
+**Providers**
+: Supported AI tools (Cursor, Claude Code, Windsurf, etc.) with automatic format conversion and optimization.
 
-**Notation Marker**
-: Element using `{{...}}` notation, used throughout Rulesets to direct the compiler. Similar to `<xml-tags>`, but fully Markdown-previewable.
-
-**Partial**
-: Modular, reusable content component stored in `/_partials`.
-
-**Provider**
-: A supported tool (Cursor, Roo Code, etc.) identified by a `kebab-case` ID (e.g., `cursor`, `roo-code`). Defines provider-specific criteria for compiling source rules into compiled rules and is provided through plugins.
-
-**Provider Group**
-: Named set of providers (`@cursor`, `@ide`, `@cli`) for property filtering (a planned feature for easier filtering).
+**Auto-Discovery**
+: Automatic detection and processing of source rules without manual file specification.
 
 ## Supported Providers
 
@@ -89,97 +80,155 @@ _Want a new provider? Implement `RulesetProvider` and publish `@rulesets/plugin-
 - **Plugin Architecture** – Add new providers via `RulesetProvider` without touching core.
 - **CLI & API** – `rulesets build`, `rulesets validate`, and `POST /compile` endpoint.
 
-## CLI Installation
+## Installation
 
 ```bash
-npm install -g @rulesets/cli        # global CLI
-npx @rulesets/cli init              # quick project bootstrap
+# Install CLI globally
+npm install -g @rulesets/cli
+
+# Or use directly with npx
+npx @rulesets/cli --help
 ```
 
-## Library Installation
+## Development (Bun-only)
 
-```bash
-# Using npm
-npm install @rulesets/core
+- Package manager: Bun (pinned via `.bun-version` and `packageManager`)
+- Install dependencies: `bun install` (use `--frozen-lockfile` in CI)
+- Run scripts: `bun run <script>` (see `package.json`)
+- Please do not use npm, Yarn, or pnpm in this repository
 
-# Using bun (recommended)
-bun add @rulesets/core
-
-# Using yarn
-yarn add @rulesets/core
-```
+See also: `.agent/rules/development-environment.md` for CI setup, caching, and troubleshooting.
 
 ## Quick Start
 
-### 1. Create a source rules file (`my-rules.rule.md`)
+### 1. Initialize a new project
 
-```markdown
+```bash
+rulesets init
+```
+
+### 2. Create source rules in `.ruleset/src/coding-standards.rule.md`
+
+```handlebars
 ---
-ruleset: { version: '0.1.0' }
-title: My Coding Standards
-description: Rules for AI coding assistants
+title: Coding Standards
 providers:
   cursor:
     outputPath: '.cursor/rules/standards.mdc'
+  claude-code:
+    outputPath: 'CLAUDE.md'
   windsurf:
     outputPath: '.windsurf/rules/standards.md'
 ---
 
-# Coding Standards
+{{#instructions}}
+# {{title}}
 
-Always use TypeScript with strict mode enabled.
-Prefer functional programming patterns.
-Write comprehensive tests for all features.
+## TypeScript Standards
+- Always use strict mode
+- Prefer functional programming patterns
+- {{> @typescript-config}}
+
+{{#if-provider "cursor"}}
+## Cursor-Specific Rules
+- Use Composer for complex changes
+- Leverage Cursor's autocomplete
+{{/if-provider}}
+
+{{#if-provider "claude-code"}}
+## Claude Code Guidelines
+- Break down complex tasks
+- Use clear, specific prompts
+{{/if-provider}}
+{{/instructions}}
 ```
 
-### 2. Use the API to process your rules
+### 3. Build for all providers
 
-```typescript
-import { runRulesetsV0, ConsoleLogger } from '@rulesets/core';
-
-async function main() {
-  const logger = new ConsoleLogger();
-
-  try {
-    await runRulesetsV0('./my-rules.rule.md', logger);
-    console.log('Rules compiled successfully!');
-  } catch (error) {
-    console.error('Error:', error);
-  }
-}
-
-main();
+```bash
+rulesets            # Auto-discover and build all
+rulesets build       # Explicit build command
 ```
 
-### 3. Find your compiled rules at:
+### 4. Build for specific providers
 
-- `.cursor/rules/standards.mdc` (for Cursor)
-- `.windsurf/rules/standards.md` (for Windsurf)
+```bash
+rulesets --provider cursor
+rulesets --provider cursor,windsurf
+```
 
-## V0 Limitations
+### 5. Find your built rules at:
 
-The current v0 release provides foundational functionality:
+- `.cursor/rules/standards.mdc`
+- `CLAUDE.md`
+- `.windsurf/rules/standards.md`
 
-- ✅ Front matter parsing and validation
-- ✅ Basic file compilation and writing
-- ✅ Destination plugin architecture
-- ❌ Rulesets syntax markers (`{{...}}`) are not processed (passed through as-is)
-- ❌ No block/import/variable support yet
+## Advanced Features
 
-These advanced features are planned for v0.x releases leading to v1.0.
+### Handlebars Templating
+
+```handlebars
+{{! Variables }}
+Project:
+{{project.name}}
+Language:
+{{project.language}}
+
+{{! Conditionals }}
+{{#if-provider 'cursor'}}
+  Cursor-specific content here
+{{/if-provider}}
+
+{{! Switch statements }}
+{{#switch-provider}}
+  {{#case 'cursor,windsurf'}}
+    IDE-specific configuration
+  {{/case}}
+  {{#case 'claude-code'}}
+    CLI-specific setup
+  {{/case}}
+  {{#default}}
+    Generic configuration
+  {{/default}}
+{{/switch-provider}}
+
+{{! Complex logic }}
+{{#if (and (eq provider.type 'ide') (has-capability 'workspaces'))}}
+  Advanced IDE features available
+{{/if}}
+```
+
+### Reusable Partials
+
+Store common content in `.ruleset/src/_partials/`:
+
+```handlebars
+{{!-- Include TypeScript rules --}}
+{{> @typescript-rules}}
+
+{{!-- Include with context --}}
+{{> @provider-config provider=provider}}
+```
 
 ## Directory Structure
 
 ```text
 project/
 ├── .ruleset/
-│   ├── dist/              # Compiled rules output
-│   │   ├── cursor/        # Cursor-specific rules
-│   │   └── windsurf/      # Windsurf-specific rules
-│   └── src/               # Source rules files (*.rule.md, *.md)
-│       └── _partials/     # Reusable content modules (future)
-├── my-rules.rule.md      # Your source rules file
-└── package.json
+│   ├── src/                      # Source rules files
+│   │   ├── coding-standards.rule.md
+│   │   ├── project-setup.rule.md
+│   │   └── _partials/            # Reusable components
+│   │       ├── typescript-rules.md
+│   │       └── security-checklist.md
+│   └── dist/                     # Built rules output
+│       ├── cursor/
+│       ├── claude-code/
+│       └── windsurf/
+├── .cursor/rules/                # Generated Cursor rules
+├── CLAUDE.md                     # Generated Claude Code rules
+├── .windsurf/rules/              # Generated Windsurf rules
+└── ruleset.config.json           # Configuration
 ```
 
 ## Developer Scripts
@@ -196,22 +245,45 @@ Common development scripts at the repo root:
 - Update lockfile: `bun run lockfile:update`
 - Git hooks: `bun run pre:commit` | `bun run pre:push` (installed via `prepare`)
 
-## Notation Cheatsheet
+## API Usage
 
-| Token / Feature             | Example                                                    | Notes                                             |
-| --------------------------- | ---------------------------------------------------------- | ------------------------------------------------- |
-| **Block**                   | `{{instructions name-("Rules") +cli}}...{{/instructions}}` | Properties control name & export.                 |
-| **Front-matter**            | `---\nname: foo\n---`                                      | YAML at file top.                                 |
-| **Import**                  | `{{> legal}}`                                              | Embed content from another source rules file.     |
-| **Import Block**            | `{{> conventions#(block-name)}}`                           | Embed a specific block.                           |
-| **Internal Link**           | `[Read more](rules.md)`                                    | Standard Markdown links.                          |
-| **Project File Link**       | `@path/to/file.txt` or `@path/to/file.txt("Custom Title")` | Links to project files, optionally with an alias. |
-| **Alias Variable**          | `{{$project}}`                                             | Resolved via `aliases` in config.                 |
-| **Data Variable**           | `{{$.key}}`                                                | Injects YAML front matter data.                   |
-| **Provider Variable**       | `{{$provider}}` / `{{$provider.id}}`                       | Injects current provider name/ID.                 |
-| **Instruction Placeholder** | `[fill this in]`                                           | Marker for LLM to complete.                       |
+```typescript
+import { runRulesets, ConsoleLogger } from '@rulesets/core';
 
-The full Rulesets syntax specification can be found in `docs/project/OVERVIEW.md`.
+async function buildMyRules() {
+  const logger = new ConsoleLogger();
+
+  try {
+    // Build single file
+    await runRulesets('./ruleset/src/my-rules.rule.md', logger);
+
+    // Build with options
+    await runRulesets('./ruleset/src/my-rules.rule.md', logger, {
+      providers: ['cursor', 'claude-code'], // Only build for these
+      developmentMode: true, // Enhanced debugging
+      cacheTemplates: false, // Disable caching
+    });
+
+    console.log('Rules built successfully!');
+  } catch (error) {
+    console.error('Build failed:', error);
+  }
+}
+```
+
+## CLI Commands
+
+```bash
+rulesets                           # Auto-discover and build all
+rulesets build                     # Explicit build command
+rulesets --provider cursor         # Build for specific provider
+rulesets --provider cursor,windsurf # Build for multiple providers
+rulesets --dev                     # Development mode with debugging
+rulesets --no-cache                # Disable template caching
+
+rulesets init                      # Initialize new project
+rulesets migrate                   # Import existing scattered rules
+```
 
 ## Versioning and Changelog
 

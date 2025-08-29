@@ -77,6 +77,7 @@ import {
   BrandedTypeUtils,
   createCompiledContent,
   createSafeFilePath,
+  createSemanticVersion,
   createTimestamp,
 } from '@/shared/types/brands';
 import { Err, Ok, type Result } from '@/shared/types/result';
@@ -87,6 +88,10 @@ import {
   PerformanceMonitor,
   type TaskPriority,
 } from '../performance';
+import { MEMORY_CONSTANTS } from '@/shared/constants';
+
+// Constants
+const DEFAULT_MAX_CACHE_SIZE_BYTES = MEMORY_CONSTANTS.LARGE_CACHE_SIZE; // 100MB
 
 /**
 
@@ -226,7 +231,7 @@ export class EnhancedRulesetsCompilationService implements ICompilationService {
       defaultTimeoutMs: 60_000,
       cacheTtlMs: 600_000, // 10 minutes
       enableIncremental: true,
-      maxCacheSize: 100 *1024* 1024, // 100MB
+      maxCacheSize: DEFAULT_MAX_CACHE_SIZE_BYTES,
       ...config,
     };
 
@@ -344,7 +349,7 @@ export class EnhancedRulesetsCompilationService implements ICompilationService {
                 metadata: {
                   initiatedBy: 'sandbox',
                   environment: 'development',
-                  compilerVersion: '0.1.0' as any,
+                  compilerVersion: createSemanticVersion('0.2.0'),
                   tags: ['cached'],
                   custom: { fromCache: true },
                   ...params.metadata,
@@ -389,7 +394,7 @@ export class EnhancedRulesetsCompilationService implements ICompilationService {
             metadata: {
               initiatedBy: 'sandbox',
               environment: 'development',
-              compilerVersion: '0.1.0' as any,
+              compilerVersion: createSemanticVersion('0.2.0'),
               tags: [],
               custom: {},
               ...params.metadata,

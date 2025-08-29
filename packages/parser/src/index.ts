@@ -186,7 +186,7 @@ function checkKeys(obj: unknown, path = ''): void {
 
   for (const key in record) {
     // Guard against prototype chain properties
-    if (!Object.hasOwn(record, key)) {
+    if (!Object.prototype.hasOwnProperty.call(record, key)) {
       continue;
     }
 
