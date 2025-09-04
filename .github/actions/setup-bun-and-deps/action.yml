@@ -1,0 +1,47 @@
+name: 'Setup Bun and Dependencies'
+description: 'Setup Bun runtime, install dependencies, and optionally run lint/test/build'
+
+inputs:
+  bun-version:
+    description: 'Version of Bun to install'
+    required: true
+    default: '1.2.21'
+  run-lint:
+    description: 'Whether to run lint'
+    required: false
+    default: 'true'
+  run-test:
+    description: 'Whether to run test'
+    required: false
+    default: 'true'
+  run-build:
+    description: 'Whether to run build'
+    required: false
+    default: 'true'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Bun
+      uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2
+      with:
+        bun-version: ${{ inputs.bun-version }}
+
+    - name: Install Dependencies
+      run: bun install --frozen-lockfile
+      shell: bash
+
+    - name: Lint
+      if: inputs.run-lint == 'true'
+      run: bun run lint
+      shell: bash
+
+    - name: Test
+      if: inputs.run-test == 'true'
+      run: bun run test
+      shell: bash
+
+    - name: Build
+      if: inputs.run-build == 'true'
+      run: bun run build
+      shell: bash
