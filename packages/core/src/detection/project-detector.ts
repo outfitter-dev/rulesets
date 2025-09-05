@@ -1,6 +1,6 @@
 import { readdir, readFile } from "node:fs/promises";
 import { join, basename } from "node:path";
-import { exists } from "node:fs/promises";
+import { exists } from "../utils/fs-helpers";
 import * as TOML from "@iarna/toml";
 
 export interface DetectionConfig {

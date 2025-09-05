@@ -1,6 +1,6 @@
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
-import { globalConfig, GlobalConfigManager } from '../../config/global-config';
+import { GlobalConfig } from '../../config/global-config';
 import { ConsoleLogger } from '../../utils/logger';
 
 /**
@@ -17,7 +17,8 @@ export async function initCommand(options: {
     // Initialize global rulesets directory
     logger.info('🚀 Initializing global rulesets directory...\n');
     
-    const globalDir = GlobalConfigManager.getGlobalRulesetsDir();
+    const globalConfig = new GlobalConfig();
+    const globalDir = globalConfig.getGlobalDirectory();
     logger.info(`📁 Location: ${globalDir}`);
     
     try {
@@ -34,7 +35,7 @@ export async function initCommand(options: {
       }
       
       // Initialize
-      await globalConfig.initialize();
+      await globalConfig.load();
       
       // Create example ruleset
       await createExampleRuleset(globalDir, logger);
@@ -89,13 +90,19 @@ export async function initCommand(options: {
       
       // Run detection
       logger.info('\n🔍 Detecting project configuration...');
-      const { ProjectDetector } = await import('../../utils/project-detector');
-      const config = await globalConfig.loadConfig();
+      const { ProjectDetector } = await import('../../detection/project-detector');
+      const globalConfigInstance = new GlobalConfig();
+      const config = await globalConfigInstance.load();
       const detector = new ProjectDetector(config);
-      const result = await detector.detect();
+      const result = await detector.detect('.');
       
       if (result.suggestedSets.length > 0) {
-        console.log('\n' + detector.getSummary(result));
+        const summary = `
+📁 Project Type: ${result.projectType.join(', ')}
+📦 Dependencies: ${result.detectedDependencies.slice(0, 5).join(', ')}${result.detectedDependencies.length > 5 ? '...' : ''}
+🎯 Suggested Rulesets: ${result.suggestedSets.join(', ')}
+`;
+        console.log(summary);
         logger.info('\n💡 To install suggested rulesets, run:');
         logger.info(`   rulesets install ${result.suggestedSets.join(' ')}`);
       }

@@ -26,6 +26,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.2.2",
     "@changesets/cli": "^2.29.6",
+    "@types/bun": "^1.2.21",
     "@types/node": "^24.3.0",
     "markdownlint-cli": "^0.45.0",
     "typescript": "^5.9.2",

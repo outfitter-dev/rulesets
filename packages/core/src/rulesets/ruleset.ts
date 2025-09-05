@@ -1,6 +1,6 @@
 import { join, dirname } from "node:path";
 import { readdir, mkdir } from "node:fs/promises";
-import { exists } from "node:fs/promises";
+import { exists } from "../utils/fs-helpers";
 import * as TOML from "@iarna/toml";
 
 export interface RulesetMetadata {
