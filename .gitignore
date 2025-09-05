@@ -41,3 +41,7 @@ bun-debug.log*
 # Private journal artifacts (should not be committed)
 /.private-journal/
 *.embedding
+
+# OS files
+.DS_Store
+Thumbs.db
