@@ -3,6 +3,8 @@ import { join, dirname } from 'node:path';
 import { GlobalConfig } from '../config/global-config';
 import { RulesetManager } from '../rulesets/ruleset-manager';
 import { Ruleset } from '../rulesets/ruleset';
+import { PluginRegistry } from '../destinations/plugin-registry';
+import type { DestinationPlugin } from '../destinations/base-plugin';
 
 export interface InstallationRecord {
   version: string;
@@ -79,6 +81,7 @@ export class InstallationManager {
   private trackingFile: string;
   private globalConfig: GlobalConfig;
   private rulesetManager: RulesetManager;
+  private pluginRegistry: PluginRegistry;
   
   constructor(projectDir: string = process.cwd()) {
     this.projectDir = projectDir;
@@ -86,6 +89,7 @@ export class InstallationManager {
     this.globalConfig = new GlobalConfig();
     const globalDir = this.globalConfig.getGlobalDirectory();
     this.rulesetManager = new RulesetManager({ globalDir });
+    this.pluginRegistry = new PluginRegistry();
   }
   
   /**
@@ -343,6 +347,13 @@ export class InstallationManager {
   }
   
   /**
+   * Get available destination plugins.
+   */
+  getAvailableDestinations(): string[] {
+    return this.pluginRegistry.getPluginIds();
+  }
+  
+  /**
    * Check for available updates.
    */
   async checkForUpdates(): Promise<UpdateInfo[]> {
@@ -391,95 +402,105 @@ export class InstallationManager {
     content: string,
     rulesetName: string
   ): Promise<boolean> {
-    const destinationPaths: Record<string, string> = {
-      "claude-code": ".claude/CLAUDE.md",
-      "cursor": ".cursor/rules/ruleset.md",
-      "windsurf": ".windsurf/rules/ruleset.md",
-      "agents-md": "AGENTS.md",
-      "copilot": ".github/copilot/instructions.md",
-    };
+    const plugin = this.pluginRegistry.getPlugin(destination);
+    if (!plugin) return false;
     
-    const relativePath = destinationPaths[destination];
-    if (!relativePath) return false;
-    
-    const fullPath = join(this.projectDir, relativePath);
-    const dir = dirname(fullPath);
-    
-    await fs.mkdir(dir, { recursive: true });
-    
-    // Check if file exists and append if needed
-    let existingContent = '';
     try {
-      existingContent = await fs.readFile(fullPath, 'utf-8');
-    } catch {
-      // File doesn't exist
+      // Get the first path for this destination
+      const paths = plugin.getPaths('project');
+      if (paths.length === 0) return false;
+      
+      const relativePath = paths[0];
+      const fullPath = join(this.projectDir, relativePath);
+      const dir = dirname(fullPath);
+      
+      await fs.mkdir(dir, { recursive: true });
+      
+      // Check if file exists and append if needed
+      let existingContent = '';
+      try {
+        existingContent = await fs.readFile(fullPath, 'utf-8');
+      } catch {
+        // File doesn't exist
+      }
+      
+      // Add separator if appending
+      const separator = existingContent ? '\n\n---\n\n' : '';
+      const header = `<!-- RULESET: ${rulesetName} -->\n`;
+      
+      // Remove old version if exists
+      if (existingContent.includes(`<!-- RULESET: ${rulesetName} -->`)) {
+        const regex = new RegExp(
+          `<!-- RULESET: ${rulesetName} -->.*?(?=<!-- RULESET:|$)`,
+          'gs'
+        );
+        existingContent = existingContent.replace(regex, '');
+      }
+      
+      const finalContent = existingContent + separator + header + content;
+      await fs.writeFile(fullPath, finalContent.trim() + '\n', 'utf-8');
+      
+      // If Cursor, also write to .cursorrules
+      if (destination === 'cursor' && paths.length > 1) {
+        const cursorRulesPath = join(this.projectDir, paths[1]);
+        await fs.writeFile(cursorRulesPath, content, 'utf-8');
+      }
+      
+      return true;
+    } catch (error) {
+      console.error(`Failed to install to ${destination}:`, error);
+      return false;
     }
-    
-    // Add separator if appending
-    const separator = existingContent ? '\n\n---\n\n' : '';
-    const header = `<!-- RULESET: ${rulesetName} -->\n`;
-    
-    // Remove old version if exists
-    if (existingContent.includes(`<!-- RULESET: ${rulesetName} -->`)) {
-      const regex = new RegExp(
-        `<!-- RULESET: ${rulesetName} -->.*?(?=<!-- RULESET:|$)`,
-        'gs'
-      );
-      existingContent = existingContent.replace(regex, '');
-    }
-    
-    const finalContent = existingContent + separator + header + content;
-    await fs.writeFile(fullPath, finalContent.trim() + '\n', 'utf-8');
-    
-    return true;
   }
   
   private async removeFromDestination(
     destination: string,
     rulesetName: string
   ): Promise<boolean> {
-    const destinationPaths: Record<string, string> = {
-      "claude-code": ".claude/CLAUDE.md",
-      "cursor": ".cursor/rules/ruleset.md",
-      "windsurf": ".windsurf/rules/ruleset.md",
-      "agents-md": "AGENTS.md",
-      "copilot": ".github/copilot/instructions.md",
-    };
+    const plugin = this.pluginRegistry.getPlugin(destination);
+    if (!plugin) return false;
     
-    const relativePath = destinationPaths[destination];
-    if (!relativePath) return false;
-    
-    const fullPath = join(this.projectDir, relativePath);
+    const paths = plugin.getPaths('project');
+    if (paths.length === 0) return false;
     
     try {
-      let content = await fs.readFile(fullPath, 'utf-8');
-      
-      // Remove ruleset section
-      const regex = new RegExp(
-        `<!-- RULESET: ${rulesetName} -->.*?(?=<!-- RULESET:|$)`,
-        'gs'
-      );
-      content = content.replace(regex, '');
-      
-      // Clean up multiple separators
-      content = content.replace(/(\n---\n){2,}/g, '\n---\n');
-      content = content.trim();
-      
-      if (content) {
-        await fs.writeFile(fullPath, content + '\n', 'utf-8');
-      } else {
-        // Remove empty file and potentially empty directory
-        await fs.unlink(fullPath);
+      // Remove from all paths for this destination
+      for (const relativePath of paths) {
+        const fullPath = join(this.projectDir, relativePath);
         
-        // Try to remove directory if empty
         try {
-          const dir = dirname(fullPath);
-          const entries = await fs.readdir(dir);
-          if (entries.length === 0) {
-            await fs.rmdir(dir);
+          let content = await fs.readFile(fullPath, 'utf-8');
+          
+          // Remove ruleset section
+          const regex = new RegExp(
+            `<!-- RULESET: ${rulesetName} -->.*?(?=<!-- RULESET:|$)`,
+            'gs'
+          );
+          content = content.replace(regex, '');
+          
+          // Clean up multiple separators
+          content = content.replace(/(\n---\n){2,}/g, '\n---\n');
+          content = content.trim();
+          
+          if (content) {
+            await fs.writeFile(fullPath, content + '\n', 'utf-8');
+          } else {
+            // Remove empty file and potentially empty directory
+            await fs.unlink(fullPath);
+            
+            // Try to remove directory if empty
+            try {
+              const dir = dirname(fullPath);
+              const entries = await fs.readdir(dir);
+              if (entries.length === 0) {
+                await fs.rmdir(dir);
+              }
+            } catch {
+              // Directory not empty or doesn't exist
+            }
           }
         } catch {
-          // Directory not empty or doesn't exist
+          // File doesn't exist, continue to next path
         }
       }
       

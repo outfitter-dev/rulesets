@@ -130,9 +130,11 @@ async function ensureProjectInitialized() {
 }
 
 async function detectDestinations(): Promise<string[]> {
+  const manager = new InstallationManager();
+  const availablePlugins = manager.getAvailableDestinations();
   const destinations: string[] = [];
   
-  // Check for common AI tool directories
+  // Map plugin IDs to their detection paths
   const checks = [
     { path: ".claude", dest: "claude-code" },
     { path: ".cursor", dest: "cursor" },
@@ -142,14 +144,16 @@ async function detectDestinations(): Promise<string[]> {
   ];
   
   for (const check of checks) {
-    if (await exists(check.path)) {
+    if (availablePlugins.includes(check.dest) && await exists(check.path)) {
       destinations.push(check.dest);
     }
   }
   
   // Default to common destinations if none detected
   if (destinations.length === 0) {
-    return ["claude-code", "cursor", "agents-md"];
+    return ["claude-code", "cursor", "agents-md"].filter(d => 
+      availablePlugins.includes(d)
+    );
   }
   
   return destinations;
