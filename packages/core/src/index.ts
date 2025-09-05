@@ -32,8 +32,11 @@ export { DriftDetector, type DriftReport, type DriftEntry } from './drift/drift-
 export { ConfigLoader, type RulesetsConfig } from './config';
 
 // Export global configuration and detection
-export { GlobalConfigManager, globalConfig, type GlobalConfig } from './config/global-config';
-export { ProjectDetector, type DetectionResult } from './utils/project-detector';
+export { GlobalConfig, type GlobalConfigData } from './config/global-config';
+export { ProjectDetector, type DetectionResult } from './detection/project-detector';
+export { InstallationManager, type InstallResult, type SyncResult } from './installation/installation-manager';
+export { Ruleset, type RulesetMetadata } from './rulesets/ruleset';
+export { RulesetManager, type ComposedRuleset } from './rulesets/ruleset-manager';
 
 // Export CLI commands
 export { initCommand } from './cli/commands/init';

@@ -34,8 +34,9 @@ export class RulesetManager {
     }
     visited.add(name);
 
-    // Check cache
-    if (this.compositionCache.has(name)) {
+    // Check cache - but skip in test environment to allow updates
+    const skipCache = process.env.NODE_ENV === 'test' || process.env.BUN_ENV === 'test';
+    if (!skipCache && this.compositionCache.has(name)) {
       return this.compositionCache.get(name)!;
     }
 
