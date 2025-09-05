@@ -14,6 +14,12 @@ export type DestinationPlugin = {
   get name(): string;
 
   /**
+   * Human-readable description of what this destination plugin does.
+   * Used in CLI output and documentation.
+   */
+  description: string;
+
+  /**
    * Returns a JSON schema describing the configuration options specific to this plugin.
    * This schema is used for validating plugin configuration.
    *

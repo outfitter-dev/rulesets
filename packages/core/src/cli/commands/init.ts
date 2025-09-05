@@ -1,0 +1,194 @@
+import { promises as fs } from 'node:fs';
+import path from 'node:path';
+import { globalConfig, GlobalConfigManager } from '../../config/global-config';
+import { ConsoleLogger } from '../../utils/logger';
+
+/**
+ * Initialize global rulesets directory and configuration.
+ */
+export async function initCommand(options: {
+  global?: boolean;
+  force?: boolean;
+  verbose?: boolean;
+}): Promise<void> {
+  const logger = new ConsoleLogger(options.verbose ? 'debug' : 'info');
+  
+  if (options.global) {
+    // Initialize global rulesets directory
+    logger.info('🚀 Initializing global rulesets directory...\n');
+    
+    const globalDir = GlobalConfigManager.getGlobalRulesetsDir();
+    logger.info(`📁 Location: ${globalDir}`);
+    
+    try {
+      // Check if already exists
+      if (!options.force) {
+        try {
+          await fs.access(path.join(globalDir, 'config.toml'));
+          logger.warn('\n⚠️  Global rulesets already initialized');
+          logger.info('Use --force to reinitialize');
+          return;
+        } catch {
+          // Doesn't exist, proceed
+        }
+      }
+      
+      // Initialize
+      await globalConfig.initialize();
+      
+      // Create example ruleset
+      await createExampleRuleset(globalDir, logger);
+      
+      // Create example command
+      await createExampleCommand(globalDir, logger);
+      
+      logger.info('\n✅ Global rulesets initialized successfully!');
+      logger.info('\n📚 Next steps:');
+      logger.info('   1. Browse available rulesets: rulesets list --global');
+      logger.info('   2. Create a new ruleset: rulesets create <name> --global');
+      logger.info('   3. Install rulesets to a project: rulesets install <name>');
+      logger.info('   4. Auto-detect project needs: rulesets detect');
+      
+    } catch (error) {
+      logger.error('Failed to initialize global rulesets:', error);
+      process.exit(1);
+    }
+  } else {
+    // Initialize project rulesets
+    logger.info('🚀 Initializing project rulesets...\n');
+    
+    try {
+      // Create .rulesets directory in project
+      await fs.mkdir('.rulesets', { recursive: true });
+      
+      // Create installed.toml
+      const installedPath = path.join('.rulesets', 'installed.toml');
+      const installedContent = [
+        '# Rulesets installed in this project',
+        '# Managed by rulesets CLI - do not edit manually',
+        '',
+        '[installed]',
+        '# Example: typescript = { version = "1.0.0", source = "global" }',
+        '',
+        '[modified]',
+        '# Files that have been locally modified',
+      ].join('\n');
+      
+      await fs.writeFile(installedPath, installedContent, 'utf-8');
+      
+      // Add to .gitignore if it exists
+      try {
+        const gitignorePath = '.gitignore';
+        const gitignore = await fs.readFile(gitignorePath, 'utf-8');
+        
+        if (!gitignore.includes('.rulesets/')) {
+          const updatedGitignore = gitignore + '\n# Rulesets tracking\n.rulesets/\n';
+          await fs.writeFile(gitignorePath, updatedGitignore, 'utf-8');
+          logger.info('📝 Added .rulesets/ to .gitignore');
+        }
+      } catch {
+        // No .gitignore or error reading it
+      }
+      
+      logger.info('✅ Project rulesets initialized');
+      
+      // Run detection
+      logger.info('\n🔍 Detecting project configuration...');
+      const { ProjectDetector } = await import('../../utils/project-detector');
+      const config = await globalConfig.loadConfig();
+      const detector = new ProjectDetector(config);
+      const result = await detector.detect();
+      
+      if (result.suggestedSets.length > 0) {
+        console.log('\n' + detector.getSummary(result));
+        logger.info('\n💡 To install suggested rulesets, run:');
+        logger.info(`   rulesets install ${result.suggestedSets.join(' ')}`);
+      }
+      
+    } catch (error) {
+      logger.error('Failed to initialize project rulesets:', error);
+      process.exit(1);
+    }
+  }
+}
+
+/**
+ * Create an example ruleset.
+ */
+async function createExampleRuleset(globalDir: string, logger: ConsoleLogger): Promise<void> {
+  const exampleDir = path.join(globalDir, 'sets', 'example');
+  await fs.mkdir(exampleDir, { recursive: true });
+  
+  // Create rules.md
+  const rulesContent = [
+    '# Example Ruleset',
+    '',
+    'This is an example ruleset to get you started.',
+    '',
+    '## Code Style',
+    '- Use 2 spaces for indentation',
+    '- Prefer const over let',
+    '- Use descriptive variable names',
+    '',
+    '## Best Practices',
+    '- Write tests for all new features',
+    '- Document complex logic',
+    '- Keep functions small and focused',
+  ].join('\n');
+  
+  await fs.writeFile(path.join(exampleDir, 'rules.md'), rulesContent, 'utf-8');
+  
+  // Create meta.toml
+  const metaContent = [
+    '[set]',
+    'name = "Example"',
+    'version = "1.0.0"',
+    'description = "Example ruleset for demonstration"',
+    'author = "Rulesets CLI"',
+    'tags = ["example", "demo"]',
+    '',
+    '[extends]',
+    'sets = []',
+    '',
+    '[detection]',
+    'files = ["*.js", "*.ts"]',
+  ].join('\n');
+  
+  await fs.writeFile(path.join(exampleDir, 'meta.toml'), metaContent, 'utf-8');
+  
+  logger.debug('📦 Created example ruleset');
+}
+
+/**
+ * Create an example slash command.
+ */
+async function createExampleCommand(globalDir: string, logger: ConsoleLogger): Promise<void> {
+  const commandsDir = path.join(globalDir, 'commands');
+  
+  const commandContent = [
+    '---',
+    'description: "Create a conventional commit message"',
+    'argument-hint: "type message"',
+    '---',
+    '',
+    '# Commit Command',
+    '',
+    'Create a conventional commit message with the format:',
+    '`<type>(<scope>): <message>`',
+    '',
+    'Arguments: $ARGUMENTS',
+    '',
+    'Types:',
+    '- feat: New feature',
+    '- fix: Bug fix',
+    '- docs: Documentation',
+    '- style: Code style',
+    '- refactor: Code refactoring',
+    '- test: Tests',
+    '- chore: Maintenance',
+  ].join('\n');
+  
+  await fs.writeFile(path.join(commandsDir, 'commit.md'), commandContent, 'utf-8');
+  
+  logger.debug('⚡ Created example slash command');
+}

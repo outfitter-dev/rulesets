@@ -1,0 +1,16 @@
+version = "0.1.0"
+defaultDestination = ".agents/rules/"
+
+[destinations.agents-md]
+outputPath = "AGENTS.md"
+
+[destinations.claude-code]
+outputPath = "CLAUDE.md"
+
+[cloneMode]
+enabled = true
+autoDetect = true
+
+[driftDetection]
+enabled = true
+historyPath = ".rulesets/history.jsonl"
