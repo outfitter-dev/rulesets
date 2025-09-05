@@ -2,6 +2,7 @@ import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { join } from "node:path";
 import { mkdtemp, rm, writeFile, mkdir } from "node:fs/promises";
 import { tmpdir } from "node:os";
+import { ProjectDetector, type DetectionResult } from "../../src/detection/project-detector";
 
 describe("ProjectDetector", () => {
   let testDir: string;
@@ -366,24 +367,3 @@ black
     });
   });
 });
-
-// Type stub for implementation
-class ProjectDetector {
-  constructor(config?: any) {}
-  
-  async detect(projectPath: string): Promise<DetectionResult> {
-    throw new Error("Not implemented");
-  }
-}
-
-interface DetectionResult {
-  projectType: string[];
-  detectedFiles: string[];
-  detectedDependencies: string[];
-  suggestedSets: string[];
-  suggestions: Array<{
-    set: string;
-    confidence: number;
-    reason: string;
-  }>;
-}

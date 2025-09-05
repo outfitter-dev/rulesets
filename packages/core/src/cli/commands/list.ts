@@ -94,11 +94,11 @@ async function listPacks(options: ListOptions) {
 
 async function listInstalledRulesets(options: ListOptions) {
   try {
-    const installedPath = join(".rulesets", "installed.toml");
+    const installedPath = join(".rulesets", "installed.json");
     const content = await Bun.file(installedPath).text();
-    const parsed = await import("@iarna/toml").then(m => m.parse(content));
+    const parsed = JSON.parse(content);
     
-    const installed = (parsed as any).installed || {};
+    const installed = parsed.installed || {};
     
     if (Object.keys(installed).length === 0) {
       console.log(chalk.yellow("No rulesets installed in this project."));
