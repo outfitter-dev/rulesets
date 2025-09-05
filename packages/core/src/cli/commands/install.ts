@@ -6,7 +6,6 @@ import { RulesetManager } from "../../rulesets/ruleset-manager";
 import { Ruleset } from "../../rulesets/ruleset";
 import { join } from "node:path";
 import { mkdir, copyFile, exists } from "node:fs/promises";
-import * as TOML from "@iarna/toml";
 
 interface InstallOptions {
   global?: boolean;
@@ -118,13 +117,17 @@ async function ensureProjectInitialized() {
   if (!(await exists(projectDir))) {
     await mkdir(projectDir, { recursive: true });
     
-    // Create initial installed.toml
+    // Create initial installed.json
     const config = {
+      "_comment": "Auto-generated - do not edit manually",
       installed: {},
       modified: {},
     };
     
-    await Bun.write(join(projectDir, "installed.toml"), TOML.stringify(config));
+    await Bun.write(
+      join(projectDir, "installed.json"),
+      JSON.stringify(config, null, 2)
+    );
   }
 }
 
@@ -173,14 +176,18 @@ async function installToDestination(destination: string, rules: string): Promise
 }
 
 async function updateInstalledConfig(installedInfo: Record<string, any>) {
-  const configPath = join(".rulesets", "installed.toml");
+  const configPath = join(".rulesets", "installed.json");
   
   // Load existing config
-  let config: any = { installed: {}, modified: {} };
+  let config: any = {
+    "_comment": "Auto-generated - do not edit manually",
+    installed: {},
+    modified: {},
+  };
   
   try {
     const content = await Bun.file(configPath).text();
-    config = TOML.parse(content);
+    config = JSON.parse(content);
   } catch {
     // File doesn't exist or is invalid
   }
@@ -189,7 +196,7 @@ async function updateInstalledConfig(installedInfo: Record<string, any>) {
   Object.assign(config.installed, installedInfo);
   
   // Write back
-  await Bun.write(configPath, TOML.stringify(config));
+  await Bun.write(configPath, JSON.stringify(config, null, 2));
 }
 
 async function createPlaceholderRuleset(dir: string, name: string) {
@@ -206,6 +213,8 @@ async function createPlaceholderRuleset(dir: string, name: string) {
     },
   };
   
+  // Keep meta.toml as TOML (user-editable config)
+  const TOML = await import("@iarna/toml");
   await Bun.write(join(dir, "meta.toml"), TOML.stringify(meta as any));
   
   // Create rules.md
