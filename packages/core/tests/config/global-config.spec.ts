@@ -2,6 +2,9 @@ import { describe, expect, it, beforeEach, afterEach } from "vitest";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import { mkdtemp, rm } from "node:fs/promises";
+import { GlobalConfig } from "../../src/config/global-config";
+import { Ruleset } from "../../src/rulesets/ruleset";
+import { RulesetManager } from "../../src/rulesets/ruleset-manager";
 
 describe("Global Rulesets Configuration", () => {
   let testDir: string;
@@ -22,14 +25,16 @@ describe("Global Rulesets Configuration", () => {
       expect(globalConfig.getGlobalDirectory()).toBe(expectedPath);
     });
 
-    it("should respect XDG_CONFIG_HOME when set", () => {
+    it("should include XDG_CONFIG_HOME in search paths when set", () => {
       const originalXDG = process.env.XDG_CONFIG_HOME;
       process.env.XDG_CONFIG_HOME = testDir;
       
       const globalConfig = new GlobalConfig();
       const expectedPath = join(testDir, "rulesets");
+      const paths = globalConfig.getSearchPaths();
       
-      expect(globalConfig.getGlobalDirectory()).toBe(expectedPath);
+      expect(paths).toContain(expectedPath);
+      expect(paths[0]).toBe(join(homedir(), ".rulesets")); // Still prioritize default
       
       process.env.XDG_CONFIG_HOME = originalXDG;
     });
@@ -265,25 +270,3 @@ sets = ["a"]
     });
   });
 });
-
-// Type stubs for implementation
-class GlobalConfig {
-  constructor(options?: { platform?: string; configPath?: string }) {}
-  getGlobalDirectory(): string { throw new Error("Not implemented"); }
-  getSearchPaths(): string[] { throw new Error("Not implemented"); }
-  async load(): Promise<any> { throw new Error("Not implemented"); }
-}
-
-class Ruleset {
-  constructor(path: string) {}
-  async loadMetadata(): Promise<any> { throw new Error("Not implemented"); }
-  async getFiles(): Promise<string[]> { throw new Error("Not implemented"); }
-  async validate(): Promise<void> { throw new Error("Not implemented"); }
-  async getOverrides(): Promise<Record<string, any>> { throw new Error("Not implemented"); }
-}
-
-class RulesetManager {
-  constructor(options: { globalDir: string }) {}
-  async compose(name: string): Promise<any> { throw new Error("Not implemented"); }
-  async createRuleset(name: string, options: any): Promise<void> { throw new Error("Not implemented"); }
-}
