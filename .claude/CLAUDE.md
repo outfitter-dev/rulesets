@@ -13,6 +13,12 @@ Ultracite enforces strict type safety, accessibility standards, and consistent c
 3. Follow the rules below strictly
 4. Validate accessibility requirements
 
+## File Format Rules
+- Use `.json` or `.jsonl` for machine-managed files that should not be manually edited
+- Add clear header comments when possible: `// Auto-generated - do not edit manually`
+- Examples: `.rulesets/installed.json`, tracking files, cache files
+- Use TOML only for user-editable configuration files
+
 ## Rules
 
 ### Accessibility (a11y)
