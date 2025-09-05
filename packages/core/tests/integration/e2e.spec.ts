@@ -107,8 +107,8 @@ This is a test document with {{stems}} and {{$variables}} that should pass throu
         linter: { requireRulesetsVersion: false },
       });
 
-      // Should still process for all destinations
-      expect(fs.writeFile).toHaveBeenCalledTimes(2); // cursor and windsurf
+      // Should still process for all destinations (10 total with new plugins)
+      expect(fs.writeFile).toHaveBeenCalledTimes(10); // all 10 destinations
       expect(mockLogger.warn).toHaveBeenCalledWith(
         expect.stringContaining('No frontmatter found')
       );
@@ -229,14 +229,13 @@ rulesets:
 
       await runRulesetsV0('./test.mix.md', mockLogger);
 
-      // Should use default paths
+      // Should use default paths for multiple destinations now
+      // With 10 destinations, we should have 10 calls
+      expect(fs.writeFile).toHaveBeenCalledTimes(10);
+      
+      // Check that cursor destination was written (now uses new format by default)
       expect(fs.writeFile).toHaveBeenCalledWith(
-        path.resolve('.rulesets/dist/cursor/my-rules.md'),
-        expect.any(String),
-        expect.objectContaining({ encoding: 'utf8' })
-      );
-      expect(fs.writeFile).toHaveBeenCalledWith(
-        path.resolve('.rulesets/dist/windsurf/my-rules.md'),
+        path.resolve('.cursor/rules/cursor.mdc'),
         expect.any(String),
         expect.objectContaining({ encoding: 'utf8' })
       );

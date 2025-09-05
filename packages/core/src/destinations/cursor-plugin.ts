@@ -7,7 +7,19 @@ import type {
   Logger,
 } from '../interfaces';
 
+/**
+ * Cursor IDE destination plugin.
+ * 
+ * Supports both legacy and new formats:
+ * - Legacy: .cursorrules (deprecated but still supported)
+ * - New: .cursor/rules/*.mdc (recommended, with path scoping)
+ * 
+ * Note: New rules currently only active in Agent mode.
+ * Migration to new format is recommended but not required.
+ */
 export class CursorPlugin implements DestinationPlugin {
+  description = 'Rules for Cursor IDE - supports both .cursorrules and .cursor/rules/ formats';
+  
   get name(): string {
     return 'cursor';
   }
@@ -18,19 +30,33 @@ export class CursorPlugin implements DestinationPlugin {
       properties: {
         outputPath: {
           type: 'string',
-          description: 'Path where the compiled rules file should be written',
+          description: 'Path where the compiled rules file should be written (.cursorrules or .cursor/rules/*.mdc)',
+        },
+        format: {
+          type: 'string',
+          enum: ['legacy', 'new'],
+          default: 'new',
+          description: 'Use legacy (.cursorrules) or new (.cursor/rules/) format'
         },
         priority: {
           type: 'string',
           enum: ['low', 'medium', 'high'],
           description: 'Priority level for the rules',
         },
+        globs: {
+          type: 'array',
+          items: { type: 'string' },
+          description: 'Path patterns for scoped rules (new format only)'
+        },
+        alwaysApply: {
+          type: 'boolean',
+          description: 'Always include this rule (new format only)'
+        }
       },
       additionalProperties: true,
     };
   }
 
-  // TODO: Add Cursor-specific formatting and transformations
   async write(ctx: {
     compiled: CompiledDoc;
     destPath: string;
@@ -41,12 +67,21 @@ export class CursorPlugin implements DestinationPlugin {
 
     logger.info(`Writing Cursor rules to: ${destPath}`);
 
-    // Determine the output path with runtime type-narrowing
+    // Determine the format and output path
+    const format = (config as { format?: string })?.format || 'new';
     const rawOutputPath = (config as { outputPath?: unknown })?.outputPath;
-    const outputPath =
-      typeof rawOutputPath === 'string' && rawOutputPath.trim().length > 0
-        ? rawOutputPath
-        : destPath;
+    
+    let outputPath: string;
+    if (typeof rawOutputPath === 'string' && rawOutputPath.trim().length > 0) {
+      outputPath = rawOutputPath;
+    } else if (format === 'legacy') {
+      outputPath = '.cursorrules';
+    } else {
+      // New format: use .cursor/rules/ directory
+      const fileName = path.basename(destPath, path.extname(destPath));
+      outputPath = `.cursor/rules/${fileName}.mdc`;
+    }
+    
     const resolvedPath = path.isAbsolute(outputPath)
       ? outputPath
       : path.resolve(outputPath);

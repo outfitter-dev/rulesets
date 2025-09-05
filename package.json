@@ -31,5 +31,7 @@
     "typescript": "^5.9.2",
     "ultracite": "5.2.17"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@iarna/toml": "^2.2.5"
+  }
 }

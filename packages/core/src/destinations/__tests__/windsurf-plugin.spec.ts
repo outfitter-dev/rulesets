@@ -100,7 +100,7 @@ describe('WindsurfPlugin', () => {
         `Writing Windsurf rules to: ${resolvedPath}`
       );
       expect(mockLogger.info).toHaveBeenCalledWith(
-        `Successfully wrote Windsurf rules to: ${resolvedPath}`
+        `Successfully wrote Windsurf rules to: ${resolvedPath} (${mockCompiledDoc.output.content.length} chars)`
       );
     });
 

@@ -8,11 +8,36 @@ import { parse } from './parser';
 
 // biome-ignore lint/performance/noBarrelFile: This is the package entry point
 export { compile } from './compiler';
-export { CursorPlugin, destinations, WindsurfPlugin } from './destinations';
+export { 
+  AgentsMdPlugin,
+  ClaudeCodePlugin,
+  ClinePlugin,
+  CodexPlugin,
+  CursorPlugin,
+  destinations, 
+  GitHubCopilotPlugin,
+  RooCodePlugin,
+  WindsurfPlugin,
+  ZedPlugin 
+} from './destinations';
 // Export all public APIs
 export * from './interfaces';
 export { type LinterConfig, type LintResult, lint } from './linter';
 export { parse } from './parser';
+
+// Export new utilities
+export { GlobPlacementManager } from './utils/glob-placement';
+export { CloneMode, type CloneResult } from './modes/clone-mode';
+export { DriftDetector, type DriftReport, type DriftEntry } from './drift/drift-detector';
+export { ConfigLoader, type RulesetsConfig } from './config';
+
+// Export global configuration and detection
+export { GlobalConfigManager, globalConfig, type GlobalConfig } from './config/global-config';
+export { ProjectDetector, type DetectionResult } from './utils/project-detector';
+
+// Export CLI commands
+export { initCommand } from './cli/commands/init';
+export { detectCommand } from './cli/commands/detect';
 
 /**
  * Reads a source file from disk.
@@ -219,7 +244,12 @@ async function writeToDestination(
     (frontmatterDestinations?.[destinationId] as
       | Record<string, unknown>
       | undefined) || {};
-  const defaultPath = `.rulesets/dist/${destinationId}/my-rules.md`;
+  // Use .ruleset/ as default, with option for .agents/rules/
+  const useAgentsDir = destConfig.useAgentsDir === true;
+  const defaultPath = useAgentsDir 
+    ? `.agents/rules/${destinationId}.md`
+    : `.ruleset/${destinationId}.md`;
+  
   const destPath =
     (destConfig.outputPath as string) ||
     (destConfig.path as string) ||
