@@ -52,7 +52,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish
         id: changesets
-        uses: changesets/action@e0145ed # v1
+        uses: changesets/action@v1
         with:
           publish: bun run release
         env:
